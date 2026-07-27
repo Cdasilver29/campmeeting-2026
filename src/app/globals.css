@@ -154,10 +154,42 @@
   --color-bookmark: #d97706; /* [functional] saved-session marker */
 
   /* ── Type ──────────────────────────────────────────────────────────
-     Faces are a Phase 1 decision. Wire next/font to these two vars and
-     the tokens below need no further change. */
+     Display: Fraunces — a reverent, editorial serif with enough
+     character for a hero and section headings without tipping into
+     decorative. Body: Inter — a workhorse sans built for dense,
+     scannable UI (schedule cards, filters, timestamps), which is most
+     of this site. Wired via next/font in src/app/layout.tsx. */
   --font-display: var(--font-display-var), Georgia, serif;
   --font-sans: var(--font-sans-var), system-ui, sans-serif;
+
+  /* ── Type scale ────────────────────────────────────────────────────
+     rem steps, 16px base. font-display is reserved for the hero and
+     section headings (h1/h2-equivalent) only — everything else,
+     including h3+ subheadings, stays on font-sans. --text-hero is a
+     fluid clamp() for the countdown/hero title so it doesn't need a
+     separate mobile override. */
+  --text-xs: 0.75rem;      /* 12px — fine print, legal */
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;     /* 14px — captions, meta, nav */
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;       /* 16px — body */
+  --text-base--line-height: 1.625rem;
+  --text-lg: 1.125rem;     /* 18px — lead paragraphs */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;      /* 20px — card titles */
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;      /* 24px — subsection headings, sans */
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;    /* 30px — section headings, display */
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.25rem;     /* 36px — larger section headings, display */
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 3rem;        /* 48px — page headings, display */
+  --text-5xl--line-height: 1.1;
+  --text-6xl: 3.75rem;     /* 60px — hero on tablet+, display */
+  --text-6xl--line-height: 1.05;
+  --text-hero: clamp(2.75rem, 1.5rem + 5vw, 5.5rem); /* hero title, display */
+  --text-hero--line-height: 1.02;
 
   /* ── Shape & motion ────────────────────────────────────────────────
      5px radius matches the parent site's slightly_rounded button
@@ -224,6 +256,16 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Tabular figures. The schedule renders ~237 timestamps in aligned
+   columns (day timeline, full program, search results) — proportional
+   digits make those columns ragged. Every timestamp in the schedule UI
+   must use `tabular-figures`; it is intentionally not applied globally
+   because it isn't needed (or wanted) for prose or headings. */
+@utility tabular-figures {
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {
