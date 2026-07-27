@@ -51,7 +51,9 @@ export function getCurrentSession(now: Date): FlatSession | undefined {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false,
+    // h23, not hour12:false — the latter renders midnight as "24" on some
+    // ICU builds, which would never match a session's "HH:MM".
+    hourCycle: "h23",
   });
   const parts = Object.fromEntries(
     fmt.formatToParts(now).map((p) => [p.type, p.value]),

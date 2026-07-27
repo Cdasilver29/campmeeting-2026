@@ -88,6 +88,10 @@
   --color-line: #0d3170;
   /* interactive accent must lighten on dark, see --color-accent-300 */
   --color-accent-500: #7ea6f2;
+  /* Featured red lightens for the same reason the accent does: the
+     printed #c8271d is 5.58:1 on white but only 3.22:1 on this surface.
+     This lands at 5.65:1, matching the light-mode reading. */
+  --color-featured: #e8695c;
 
   /* shadcn base, pointed at the brand dark values above so dark mode
      is navy throughout instead of shadcn's own neutral grey scale. */

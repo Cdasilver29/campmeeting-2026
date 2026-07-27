@@ -1,67 +1,47 @@
-import { allSessions, eventInfo, program, speakers } from "@/data";
+import { eventInfo } from "@/data";
+import { TodayView } from "@/features/schedule/components/today-view";
 
 /**
- * TEMPORARY Phase 0 page. It exists only to prove the data layer resolves
- * through the @/data barrel and that the brand tokens render in both themes.
- * Phase 3 replaces this with the real schedule.
+ * The hero is a server component: the event name, dates and venue are
+ * fixed at build time. Only the clock-dependent part below it ships as
+ * client JavaScript.
+ *
+ * No theme line here on purpose. CLAUDE.md lists the August 2026 theme
+ * as unconfirmed, and the wording on the parent site belongs to a
+ * different pastor and a February programme.
  */
+function formatDateRange() {
+  const start = new Date(`${eventInfo.startDate}T00:00:00Z`);
+  const end = new Date(`${eventInfo.endDate}T00:00:00Z`);
+  const format = (date: Date, options: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", ...options }).format(
+      date,
+    );
 
-const blockCount = program.reduce((n, day) => n + day.blocks.length, 0);
-const allBlockActivityCount = program.reduce(
-  (n, day) => n + day.blocks.filter((b) => b.allBlockActivity).length,
-  0,
-);
-const untimedSessionCount = allSessions.filter((s) => !s.start).length;
-
-const stats = [
-  { label: "Days", value: program.length },
-  { label: "Blocks", value: blockCount },
-  { label: "Timed sessions", value: allSessions.length - untimedSessionCount },
-  { label: "Untimed sessions", value: untimedSessionCount },
-  { label: "All-block activities", value: allBlockActivityCount },
-  { label: "Speakers", value: speakers.length },
-];
+  return `${format(start, { day: "numeric" })} to ${format(end, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })}`;
+}
 
 export default function Home() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
       <header className="flex flex-col gap-3">
         <p className="text-sm tracking-wide text-ink-muted uppercase">
-          Phase 0 scaffold
+          {eventInfo.church.name}
         </p>
-        <h1 className="font-display text-4xl leading-tight text-balance">
-          {eventInfo.name}
+        <h1 className="font-display text-hero text-balance">
+          {eventInfo.edition}
         </h1>
-        <p className="text-ink-muted">
-          {eventInfo.edition} at {eventInfo.church.name},{" "}
-          {eventInfo.church.address}. {eventInfo.startDate} to{" "}
-          {eventInfo.endDate}, {eventInfo.timezone}.
+        <p className="text-lg text-ink-muted">
+          {formatDateRange()} at {eventInfo.church.address}. All times are
+          East Africa Time.
         </p>
       </header>
 
-      <section aria-labelledby="data-layer" className="flex flex-col gap-4">
-        <h2 id="data-layer" className="font-display text-xl">
-          Data layer
-        </h2>
-        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-3">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col gap-1 bg-surface-muted p-4"
-            >
-              <dt className="text-sm text-ink-muted">{stat.label}</dt>
-              <dd className="font-display text-2xl tabular-nums">
-                {stat.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
-        <p className="text-sm text-ink-muted">
-          Counts are derived from src/data at build time. Untimed entries and
-          all-block activities are surfaced separately because the schedule UI
-          has to handle them, per DATA-NOTES.md.
-        </p>
-      </section>
+      <TodayView />
     </div>
   );
 }
