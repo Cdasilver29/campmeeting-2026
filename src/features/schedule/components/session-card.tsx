@@ -1,18 +1,10 @@
+import type { ReactNode } from "react";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { speakerById, type FlatSession } from "@/data";
+import { type FlatSession } from "@/data";
 import { cn } from "@/lib/utils";
+import { presenterNames } from "../lib/presenters";
 import { ministryLabels } from "../lib/today";
-
-/** "Pr. Kennedy Mfune" from a speaker id, plus any free-text credits. */
-export function presenterNames(session: FlatSession): string[] {
-  const named = (session.presenterIds ?? []).map((id) => {
-    const speaker = speakerById[id];
-    if (!speaker) return id;
-    return speaker.title ? `${speaker.title} ${speaker.name}` : speaker.name;
-  });
-  return [...named, ...(session.presentedBy ?? [])];
-}
 
 /**
  * Times are set in tabular figures so the column stays flush down a
@@ -66,10 +58,16 @@ export function PresenterChips({ session }: { session: FlatSession }) {
 export function SessionCard({
   session,
   headingLevel: Heading = "h3",
+  showBlockLabel = true,
+  meta,
   className,
 }: {
   session: FlatSession;
   headingLevel?: "h2" | "h3" | "h4";
+  /** Off inside the full programme, where the block is already a heading. */
+  showBlockLabel?: boolean;
+  /** Trailing control on the meta row, e.g. the bookmark toggle. */
+  meta?: ReactNode;
   className?: string;
 }) {
   return (
@@ -79,9 +77,16 @@ export function SessionCard({
         className,
       )}
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+      {/* min-h-6 holds the row at the height of a 24px control, so a
+          bookmark toggle appearing after mount shifts nothing. */}
+      <div className="flex min-h-6 flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <TimeRange start={session.start} end={session.end} />
-        <span className="text-xs text-ink-muted">{session.blockLabel}</span>
+        <div className="flex items-center gap-2">
+          {showBlockLabel ? (
+            <span className="text-xs text-ink-muted">{session.blockLabel}</span>
+          ) : null}
+          {meta}
+        </div>
       </div>
 
       <Heading className="flex items-start gap-1.5 text-base leading-snug font-medium text-ink">
