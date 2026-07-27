@@ -9,8 +9,10 @@ import {
   type ScheduleFilters,
 } from "../lib/url";
 import { DayRail } from "./day-rail";
+import { MyScheduleEmpty } from "./my-schedule-empty";
 import { ProgramView } from "./program-view";
 import { ScheduleFiltersBar } from "./schedule-filters";
+import { ViewSwitch } from "./view-switch";
 
 const clearLinkClasses =
   "inline-flex h-8 items-center rounded-control px-2 text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
@@ -40,12 +42,20 @@ export function ScheduleShell({
   return (
     <div className="flex flex-col gap-6">
       <ScheduleFiltersBar filters={filters} />
+      <ViewSwitch filters={filters} />
       <DayRail filters={filters} />
       <ResultSummary count={count} filters={filters} />
-      {count === 0 ? (
-        <NoResults filters={filters} />
-      ) : (
+      {count > 0 ? (
         <ProgramView groups={groups} showGaps={showGaps} />
+      ) : filters.mine ? (
+        // Saved sessions are unknown until localStorage has been read,
+        // so this branch decides for itself whether "nothing" means
+        // "nothing saved" or "not read yet".
+        <MyScheduleEmpty
+          otherFiltersActive={hasActiveFilters({ ...filters, mine: false })}
+        />
+      ) : (
+        <NoResults filters={filters} />
       )}
     </div>
   );

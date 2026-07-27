@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
+import { useBookmarks } from "../bookmarks";
 import { allDayGroups, allEntries, groupEntries } from "../lib/entries";
 import { filterEntries } from "../lib/filter";
 import { hasActiveFilters, parseScheduleFilters } from "../lib/url";
@@ -23,6 +24,8 @@ export function ScheduleBrowser() {
   const filters = parseScheduleFilters(params);
   const reduceMotion = useReducedMotion();
 
+  const { ids } = useBookmarks();
+
   const { q, day, ministry, speaker, mine } = filters;
   const groups = useMemo(() => {
     // Nothing is filtered: reuse the grouping built at module load
@@ -31,9 +34,11 @@ export function ScheduleBrowser() {
       return allDayGroups;
     }
     return groupEntries(
-      filterEntries(allEntries, { q, day, ministry, speaker, mine }),
+      filterEntries(allEntries, { q, day, ministry, speaker, mine }, (id) =>
+        ids.has(id),
+      ),
     );
-  }, [q, day, ministry, speaker, mine]);
+  }, [q, day, ministry, speaker, mine, ids]);
 
   const count = useMemo(
     () => groups.reduce((total, group) => total + group.count, 0),

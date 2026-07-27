@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { eventInfo, program } from "@/data";
+import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { ScheduleBrowser } from "@/features/schedule/components/schedule-browser";
 import { ScheduleShell } from "@/features/schedule/components/schedule-shell";
 import { allDayGroups, totalEntryCount } from "@/features/schedule/lib/entries";
@@ -34,9 +35,14 @@ export default function SchedulePage() {
         </p>
       </header>
 
-      <Suspense fallback={<StaticProgramme />}>
-        <ScheduleBrowser />
-      </Suspense>
+      {/* Outside the boundary so the browser and the prerendered
+          fallback read the same saved set, and so the provider is not
+          torn down and remounted when the boundary resolves. */}
+      <BookmarksProvider>
+        <Suspense fallback={<StaticProgramme />}>
+          <ScheduleBrowser />
+        </Suspense>
+      </BookmarksProvider>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { blockGaps, type BlockGroup, type DayGroup, type ScheduleGap } from "../lib/entries";
 import { AllBlockCard } from "./all-block-card";
+import { BookmarkToggle } from "./bookmark-toggle";
 import { SessionCard } from "./session-card";
 
 /**
@@ -51,8 +52,16 @@ function BlockSection({
                   session={entry.session}
                   headingLevel="h4"
                   showBlockLabel={false}
+                  meta={
+                    <BookmarkToggle
+                      sessionId={entry.key}
+                      title={entry.session.title}
+                    />
+                  }
                 />
               ) : (
+                // Untimed activities are not saveable: a bookmark keys
+                // off a session id and an all-block activity has none.
                 <AllBlockCard
                   activity={entry.activity}
                   blockLabel={entry.blockLabel}
