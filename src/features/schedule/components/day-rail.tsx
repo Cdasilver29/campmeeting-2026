@@ -9,10 +9,11 @@ function shortLabel(dayLabel: string, date: string): string {
 }
 
 /**
- * Day selector for the full programme. Real links rather than buttons:
- * every day is a shareable URL, they work with JavaScript still loading,
- * and they can be opened in a new tab. Every other active filter rides
- * along, so picking a day narrows a filtered view instead of resetting it.
+ * Day selector for the programme. Each day is its own page, so these are
+ * plain links: they work with JavaScript still loading, open in a new tab,
+ * and carry the day's own title into anything they are pasted into. Every
+ * active filter rides along in the query string, so picking a day narrows
+ * a filtered view instead of resetting it.
  */
 export function DayRail({ filters }: { filters: ScheduleFilters }) {
   const options = [
@@ -37,8 +38,7 @@ export function DayRail({ filters }: { filters: ScheduleFilters }) {
             <li key={option.id ?? "all"}>
               <Link
                 href={scheduleHref({ ...filters, day: option.id })}
-                scroll={false}
-                aria-current={active ? "true" : undefined}
+                aria-current={active ? "page" : undefined}
                 className={cn(
                   "inline-flex h-8 items-center rounded-control border px-3 text-sm font-medium whitespace-nowrap transition-colors duration-fast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
                   active

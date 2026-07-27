@@ -1,36 +1,23 @@
-import { Suspense } from "react";
-import type { Metadata } from "next";
 import { eventInfo, program } from "@/data";
-import { BookmarksProvider } from "@/features/schedule/bookmarks";
-import { ScheduleBrowser } from "@/features/schedule/components/schedule-browser";
-import { ScheduleShell } from "@/features/schedule/components/schedule-shell";
-import { allDayGroups, totalEntryCount } from "@/features/schedule/lib/entries";
-import { emptyFilters } from "@/features/schedule/lib/url";
+import { ScheduleProgramme } from "@/features/schedule/components/schedule-programme";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: `Full programme | ${eventInfo.edition}`,
-  description: `Every session of ${eventInfo.edition} across all ${program.length} days, ${eventInfo.startDate} to ${eventInfo.endDate} at ${eventInfo.church.address}.`,
-};
+export const metadata = pageMetadata({
+  title: "Full programme",
+  description: `Every session of ${eventInfo.edition} across all ${program.length} days, ${eventInfo.startDate} to ${eventInfo.endDate} at ${eventInfo.church.address}. Times are East Africa Time.`,
+});
 
 /**
- * The full programme.
+ * The full programme, all days at once. Individual days are pages of
+ * their own at /schedule/{day}.
  *
  * Deliberately clock-free. The countdown, live and archive states live on
  * the Today view at "/", which is the page a reader opens to ask what is
  * happening now; repeating them here would make an otherwise entirely
  * static reference page depend on the clock, push the programme itself
  * below the fold on a phone, and shift the layout on mount during the
- * event, since the live and archive states are shorter than the
- * countdown the placeholder has to be sized for.
- *
- * The page shell is a server component and the programme itself renders
- * on the server too, as the Suspense fallback below: the browser reads
- * the query string with useSearchParams, which forces its own subtree
- * out of the static render, so the fallback is what ends up in the
- * prerendered HTML. Making that fallback the real, unfiltered programme
- * rather than a skeleton means the static page carries every session,
- * the day links work before hydration, and hydrating swaps like for
- * like instead of replacing placeholder boxes with content.
+ * event, since the live and archive states are shorter than the countdown
+ * the placeholder has to be sized for.
  */
 export default function SchedulePage() {
   return (
@@ -43,24 +30,7 @@ export default function SchedulePage() {
         </p>
       </header>
 
-      {/* Outside the boundary so the browser and the prerendered
-          fallback read the same saved set, and so the provider is not
-          torn down and remounted when the boundary resolves. */}
-      <BookmarksProvider>
-        <Suspense fallback={<StaticProgramme />}>
-          <ScheduleBrowser />
-        </Suspense>
-      </BookmarksProvider>
+      <ScheduleProgramme />
     </div>
-  );
-}
-
-function StaticProgramme() {
-  return (
-    <ScheduleShell
-      filters={emptyFilters}
-      groups={allDayGroups}
-      count={totalEntryCount}
-    />
   );
 }

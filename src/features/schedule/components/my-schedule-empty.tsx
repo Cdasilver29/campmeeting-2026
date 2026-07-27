@@ -21,8 +21,11 @@ const linkClasses =
  */
 export function MyScheduleEmpty({
   otherFiltersActive,
+  clearHref,
 }: {
   otherFiltersActive: boolean;
+  /** Where "Clear filters" goes: this page without its filters. */
+  clearHref: string;
 }) {
   const { ready, count } = useBookmarks();
 
@@ -35,7 +38,7 @@ export function MyScheduleEmpty({
         title="None of your saved sessions match"
         description={`You have ${count} saved ${count === 1 ? "session" : "sessions"}, but the other filters rule all of them out.`}
         action={
-          <Link href={SCHEDULE_PATH} scroll={false} className={linkClasses}>
+          <Link href={clearHref} scroll={false} className={linkClasses}>
             Clear filters
           </Link>
         }

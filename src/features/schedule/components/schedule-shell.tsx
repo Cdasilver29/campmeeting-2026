@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { SearchX } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
-import { totalEntryCount, type DayGroup } from "../lib/entries";
+import { type DayGroup } from "../lib/entries";
 import { describeFilters, joinPhrases } from "../lib/filter";
 import {
   hasActiveFilters,
-  SCHEDULE_PATH,
+  scheduleHref,
   type ScheduleFilters,
 } from "../lib/url";
 import { DayRail } from "./day-rail";
@@ -27,24 +27,28 @@ export function ScheduleShell({
   filters,
   groups,
   count,
+  total,
 }: {
   filters: ScheduleFilters;
   groups: DayGroup[];
   count: number;
+  /** Entries the route holds before filtering: the week, or one day. */
+  total: number;
 }) {
-  // A day filter hides other days but removes nothing from the ones it
-  // keeps, so the printed holes are still real. Any other filter takes
+  // Being on a day page hides other days but removes nothing from the one
+  // it keeps, so the printed holes there are still real. Any filter takes
   // sessions out, and the holes left behind are its doing, not the
   // programme's.
-  const showGaps =
-    !filters.q && !filters.ministry && !filters.speaker && !filters.mine;
+  const showGaps = !hasActiveFilters(filters);
+  // Clearing the filters leaves the day alone: the day is the page.
+  const clearHref = scheduleHref({ day: filters.day });
 
   return (
     <div className="flex flex-col gap-6">
       <ScheduleFiltersBar filters={filters} />
       <ViewSwitch filters={filters} />
       <DayRail filters={filters} />
-      <ResultSummary count={count} filters={filters} />
+      <ResultSummary count={count} total={total} clearHref={clearHref} filters={filters} />
       {count > 0 ? (
         <ProgramView groups={groups} showGaps={showGaps} />
       ) : filters.mine ? (
@@ -52,10 +56,11 @@ export function ScheduleShell({
         // so this branch decides for itself whether "nothing" means
         // "nothing saved" or "not read yet".
         <MyScheduleEmpty
+          clearHref={clearHref}
           otherFiltersActive={hasActiveFilters({ ...filters, mine: false })}
         />
       ) : (
-        <NoResults filters={filters} />
+        <NoResults filters={filters} clearHref={clearHref} />
       )}
     </div>
   );
@@ -69,9 +74,13 @@ export function ScheduleShell({
  */
 function ResultSummary({
   count,
+  total,
+  clearHref,
   filters,
 }: {
   count: number;
+  total: number;
+  clearHref: string;
   filters: ScheduleFilters;
 }) {
   return (
@@ -79,11 +88,10 @@ function ResultSummary({
       <p role="status" className="text-sm text-ink-muted">
         Showing{" "}
         <span className="tabular-figures font-medium text-ink">{count}</span> of{" "}
-        <span className="tabular-figures">{totalEntryCount}</span> programme
-        entries
+        <span className="tabular-figures">{total}</span> programme entries
       </p>
       {hasActiveFilters(filters) ? (
-        <Link href={SCHEDULE_PATH} scroll={false} className={clearLinkClasses}>
+        <Link href={clearHref} scroll={false} className={clearLinkClasses}>
           Clear filters
         </Link>
       ) : null}
@@ -91,7 +99,13 @@ function ResultSummary({
   );
 }
 
-function NoResults({ filters }: { filters: ScheduleFilters }) {
+function NoResults({
+  filters,
+  clearHref,
+}: {
+  filters: ScheduleFilters;
+  clearHref: string;
+}) {
   const description = `No sessions ${joinPhrases(describeFilters(filters))}.`;
 
   return (
@@ -100,7 +114,7 @@ function NoResults({ filters }: { filters: ScheduleFilters }) {
       title="Nothing matches those filters"
       description={`${description} Clear them to see the whole programme again.`}
       action={
-        <Link href={SCHEDULE_PATH} scroll={false} className={clearLinkClasses}>
+        <Link href={clearHref} scroll={false} className={clearLinkClasses}>
           Clear filters
         </Link>
       }

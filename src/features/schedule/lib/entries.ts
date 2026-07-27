@@ -135,7 +135,41 @@ export function groupEntries(entries: ScheduleEntry[]): DayGroup[] {
 /** The whole programme, grouped. Built once at module load. */
 export const allDayGroups: DayGroup[] = groupEntries(allEntries);
 
-export const totalEntryCount = allEntries.length;
+/**
+ * What a programme route is looking at before any filter runs: the whole
+ * week on /schedule, one day on /schedule/{day}. Both forms are built
+ * once at module load, so an unfiltered page renders a prepared grouping
+ * instead of walking 239 entries to arrive back at it, and the "of N" in
+ * the count is the size of the page's own scope rather than of the week.
+ */
+export interface ScheduleScope {
+  /** Everything in scope, for the filters to narrow. */
+  entries: ScheduleEntry[];
+  /** The same entries, grouped, for the unfiltered render. */
+  groups: DayGroup[];
+  total: number;
+}
+
+export const wholeProgramme: ScheduleScope = {
+  entries: allEntries,
+  groups: allDayGroups,
+  total: allEntries.length,
+};
+
+const scopeByDay = new Map<string, ScheduleScope>(
+  program.map((day) => {
+    const entries = allEntries.filter((entry) => entry.dayId === day.id);
+    return [
+      day.id,
+      { entries, groups: groupEntries(entries), total: entries.length },
+    ];
+  }),
+);
+
+/** Falls back to the whole programme, so an unknown day is never empty. */
+export function scheduleScope(dayId?: string): ScheduleScope {
+  return (dayId ? scopeByDay.get(dayId) : undefined) ?? wholeProgramme;
+}
 
 function minutesOf(time: string): number {
   return Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
