@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { eventInfo, program } from "@/data";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { ScheduleBrowser } from "@/features/schedule/components/schedule-browser";
+import { ScheduleHero } from "@/features/schedule/components/schedule-hero";
 import { ScheduleShell } from "@/features/schedule/components/schedule-shell";
 import { allDayGroups, totalEntryCount } from "@/features/schedule/lib/entries";
 import { emptyFilters } from "@/features/schedule/lib/url";
@@ -34,6 +35,8 @@ export default function SchedulePage() {
           are East Africa Time.
         </p>
       </header>
+
+      <ScheduleHero />
 
       {/* Outside the boundary so the browser and the prerendered
           fallback read the same saved set, and so the provider is not

@@ -13,19 +13,11 @@ import {
 } from "../lib/today";
 import { useNow } from "../use-now";
 import { Countdown } from "./countdown";
+import { LiveDot } from "./live-dot";
 import { PresenterChips, SessionCard, TimeRange } from "./session-card";
 
 const sectionHeading =
   "font-display text-2xl text-ink";
-
-function LiveDot() {
-  return (
-    <span aria-hidden className="relative flex size-2.5 shrink-0">
-      <span className="absolute inline-flex size-full animate-ping rounded-full bg-live opacity-70" />
-      <span className="relative inline-flex size-2.5 rounded-full bg-live" />
-    </span>
-  );
-}
 
 /**
  * The live indicator. A timed session and an all-block activity are the
