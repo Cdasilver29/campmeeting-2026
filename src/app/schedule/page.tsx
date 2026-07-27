@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { eventInfo, program } from "@/data";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { ScheduleBrowser } from "@/features/schedule/components/schedule-browser";
-import { ScheduleHero } from "@/features/schedule/components/schedule-hero";
 import { ScheduleShell } from "@/features/schedule/components/schedule-shell";
 import { allDayGroups, totalEntryCount } from "@/features/schedule/lib/entries";
 import { emptyFilters } from "@/features/schedule/lib/url";
@@ -15,6 +14,14 @@ export const metadata: Metadata = {
 
 /**
  * The full programme.
+ *
+ * Deliberately clock-free. The countdown, live and archive states live on
+ * the Today view at "/", which is the page a reader opens to ask what is
+ * happening now; repeating them here would make an otherwise entirely
+ * static reference page depend on the clock, push the programme itself
+ * below the fold on a phone, and shift the layout on mount during the
+ * event, since the live and archive states are shorter than the
+ * countdown the placeholder has to be sized for.
  *
  * The page shell is a server component and the programme itself renders
  * on the server too, as the Suspense fallback below: the browser reads
@@ -35,8 +42,6 @@ export default function SchedulePage() {
           are East Africa Time.
         </p>
       </header>
-
-      <ScheduleHero />
 
       {/* Outside the boundary so the browser and the prerendered
           fallback read the same saved set, and so the provider is not
