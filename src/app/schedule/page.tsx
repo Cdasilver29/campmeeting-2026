@@ -1,10 +1,9 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { eventInfo, program } from "@/data";
-import { DayRail } from "@/features/schedule/components/day-rail";
-import { ProgramView } from "@/features/schedule/components/program-view";
 import { ScheduleBrowser } from "@/features/schedule/components/schedule-browser";
-import { allDayGroups } from "@/features/schedule/lib/entries";
+import { ScheduleShell } from "@/features/schedule/components/schedule-shell";
+import { allDayGroups, totalEntryCount } from "@/features/schedule/lib/entries";
 import { emptyFilters } from "@/features/schedule/lib/url";
 
 export const metadata: Metadata = {
@@ -44,9 +43,10 @@ export default function SchedulePage() {
 
 function StaticProgramme() {
   return (
-    <div className="flex flex-col gap-8">
-      <DayRail filters={emptyFilters} />
-      <ProgramView groups={allDayGroups} />
-    </div>
+    <ScheduleShell
+      filters={emptyFilters}
+      groups={allDayGroups}
+      count={totalEntryCount}
+    />
   );
 }

@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
-import { allDayGroups } from "../lib/entries";
-import { parseScheduleFilters } from "../lib/url";
-import { DayRail } from "./day-rail";
-import { ProgramView } from "./program-view";
+import { allDayGroups, allEntries, groupEntries } from "../lib/entries";
+import { filterEntries } from "../lib/filter";
+import { hasActiveFilters, parseScheduleFilters } from "../lib/url";
+import { ScheduleShell } from "./schedule-shell";
 
 /**
  * The programme browser. All of its state is read from the query string
  * rather than held locally, so the view a reader is looking at is always
- * the view in the address bar.
+ * the view in the address bar, the back button walks their filters, and
+ * a copied URL reproduces the page for someone else.
  *
  * The static HTML for this route is the Suspense fallback in page.tsx —
  * the whole programme, unfiltered — so the page is readable before this
@@ -22,27 +23,35 @@ export function ScheduleBrowser() {
   const filters = parseScheduleFilters(params);
   const reduceMotion = useReducedMotion();
 
-  const groups = filters.day
-    ? allDayGroups.filter((group) => group.day.id === filters.day)
-    : allDayGroups;
+  const { q, day, ministry, speaker, mine } = filters;
+  const groups = useMemo(() => {
+    // Nothing is filtered: reuse the grouping built at module load
+    // rather than walking 239 entries to arrive back at it.
+    if (!hasActiveFilters({ q, day, ministry, speaker, mine })) {
+      return allDayGroups;
+    }
+    return groupEntries(
+      filterEntries(allEntries, { q, day, ministry, speaker, mine }),
+    );
+  }, [q, day, ministry, speaker, mine]);
 
-  useScrollToDay(filters.day, Boolean(reduceMotion));
-
-  return (
-    <div className="flex flex-col gap-8">
-      <DayRail filters={filters} />
-      <ProgramView groups={groups} />
-    </div>
+  const count = useMemo(
+    () => groups.reduce((total, group) => total + group.count, 0),
+    [groups],
   );
+
+  useScrollToDay(day, Boolean(reduceMotion));
+
+  return <ScheduleShell filters={filters} groups={groups} count={count} />;
 }
 
 /**
- * Brings the chosen day into view. Deep links land on the page with the
- * heading already past the fold otherwise, and the same movement on a
- * rail click confirms the choice took effect.
+ * Brings the chosen day into view. A deep link would otherwise land with
+ * its heading below the fold, and the same movement on a rail click
+ * confirms the choice took effect.
  *
- * Skipped when the day is unchanged, so unrelated filter edits later on
- * never yank the page around under the reader.
+ * Only on a change of day, so editing an unrelated filter later never
+ * yanks the page around under the reader.
  */
 function useScrollToDay(dayId: string | undefined, reduceMotion: boolean) {
   const previous = useRef<string | undefined>(undefined);
@@ -54,8 +63,7 @@ function useScrollToDay(dayId: string | undefined, reduceMotion: boolean) {
     }
     previous.current = dayId;
 
-    const target = document.getElementById(`day-${dayId}`);
-    target?.scrollIntoView({
+    document.getElementById(`day-${dayId}`)?.scrollIntoView({
       behavior: reduceMotion ? "auto" : "smooth",
       block: "start",
     });
