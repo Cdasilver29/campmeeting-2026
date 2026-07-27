@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { PageTransition } from "@/components/page-transition";
 import { eventInfo } from "@/data";
 import "./globals.css";
 
@@ -49,7 +50,9 @@ export default function RootLayout({
             Skip to content
           </a>
           <SiteHeader />
-          <main id="content">{children}</main>
+          <main id="content">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <SiteFooter />
         </ThemeProvider>
       </body>
