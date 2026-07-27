@@ -1,4 +1,3 @@
-import { DevThemeToggle } from "@/components/dev-theme-toggle";
 import { allSessions, eventInfo, program, speakers } from "@/data";
 
 /**
@@ -25,7 +24,7 @@ const stats = [
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-10 bg-surface px-6 py-16 text-ink">
+    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
       <header className="flex flex-col gap-3">
         <p className="text-sm tracking-wide text-ink-muted uppercase">
           Phase 0 scaffold
@@ -63,13 +62,6 @@ export default function Home() {
           has to handle them, per DATA-NOTES.md.
         </p>
       </section>
-
-      <footer className="mt-auto flex flex-wrap items-center gap-4 border-t border-line pt-6">
-        <DevThemeToggle />
-        <span className="text-sm text-ink-muted">
-          Temporary control, replaced in Phase 2.
-        </span>
-      </footer>
-    </main>
+    </div>
   );
 }

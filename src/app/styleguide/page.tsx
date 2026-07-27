@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Loader2 } from "lucide-react";
-import { DevThemeToggle } from "@/components/dev-theme-toggle";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
   title: "Style guide | Camp Meeting 2026",
@@ -89,7 +89,7 @@ function SectionHeading({
 
 export default function StyleguidePage() {
   return (
-    <main className="mx-auto flex max-w-4xl flex-col gap-16 px-6 py-16">
+    <div className="mx-auto flex max-w-4xl flex-col gap-16 px-6 py-16">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-8">
         <div className="flex flex-col gap-2">
           <p className="text-sm tracking-wide text-ink-muted uppercase">
@@ -101,7 +101,7 @@ export default function StyleguidePage() {
             both themes.
           </p>
         </div>
-        <DevThemeToggle />
+        <ThemeToggle />
       </header>
 
       <section aria-labelledby="colors" className="flex flex-col gap-8">
@@ -257,6 +257,6 @@ export default function StyleguidePage() {
           action={<Button>Retry</Button>}
         />
       </section>
-    </main>
+    </div>
   );
 }
