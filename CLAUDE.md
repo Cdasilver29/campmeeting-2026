@@ -3,7 +3,7 @@
 Official digital companion for Camp Meeting, 15th–22nd August 2026, Newlife SDA Church, 5th Ngong Avenue, Nairobi. Greenfield build, separate from newlifesdanairobi.org, but it inherits that site's brand colors. Benchmark: modern conference sites (Apple Events, Stripe Sessions, Figma Config), executed with SDA reverence and restraint. Calm, elegant, fast. No decorative religious icons, no gradient soup, no oversized shadows.
 
 ## Stack (pin exact versions in package.json)
-Next.js 15, React 19, TypeScript strict, Tailwind CSS v4 (CSS-first config in `app/globals.css`), shadcn/ui, Framer Motion, Lucide, next-themes, pnpm. Deploy on Vercel. Static generation everywhere; no traditional backend.
+Next.js 15, React 19, TypeScript strict, Tailwind CSS v4 (CSS-first config in `src/app/globals.css`), shadcn/ui, Framer Motion, Lucide, next-themes, pnpm. Deploy on Vercel. Static generation everywhere; no traditional backend. The app router lives under `src/` (`src/app/`), not at the repo root.
 
 ## Non-negotiables
 - All program content comes from `src/data/` (already written and validated: `types.ts`, `program.ts`, `event.ts`, `index.ts`). Never hardcode schedule content in components. Future years swap data files only.

@@ -1,8 +1,17 @@
 /*
  * Camp Meeting 2026 — design tokens (Tailwind v4 CSS-first config).
- * Colors marked APPROX are sampled from the printed program artwork,
- * not the live site's stylesheet. Replace with exact hexes from the
- * newlifesdanairobi.org theme CSS before Phase 1 sign-off.
+ *
+ * PROVENANCE
+ * Values marked [site] are exact, extracted from
+ *   wp-content/themes/Newlife/css/salient-dynamic-styles.css
+ * which Salient generates from the theme options panel, so these are
+ * deliberate brand choices rather than framework defaults.
+ * Values marked [derived] are computed from those anchors (linear mix,
+ * ratio noted). Values marked [program] come from the printed program
+ * artwork. Values marked [functional] are new, chosen for UI states the
+ * parent site has no equivalent for.
+ *
+ * Every text/background pair below is WCAG-checked; ratios are in comments.
  *
  * Layering: shadcn's neutral base sits underneath, the brand @theme block
  * sits on top. Where the two name the same token, the brand value wins.
@@ -53,14 +62,21 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* Dark mode: class strategy so shadcn/ui and next-themes align. */
+/* Dark mode: class strategy so shadcn/ui and next-themes align.
+   Brand dark values below are entirely [derived] — the parent site has
+   no dark mode. Surfaces are the brand navy pushed toward black, ink is
+   white pulled slightly toward the accent so the neutrals stay in family.
+   ink on surface 15.71:1, muted ink on surface 11.08:1. */
 .dark {
   /* Brand */
-  --color-surface: #0b1622;
-  --color-surface-muted: #101f2e;
-  --color-ink: #e8eef4;
-  --color-ink-muted: #94a8ba;
-  --color-line: #1d3348;
+  --color-surface: #031635;
+  --color-surface-muted: #041b42;
+  --color-surface-warm: #041b42;
+  --color-ink: #eaf0fd;
+  --color-ink-muted: #b6ccf7;
+  --color-line: #0d3170;
+  /* interactive accent must lighten on dark, see --color-accent-300 */
+  --color-accent-500: #7ea6f2;
 
   /* shadcn base */
   --background: oklch(0.145 0 0);
@@ -99,37 +115,55 @@
 /* ── Brand tokens ───────────────────────────────────────────────────── */
 
 @theme {
-  /* ── Brand ─────────────────────────────────────────── */
-  --color-navy-950: #081826;   /* APPROX — deepest header/footer */
-  --color-navy-900: #0d2438;   /* APPROX — program header bars */
-  --color-navy-800: #14324c;   /* APPROX */
-  --color-navy-700: #1c4265;   /* APPROX */
-  --color-sky-500: #1b7fd4;    /* APPROX — cover gradient top */
-  --color-sky-300: #7db4e2;    /* APPROX — cover gradient mid */
-  --color-sky-100: #dcebf7;    /* APPROX — cover gradient base */
-  --color-accent-600: #c8271d; /* APPROX — featured-session red, use sparingly */
+  /* ── Brand anchors ─────────────────────────────────────────────────
+     The parent site's accent is #2e6de7 and its extra-color-1 is
+     #052252. Note #2e6de7 clears AA on white by only 4.71:1, so it is
+     scoped to interactive elements and never used for body text. Deep
+     navy carries the brand weight instead (15.47:1 on white). */
+  --color-navy-950: #031635; /* [derived] navy -> black 35% */
+  --color-navy-900: #052252; /* [site] extra-color-1, copyright bar */
+  --color-navy-800: #0d3170; /* [derived] navy -> accent 20% */
+  --color-navy-700: #133c86; /* [derived] navy -> accent 35%, 10.40:1 on white */
 
-  /* ── Neutrals ──────────────────────────────────────── */
-  --color-surface: #ffffff;
-  --color-surface-muted: #f5f7fa;
-  --color-ink: #10202e;
-  --color-ink-muted: #4e6274;
-  --color-line: #e2e8ef;
+  --color-accent-700: #2053b3; /* [derived] accent -> navy 35%, pressed state */
+  --color-accent-600: #265ec9; /* [derived] accent -> navy 20%, 5.95:1 on white, hover */
+  --color-accent-500: #2e6de7; /* [site] Salient accent-color, 4.71:1 on white */
+  --color-accent-50: #eef3fd;  /* [derived] accent -> white 92%, subtle fills */
 
-  /* ── Semantic (light) ──────────────────────────────── */
-  --color-live: #16a34a;           /* current-session indicator */
-  --color-bookmark: #d97706;
+  /* Lightened accent for dark mode. Raw #2e6de7 on the dark surface is
+     only 3.81:1, which fails AA for text. This clears it at 7.37:1. */
+  --color-accent-300: #7ea6f2; /* [derived] */
 
-  /* ── Type ──────────────────────────────────────────── */
-  /* Display: pick one characterful face in Phase 1 (candidate:
-     Fraunces or Newsreader for reverent-but-modern; decide, don't default).
-     Body: Inter or Geist. Load via next/font, subset latin. */
+  /* ── Neutrals ──────────────────────────────────────────────────────
+     Parent site uses #333333 as extra-color-3 and a warm #ecebe9 for
+     its call-to-action band. Body ink is cooled slightly toward the
+     navy so the greys sit in the same family as the brand. */
+  --color-surface: #ffffff;       /* [site] header background */
+  --color-surface-muted: #f5f7fa; /* [derived] */
+  --color-surface-warm: #ecebe9;  /* [site] call-to-action band */
+  --color-ink: #10202e;           /* [derived] 16.56:1 on white */
+  --color-ink-muted: #4e6274;     /* [derived] 6.32:1 on white */
+  --color-line: #e2e8ef;          /* [derived] */
+
+  /* ── Functional ────────────────────────────────────────────────────
+     No parent-site equivalents exist for these. Featured red has
+     precedent in the printed program, where highlighted sessions and
+     the version label are set in red. */
+  --color-featured: #c8271d; /* [program] use sparingly, never as a fill behind text */
+  --color-live: #16a34a;     /* [functional] current-session indicator */
+  --color-bookmark: #d97706; /* [functional] saved-session marker */
+
+  /* ── Type ──────────────────────────────────────────────────────────
+     Faces are a Phase 1 decision. Wire next/font to these two vars and
+     the tokens below need no further change. */
   --font-display: var(--font-display-var), Georgia, serif;
   --font-sans: var(--font-sans-var), system-ui, sans-serif;
 
-  /* ── Shape & motion ────────────────────────────────── */
+  /* ── Shape & motion ────────────────────────────────────────────────
+     5px radius matches the parent site's slightly_rounded button
+     setting; rounded to 0.25rem so it scales with the type. */
   --radius-card: 0.75rem;
-  --radius-control: 0.5rem;
+  --radius-control: 0.3125rem; /* [site] 5px */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 150ms;
   --duration-base: 250ms;

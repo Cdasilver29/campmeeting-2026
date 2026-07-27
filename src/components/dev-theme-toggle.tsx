@@ -19,7 +19,7 @@ export function DevThemeToggle() {
     <button
       type="button"
       onClick={() => setTheme(next)}
-      className="rounded-control border border-line px-3 py-1.5 text-sm text-ink-muted transition-colors duration-fast hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+      className="rounded-control border border-line px-3 py-1.5 text-sm text-ink-muted transition-colors duration-fast hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
     >
       {mounted ? `Switch to ${next} mode` : "Switch theme"}
     </button>
