@@ -1,6 +1,11 @@
 export * from "./types";
 export { eventInfo, speakers, speakerById } from "./event";
 export { program } from "./program";
+export {
+  announcements,
+  announcementsByDate,
+  announcementsBySessionId,
+} from "./announcements";
 
 import { program } from "./program";
 import type { Session, ProgramDay } from "./types";

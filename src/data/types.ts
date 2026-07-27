@@ -78,6 +78,27 @@ export interface Speaker {
   bio?: string;
 }
 
+export type AnnouncementPriority = "normal" | "urgent";
+
+/**
+ * Programme updates published during camp meeting. Phase 5 owns the
+ * announcements page; the shape is fixed here so the schedule UI can
+ * flag affected sessions without a later refactor.
+ */
+export interface Announcement {
+  id: string;
+  /** full ISO 8601 instant, e.g. "2026-08-17T09:12:00+03:00" */
+  publishedAt: string;
+  title: string;
+  body: string;
+  priority: AnnouncementPriority;
+  /**
+   * Session ids this announcement amends (cancellation, speaker change,
+   * time change). Ids are the stable `{dayId}-{slug}` form from program.ts.
+   */
+  affectedSessionIds?: string[];
+}
+
 export interface EventInfo {
   name: string;
   year: number;

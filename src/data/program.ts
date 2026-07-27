@@ -435,12 +435,12 @@ export const program: ProgramDay[] = [
       },
       {
         id: "afternoon-program",
-        label: "Afternoon Program",
+        label: "Afternoon and Evening",
         sessions: [],
         allBlockActivity: {
           title: "Sabbath Preparation",
           ministry: "fellowship",
-          note: "No timed sessions — the afternoon is reserved for Sabbath preparation.",
+          note: "Confirmed by the program committee: there is no Friday evening service. The afternoon and evening are reserved for Sabbath preparation.",
         },
       },
     ],
