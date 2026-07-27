@@ -1,5 +1,15 @@
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { eventInfo } from "@/data";
+
+// Routes the primary nav deliberately leaves out. The nav stays short;
+// the footer carries the overflow so nothing is unreachable from the shell.
+const moreLinks = [
+  { href: "/prayer-requests", label: "Prayer Requests" },
+  { href: "/announcements", label: "Announcements" },
+  { href: "/downloads", label: "Downloads" },
+  { href: "/faq", label: "FAQ" },
+];
 
 const socialLinks = [
   { href: eventInfo.social.facebook, label: "Facebook" },
@@ -12,10 +22,12 @@ const socialLinks = [
 const linkClassName =
   "rounded-control hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
 
+const headingClassName = "text-xs font-medium tracking-wide text-ink uppercase";
+
 export function SiteFooter() {
   return (
     <footer className="border-t border-line bg-surface-muted">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-6 py-10 text-sm text-ink-muted sm:flex-row sm:justify-between">
+      <div className="mx-auto grid max-w-5xl gap-8 px-6 py-10 text-sm text-ink-muted sm:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-col gap-1">
           <p className="font-display text-base text-ink">
             {eventInfo.church.name}
@@ -27,20 +39,33 @@ export function SiteFooter() {
             </a>
           </p>
           <p>
-            <a href={`mailto:${eventInfo.contact.email}`} className={linkClassName}>
+            <a
+              href={`mailto:${eventInfo.contact.email}`}
+              className={linkClassName}
+            >
               {eventInfo.contact.email}
             </a>
           </p>
         </div>
 
-        <nav aria-label="Social" className="flex flex-col gap-2 sm:items-end">
+        <nav aria-label="More" className="flex flex-col gap-2">
+          <h2 className={headingClassName}>More</h2>
+          {moreLinks.map((link) => (
+            <Link key={link.href} href={link.href} className={linkClassName}>
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <nav aria-label="Social" className="flex flex-col gap-2">
+          <h2 className={headingClassName}>Follow</h2>
           {socialLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
               target="_blank"
               rel="noreferrer"
-              className={`inline-flex items-center gap-1 ${linkClassName}`}
+              className={`inline-flex w-fit items-center gap-1 ${linkClassName}`}
             >
               {link.label}
               <ExternalLink aria-hidden className="size-3.5" />
