@@ -1,5 +1,6 @@
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 import { eventInfo } from "@/data";
+import { ContactForm } from "@/features/forms/contact-form";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -23,6 +24,11 @@ export default function ContactPage() {
           {eventInfo.church.name}, {eventInfo.church.address}.
         </p>
       </header>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="font-display text-2xl text-ink">Send a message</h2>
+        <ContactForm />
+      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="font-display text-2xl text-ink">Get in touch</h2>

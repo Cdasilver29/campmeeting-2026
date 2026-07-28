@@ -1,15 +1,23 @@
-import {
-  PlaceholderPage,
-  placeholderMetadata,
-} from "@/components/placeholder-page";
+import { PrayerRequestForm } from "@/features/forms/prayer-request-form";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = placeholderMetadata("Prayer Requests");
+export const metadata = pageMetadata({
+  title: "Prayer Requests",
+  description: "Share a prayer request with the pastoral team, by name or anonymously.",
+});
 
 export default function PrayerRequestsPage() {
   return (
-    <PlaceholderPage
-      title="Prayer Requests"
-      description="The prayer request form opens in Phase 5. Requests are handled in confidence by the prayer ministry."
-    />
+    <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-16">
+      <header className="flex flex-col gap-3">
+        <h1 className="font-display text-4xl text-balance">Prayer Requests</h1>
+        <p className="text-lg text-ink-muted">
+          Whatever you are carrying, you are welcome to share it here. The
+          pastoral team reads every request.
+        </p>
+      </header>
+
+      <PrayerRequestForm />
+    </div>
   );
 }
