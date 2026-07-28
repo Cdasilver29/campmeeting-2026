@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import { Star } from "lucide-react";
+import Link from "next/link";
+import { Star, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { type FlatSession } from "@/data";
+import { announcementsBySessionId, type Announcement, type FlatSession } from "@/data";
 import { cn } from "@/lib/utils";
 import { presenterNames } from "../lib/presenters";
 import { ministryLabels } from "../lib/today";
@@ -49,6 +50,36 @@ export function PresenterChips({ session }: { session: FlatSession }) {
       {names.map((name) => (
         <li key={name}>
           <Badge variant="secondary">{name}</Badge>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Programme changes surfaced right on the session they affect, so a
+ * reader on Friday's day page sees a moved session without a separate
+ * trip to /announcements. Distinct by more than the featured colour: an
+ * icon and an "Update" label carry the same meaning independent of it.
+ */
+function SessionNotices({ sessionId }: { sessionId: string }) {
+  const notices = announcementsBySessionId[sessionId];
+  if (!notices || notices.length === 0) return null;
+
+  return (
+    <ul className="flex flex-col gap-1.5">
+      {notices.map((notice: Announcement) => (
+        <li key={notice.id}>
+          <Link
+            href="/announcements"
+            className="flex items-start gap-1.5 rounded-control bg-featured/10 p-2 text-sm ring-1 ring-featured/40 transition-colors hover:bg-featured/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+          >
+            <TriangleAlert aria-hidden className="mt-0.5 size-3.5 shrink-0 text-featured" />
+            <span>
+              <span className="font-medium text-ink">Update: {notice.title}</span>{" "}
+              <span className="text-ink-muted">{notice.body}</span>
+            </span>
+          </Link>
         </li>
       ))}
     </ul>
@@ -103,6 +134,8 @@ export function SessionCard({
           ) : null}
         </span>
       </Heading>
+
+      <SessionNotices sessionId={session.id} />
 
       <PresenterChips session={session} />
 

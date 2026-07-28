@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
@@ -210,6 +211,16 @@ export default function StyleguidePage() {
           <Input placeholder="Disabled" disabled />
           <Input defaultValue="Filled" />
           <Input aria-invalid placeholder="Invalid" />
+        </div>
+      </section>
+
+      <section aria-labelledby="textarea" className="flex flex-col gap-6">
+        <SectionHeading id="textarea">Textarea</SectionHeading>
+        <div className="grid max-w-md gap-3">
+          <Textarea placeholder="Default" />
+          <Textarea placeholder="Disabled" disabled />
+          <Textarea defaultValue="Filled" />
+          <Textarea aria-invalid placeholder="Invalid" />
         </div>
       </section>
 

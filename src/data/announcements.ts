@@ -9,7 +9,16 @@ import type { Announcement } from "./types";
  * When adding one, set `affectedSessionIds` to the ids from program.ts
  * that the notice changes so the schedule can mark those sessions.
  */
-export const announcements: Announcement[] = [];
+export const announcements: Announcement[] = [
+  // {
+  //   id: "sabbath-15-heart-of-worship-move",
+  //   publishedAt: "2026-08-15T07:40:00+03:00",
+  //   title: "Heart of Worship moved to 10:00",
+  //   body: "The printed 09:50 start slipped ten minutes for a sound check. Divine Service itself is unaffected.",
+  //   priority: "normal",
+  //   affectedSessionIds: ["sabbath-15-heart-of-worship"],
+  // },
+];
 
 /** Newest first. */
 export const announcementsByDate: Announcement[] = [...announcements].sort(
