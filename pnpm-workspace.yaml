@@ -1,4 +1,16 @@
+# @serwist/turbopack pins browserslist 4.28.6 while the rest of the tree
+# resolves 4.28.7. browserslist is a peer of `serwist`, so two versions of
+# it mean two copies of `serwist` in the service worker bundle — and then
+# `handler instanceof Strategy` is false across the copies, which silently
+# drops the offline fallback from every runtime caching strategy. Pinning
+# one version collapses them back to a single copy.
+overrides:
+  browserslist: 4.28.7
+
 # pnpm 10 reads build-script approvals from here.
 onlyBuiltDependencies:
+  # esbuild compiles the service worker source (see app/serwist/[path]).
+  # Its install script is what puts the platform binary in place.
+  - esbuild
   - sharp
   - unrs-resolver

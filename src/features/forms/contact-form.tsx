@@ -3,8 +3,10 @@
 import { eventInfo } from "@/data";
 import { HoneypotField } from "./components/honeypot-field";
 import { FormStatusBanner } from "./components/form-status-banner";
+import { OfflineBanner } from "./components/offline-banner";
 import { SelectField, TextAreaField, TextField } from "./components/form-fields";
 import { SubmitButton } from "./components/submit-button";
+import { useOnline } from "./lib/use-online";
 import { useWeb3Form } from "./lib/use-web3-form";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,6 +39,7 @@ function validateContact(data: FormData): Record<string, string> {
 }
 
 export function ContactForm() {
+  const online = useOnline();
   const { status, errors, formRef, handleSubmit } = useWeb3Form({
     subject: `Contact form — ${eventInfo.edition}`,
     fromName: `${eventInfo.edition} website — contact form`,
@@ -85,6 +88,14 @@ export function ContactForm() {
         required
         error={errors.message}
       />
+
+      {!online || status === "offline" ? (
+        <OfflineBanner
+          attempted={status === "offline"}
+          noun="message"
+          fallbackEmail={eventInfo.contact.email}
+        />
+      ) : null}
 
       <FormStatusBanner
         status={status}

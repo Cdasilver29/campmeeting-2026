@@ -3,7 +3,13 @@
 import { useRef, useState, type FormEvent } from "react";
 import { submitToWeb3Forms } from "./submit";
 
-export type FormStatus = "idle" | "submitting" | "success" | "error";
+export type FormStatus =
+  | "idle"
+  | "submitting"
+  | "success"
+  | "error"
+  /** Submit was pressed with no connection, so nothing was sent. */
+  | "offline";
 
 interface UseWeb3FormOptions {
   /** Default email subject line; a form can override this per-submit via `prepare`. */
@@ -57,6 +63,17 @@ export function useWeb3Form({
     }
 
     setErrors({});
+
+    // Checked here, after validation and before anything is sent, so the
+    // answer is "this did not send" rather than a request that hangs and
+    // then fails. Nothing is queued: a prayer request that quietly goes
+    // out hours later, to a team that has stopped expecting it, is worse
+    // than one the sender knows did not go.
+    if (!navigator.onLine) {
+      setStatus("offline");
+      return;
+    }
+
     setStatus("submitting");
     data.set("subject", subject);
     data.set("from_name", fromName);

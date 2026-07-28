@@ -4,8 +4,10 @@ import { useState } from "react";
 import { eventInfo } from "@/data";
 import { HoneypotField } from "./components/honeypot-field";
 import { FormStatusBanner } from "./components/form-status-banner";
+import { OfflineBanner } from "./components/offline-banner";
 import { TextAreaField, TextField } from "./components/form-fields";
 import { SubmitButton } from "./components/submit-button";
+import { useOnline } from "./lib/use-online";
 import { useWeb3Form } from "./lib/use-web3-form";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,6 +30,7 @@ const fallbackEmail = eventInfo.contact.prayerEmail ?? eventInfo.contact.email;
 export function PrayerRequestForm() {
   // In-memory only — this choice is never written to any client storage.
   const [shareIdentity, setShareIdentity] = useState(false);
+  const online = useOnline();
 
   const { status, errors, formRef, handleSubmit } = useWeb3Form({
     subject: `Prayer request — ${eventInfo.edition}`,
@@ -123,6 +126,14 @@ export function PrayerRequestForm() {
         it will be held in the same confidence the church promises for
         every prayer request brought to it.
       </p>
+
+      {!online || status === "offline" ? (
+        <OfflineBanner
+          attempted={status === "offline"}
+          noun="prayer request"
+          fallbackEmail={fallbackEmail}
+        />
+      ) : null}
 
       <FormStatusBanner
         status={status}
