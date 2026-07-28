@@ -5,62 +5,14 @@ import { CalendarCheck, CalendarClock } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { eventInfo, getDayByDate, type FlatSession } from "@/data";
-import {
-  getTodayState,
-  ministryLabels,
-  type CurrentEntry,
-  type TodayState,
-} from "../lib/today";
+import { getTodayState, type TodayState } from "../lib/today";
 import { useNow } from "../use-now";
 import { Countdown } from "./countdown";
-import { LiveDot } from "./live-dot";
+import { NowCard } from "./now-card";
 import { PresenterChips, SessionCard, TimeRange } from "./session-card";
 
 const sectionHeading =
   "font-display text-2xl text-ink";
-
-/**
- * The live indicator. A timed session and an all-block activity are the
- * same thing to a reader standing on the campground ("what is on right
- * now"), so they share a heading and differ only in body.
- */
-function NowCard({ current }: { current: CurrentEntry }) {
-  return (
-    <section aria-labelledby="now-heading" className="flex flex-col gap-3">
-      <h2 id="now-heading" className={`flex items-center gap-2 ${sectionHeading}`}>
-        <LiveDot />
-        Happening now
-      </h2>
-
-      {current.kind === "session" ? (
-        <SessionCard
-          session={current.session}
-          className="bg-surface-muted ring-2 ring-primary"
-        />
-      ) : (
-        <article className="flex flex-col gap-2 rounded-card bg-surface-muted p-4 ring-2 ring-primary">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-            <TimeRange />
-            <span className="text-xs text-ink-muted">
-              {current.block.label}
-            </span>
-          </div>
-          <h3 className="text-base leading-snug font-medium text-ink">
-            {current.activity.title}
-          </h3>
-          {current.activity.ministry ? (
-            <p className="text-xs text-ink-muted">
-              {ministryLabels[current.activity.ministry]}
-            </p>
-          ) : null}
-          {current.activity.note ? (
-            <p className="text-sm text-ink-muted">{current.activity.note}</p>
-          ) : null}
-        </article>
-      )}
-    </section>
-  );
-}
 
 /** Shown in place of the now card when nothing is running but the day is not over. */
 function BetweenCard({ next }: { next?: FlatSession }) {
