@@ -13,10 +13,10 @@ import {
  * play control is activated. A visit before the event or on mobile data
  * during it costs nothing until the visitor chooses to spend it.
  *
- * Neither id is known yet (see config.ts), so today this renders a link
- * out to the channel instead of an embed. The moment one is set, this
- * same component starts rendering the real poster and player — nothing
- * in the page around it has to change.
+ * The channel id is set (see config.ts), so this renders the poster and
+ * then the player. The link-out branch below is what shows if both ids
+ * are ever cleared, which is the only state in which an embed cannot be
+ * built at all.
  */
 export function LiveEmbed({ label }: { label: string }) {
   const [activated, setActivated] = useState(false);
@@ -65,7 +65,7 @@ export function LiveEmbed({ label }: { label: string }) {
       type="button"
       onClick={() => setActivated(true)}
       aria-label={`Load the livestream video from YouTube: ${label}`}
-      className="flex aspect-video w-full items-center justify-center rounded-card bg-navy-950 ring-1 ring-line transition-colors hover:bg-navy-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
+      className="group flex aspect-video w-full items-center justify-center rounded-card bg-navy-950 ring-1 ring-line transition-colors hover:bg-navy-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
     >
       <span className="flex size-16 items-center justify-center rounded-full bg-white text-navy-950 transition-transform group-hover:scale-105">
         <Play aria-hidden className="ml-1 size-7 fill-current" />

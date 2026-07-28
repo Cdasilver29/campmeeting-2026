@@ -12,15 +12,23 @@ export const eventInfo: EventInfo = {
     address: "5th Ngong Avenue, Nairobi",
     website: "https://www.newlifesdanairobi.org",
   },
+  // Phone and email are confirmed against the church's own 2025 bulletin.
   contact: {
     phone: "0795638070",
     email: "info@newlifesdanairobi.org",
-    prayerEmail: "requests@newlifesdanairobi.org",
+    // ── COMMITTEE OWES THIS ──────────────────────────────────────────
+    // This was requests@newlifesdanairobi.org, which could not be
+    // verified against any church source and is probably wrong, so
+    // prayer requests fall back to the confirmed info@ address. Restore
+    // a dedicated prayer address only once the church confirms it
+    // exists and is monitored.
+    prayerEmail: "info@newlifesdanairobi.org",
   },
   // Verified from newlifesdanairobi.org, July 2026.
   social: {
     facebook: "https://www.facebook.com/newlifesdanairobi.org",
-    youtube: "https://www.youtube.com/c/NewlifeSDAChurchNairobi",
+    // Handle form. The /c/NewlifeSDAChurchNairobi form is legacy.
+    youtube: "https://www.youtube.com/@NewlifeSDAChurchNairobi",
     instagram: "https://www.instagram.com/newlifesdachurchnairobi/",
     twitter: "https://twitter.com/NewlifechurchKE",
     linkedin: "https://www.linkedin.com/in/newlife-sda-church-nairobi-1415b3137/",
