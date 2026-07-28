@@ -6,6 +6,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Contact",
   description: `Reach ${eventInfo.church.name}, find directions to ${eventInfo.church.address}, and giving details for ${eventInfo.edition}.`,
+  path: "/contact",
 });
 
 const linkClassName =

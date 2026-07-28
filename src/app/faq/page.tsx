@@ -6,6 +6,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "FAQ",
   description: `Answers to common questions about ${eventInfo.edition}: dates, venue, session times, livestream and the children's programme.`,
+  path: "/faq",
 });
 
 export default function FaqPage() {

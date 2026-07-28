@@ -9,6 +9,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Downloads",
   description: `The printed programme PDF for ${eventInfo.edition}.`,
+  path: "/downloads",
 });
 
 /** Where the committee's signed-off programme PDF is expected to land. */

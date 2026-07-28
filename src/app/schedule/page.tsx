@@ -5,6 +5,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Full programme",
   description: `Every session of ${eventInfo.edition} across all ${program.length} days, ${eventInfo.startDate} to ${eventInfo.endDate} at ${eventInfo.church.address}. Times are East Africa Time.`,
+  path: "/schedule",
 });
 
 /**

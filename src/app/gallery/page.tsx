@@ -3,7 +3,7 @@ import {
   placeholderMetadata,
 } from "@/components/placeholder-page";
 
-export const metadata = placeholderMetadata("Gallery");
+export const metadata = placeholderMetadata("Gallery", "/gallery");
 
 export default function GalleryPage() {
   return (

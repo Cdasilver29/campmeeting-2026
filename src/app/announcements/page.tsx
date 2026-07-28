@@ -8,6 +8,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Announcements",
   description: `Programme updates and notices for ${eventInfo.edition}.`,
+  path: "/announcements",
 });
 
 export default function AnnouncementsPage() {

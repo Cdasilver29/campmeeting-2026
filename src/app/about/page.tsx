@@ -5,6 +5,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "About",
   description: `What Camp Meeting is, and the details for ${eventInfo.edition} at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
+  path: "/about",
 });
 
 export default function AboutPage() {

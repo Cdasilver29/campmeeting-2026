@@ -10,6 +10,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Ministries",
   description: `The ministries with their own pages at ${eventInfo.edition}, and every other ministry tag searchable on the programme.`,
+  path: "/ministries",
 });
 
 function countFor(tag: MinistryTag): number {

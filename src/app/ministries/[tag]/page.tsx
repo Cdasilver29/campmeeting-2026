@@ -37,6 +37,7 @@ export async function generateMetadata({
   return pageMetadata({
     title: copy.label,
     description: `${copy.description} ${count} programme ${count === 1 ? "entry" : "entries"} across ${groups.length} ${groups.length === 1 ? "day" : "days"}.`,
+    path: `/ministries/${tag}`,
   });
 }
 

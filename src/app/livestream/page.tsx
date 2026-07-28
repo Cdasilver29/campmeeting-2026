@@ -5,6 +5,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Livestream",
   description: `Watch ${eventInfo.edition} live from ${eventInfo.church.name}.`,
+  path: "/livestream",
 });
 
 export default function LivestreamPage() {

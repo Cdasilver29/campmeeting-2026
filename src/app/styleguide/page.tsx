@@ -20,6 +20,11 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export const metadata: Metadata = {
   title: "Style guide | Camp Meeting 2026",
   description: "Phase 1 design system reference: tokens, type, and primitives.",
+  alternates: { canonical: "/styleguide" },
+  // A development reference, not part of the published site: it is absent
+  // from the sitemap and disallowed in robots.ts, and this is the part
+  // that holds if a crawler reaches it anyway.
+  robots: { index: false, follow: false },
 };
 
 const swatches: Array<{

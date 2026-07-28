@@ -6,6 +6,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Speakers",
   description: `The speakers and presenters at ${eventInfo.edition}, ${eventInfo.church.name}, with every session they are part of.`,
+  path: "/speakers",
 });
 
 export default function SpeakersPage() {

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EmptyState } from "@/components/empty-state";
 import { eventInfo } from "@/data";
+import { pageMetadata } from "@/lib/metadata";
 
 /**
  * Stand-in for routes the footer links to before their phase lands.
@@ -22,6 +23,16 @@ export function PlaceholderPage({
   );
 }
 
-export function placeholderMetadata(title: string): Metadata {
-  return { title: `${title} | ${eventInfo.edition}` };
+/**
+ * Through pageMetadata rather than a bare title, so a placeholder route
+ * carries the same canonical and Open Graph pair as a finished one — it
+ * is in the sitemap and linked from the shell, so it gets shared like any
+ * other page.
+ */
+export function placeholderMetadata(title: string, path: string): Metadata {
+  return pageMetadata({
+    title,
+    description: `${title} for ${eventInfo.edition} at ${eventInfo.church.name}. Not published yet.`,
+    path,
+  });
 }

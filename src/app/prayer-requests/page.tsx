@@ -4,6 +4,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Prayer Requests",
   description: "Share a prayer request with the pastoral team, by name or anonymously.",
+  path: "/prayer-requests",
 });
 
 export default function PrayerRequestsPage() {

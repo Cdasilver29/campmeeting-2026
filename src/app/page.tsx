@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
 import { eventInfo } from "@/data";
 import { TodayView } from "@/features/schedule/components/today-view";
+import { campMeetingEvent } from "@/lib/structured-data";
+
+/**
+ * Title and description are inherited from the root layout: this is the
+ * site's front page, so the site's own name is the right title. Only the
+ * canonical is its own.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /**
  * The hero is a server component: the event name, dates and venue are
@@ -28,6 +40,10 @@ function formatDateRange() {
 export default function Home() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
+      {/* The camp meeting itself, with one subEvent per programme day.
+          Each day carries its own sessions on its own page. */}
+      <JsonLd data={campMeetingEvent()} />
+
       <header className="flex flex-col gap-3">
         <p className="text-sm tracking-wide text-ink-muted uppercase">
           {eventInfo.church.name}

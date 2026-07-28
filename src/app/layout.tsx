@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import { SerwistProvider } from "@serwist/turbopack/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SW_URL } from "@/lib/pwa";
+import { siteUrl } from "@/lib/site-url";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { PageTransition } from "@/components/page-transition";
@@ -27,11 +28,28 @@ const inter = Inter({
   display: "swap",
 });
 
+const siteTitle = `${eventInfo.edition} | ${eventInfo.church.name}`;
+const siteDescription = `${eventInfo.edition} at ${eventInfo.church.name}, ${eventInfo.church.address}.`;
+
 export const metadata: Metadata = {
-  title: `${eventInfo.edition} | ${eventInfo.church.name}`,
-  description: `${eventInfo.edition} at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
+  // Every canonical and Open Graph URL on the site is written
+  // site-relative and resolved against this. See src/lib/site-url.ts for
+  // where the origin comes from on production, on a preview and locally.
+  metadataBase: siteUrl,
+  title: siteTitle,
+  description: siteDescription,
   applicationName: eventInfo.edition,
   appleWebApp: { capable: true, statusBarStyle: "default", title: eventInfo.name },
+  // The default for the home page, which has no title of its own. Pages
+  // that use pageMetadata replace this wholesale.
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    url: "/",
+    siteName: eventInfo.edition,
+    locale: "en_KE",
+    type: "website",
+  },
 };
 
 /**

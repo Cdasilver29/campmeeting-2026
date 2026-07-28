@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/json-ld";
 import { eventInfo, getDay, program } from "@/data";
 import { ScheduleProgramme } from "@/features/schedule/components/schedule-programme";
 import { scheduleScope } from "@/features/schedule/lib/entries";
+import { dayPath } from "@/features/schedule/lib/url";
 import { pageMetadata } from "@/lib/metadata";
+import { dayEventDocument } from "@/lib/structured-data";
 
 /** One page per programme day, and nothing else: an unknown day is a 404. */
 export const dynamicParams = false;
@@ -36,6 +39,7 @@ export async function generateMetadata({
   return pageMetadata({
     title: label,
     description: `${total} programme entries for ${label}, day ${dayNumber} of ${program.length} at ${eventInfo.edition}, ${eventInfo.church.name}, ${eventInfo.church.address}. Times are East Africa Time.`,
+    path: dayPath(day.id),
   });
 }
 
@@ -54,6 +58,10 @@ export default async function ScheduleDayPage({
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+      {/* This day as an Event, with every session and untimed activity
+          nested as a subEvent. */}
+      <JsonLd data={dayEventDocument(day)} />
+
       <header className="flex flex-col gap-3">
         <p className="text-sm tracking-wide text-ink-muted uppercase">
           Day {dayNumber} of {program.length}

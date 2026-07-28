@@ -37,6 +37,7 @@ export async function generateMetadata({
   return pageMetadata({
     title: speakerLabel(speaker),
     description: `${roleText}${eventInfo.edition}, ${eventInfo.church.name}. ${total} ${total === 1 ? "session" : "sessions"} across the programme.`,
+    path: `/speakers/${speaker.id}`,
   });
 }
 

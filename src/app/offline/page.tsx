@@ -2,11 +2,13 @@ import Link from "next/link";
 import { eventInfo, program } from "@/data";
 import { dayPath } from "@/features/schedule/lib/url";
 import { pageMetadata } from "@/lib/metadata";
+import { OFFLINE_ROUTE } from "@/lib/pwa";
 
 export const metadata = {
   ...pageMetadata({
     title: "Offline",
     description: `What you can still read from ${eventInfo.edition} without a connection.`,
+    path: OFFLINE_ROUTE,
   }),
   // The fallback the service worker shows when a page is not cached. It
   // is not part of the site's content and should never be a result.
