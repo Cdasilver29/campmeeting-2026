@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import type { MinistryTag } from "@/data";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { ProgramView } from "@/features/schedule/components/program-view";
-import { programMinistries } from "@/features/schedule/lib/entries";
-import { ministryCopy } from "@/features/ministries/copy";
+import { ministryCopy, ministryPages, type MinistryPageTag } from "@/features/ministries/copy";
 import { ministryDayGroups } from "@/features/ministries/lib";
 import { pageMetadata } from "@/lib/metadata";
 
-/** One page per ministry that has sessions, and nothing else: an unknown or session-less tag is a 404. */
+/**
+ * One page per ministry with a page of its own — children, family-life,
+ * health, christian-education (features/ministries/copy.ts). Every other
+ * ministry tag stays reachable only through ?ministry= on the programme,
+ * so an unknown or unlisted tag here is a 404.
+ */
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return programMinistries.map((tag) => ({ tag }));
+  return ministryPages.map((tag) => ({ tag }));
 }
 
-function findMinistry(tag: string): MinistryTag | undefined {
-  return programMinistries.find((candidate) => candidate === tag);
+function findMinistry(tag: string): MinistryPageTag | undefined {
+  return ministryPages.find((candidate) => candidate === tag);
 }
 
 export async function generateMetadata({

@@ -1,12 +1,11 @@
 import Link from "next/link";
-import type { MinistryTag } from "@/data";
-import { ministryCopy } from "../copy";
+import { ministryCopy, type MinistryPageTag } from "../copy";
 
 export function MinistryCard({
   tag,
   count,
 }: {
-  tag: MinistryTag;
+  tag: MinistryPageTag;
   count: number;
 }) {
   const copy = ministryCopy[tag];
