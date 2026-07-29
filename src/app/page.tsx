@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/json-ld";
-import { eventInfo } from "@/data";
+import { Hero } from "@/features/home/components/hero";
 import { TodayView } from "@/features/schedule/components/today-view";
-import { eventDateRange } from "@/lib/event-dates";
 import { campMeetingEvent } from "@/lib/structured-data";
 
 /**
@@ -15,12 +14,14 @@ export const metadata: Metadata = {
 };
 
 /**
- * The hero is a server component: the event name, dates and venue are
- * fixed at build time. Only the clock-dependent part below it ships as
- * client JavaScript.
+ * The hero (src/features/home/components/hero.tsx) is a server component:
+ * the event name, dates and venue are fixed at build time. Only the
+ * clock-dependent part below it, TodayView, ships as client JavaScript,
+ * and the hero does not touch it — the countdown / live / archive states
+ * are exactly as they were.
  *
- * No theme line here on purpose. CLAUDE.md lists the August 2026 theme
- * as unconfirmed, and the wording on the parent site belongs to a
+ * No theme line in the hero on purpose. CLAUDE.md lists the August 2026
+ * theme as unconfirmed, and the wording on the parent site belongs to a
  * different pastor and a February programme.
  *
  * The date range moved to src/lib/event-dates.ts when the Open Graph
@@ -28,25 +29,18 @@ export const metadata: Metadata = {
  */
 export default function Home() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
+    <>
       {/* The camp meeting itself, with one subEvent per programme day.
           Each day carries its own sessions on its own page. */}
       <JsonLd data={campMeetingEvent()} />
 
-      <header className="flex flex-col gap-3">
-        <p className="text-sm tracking-wide text-ink-muted uppercase">
-          {eventInfo.church.name}
-        </p>
-        <h1 className="font-display text-hero text-balance">
-          {eventInfo.edition}
-        </h1>
-        <p className="text-lg text-ink-muted">
-          {eventDateRange()} at {eventInfo.church.address}. All times are
-          East Africa Time.
-        </p>
-      </header>
+      {/* Full-bleed, so it sits outside the content column. */}
+      <Hero />
 
-      <TodayView />
-    </div>
+      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-16">
+        <p className="text-sm text-ink-muted">All times are East Africa Time.</p>
+        <TodayView />
+      </div>
+    </>
   );
 }
