@@ -288,6 +288,22 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The church mark, painted through a mask so it inherits `color` from the
+   element it sits on. See src/components/brand-lockup.tsx for why this is a
+   mask rather than an <img> or an inlined path: it keeps
+   public/brand/adventist-mark.svg as the one copy of the artwork while still
+   letting CSS recolour it. Pair with `bg-current` and a size utility. */
+@utility mask-brand-mark {
+  -webkit-mask-image: url("/brand/adventist-mark.svg");
+  mask-image: url("/brand/adventist-mark.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { BrandLockup } from "@/components/brand-lockup";
 import { eventInfo } from "@/data";
 
 // Routes the primary nav deliberately leaves out. The nav stays short;
@@ -29,9 +30,7 @@ export function SiteFooter() {
     <footer className="border-t border-line bg-surface-muted">
       <div className="mx-auto grid max-w-5xl gap-8 px-6 py-10 text-sm text-ink-muted sm:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-col gap-1">
-          <p className="font-display text-base text-ink">
-            {eventInfo.church.name}
-          </p>
+          <BrandLockup size="footer" className="mb-2" />
           <p>{eventInfo.church.address}</p>
           <p>
             <a href={`tel:${eventInfo.contact.phone}`} className={linkClassName}>
