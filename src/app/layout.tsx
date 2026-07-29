@@ -11,22 +11,26 @@ import { eventInfo } from "@/data";
 import "./globals.css";
 
 // Display: Fraunces, reserved for the hero and section headings.
-// Body: Inter (variable), carries everything else. Only the body face is
-// preloaded — the display face is comparatively rare per page (hero + a
-// handful of section headings) so preloading it would waste bandwidth on
-// campground mobile data.
+// Body: Inter (variable), carries everything else.
 //
 // Fraunces is pinned to 400 rather than left variable. Every heading on
 // the site renders at 400 (Tailwind's preflight resets heading weight to
 // inherit, and nothing overrides it), so the variable font's whole
 // 100..900 range was being shipped to serve one instance of it. Naming a
 // weight makes next/font fetch the static instance instead.
+//
+// Both faces are preloaded. The display face was not, on the reasoning
+// that it is rare enough per page not to be worth the bandwidth — but it
+// is on every page (the header wordmark and every h1), so it was always
+// fetched, just late: Lighthouse's request chain had it last behind the
+// HTML and the stylesheet, which is what the largest element on most
+// pages was waiting for. Preloading moves the same bytes earlier rather
+// than adding any, and pinning the weight halved them first.
 const fraunces = Fraunces({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-display-var",
   display: "swap",
-  preload: false,
 });
 
 const inter = Inter({
