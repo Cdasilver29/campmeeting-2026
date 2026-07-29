@@ -36,25 +36,19 @@ export function Hero() {
             fill
             priority
             sizes="100vw"
-            quality={85}
+            quality={90}
+            // Rendered sharp: no blur filter, no transform. The building
+            // is meant to be legible, so the only thing between it and the
+            // reader is the flat overlay below, whose alpha was measured
+            // against the unblurred pixels.
             className="-z-20 object-cover"
-            // The scale is not decoration. A blur samples past the edge of
-            // its own box, so a blurred element that exactly fills its
-            // frame feathers to transparent at all four sides and lets the
-            // navy show through as a halo. Oversizing by 10% pushes the
-            // feathered edge outside the band, where overflow-hidden clips
-            // it.
-            style={{
-              filter: `blur(${HERO_IMAGE.blurPx}px)`,
-              transform: "scale(1.1)",
-            }}
           />
           {/*
-            Flat navy at a measured alpha, not a gradient. The photograph's
-            bright region is the sun flare in the upper right, which is not
-            where a top-to-bottom or bottom-to-top gradient puts its dense
-            end, so a gradient would have had to be heavier overall to
-            protect the same text.
+            Flat navy at a measured alpha, not a gradient. The bright
+            region here is clipped cloud along the top of the frame, and a
+            bottom-weighted scrim (the usual reflex) puts its dense end in
+            exactly the wrong place — it would have to be heavier overall
+            to protect the same text.
           */}
           <div
             aria-hidden
@@ -66,8 +60,8 @@ export function Hero() {
 
       {/*
         Every string here is pure white, never white/80 or white/90. The
-        measured 5.36:1 is the figure for white; knocking the eyebrow back
-        to 80% opacity over the same pixels drops it to 4.15:1 and fails.
+        measured 5.07:1 is the figure for white; knocking the eyebrow back
+        to 80% opacity over the same pixels drops it to 3.94:1 and fails.
         Hierarchy comes from size and tracking instead of from opacity.
       */}
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-6">
