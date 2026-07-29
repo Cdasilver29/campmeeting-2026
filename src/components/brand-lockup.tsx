@@ -53,6 +53,12 @@ export function BrandLockup({
       className={cn(
         "group flex items-center gap-2.5 rounded-control text-ink transition-colors duration-fast ease-out-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
         isFooter && "gap-2",
+        // Over the hero photograph the lockup goes pure white, mark
+        // included: the mark is painted with `bg-current` so it follows
+        // the same colour as the wordmark. Keyed to the header's state
+        // attribute, so it is inert in the footer, which has neither the
+        // group nor the attribute.
+        "group-data-[header-state=transparent]/header:text-white",
         className,
       )}
     >
@@ -65,8 +71,14 @@ export function BrandLockup({
       >
         <span>{eventInfo.church.name}</span>
         {/* The city, not the street. eventInfo.church.address is the full
-            postal line and belongs in the footer contact block, not here. */}
-        <span className="text-ink-muted">Nairobi</span>
+            postal line and belongs in the footer contact block, not here.
+
+            Muted ink would fail against the hero's top scrim, so over the
+            photograph this line is white like the rest of the lockup and
+            stays subordinate by size alone. */}
+        <span className="text-ink-muted group-data-[header-state=transparent]/header:text-white">
+          Nairobi
+        </span>
       </span>
     </Link>
   );

@@ -211,6 +211,14 @@
   --text-hero: clamp(2.75rem, 1.5rem + 5vw, 5.5rem); /* hero title, display */
   --text-hero--line-height: 1.02;
 
+  /* ── Layout ────────────────────────────────────────────────────────
+     The header's height, named because two places have to agree on it:
+     the header sets it, and the home hero pulls itself up by exactly the
+     same amount so the photograph runs behind the header full bleed. A
+     magic 5rem in both spots would drift the first time the lockup
+     changes size. 48px lockup + 2 x 16px padding = 80px. */
+  --spacing-header: 5rem;
+
   /* ── Shape & motion ────────────────────────────────────────────────
      5px radius matches the parent site's slightly_rounded button
      setting; rounded to 0.25rem so it scales with the type. */

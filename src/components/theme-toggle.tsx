@@ -20,6 +20,9 @@ export function ThemeToggle() {
       size="icon"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle theme"}
+      // White over the hero photograph, for the same reason the lockup and
+      // the nav are. Inert anywhere without the header's state attribute.
+      className="group-data-[header-state=transparent]/header:text-white"
     >
       {isDark ? <Sun aria-hidden /> : <Moon aria-hidden />}
     </Button>
