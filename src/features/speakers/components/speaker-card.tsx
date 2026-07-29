@@ -13,7 +13,10 @@ export function SpeakerCard({
   return (
     <Link
       href={`/speakers/${speaker.id}`}
-      className="flex flex-col items-center gap-3 rounded-card bg-surface p-6 text-center ring-1 ring-line transition-colors duration-fast hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+      // Hover is a surface tint and a 1px lift, both on --duration-fast
+      // and --ease-out-soft. No shadow: CLAUDE.md rules out the heavy
+      // drop-shadow card hover, and the ring already reads as an edge.
+      className="flex h-full flex-col items-center gap-3 rounded-card bg-surface p-6 text-center ring-1 ring-line transition-[background-color,translate] duration-fast ease-out-soft hover:-translate-y-px hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
     >
       <SpeakerAvatar speaker={speaker} size="lg" />
       <div>

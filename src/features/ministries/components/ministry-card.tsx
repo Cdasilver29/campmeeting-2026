@@ -13,7 +13,9 @@ export function MinistryCard({
   return (
     <Link
       href={`/ministries/${tag}`}
-      className="flex flex-col gap-2 rounded-card bg-surface p-6 ring-1 ring-line transition-colors duration-fast hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+      // Same hover as SpeakerCard: surface tint plus a 1px lift, on the
+      // --duration-fast / --ease-out-soft pair. No shadow.
+      className="flex h-full flex-col gap-2 rounded-card bg-surface p-6 ring-1 ring-line transition-[background-color,translate] duration-fast ease-out-soft hover:-translate-y-px hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
     >
       <p className="font-display text-lg text-ink">{copy.label}</p>
       <p className="text-sm text-ink-muted">{copy.description}</p>

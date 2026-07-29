@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo, type MinistryTag } from "@/data";
 import { ministryPages, type MinistryPageTag } from "@/features/ministries/copy";
 import { MinistryCard } from "@/features/ministries/components/ministry-card";
@@ -36,11 +37,13 @@ export default function MinistriesPage() {
       </header>
 
       <section className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {ministryPages.map((tag) => (
-            <MinistryCard key={tag} tag={tag} count={countFor(tag)} />
+            <RevealItem key={tag} className="h-full">
+              <MinistryCard tag={tag} count={countFor(tag)} />
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
       <section className="flex flex-col gap-4">

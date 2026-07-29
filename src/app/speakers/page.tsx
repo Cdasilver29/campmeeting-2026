@@ -1,3 +1,4 @@
+import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo, speakers } from "@/data";
 import { SpeakerCard } from "@/features/speakers/components/speaker-card";
 import { speakerDayGroups } from "@/features/speakers/lib";
@@ -20,18 +21,21 @@ export default function SpeakersPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      {/* Four cards read as one set, so they stagger. This is the size of
+          group the stagger is for; a long list is not. */}
+      <RevealGroup className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
         {speakers.map((speaker) => (
-          <SpeakerCard
-            key={speaker.id}
-            speaker={speaker}
-            sessionCount={speakerDayGroups(speaker.id).reduce(
-              (total, group) => total + group.sessions.length,
-              0,
-            )}
-          />
+          <RevealItem key={speaker.id} className="h-full">
+            <SpeakerCard
+              speaker={speaker}
+              sessionCount={speakerDayGroups(speaker.id).reduce(
+                (total, group) => total + group.sessions.length,
+                0,
+              )}
+            />
+          </RevealItem>
         ))}
-      </div>
+      </RevealGroup>
     </div>
   );
 }

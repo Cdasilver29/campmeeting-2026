@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/json-ld";
+import { Reveal } from "@/components/reveal";
 import { Hero } from "@/features/home/components/hero";
 import { TodayView } from "@/features/schedule/components/today-view";
 import { campMeetingEvent } from "@/lib/structured-data";
@@ -37,10 +38,12 @@ export default function Home() {
       {/* Full-bleed, so it sits outside the content column. */}
       <Hero />
 
-      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-16">
+      {/* One reveal for the whole clock-dependent block, not one per
+          session inside it. */}
+      <Reveal className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-16">
         <p className="text-sm text-ink-muted">All times are East Africa Time.</p>
         <TodayView />
-      </div>
+      </Reveal>
     </>
   );
 }

@@ -40,7 +40,11 @@ export function DayRail({ filters }: { filters: ScheduleFilters }) {
                 href={scheduleHref({ ...filters, day: option.id })}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "inline-flex h-8 items-center rounded-control border px-3 text-sm font-medium whitespace-nowrap transition-colors duration-fast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
+                  // Colour and a 1px lift on hover, both on the shared
+                  // --duration-fast / --ease-out-soft pair. Deliberately
+                  // CSS, not JS: this rail sits on /schedule, where the
+                  // motion budget goes to nothing but the essentials.
+                  "inline-flex h-8 items-center rounded-control border px-3 text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,translate] duration-fast ease-out-soft hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
                   active
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-line text-ink-muted hover:bg-surface-muted hover:text-ink",
