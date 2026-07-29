@@ -10,13 +10,20 @@ import { PageTransition } from "@/components/page-transition";
 import { eventInfo } from "@/data";
 import "./globals.css";
 
-// Display: Fraunces (variable), reserved for the hero and section headings.
+// Display: Fraunces, reserved for the hero and section headings.
 // Body: Inter (variable), carries everything else. Only the body face is
 // preloaded — the display face is comparatively rare per page (hero + a
 // handful of section headings) so preloading it would waste bandwidth on
 // campground mobile data.
+//
+// Fraunces is pinned to 400 rather than left variable. Every heading on
+// the site renders at 400 (Tailwind's preflight resets heading weight to
+// inherit, and nothing overrides it), so the variable font's whole
+// 100..900 range was being shipped to serve one instance of it. Naming a
+// weight makes next/font fetch the static instance instead.
 const fraunces = Fraunces({
   subsets: ["latin"],
+  weight: "400",
   variable: "--font-display-var",
   display: "swap",
   preload: false,

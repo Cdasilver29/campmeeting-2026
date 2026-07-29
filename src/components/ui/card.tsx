@@ -38,7 +38,9 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+        // No font-medium: the display face ships as a single 400 instance
+        // (src/app/layout.tsx), so 500 would resolve back to 400 anyway.
+        "font-heading text-base leading-snug group-data-[size=sm]/card:text-sm",
         className
       )}
       {...props}

@@ -114,7 +114,9 @@ function SheetTitle({
     <SheetPrimitive.Title
       data-slot="sheet-title"
       className={cn(
-        "font-heading text-base font-medium text-foreground",
+        // No font-medium: the display face ships as a single 400 instance
+        // (src/app/layout.tsx), so 500 would resolve back to 400 anyway.
+        "font-heading text-base text-foreground",
         className
       )}
       {...props}
