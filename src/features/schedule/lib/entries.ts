@@ -171,6 +171,22 @@ export function scheduleScope(dayId?: string): ScheduleScope {
   return (dayId ? scopeByDay.get(dayId) : undefined) ?? wholeProgramme;
 }
 
+/**
+ * "Friday 21st August 2026" — displayLabel exactly as printed in the
+ * programme, plus the year, which the printed labels leave off.
+ *
+ * Shared by the day page, its metadata and its share card so all three
+ * name the day the same way.
+ */
+export function fullDayLabel(day: Pick<ProgramDay, "displayLabel" | "date">): string {
+  return `${day.displayLabel} ${day.date.slice(0, 4)}`;
+}
+
+/** 1-based position of a day in the programme, for "Day 6 of 8". */
+export function dayNumber(dayId: string): number {
+  return program.findIndex((day) => day.id === dayId) + 1;
+}
+
 function minutesOf(time: string): number {
   return Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
 }

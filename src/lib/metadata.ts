@@ -16,8 +16,10 @@ import { eventInfo } from "@/data";
  * quietly ship without it. It is site-relative — metadataBase, set in
  * src/app/layout.tsx, makes it absolute.
  *
- * No og:image: there is no artwork approved for social previews yet, and
- * a broken image URL renders worse than none at all.
+ * No og:image here either. It comes from the `opengraph-image` routes
+ * (src/lib/og.tsx draws them), which Next resolves ahead of anything this
+ * function returns, so every page gets the nearest generated card without
+ * having to name it.
  */
 export function pageMetadata({
   title,

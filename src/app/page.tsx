@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JsonLd } from "@/components/json-ld";
 import { eventInfo } from "@/data";
 import { TodayView } from "@/features/schedule/components/today-view";
+import { eventDateRange } from "@/lib/event-dates";
 import { campMeetingEvent } from "@/lib/structured-data";
 
 /**
@@ -21,22 +22,10 @@ export const metadata: Metadata = {
  * No theme line here on purpose. CLAUDE.md lists the August 2026 theme
  * as unconfirmed, and the wording on the parent site belongs to a
  * different pastor and a February programme.
+ *
+ * The date range moved to src/lib/event-dates.ts when the Open Graph
+ * images started needing the same string.
  */
-function formatDateRange() {
-  const start = new Date(`${eventInfo.startDate}T00:00:00Z`);
-  const end = new Date(`${eventInfo.endDate}T00:00:00Z`);
-  const format = (date: Date, options: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", ...options }).format(
-      date,
-    );
-
-  return `${format(start, { day: "numeric" })} to ${format(end, {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })}`;
-}
-
 export default function Home() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
@@ -52,7 +41,7 @@ export default function Home() {
           {eventInfo.edition}
         </h1>
         <p className="text-lg text-ink-muted">
-          {formatDateRange()} at {eventInfo.church.address}. All times are
+          {eventDateRange()} at {eventInfo.church.address}. All times are
           East Africa Time.
         </p>
       </header>

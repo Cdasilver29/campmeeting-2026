@@ -3,7 +3,11 @@ import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
 import { eventInfo, getDay, program } from "@/data";
 import { ScheduleProgramme } from "@/features/schedule/components/schedule-programme";
-import { scheduleScope } from "@/features/schedule/lib/entries";
+import {
+  dayNumber,
+  fullDayLabel,
+  scheduleScope,
+} from "@/features/schedule/lib/entries";
 import { dayPath } from "@/features/schedule/lib/url";
 import { pageMetadata } from "@/lib/metadata";
 import { dayEventDocument } from "@/lib/structured-data";
@@ -13,11 +17,6 @@ export const dynamicParams = false;
 
 export function generateStaticParams() {
   return program.map((day) => ({ day: day.id }));
-}
-
-/** "Friday 21st August 2026" — displayLabel as printed, plus the year. */
-function fullDayLabel(displayLabel: string, date: string): string {
-  return `${displayLabel} ${date.slice(0, 4)}`;
 }
 
 /**
@@ -32,13 +31,12 @@ export async function generateMetadata({
   const day = getDay((await params).day);
   if (!day) return {};
 
-  const label = fullDayLabel(day.displayLabel, day.date);
-  const dayNumber = program.findIndex((d) => d.id === day.id) + 1;
+  const label = fullDayLabel(day);
   const { total } = scheduleScope(day.id);
 
   return pageMetadata({
     title: label,
-    description: `${total} programme entries for ${label}, day ${dayNumber} of ${program.length} at ${eventInfo.edition}, ${eventInfo.church.name}, ${eventInfo.church.address}. Times are East Africa Time.`,
+    description: `${total} programme entries for ${label}, day ${dayNumber(day.id)} of ${program.length} at ${eventInfo.edition}, ${eventInfo.church.name}, ${eventInfo.church.address}. Times are East Africa Time.`,
     path: dayPath(day.id),
   });
 }
@@ -53,7 +51,6 @@ export default async function ScheduleDayPage({
   // still fail and this is what makes that a 404 rather than a crash.
   if (!day) notFound();
 
-  const dayNumber = program.findIndex((d) => d.id === day.id) + 1;
   const { total } = scheduleScope(day.id);
 
   return (
@@ -64,10 +61,10 @@ export default async function ScheduleDayPage({
 
       <header className="flex flex-col gap-3">
         <p className="text-sm tracking-wide text-ink-muted uppercase">
-          Day {dayNumber} of {program.length}
+          Day {dayNumber(day.id)} of {program.length}
         </p>
         <h1 className="font-display text-4xl text-balance">
-          {fullDayLabel(day.displayLabel, day.date)}
+          {fullDayLabel(day)}
         </h1>
         <p className="text-lg text-ink-muted">
           {total} programme entries, as printed. Times are East Africa Time.
