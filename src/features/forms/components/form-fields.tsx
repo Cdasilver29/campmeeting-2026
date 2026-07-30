@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 const selectClasses =
-  "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 text-sm text-ink transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30";
+  "h-11 lg:h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 text-sm text-ink transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30";
 
 function FieldShell({
   id,

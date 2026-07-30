@@ -44,7 +44,16 @@ export const DOC_HEADING = "font-display text-2xl text-ink";
  * --text-base--line-height is tuned for dense UI, and prose read at length
  * wants the extra quarter-line.
  */
-export const DOC_BODY = `${MEASURE} leading-7 text-ink-muted`;
+/*
+ * break-words is not cosmetic. One FAQ answer holds a token 365px wide at
+ * a 360px viewport — an address or a URL with nothing in it a line break
+ * can land on — and with the default `overflow-wrap: normal` it pushed the
+ * whole document 25px past the viewport and gave the site a horizontal
+ * scrollbar at 360. `break-word` rather than `anywhere`: it only breaks a
+ * word that cannot fit on a line of its own, so ordinary prose is
+ * unaffected.
+ */
+export const DOC_BODY = `${MEASURE} leading-7 break-words text-ink-muted`;
 
 /**
  * The vertical rhythm of a document: one gap between a heading and its

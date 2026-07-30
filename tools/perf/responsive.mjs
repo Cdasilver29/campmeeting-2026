@@ -202,6 +202,33 @@ for (const route of ROUTES) {
         .filter((a) => !overflowing.some((b) => b.el !== a.el && b.el.contains(a.el)))
         .map(({ name, right }) => ({ name, right }));
 
+      /*
+       * The other way a document overflows, and the one the check above
+       * cannot see: an element whose own box fits but whose CONTENT does
+       * not, with overflow visible. An unbreakable 365px token inside a
+       * 320px paragraph pushes the document out while every rect on the
+       * page, including the paragraph's, stays inside the viewport.
+       *
+       * That case reported "OVERFLOW +25px []" — an overflow with no
+       * offender — which is the sort of output that gets written off as
+       * instrument noise. It was a real horizontal scrollbar on /faq at
+       * 360.
+       */
+      if (outermost.length === 0) {
+        for (const el of all) {
+          if (inHiddenSubtree(el)) continue;
+          const cs = getComputedStyle(el);
+          if (cs.overflowX !== "visible") continue;
+          if (el.children.length > 0) continue; // leaf holding the text
+          if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) {
+            outermost.push({
+              name: `${name(el)} (content ${el.scrollWidth} in ${el.clientWidth})`,
+              right: el.scrollWidth,
+            });
+          }
+        }
+      }
+
       // Clipped content: a box that hides its own overflow while holding
       // something wider than itself.
       const clipped = [];

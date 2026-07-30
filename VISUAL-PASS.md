@@ -1,7 +1,13 @@
 # Visual design pass — progress and handoff
 
 Sessions of 2026-07-29 and 2026-07-30. Art direction and typographic
-hierarchy, not ornament. **All chunks are done and pushed.**
+hierarchy, then the layout system underneath it. **All chunks are done and
+pushed.**
+
+Session 3 is the layout system, responsiveness and interaction pass and is
+written up at the bottom of this file, after the two art-direction
+sessions. If you are only reading one part, read that one: it contains the
+width system every page now depends on.
 
 Constraints that held throughout and still hold: no unnecessary gradients,
 no oversized shadows, no decorative religious icons, no excessive
@@ -424,7 +430,500 @@ Called out so they can be reverted cleanly.
   a 1920 viewport and 1.57x at 2560, before device pixel ratio. Next.js is
   also serving a 1089px-wide variant at 2560, so the real upscale there is
   2.35x. This is the one remaining thing that visibly limits the hero.
+  Session 3 removed the phone from this problem entirely — see the crop
+  section below — so it is now a desktop-only concern.
 - Event theme text for the hero (still absent from the hero on purpose).
 - Friday evening service, Sunday Medical Camp times, closing Sabbath
   15:00-16:00 gap.
 - Speaker photos and bios. All four avatars are monograms today.
+
+---
+
+# Session 3 (2026-07-30) — layout system, responsiveness, interaction
+
+Four commits: `14f32c0`, `7683d83`, `33baead`, and the final one this
+document is part of.
+
+## The width system (`14f32c0`)
+
+### The bug
+
+The site had four competing widths. Eleven page wrappers were `max-w-3xl`
+(768px), two were `max-w-2xl` (672px), the styleguide was `max-w-4xl`, and
+the header, the footer and the hero were `max-w-5xl` (1024px). Nothing
+shared an alignment grid. On a 1920px viewport the content column was
+768px with 576px of dead margin either side, and the header lockup began
+128px to the left of every page title.
+
+### What replaced it
+
+Two tokens in `globals.css`, in `:root` rather than `@theme`, and three
+utilities that are their only interface:
+
+```
+--width-shell    80rem    the outer grid everything aligns to
+--width-prose    68ch     a measure, nested inside the shell
+--shell-gutter   1.25rem / 2rem at md / 2.5rem at lg
+```
+
+`shell` is carried by the header inner, the footer inner, the hero text
+block and all twenty page wrappers. `shell-bleed` lets the sticky day rail
+paint to the column edge while reading the same gutter variable.
+`prose-column` caps body copy — applied to the column that holds the
+prose, not to each paragraph, so headings, rules and text share one left
+and right edge.
+
+**Not in `@theme`, deliberately.** They generate no utilities, and a
+`@theme` variable that no generated utility references can be tree-shaken
+out of the built stylesheet. `:root` always emits. Verified by grepping
+the built CSS chunk, not assumed.
+
+80rem rather than the 64rem the shell used to run at, because the
+programme is a four-part row — time, title, presenter, ministry — and
+768px was starving it.
+
+### Measured alignment
+
+`tools/perf/align.mjs` is new. It reads the x position of the header
+lockup and of the page `h1` at five widths on seventeen routes and
+requires them equal. **85 route x width combinations, all pass.**
+
+| viewport | 390 | 768 | 1024 | 1440 | 1920 |
+| --- | --- | --- | --- | --- | --- |
+| header lockup x | 20 | 32 | 40 | 120 | 360 |
+| page h1 x | **20** | **32** | **40** | **120** | **360** |
+| content width | 350 | 704 | 944 | 1200 | 1200 |
+| gutter | 20 | 32 | 40 | 40 | 40 |
+
+### No raw `max-w-*` on any page wrapper
+
+Confirmed by grep. What is left, and why each is not a wrapper:
+
+- `components/ui/sheet.tsx` — `sm:max-w-sm` on the shadcn drawer panel.
+- `styleguide/page.tsx` — `max-w-md` / `max-w-sm` on component specimens.
+  The page exists to show primitives at their own sizes.
+- `hero.tsx` — `max-w-2xl` on the hero title block. A measure inside the
+  shell, the same role `prose-column` plays elsewhere, at display size.
+- `live-embed.tsx` — `max-w-sm` on an error message inside the player.
+- `lib/typography.ts` — `max-w-(--width-prose)`, which is the token.
+
+## Bands and rhythm (`7683d83`)
+
+Every page was one column of one width on one white surface with `py-16`
+between everything, so nothing grouped. That uniformity, not the palette,
+is what made the pages read as one long undifferentiated document.
+
+`src/components/band.tsx` spans the viewport and puts its contents on the
+shell, so the background breaks the column without moving a character
+sideways. Adjacent bands alternate `surface` and `surface-muted`, two or
+three per page maximum. Flat colour only — no image, no gradient, no
+pattern, in any band. A plain `div`, not a `section`: an unlabelled
+`section` is either ignored by assistive technology or announced as an
+anonymous region, and the pages already carry labelled sections inside.
+
+Three rhythm tokens replaced the flat `py-16`:
+
+| token | mobile | md | role |
+| --- | --- | --- | --- |
+| `--space-band` | 3rem | 4rem | a band's own top and bottom |
+| `--space-section` | 2rem | 2.5rem | between sections in one band |
+| `--space-item` | 0.75rem | 1rem | a heading and its own items |
+
+Roughly 4 : 2.5 : 1 at md, so a section opening always has visibly more
+above it than its contents have between them. Two adjacent bands put twice
+`--space-band` between their contents, which is right: a band boundary is
+the biggest break on a page and it also changes surface colour.
+`DOC_SECTION` and `DOC_STACK` in `lib/typography.ts` read the same tokens.
+
+`/contact` got the most out of it: three bands, and the address and the
+map now sit side by side from `lg`. That is the one place on that page
+where 80rem buys something — the map stops being a 288px letterbox under a
+short list.
+
+**The home page has one band below the hero, not two, and that is
+deliberate.** The photograph is already the strongest surface change on
+the site, and everything under it is `TodayView`, whose internal sections
+are clock-dependent and painted client-side; banding those would put a
+surface change on markup that is a skeleton at first paint, which is the
+layout shift the hero's phase attribute exists to avoid. A second band
+would have meant inventing content for it. It was not invented.
+
+## The day rail (`33baead`)
+
+### The bug
+
+`flex gap-2 overflow-x-auto` at every width inside a 768px column, so on a
+1920px screen the rail still scrolled and the closing Sabbath sat off the
+right-hand end — a navigation control hiding the day most readers were
+looking for.
+
+### After
+
+Nine equal columns from `md`, nothing scrolls. Measured, `tools/perf/responsive.mjs`:
+
+| viewport | 360 | 390 | 414 | 768 | 820 | 1024 | 1280 | 1440 | 1920 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| tiles | 9 | 9 | 9 | 9 | 9 | 9 | 9 | 9 | 9 |
+| result | scrolls | scrolls | scrolls | fits | fits | **fits** | fits | **fits** | **fits** |
+
+Nine tiles in the 704px content box at `md` means "Wednesday" does not fit
+at 14px semibold, so the weekday is abbreviated between `md` and `lg` and
+written out again from `lg`, where the box is 944px. Two spans per tile,
+eighteen elements in total — this is navigation, not the 237-entry
+programme, and the per-row rules do not apply to it.
+
+Below `md` it still scrolls, and that is now designed rather than
+overflowing: scroll-snap per tile, an edge mask on whichever side has
+content behind it, and the selected day scrolled into view on load.
+
+The mask is keyed off a `data-overflow` attribute rather than painted
+unconditionally, so a rail scrolled to its end does not fade out the last
+tile — which is exactly when the reader most needs to see it. It is a
+mask, not a gradient overlay, so it works on any background and there is
+no colour to keep in step with the surface token underneath.
+
+The sticky offset and the day sections' `scroll-margin` are both derived
+from the measured header and rail (`day-rail-behaviour.tsx`) rather than
+from `top-header` and a hardcoded `scroll-mt-40`.
+
+**Scrolling into view is written as `scrollLeft`, not `scrollIntoView`.**
+`scrollIntoView` walks up every scrollable ancestor, and this rail is
+sticky inside a 28,000px document, so it can and does scroll the page as
+well as the rail.
+
+### The entry grid at full width
+
+From `lg` the presenter and ministry chips move up beside the title into
+columns three and four of the same row. Placed by `data-entry` attributes
+rather than by position, because which children exist varies per entry —
+notices, presenters, ministry and note are each optional — and by element
+type two pairs collide (notices and presenters are both `ul`, ministry and
+note are both `p`).
+
+Written as `:not()` exclusions on the `sm` rule rather than as `lg`
+overrides of it. `.parent > *:not(:first-child)` and
+`.parent > [data-entry=x]` have identical specificity, so an override
+would have been settled by Tailwind's sort order — the same tie that once
+put every time in the title's place. Taking the two elements out of the
+general rule removes the conflict instead of betting on it.
+
+## The hero on a phone (`33baead`)
+
+### Why a crop could not fix it
+
+The source is 1634x962, a 1.70:1 landscape photograph. A 390x844 portrait
+viewport is 0.46:1, so `object-fit: cover` kept **27% of the image's
+width** — the middle third, roof and tarmac, with the building's own edges
+outside the frame. There is no `object-position` that survives that, and
+letterboxing a hero is not an answer.
+
+### What was done
+
+Below `md` the frame stops being driven by the viewport and takes a 4:3
+ratio of its own, and the text block moves off the photograph onto the
+page surface. One text block positioned differently by breakpoint, not two
+copies — two copies is two `h1` elements, which is a real structured-data
+and accessibility fault rather than a tidiness preference.
+
+Measured, `tools/perf/phone-hero.mjs`:
+
+| viewport | frame | ratio | keeps | window | title |
+| --- | --- | --- | --- | --- | --- |
+| 360 | 360x270 | 1.33:1 | 78.5% of width | x 8.2%-86.7% | below, ink |
+| 390 | 390x293 | 1.33:1 | 78.4% | x 8.2%-86.6% | below, ink |
+| 414 | 414x311 | 1.33:1 | 78.4% | x 8.2%-86.6% | below, ink |
+| 768 | 768x844 | 0.91:1 | 53.6% | x 23.2%-76.8% | over, white |
+
+The crop no longer varies with the device, because the frame's shape no
+longer does. From `md` the phase-driven `svh` behaviour is untouched.
+
+**`object-position: 38% 50%` below md.** The vertical half is inert at 4:3
+— cover takes 22% off the width and nothing off the height — and is
+written only because the property needs both. 38% rather than 50% moves
+the kept window from x 11%-89% to x 8%-87%, trading the right-hand edge of
+the neighbouring tower block for the church's own left-hand roofline. The
+green sign sits at x 24%-44% and is inside every possible window, so it
+was never the thing at risk.
+
+**What is visible at 390 and 414:** the whole church — the full pitched
+roof and its clerestory vents, the green "NEWLIFE SDA CHURCH, NAIROBI"
+sign, the glazed frontage end to end, the stone base course — plus the
+front row of the car park with the red pickup, and sky above the roofline.
+Lost at both widths: a sliver of the neighbouring tower block on the right
+and the parked cars at the far left edge. At 414 slightly more of the
+right-hand awning survives than at 390 because the frame is taller in
+absolute terms, not because the crop fraction differs.
+
+### Contrast, every width, both phases
+
+`tools/perf/verify-hero.mjs` against the real built page. **Every width
+passes.**
+
+Full-bleed phase (`before`):
+
+| viewport | type | worst backdrop pixel | ratio |
+| --- | --- | --- | --- |
+| 390x844 | ink | rgb(255,255,255) | **16.56:1** |
+| 768x1024 | white | rgb(98,96,99) | 6.23:1 |
+| 1024x768 | white | rgb(103,106,113) | 5.42:1 |
+| 1440x900 | white | rgb(109,112,115) | 4.98:1 |
+| 1920x1080 | white | rgb(111,114,117) | 4.84:1 |
+| 2560x1440 | white | rgb(113,114,117) | **4.81:1** (worst) |
+
+Compact phase (`during` / `after`): 16.56, 5.34, 5.48, 5.34, 5.14,
+**5.05:1** at the same six widths.
+
+390 went from 5.38:1 to 16.56:1 because the title is no longer over a
+photograph at all. The other five widths are within 0.1 of the previous
+session's readings, which is the expected result: nothing above `md`
+changed.
+
+Header, both states, unchanged and passing: transparent 5.05-5.11:1,
+glass 10.31-13.42:1 across all six widths.
+
+`tools/perf/hero-contrast.mjs` was also re-run at both phases as asked.
+Worth knowing what it does and does not now cover: it builds a **mock** of
+the hero rather than loading the site, and its mock is full-bleed at every
+width, so its 390 row now models a hero shape the site does not render.
+It is still the right instrument for iterating on gradient stops without a
+rebuild; `verify-hero.mjs` is the one that measures what ships, and that
+is the table above.
+
+### Would a portrait-cropped second source help?
+
+**No, and the numbers now say so.** At 390 the frame is 390x293 CSS px and
+the file is 1634x962, so the image is **downsampled 3.3x** — 0.61x even at
+device pixel ratio 2. There are no pixels missing on a phone; there is a
+surplus. A portrait crop would supply fewer pixels for the same box and
+would have to re-solve a composition that the 4:3 frame already gets
+right. Do not commission one.
+
+The upscale problem is now desktop-only, and it is worst where it always
+was: 1.18x at 1920 and 1.57x at 2560 against the file, and 2.35x at 2560
+against the 1089px variant Next actually serves. One further finding: at
+768x1024 the served variant is 768w for a box that needs 1738px of source
+width, a **2.27x** upscale — the worst on the site. That is a `sizes`
+problem, not a source problem: `sizes="100vw"` describes the box's width
+while `object-cover` on a tall frame is driven by its height. It predates
+this session and is left as found.
+
+## Responsiveness audit
+
+Nine widths x seventeen routes = 153 combinations, `tools/perf/responsive.mjs`.
+**Findings went from 153 of 153 to 33 of 153**, and every one of the 33 is
+at 1024 or above.
+
+| route | width | what broke | fixed |
+| --- | --- | --- | --- |
+| **every route** | 768, 820 | Desktop nav overflowed the document by **126px / 74px** — a horizontal scrollbar on every page of the site at tablet width | Nav moved from `md:flex` to `lg:flex`, gap steps `lg:gap-4 xl:gap-6` |
+| `/faq` | 360 | Document 25px past the viewport from an unbreakable long token in one answer. No element rect exceeded the viewport, which is why it read as "overflow with no offender" | `break-words` on `DOC_BODY` |
+| `/styleguide` | 360, 390, 414 | `whitespace-nowrap` type-scale labels pushed the document out by 110 / 80 / 56px | Label allowed to wrap |
+| **every route** | all | Theme toggle and mobile menu 32x32 | 44px hit area from a pseudo-element; painted size unchanged, because growing it would push the header past `--spacing-header`, which the hero's `-mt-header` and the rail's sticky offset both read |
+| **every route** | all | Footer nav links 20px tall | `min-h-11 min-w-11` |
+| **every route** | all | Footer brand lockup 379x40 — under the floor *and* a full-width mis-hit band that sent any click to the home page | `w-fit min-h-11 min-w-11` |
+| all forms | ≤ 820 | Every `Input` 32px, contact select 32px, submit buttons 36px | `h-11` up to `lg` |
+| `/schedule` | ≤ 820 | Filter selects 36px, view-switch chips 32px, "Clear filters" 32px | `h-11` / `min-h-11` up to `lg` |
+| `/schedule` | all | Bookmark toggle 24x24 | 44px hit area from a pseudo-element — a 44px control on each of 237 rows would set the row height |
+| `/ministries` | all | "More ministries" rows 38px | `min-h-11` |
+| `/prayer-requests` | all | Identity radios measured 40px | `min-h-11 py-1` on the labels, which are the real targets |
+| `/livestream`, `/downloads` | all | Action links stretched to the full column (694px, 217px) as flex items | `w-fit` on `ACTION_LINK` |
+| `/schedule` | 768 | Filter row was `md:flex-row`, giving search a third of a starved column | Grid: `sm:grid-cols-2`, `lg:grid-cols-[2fr_1fr_1fr]` |
+| `/schedule` | all | Three stacked full-width control rows above the programme | View switch and result count share one line from `sm`; day rail moved above them |
+
+**Nothing collides, nothing clips, and no route requires a horizontal
+scroll** at any of the nine widths. The only horizontal scroller left is
+the day rail below `md`, which is intentional and now has snap points and
+an edge fade.
+
+### The 33 remaining findings, and why they stay
+
+All are at 1024 and above, where a mouse does the pointing:
+
+- Form inputs 32px, selects 36px, submit buttons 36px, action links 32px.
+  This is the `lg:` compact size and it is the deliberate line: **44px up
+  to `lg`, the original compact size above it.** The split is at `lg`, not
+  `sm` — that was a correction during this session. 768 and 820 are tablet
+  portrait, which is a finger, and at `sm` every form control on the site
+  still measured 32px there. All of these clear WCAG 2.2 AA target size
+  (24x24); 44px is the AAA bar.
+- `/styleguide` buttons at 58x32 at every width. That page's job is to
+  show the Button primitive at its declared `sm` and `xs` sizes.
+
+## Interaction
+
+Everything is under 200ms on the existing `--duration-fast` /
+`--ease-out-soft` tokens, and no state change is carried by colour alone.
+
+- **Nav links** gain an underline on hover as well as an ink change, and
+  `min-h-11` for the target without taking horizontal room the desktop bar
+  does not have.
+- **Speaker and ministry cards** get three states, deliberately identical
+  to each other: hover is a tint plus a 1px lift, active puts the lift
+  back and deepens the ring to 2px accent, focus-visible is the accent
+  outline. The ring moving is what makes the change legible without
+  colour — the tint alone is a 2% shift many screens will not show.
+- **Day rail tiles** get hover, a pressed state and the same focus ring.
+- **Session rows** get a hover on the hairline only. A row is not a link
+  and must not pretend to be one; what the hover is for is that the one
+  interactive thing in the row is a 16px bookmark icon, and it gains
+  contrast on the same hover so it can be found.
+- **The bookmark** confirms a press with a scale on the icon, driven by
+  `group-active` on the button rather than `active:` on the icon: the hit
+  area is a pseudo-element well outside the icon, so a press landing on it
+  never makes the icon the active element and a bare `active:` variant
+  would silently do nothing for most of the target.
+- **The live dot** replaced Tailwind's `animate-ping` with a 2.4s
+  `live-pulse` that reaches 1.6x and a 0.45 alpha ceiling. `ping` goes to
+  2x and zero opacity in one second, which at indicator size reads as a
+  notification badge. On the dot, never the card.
+- **The sticky rail marks which day is on screen**, from one
+  IntersectionObserver over the eight day sections — not one per row and
+  not a scroll handler. Deliberately not `aria-current`: that already
+  means "the day you are on", and two attributes claiming two kinds of
+  "current" in one control is worse than not marking it.
+
+Nothing new uses Framer. No dynamic feature import was reintroduced.
+
+## Gate
+
+### Build, types, lint
+
+`npx tsc --noEmit`, `pnpm lint` and `pnpm build` all pass.
+
+### Reduced motion, verified in a browser
+
+`tools/perf/reduced-motion.mjs`, preference emulated before the document
+runs, eight screenshots over two seconds per route, byte-compared.
+
+**Seven of eight routes are pixel-identical across all eight frames. Zero
+running animations and zero stalled transforms on all eight.**
+
+`/schedule` changes once, at frame 1: **35 pixels in a 620x3 region over
+`select#schedule-ministry`**. That is the native select repainting on
+hydration — the harness now reports the diff region and the element under
+it, so this is identified rather than assumed. It is a control repaint,
+not motion, and the same finding the previous session recorded (it was
+13px in a 3x30 region then; the select is full-width now, hence the
+different shape).
+
+`.live-pulse` under the preference: **`display: none`, its own
+`getAnimations()` empty.** The global reduced-motion block alone stops the
+movement but leaves the ring painted at its first keyframe — a permanent
+45% halo — so there is a rule that removes it, and this is what verifies
+that rule.
+
+### `/schedule` performance
+
+Median of 5, 4x CPU throttle. Baseline is `7525893`, the commit this
+session started from, measured before any change.
+
+| metric | baseline | after | range (baseline / after) |
+| --- | --- | --- | --- |
+| forced style+layout | 0.90 ms | **0.80 ms** | 0.80-1.80 / 0.80-0.80 |
+| long-task total | 1,061 ms | **1,237 ms** | 714-1,393 / 1,177-2,999 |
+| style+layout+paint | 732 ms | 827 ms | 507-1,353 / 764-1,996 |
+| CLS | 0.0001 | **0.0000** | max 0.0018 / max 0.0061 |
+| elements | 4,790 | 4,843 | identical every run |
+| document height | 27,971 px | **27,961 px** | identical every run |
+
+**Long-task total is up 16.6% on the median, which is above the brief's
+10% line. Stating it plainly rather than filing it under noise.**
+
+What the width itself costs: **nothing measurable.** A/B'd on one build,
+`.shell` forced back to 48rem and not, five pages each:
+
+| | median | range |
+| --- | --- | --- |
+| shell at 80rem | 0.80 ms | 0.80 - 0.80 |
+| shell forced to 48rem | 0.70 ms | 0.70 - 1.00 |
+
+A tenth of a millisecond on a 4,843-element page, with element count and
+document height identical either way. The wider column is not what moved
+the long-task number.
+
+What did move it, measured by removing it: **the day rail's behaviour
+component costs about 55 ms.** Built once with `<DayRailBehaviour />`
+present and once without, same code otherwise:
+
+| | long-task median | range |
+| --- | --- | --- |
+| with rail behaviour | 1,237 / 1,217 / 1,218 ms | 1,117 - 2,999 |
+| without it | **1,166 ms** | 1,061 - 1,819 |
+
+Three independent 5-run passes on the final build gave long-task medians
+of 1,237, 1,217 and 1,218 ms — reproducible to about 2%, so the
+instrument was not drifting while this was measured. The baseline's own
+five runs spread 714-1,393, so **1,061 is the less trustworthy of the two
+numbers**, and separating "the page got heavier" from "the machine was
+quieter that hour" would need the old commit rebuilt in a worktree, which
+was not done.
+
+**What I would trade, in order.** The day-in-view IntersectionObserver in
+`DayRailBehaviour` is the only part of that component that is a nicety
+rather than a fix — the sticky offset and the edge fade are both
+correctness — and dropping it recovers most of the 55 ms. I would not
+trade the width: it costs 0.1 ms and it is the thing the whole session was
+for. I would not trade the CSS states: they are paint-time, and
+style+layout+paint moved 732 → 827 ms inside ranges that overlap almost
+entirely.
+
+## Not asked for, done anyway
+
+Called out so they can be reverted cleanly.
+
+1. **`src/lib/link-styles.ts`.** Six files carried a byte-identical copy
+   of one call-to-action link class string and three more carried another.
+   All six measured 32px tall. Fixing that in six places was the
+   alternative.
+2. **Four harness corrections, all of which produced or would have
+   produced wrong numbers.**
+   - `verify-hero.mjs` measured the hero text as white against the
+     brightest pixel unconditionally. Below `md` the title is ink on the
+     page surface, so it would have reported 1.00:1 for a hero that is
+     fine — the identical mistake its own header block documents. It now
+     reads the title's computed colour. Its scrim query was `:scope >
+     div[aria-hidden]` and silently returned `[]` once the scrims moved
+     inside the frame element.
+   - `reduced-motion.mjs`'s new `.live-pulse` check first asserted on
+     `document.getAnimations()`, which returns everything on the page: it
+     reported "4 running" for an element that is `display: none` and can
+     have none, and failed a rule that works. Now scoped to the element.
+   - `responsive.mjs` needed three false-positive filters before it was
+     worth reading: `sr-only` subtrees (126 rows of "CLIPPED by 346px" for
+     markup working exactly as intended), the off-screen spam honeypot,
+     and pseudo-element hit areas — without that last one it reports a
+     correctly-sized 44px control as a 32px failure and sends you off to
+     inflate a control that is already right.
+   - It also could not see the `/faq` overflow, because the offending
+     element's own box fits and only its content overflows. It now falls
+     back to leaf elements whose `scrollWidth` exceeds their `clientWidth`,
+     which turned "OVERFLOW +25px []" into a named element.
+3. **Two new harnesses**: `align.mjs` and `responsive.mjs`. The gate asks
+   for an alignment proof and a route-by-route table; neither existed.
+4. **`/contact` restructured** into three bands with the address and map
+   side by side at `lg`, rather than left as four sections in one column.
+5. **`ScheduleShell` reordered**: the day rail moved above the results bar
+   (it is navigation, and it is the sticky element), and the view switch
+   and the result count now share one line from `sm`.
+6. **The footer copyright bar** moved onto the shell, so the line of type
+   starts where the lockup above it does. Its rule still spans the
+   viewport.
+7. **The hero CTA is a primary-filled button below `md`.** A white button
+   on the white page surface would have been an outline of nothing.
+8. **`break-words` on `DOC_BODY`**, which is the `/faq` overflow fix but
+   applies to every document page.
+
+## Environment notes to add to the ones above
+
+- **Do not run `pnpm build` while `pnpm start` is serving `.next`.** Two of
+  the build failures this session were `PageNotFoundError: Cannot find
+  module for page: /about` and similar across six routes, alongside the
+  usual `Slow filesystem detected`. Stopping the server first made them
+  stop.
+- **PowerShell 5.1's `Get-Content` mangles UTF-8.** A bulk edit run through
+  `Get-Content` without `-Raw` (which this shell rejects anyway) turned
+  every em dash in fourteen files into `â€"` and added BOMs. Use `node` for
+  scripted edits to source files; it reads and writes UTF-8 correctly.
+- **PowerShell paths containing `[...]` need `-LiteralPath`.** Every
+  `src/app/schedule/[day]/` path fails silently with wildcard globbing
+  otherwise; the Read tool and `node` handle them fine.

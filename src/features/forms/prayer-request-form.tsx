@@ -51,7 +51,7 @@ export function PrayerRequestForm() {
         <legend className="text-xs font-medium text-ink-muted">
           How should we receive this?
         </legend>
-        <label className="flex items-start gap-2 text-sm text-ink">
+        <label className="flex min-h-11 items-start gap-2 py-1 text-sm text-ink">
           <input
             type="radio"
             name="identity"
@@ -67,7 +67,7 @@ export function PrayerRequestForm() {
             </span>
           </span>
         </label>
-        <label className="flex items-start gap-2 text-sm text-ink">
+        <label className="flex min-h-11 items-start gap-2 py-1 text-sm text-ink">
           <input
             type="radio"
             name="identity"

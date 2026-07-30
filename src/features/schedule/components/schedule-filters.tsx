@@ -11,18 +11,13 @@ import { programSpeakers, speakerLabel } from "../lib/presenters";
 import { ministryLabels } from "../lib/today";
 import { scheduleHref, type ScheduleFilters } from "../lib/url";
 
-// h-9 rather than h-8: 36px was under the 44px tap-target floor, and a
-// native select is one of the two controls on this page a reader taps
-// most. w-full at every width now — the old `md:w-auto` collapsed the
-// select to its longest option, which put the two of them at different
-// widths in a row that reads as a set.
-// h-11 on a phone, h-9 from sm — the same rule the Input follows, so the
+// h-11 up to lg, h-9 above it — the same rule the Input follows, so the
 // three controls in this row stay the same height as each other at every
 // width. w-full at every width now: the old `md:w-auto` collapsed each
 // select to its longest option, which put two controls that read as a
 // pair at two different widths.
 const selectClasses =
-  "h-11 sm:h-9 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 text-sm text-ink transition-colors outline-none hover:border-ink-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+  "h-11 lg:h-9 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 text-sm text-ink transition-colors outline-none hover:border-ink-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
 
 /**
  * The filter bar. Nothing here holds the result set: every control

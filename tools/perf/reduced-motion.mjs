@@ -59,10 +59,64 @@ for (const route of ROUTES) {
   await page.evaluate(() => document.fonts.ready);
 
   const hashes = [];
+  const raw = [];
   for (let i = 0; i < FRAMES; i++) {
     const shot = await page.screenshot({ type: "png" });
     hashes.push(createHash("sha1").update(shot).digest("hex").slice(0, 12));
+    raw.push(shot);
     await new Promise((r) => setTimeout(r, FRAME_GAP_MS));
+  }
+
+  /*
+   * WHERE the frames differ, not just that they do.
+   *
+   * "NOT STATIC" on its own is unactionable and, worse, easy to wave away
+   * as noise. A bounding box and a pixel count says whether this is a
+   * 3x30 control repainting on hydration or half the page moving. The
+   * first differing pair is compared, in the page, using the same
+   * OffscreenCanvas route the contrast harnesses use.
+   */
+  let diff = null;
+  const firstChange = hashes.findIndex((h, i) => i > 0 && h !== hashes[i - 1]);
+  if (firstChange > 0) {
+    diff = await page.evaluate(
+      async (a, b) => {
+        const decode = async (bytes) =>
+          createImageBitmap(new Blob([new Uint8Array(bytes)], { type: "image/png" }));
+        const [ba, bb] = await Promise.all([decode(a), decode(b)]);
+        const c = new OffscreenCanvas(ba.width, ba.height);
+        const ctx = c.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(ba, 0, 0);
+        const da = ctx.getImageData(0, 0, c.width, c.height).data;
+        ctx.clearRect(0, 0, c.width, c.height);
+        ctx.drawImage(bb, 0, 0);
+        const db = ctx.getImageData(0, 0, c.width, c.height).data;
+
+        let n = 0, x0 = Infinity, y0 = Infinity, x1 = -1, y1 = -1;
+        for (let i = 0; i < da.length; i += 4) {
+          if (da[i] !== db[i] || da[i + 1] !== db[i + 1] || da[i + 2] !== db[i + 2]) {
+            const p = i / 4;
+            const x = p % c.width, y = (p / c.width) | 0;
+            n++;
+            if (x < x0) x0 = x;
+            if (y < y0) y0 = y;
+            if (x > x1) x1 = x;
+            if (y > y1) y1 = y;
+          }
+        }
+        if (n === 0) return { pixels: 0 };
+        const el = document.elementFromPoint((x0 + x1) / 2, (y0 + y1) / 2);
+        return {
+          pixels: n,
+          box: `${x1 - x0 + 1}x${y1 - y0 + 1} at (${x0},${y0})`,
+          element: el
+            ? `${el.tagName.toLowerCase()}${el.id ? "#" + el.id : ""}.${(el.getAttribute("class") ?? "").slice(0, 40)}`
+            : "?",
+        };
+      },
+      [...raw[firstChange - 1]],
+      [...raw[firstChange]],
+    );
   }
 
   const running = await page.evaluate(() =>
@@ -94,7 +148,10 @@ for (const route of ROUTES) {
   if (!ok) failures++;
 
   console.log(`\n${route}  ${ok ? "STATIC" : "NOT STATIC"}`);
-  console.log(`  frames      ${unique.length} distinct of ${FRAMES}  ${framesOk ? "ok" : "CHANGED: " + hashes.join(" ")}`);
+  console.log(`  frames      ${unique.length} distinct of ${FRAMES}  ${framesOk ? "ok" : "CHANGED at frame " + firstChange}`);
+  if (diff) {
+    console.log(`  diff        ${diff.pixels} px in a ${diff.box} region, over ${diff.element}`);
+  }
   console.log(`  animations  ${running.length}${running.length ? "\n    " + running.join("\n    ") : "  ok"}`);
   console.log(`  translucent/transformed elements: ${stuck.length}`);
   for (const s of stuck.slice(0, 6)) console.log(`    ${s}`);
@@ -138,7 +195,14 @@ for (const route of ROUTES) {
       display: s.display,
       animationName: s.animationName,
       animationDuration: s.animationDuration,
-      running: document.getAnimations().length,
+      // The ELEMENT's own animations, not the document's. document
+      // .getAnimations() returns everything on the page at that instant,
+      // so this reported "4 running" for an element that has none and
+      // cannot have any — it is display:none — and failed a rule that
+      // works. Same class of mistake as measuring white against a backdrop
+      // the type is never white on.
+      running: el.getAnimations().length,
+      documentWide: document.getAnimations().length,
     };
     el.remove();
     return result;
@@ -147,7 +211,7 @@ for (const route of ROUTES) {
   const pulseOk = pulse.display === "none" && pulse.running === 0;
   if (!pulseOk) failures++;
   console.log(`\n.live-pulse under reduced motion  ${pulseOk ? "STOPPED" : "STILL RUNNING"}`);
-  console.log(`  display ${pulse.display}   animation ${pulse.animationName} ${pulse.animationDuration}   getAnimations() ${pulse.running}`);
+  console.log(`  display ${pulse.display}   animation ${pulse.animationName} ${pulse.animationDuration}   its own getAnimations() ${pulse.running}   (document-wide, for reference: ${pulse.documentWide})`);
   await page.close();
 }
 

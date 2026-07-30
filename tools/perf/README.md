@@ -1,7 +1,12 @@
 # Measurement harnesses
 
-Five standalone scripts used for the visual pass. They are not part of the
+Eight standalone scripts used for the visual pass. They are not part of the
 build and nothing in `src/` imports them.
+
+**Every one of these has, at some point, returned a confident wrong
+number.** Four separate instances are documented below and in
+`VISUAL-PASS.md`. Before quoting a reading that looks too good or too bad,
+check what the script actually measured — most of them now print it.
 
 ## Why these exist rather than Lighthouse
 
@@ -50,6 +55,44 @@ offline behaviour.
 | `hero-contrast.mjs` | hero scrim contrast against a standalone mock, for iterating on gradient stops without a rebuild. |
 | `verify-hero.mjs` | the same measurement against the real built page at six widths, both header states and either hero phase, plus upscale factors. Use this one to confirm. |
 | `crop-sweep.mjs` | brightest **raw** photographic pixel behind the text block, per `object-position`. Answers "would a different crop let the scrim be lighter" before any scrim is designed. |
+| `align.mjs` | the x position of the header lockup against the x position of the page `h1`, at five widths on seventeen routes, plus the content column's width, left offset and gutter. Fails if any pair disagrees. |
+| `responsive.mjs` | nine widths x seventeen routes: horizontal overflow with the offending elements named, clipped text, tap targets under 44px, and whether the day rail is scrollable. |
+| `reduced-motion.mjs` | emulates the preference before the document runs, byte-compares eight frames per route, and reports where they differ. Also checks `.live-pulse` directly, since the live dot only renders during the event. |
+
+## Three false positives `responsive.mjs` filters, and why each had to be
+
+Without these the report is 126 rows of noise and the real findings are
+invisible inside it.
+
+**`sr-only` subtrees.** Screen-reader-only text is a 1x1 clipped box
+holding a full sentence, by construction, so it reports as "clipped by
+346px" and as a 1x1 tap target on every page. Detected by the clip and by
+walking ancestors, not by class name, so a hand-rolled visually-hidden
+helper is caught too.
+
+**The spam honeypot.** Deliberately parked at `left: -9999px` inside an
+`aria-hidden` wrapper, and reported as a 215x24 tap target on every form
+on the site.
+
+**Pseudo-element hit areas.** A 32px control with
+`before:absolute before:-inset-1.5` is a 44px target;
+`getBoundingClientRect` reports 32 and knows nothing about the
+pseudo-element. Reporting that as a failure sends you off to inflate a
+control that is already correct — which is the worse outcome, because the
+instrument then drives the design. The negative insets of `::before` and
+`::after` are read and added back. Radios and checkboxes are measured
+against their wrapping `<label>` for the same reason: the label is the
+target and the 16px box is only the part that gets drawn.
+
+## The overflow a rect-based check cannot see
+
+An element whose own box fits but whose *content* does not, with overflow
+visible — an unbreakable 365px token inside a 320px paragraph — pushes the
+document out while every rect on the page stays inside the viewport. That
+reported as `OVERFLOW +25px []`, an overflow with no offender, which is
+the sort of output that gets written off as instrument noise. It was a
+real horizontal scrollbar on `/faq` at 360. There is now a fallback pass
+over leaf elements whose `scrollWidth` exceeds their `clientWidth`.
 
 Both contrast scripts hide the type with `visibility: hidden` before
 screenshotting, keeping its layout box, and then report the **brightest**
@@ -73,6 +116,33 @@ frames.
 **A tag list is not a subtree.** Hiding `a, button, span` leaves the
 `<svg>` inside a button visible if the button itself was missed. Hide
 every descendant.
+
+**A `:scope >` query is not a subtree either.** `verify-hero.mjs` found
+the scrims with `hero.querySelectorAll(":scope > div[aria-hidden]")`. When
+the scrims moved one level down into the frame element it returned `[]`
+and reported the scrim heights as empty rather than failing.
+
+## Measure against the colour the type actually is
+
+Not against white, and not against black, but against whichever the
+element's own computed `color` resolves to at that width — then take the
+extreme that can hurt it: the brightest backdrop pixel for light type, the
+darkest for dark type.
+
+This bit twice. First on the header, where the glass state's type is
+`--color-ink` and measuring white against it scored a colour that is never
+used there. Then on the hero text, which below `md` is now ink on the page
+surface rather than white over the photograph: hardcoding white would have
+returned **1.00:1 for a 390px hero that measures 16.56:1 and is fine**.
+Both scripts now read `getComputedStyle(el).color` and branch on it.
+
+## Scope an animation assertion to the element
+
+`reduced-motion.mjs`'s check on `.live-pulse` first asserted on
+`document.getAnimations()`, which returns every animation on the page at
+that instant. It reported "4 running" for an element that is
+`display: none` and therefore cannot have any, and failed a rule that
+works. `el.getAnimations()` is the question that was being asked.
 
 ## Measuring the header against the right colour
 

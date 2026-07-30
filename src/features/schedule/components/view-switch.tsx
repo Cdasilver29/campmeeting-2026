@@ -6,7 +6,7 @@ import { useBookmarks } from "../bookmarks";
 import { scheduleHref, type ScheduleFilters } from "../lib/url";
 
 const chipClasses =
-  "inline-flex h-8 items-center rounded-control border px-3 text-sm font-medium whitespace-nowrap transition-colors duration-fast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
+  "inline-flex min-h-11 items-center rounded-control border px-3 lg:h-8 lg:min-h-0 text-sm font-medium whitespace-nowrap transition-colors duration-fast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
 
 /**
  * Switch between the whole programme and the sessions this device has
