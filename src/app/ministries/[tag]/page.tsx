@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/page-header";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { ProgramView } from "@/features/schedule/components/program-view";
 import { ministryCopy, ministryPages, type MinistryPageTag } from "@/features/ministries/copy";
 import { ministryDayGroups } from "@/features/ministries/lib";
 import { pageMetadata } from "@/lib/metadata";
+import { ministryPageDefinition } from "@/lib/page-identity";
 
 /**
  * One page per ministry with a page of its own — children, family-life,
@@ -30,15 +32,7 @@ export async function generateMetadata({
   const tag = findMinistry((await params).tag);
   if (!tag) return {};
 
-  const copy = ministryCopy[tag];
-  const groups = ministryDayGroups(tag);
-  const count = groups.reduce((total, group) => total + group.count, 0);
-
-  return pageMetadata({
-    title: copy.label,
-    description: `${copy.description} ${count} programme ${count === 1 ? "entry" : "entries"} across ${groups.length} ${groups.length === 1 ? "day" : "days"}.`,
-    path: `/ministries/${tag}`,
-  });
+  return pageMetadata(ministryPageDefinition(tag));
 }
 
 export default async function MinistryPage({
@@ -57,14 +51,15 @@ export default async function MinistryPage({
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">{copy.label}</h1>
-        <p className="text-lg text-ink-muted">{copy.description}</p>
-        <p className="text-sm text-ink-muted">
-          {count} programme {count === 1 ? "entry" : "entries"} across{" "}
-          {groups.length} {groups.length === 1 ? "day" : "days"}.
+      <PageHeader {...ministryPageDefinition(tag)}>
+        <p className="text-ink-muted">
+          {copy.description}{" "}
+          <span className="tabular-figures">
+            {count} programme {count === 1 ? "entry" : "entries"} across{" "}
+            {groups.length} {groups.length === 1 ? "day" : "days"}.
+          </span>
         </p>
-      </header>
+      </PageHeader>
 
       {/* Gaps are only meaningful on the unfiltered block; a ministry
           view is a slice of a block, so any hole is the filter's, not

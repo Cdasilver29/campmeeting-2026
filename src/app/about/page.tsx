@@ -1,25 +1,14 @@
-import { eventInfo } from "@/data";
+import { PageHeader } from "@/components/page-header";
 import { aboutSections } from "@/features/about/copy";
 import { pageMetadata } from "@/lib/metadata";
+import { aboutPage } from "@/lib/page-identity";
 
-export const metadata = pageMetadata({
-  title: "About",
-  description: `What Camp Meeting is, and the details for ${eventInfo.edition} at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
-  path: "/about",
-});
+export const metadata = pageMetadata(aboutPage);
 
 export default function AboutPage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">
-          About Camp Meeting
-        </h1>
-        <p className="text-lg text-ink-muted">
-          {eventInfo.edition} at {eventInfo.church.name},{" "}
-          {eventInfo.church.address}.
-        </p>
-      </header>
+      <PageHeader {...aboutPage} />
 
       <div className="flex flex-col gap-10">
         {aboutSections.map((section) => (

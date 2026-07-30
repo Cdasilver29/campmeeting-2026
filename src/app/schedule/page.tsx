@@ -1,12 +1,9 @@
-import { eventInfo, program } from "@/data";
+import { PageHeader } from "@/components/page-header";
 import { ScheduleProgramme } from "@/features/schedule/components/schedule-programme";
 import { pageMetadata } from "@/lib/metadata";
+import { schedulePage } from "@/lib/page-identity";
 
-export const metadata = pageMetadata({
-  title: "Full programme",
-  description: `Every session of ${eventInfo.edition} across all ${program.length} days, ${eventInfo.startDate} to ${eventInfo.endDate} at ${eventInfo.church.address}. Times are East Africa Time.`,
-  path: "/schedule",
-});
+export const metadata = pageMetadata(schedulePage);
 
 /**
  * The full programme, all days at once. Individual days are pages of
@@ -23,13 +20,7 @@ export const metadata = pageMetadata({
 export default function SchedulePage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">Full programme</h1>
-        <p className="text-lg text-ink-muted">
-          All {program.length} days of {eventInfo.edition}, as printed. Times
-          are East Africa Time.
-        </p>
-      </header>
+      <PageHeader {...schedulePage} />
 
       <ScheduleProgramme />
     </div>

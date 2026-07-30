@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { eventInfo, speakerById, speakers } from "@/data";
+import { PageHeader } from "@/components/page-header";
+import { speakerById, speakers } from "@/data";
 import { TimeRange } from "@/features/schedule/components/session-card";
 import { speakerLabel } from "@/features/schedule/lib/presenters";
 import { ministryLabels } from "@/features/schedule/lib/today";
 import { SpeakerAvatar } from "@/features/speakers/components/speaker-avatar";
 import { speakerDayGroups } from "@/features/speakers/lib";
 import { pageMetadata } from "@/lib/metadata";
+import { speakerPageDefinition } from "@/lib/page-identity";
 
 /** One page per speaker in event.ts, and nothing else: an unknown id is a 404. */
 export const dynamicParams = false;
@@ -28,17 +30,7 @@ export async function generateMetadata({
   const speaker = speakerById[(await params).id];
   if (!speaker) return {};
 
-  const total = speakerDayGroups(speaker.id).reduce(
-    (count, group) => count + group.sessions.length,
-    0,
-  );
-  const roleText = speaker.role ? `${speaker.role} at ` : "Speaking at ";
-
-  return pageMetadata({
-    title: speakerLabel(speaker),
-    description: `${roleText}${eventInfo.edition}, ${eventInfo.church.name}. ${total} ${total === 1 ? "session" : "sessions"} across the programme.`,
-    path: `/speakers/${speaker.id}`,
-  });
+  return pageMetadata(speakerPageDefinition(speaker));
 }
 
 export default async function SpeakerPage({
@@ -56,28 +48,25 @@ export default async function SpeakerPage({
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
-      <header className="flex flex-col items-center gap-4 text-center">
-        <SpeakerAvatar speaker={speaker} size="lg" />
-        <div>
-          <h1 className="font-display text-4xl text-balance">
-            {speakerLabel(speaker)}
-          </h1>
-          {speaker.role ? (
-            <p className="mt-1 text-lg text-ink-muted">{speaker.role}</p>
-          ) : null}
-        </div>
-        <p className="max-w-prose text-sm text-ink-muted italic">
+      {/* Left-aligned like every other page now, rather than centred: the
+          role has moved into the eyebrow, where the share card already put
+          it, so the name no longer needs a subtitle under it. */}
+      <PageHeader
+        {...speakerPageDefinition(speaker)}
+        media={<SpeakerAvatar speaker={speaker} size="lg" />}
+      >
+        <p className="max-w-prose text-ink-muted italic">
           {speaker.bio ?? "Biography to follow."}
         </p>
-      </header>
+      </PageHeader>
 
       {total === 0 ? (
-        <p className="text-center text-ink-muted">
+        <p className="text-ink-muted">
           No sessions are listed for {speakerLabel(speaker)} yet.
         </p>
       ) : (
         <div className="flex flex-col gap-10">
-          <p className="text-center text-sm text-ink-muted">
+          <p className="tabular-figures text-sm text-ink-muted">
             {total} {total === 1 ? "session" : "sessions"} across{" "}
             {groups.length} {groups.length === 1 ? "day" : "days"}.
           </p>

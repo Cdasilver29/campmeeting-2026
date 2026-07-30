@@ -1,25 +1,18 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
-import { announcementsByDate, eventInfo } from "@/data";
+import { PageHeader } from "@/components/page-header";
+import { announcementsByDate } from "@/data";
 import { AnnouncementsList } from "@/features/announcements/components/announcements-list";
 import { pageMetadata } from "@/lib/metadata";
+import { announcementsPage } from "@/lib/page-identity";
 
-export const metadata = pageMetadata({
-  title: "Announcements",
-  description: `Programme updates and notices for ${eventInfo.edition}.`,
-  path: "/announcements",
-});
+export const metadata = pageMetadata(announcementsPage);
 
 export default function AnnouncementsPage() {
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">Announcements</h1>
-        <p className="text-lg text-ink-muted">
-          Programme updates published during {eventInfo.edition}, newest first.
-        </p>
-      </header>
+      <PageHeader {...announcementsPage} />
 
       {announcementsByDate.length === 0 ? (
         <EmptyState

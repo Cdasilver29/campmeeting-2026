@@ -1,11 +1,8 @@
 import { notFound } from "next/navigation";
 import { eventInfo, getDay, program } from "@/data";
-import {
-  dayNumber,
-  fullDayLabel,
-  scheduleScope,
-} from "@/features/schedule/lib/entries";
+import { dayNumber, fullDayLabel } from "@/features/schedule/lib/entries";
 import { CARD_ID, OG_CONTENT_TYPE, OG_SIZE, ogCard } from "@/lib/og";
+import { dayPageDefinition } from "@/lib/page-identity";
 
 /**
  * A share card per programme day, so a day link dropped into a WhatsApp
@@ -55,11 +52,6 @@ export default async function Image({ params }: Params) {
   // the card is one too, rather than a card with a blank title.
   if (!day) notFound();
 
-  const { total } = scheduleScope(day.id);
-
-  return ogCard({
-    eyebrow: `Day ${dayNumber(day.id)} of ${program.length}`,
-    title: fullDayLabel(day),
-    meta: `${total} programme entries · East Africa Time`,
-  });
+  // Same three strings the page's own header renders.
+  return ogCard(dayPageDefinition(day));
 }

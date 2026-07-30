@@ -1,22 +1,14 @@
-import { eventInfo } from "@/data";
+import { PageHeader } from "@/components/page-header";
 import { LivestreamView } from "@/features/livestream/components/livestream-view";
 import { pageMetadata } from "@/lib/metadata";
+import { livestreamPage } from "@/lib/page-identity";
 
-export const metadata = pageMetadata({
-  title: "Livestream",
-  description: `Watch ${eventInfo.edition} live from ${eventInfo.church.name}.`,
-  path: "/livestream",
-});
+export const metadata = pageMetadata(livestreamPage);
 
 export default function LivestreamPage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">Livestream</h1>
-        <p className="text-lg text-ink-muted">
-          Follow {eventInfo.edition} from wherever you are.
-        </p>
-      </header>
+      <PageHeader {...livestreamPage} />
 
       <LivestreamView />
     </div>

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { eventInfo, speakerById, speakers } from "@/data";
 import { speakerLabel } from "@/features/schedule/lib/presenters";
 import { CARD_ID, OG_CONTENT_TYPE, OG_SIZE, ogCard } from "@/lib/og";
+import { speakerPageDefinition } from "@/lib/page-identity";
 
 /**
  * A share card per speaker: the name and the role, the same two strings
@@ -48,11 +49,6 @@ export default async function Image({ params }: Params) {
   // the card is one too, rather than a card with a blank title.
   if (!speaker) notFound();
 
-  return ogCard({
-    // The role is the eyebrow when there is one. "Speaker" is the honest
-    // fallback for the profiles whose role the committee has not sent.
-    eyebrow: speaker.role ?? "Speaker",
-    title: speakerLabel(speaker),
-    meta: `${eventInfo.edition} · ${eventInfo.church.name}`,
-  });
+  // Same three strings the page's own header renders.
+  return ogCard(speakerPageDefinition(speaker));
 }

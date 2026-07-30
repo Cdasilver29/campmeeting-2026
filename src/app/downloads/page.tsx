@@ -3,14 +3,11 @@ import path from "node:path";
 import Link from "next/link";
 import { Download, FileText } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
-import { eventInfo } from "@/data";
+import { PageHeader } from "@/components/page-header";
 import { pageMetadata } from "@/lib/metadata";
+import { downloadsPage } from "@/lib/page-identity";
 
-export const metadata = pageMetadata({
-  title: "Downloads",
-  description: `The printed programme PDF for ${eventInfo.edition}.`,
-  path: "/downloads",
-});
+export const metadata = pageMetadata(downloadsPage);
 
 /** Where the committee's signed-off programme PDF is expected to land. */
 const PROGRAM_PDF_PATH = "/downloads/camp-meeting-2026-programme.pdf";
@@ -40,12 +37,7 @@ export default function DownloadsPage() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">Downloads</h1>
-        <p className="text-lg text-ink-muted">
-          The printed programme for {eventInfo.edition}.
-        </p>
-      </header>
+      <PageHeader {...downloadsPage} />
 
       {pdf ? (
         <a

@@ -1,18 +1,16 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/page-header";
 import { RevealGroup, RevealItem } from "@/components/reveal";
-import { eventInfo, type MinistryTag } from "@/data";
+import { type MinistryTag } from "@/data";
 import { ministryPages, type MinistryPageTag } from "@/features/ministries/copy";
 import { MinistryCard } from "@/features/ministries/components/ministry-card";
 import { allEntries, programMinistries } from "@/features/schedule/lib/entries";
 import { ministryLabels } from "@/features/schedule/lib/today";
 import { scheduleHref } from "@/features/schedule/lib/url";
 import { pageMetadata } from "@/lib/metadata";
+import { ministriesPage } from "@/lib/page-identity";
 
-export const metadata = pageMetadata({
-  title: "Ministries",
-  description: `The ministries with their own pages at ${eventInfo.edition}, and every other ministry tag searchable on the programme.`,
-  path: "/ministries",
-});
+export const metadata = pageMetadata(ministriesPage);
 
 function countFor(tag: MinistryTag): number {
   return allEntries.filter((entry) => entry.ministry === tag).length;
@@ -27,14 +25,12 @@ export default function MinistriesPage() {
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-14 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">Ministries</h1>
-        <p className="text-lg text-ink-muted">
-          Four ministries run enough of the programme to be worth a page
-          of their own. Every other ministry is still searchable on the
-          full programme.
+      <PageHeader {...ministriesPage}>
+        <p className="text-ink-muted">
+          These run enough of the programme to be worth a page of their own.
+          Every other ministry is still searchable on the full programme.
         </p>
-      </header>
+      </PageHeader>
 
       <section className="flex flex-col gap-4">
         <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">

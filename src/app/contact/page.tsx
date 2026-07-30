@@ -1,13 +1,11 @@
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 import { eventInfo } from "@/data";
 import { ContactForm } from "@/features/forms/contact-form";
 import { pageMetadata } from "@/lib/metadata";
+import { contactPage } from "@/lib/page-identity";
 
-export const metadata = pageMetadata({
-  title: "Contact",
-  description: `Reach ${eventInfo.church.name}, find directions to ${eventInfo.church.address}, and giving details for ${eventInfo.edition}.`,
-  path: "/contact",
-});
+export const metadata = pageMetadata(contactPage);
 
 const linkClassName =
   "rounded-control underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
@@ -19,12 +17,7 @@ const mapQuery = encodeURIComponent(
 export default function ContactPage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
-      <header className="flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">Contact</h1>
-        <p className="text-lg text-ink-muted">
-          {eventInfo.church.name}, {eventInfo.church.address}.
-        </p>
-      </header>
+      <PageHeader {...contactPage} />
 
       <section className="flex flex-col gap-4">
         <h2 className="font-display text-2xl text-ink">Send a message</h2>

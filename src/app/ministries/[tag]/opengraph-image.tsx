@@ -7,6 +7,7 @@ import {
 } from "@/features/ministries/copy";
 import { eventDateRange } from "@/lib/event-dates";
 import { CARD_ID, OG_CONTENT_TYPE, OG_SIZE, ogCard } from "@/lib/og";
+import { ministryPageDefinition } from "@/lib/page-identity";
 
 /**
  * A share card per ministry page, titled with the ministry label from
@@ -52,9 +53,6 @@ export default async function Image({ params }: Params) {
   // the card is one too, rather than a card with a blank title.
   if (!tag) notFound();
 
-  return ogCard({
-    eyebrow: eventInfo.edition,
-    title: ministryCopy[tag].label,
-    meta: `${eventDateRange()} · ${eventInfo.church.address}`,
-  });
+  // Same three strings the page's own header renders.
+  return ogCard(ministryPageDefinition(tag));
 }

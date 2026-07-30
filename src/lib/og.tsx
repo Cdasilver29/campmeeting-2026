@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import type { PageIdentity } from "@/lib/page-identity";
 
 /**
  * The one Open Graph card this site draws, rendered at build time.
@@ -98,14 +99,15 @@ function titleSize(title: string): number {
   return 56;
 }
 
-export interface OgCardProps {
-  /** Small uppercase line at the top: what kind of page this is. */
-  eyebrow: string;
-  /** The page's own name, in the display face. */
-  title: string;
-  /** One line under the rule: dates, venue, counts. */
-  meta: string;
-}
+/**
+ * The card draws a PageIdentity, which is the same object the page's own
+ * header draws (src/components/page-header.tsx). One shape, so a preview
+ * and the page it opens cannot describe themselves differently.
+ *
+ * Type-only import: nothing from page-identity.ts is pulled in at runtime,
+ * and this module's node:fs read stays where it is.
+ */
+export type OgCardProps = PageIdentity;
 
 /**
  * The card itself. Callers are the `opengraph-image` routes, which
