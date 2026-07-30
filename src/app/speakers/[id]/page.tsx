@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { speakerById, speakers } from "@/data";
 import { TimeRange } from "@/features/schedule/components/session-card";
@@ -47,25 +48,28 @@ export default async function SpeakerPage({
   const total = groups.reduce((count, group) => count + group.sessions.length, 0);
 
   return (
-    <div className="shell flex flex-col gap-10 py-16">
+    <>
       {/* Left-aligned like every other page now, rather than centred: the
           role has moved into the eyebrow, where the share card already put
           it, so the name no longer needs a subtitle under it. */}
-      <PageHeader
-        {...speakerPageDefinition(speaker)}
-        media={<SpeakerAvatar speaker={speaker} size="lg" />}
-      >
-        <p className="prose-column text-ink-muted italic">
-          {speaker.bio ?? "Biography to follow."}
-        </p>
-      </PageHeader>
+      <Band>
+        <PageHeader
+          {...speakerPageDefinition(speaker)}
+          media={<SpeakerAvatar speaker={speaker} size="lg" />}
+        >
+          <p className="prose-column text-ink-muted italic">
+            {speaker.bio ?? "Biography to follow."}
+          </p>
+        </PageHeader>
+      </Band>
 
+      <Band tone="muted">
       {total === 0 ? (
         <p className="text-ink-muted">
           No sessions are listed for {speakerLabel(speaker)} yet.
         </p>
       ) : (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-(--space-section)">
           <p className="tabular-figures text-sm text-ink-muted">
             {total} {total === 1 ? "session" : "sessions"} across{" "}
             {groups.length} {groups.length === 1 ? "day" : "days"}.
@@ -118,6 +122,7 @@ export default async function SpeakerPage({
           ))}
         </div>
       )}
-    </div>
+      </Band>
+    </>
   );
 }

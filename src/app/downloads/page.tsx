@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
 import { Download, FileText } from "lucide-react";
+import { Band } from "@/components/band";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Reveal } from "@/components/reveal";
@@ -37,9 +38,12 @@ export default function DownloadsPage() {
   const pdf = programPdf();
 
   return (
-    <div className="shell flex flex-col gap-10 py-16">
-      <PageHeader {...downloadsPage} />
+    <>
+      <Band>
+        <PageHeader {...downloadsPage} />
+      </Band>
 
+      <Band tone="muted">
       <Reveal className="prose-column">
       {pdf ? (
         <a
@@ -74,6 +78,7 @@ export default function DownloadsPage() {
         />
       )}
       </Reveal>
-    </div>
+      </Band>
+    </>
   );
 }

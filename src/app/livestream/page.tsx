@@ -1,3 +1,4 @@
+import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { LivestreamView } from "@/features/livestream/components/livestream-view";
 import { pageMetadata } from "@/lib/metadata";
@@ -7,17 +8,24 @@ export const metadata = pageMetadata(livestreamPage);
 
 export default function LivestreamPage() {
   return (
-    <div className="shell flex flex-col gap-8 py-16">
-      <PageHeader {...livestreamPage} />
+    <>
+      <Band>
+        <PageHeader {...livestreamPage} />
+      </Band>
 
-      {/* Capped at the measure rather than run to the shell. A 16:9 player
-          at 80rem is 720px tall, which is taller than the viewport it is
-          meant to sit inside on most laptops. Chunk 2 gives this page a
-          real two-column band at lg; until then the measure is the safe
-          bound. */}
-      <div className="prose-column">
-        <LivestreamView />
-      </div>
-    </div>
+      {/*
+        The player band is muted, and the player is capped at the measure
+        rather than run to the shell: a 16:9 frame at 80rem is 720px tall,
+        which is taller than the viewport it is meant to sit inside on most
+        laptops. The measure puts it at roughly 620x350, which is close to
+        where it already was and does not push the "what is on now" card off
+        the fold.
+      */}
+      <Band tone="muted">
+        <div className="prose-column">
+          <LivestreamView />
+        </div>
+      </Band>
+    </>
   );
 }

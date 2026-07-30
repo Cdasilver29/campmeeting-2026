@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Band } from "@/components/band";
 import { JsonLd } from "@/components/json-ld";
 import { PageHeader } from "@/components/page-header";
 import { getDay, program } from "@/data";
@@ -41,14 +42,18 @@ export default async function ScheduleDayPage({
   if (!day) notFound();
 
   return (
-    <div className="shell flex flex-col gap-10 py-16">
+    <>
       {/* This day as an Event, with every session and untimed activity
           nested as a subEvent. */}
       <JsonLd data={dayEventDocument(day)} />
 
-      <PageHeader {...dayPageDefinition(day)} />
+      <Band tone="muted">
+        <PageHeader {...dayPageDefinition(day)} />
+      </Band>
 
-      <ScheduleProgramme day={day} />
-    </div>
+      <Band>
+        <ScheduleProgramme day={day} />
+      </Band>
+    </>
   );
 }

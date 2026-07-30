@@ -1,3 +1,4 @@
+import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { RevealGroup, RevealItem } from "@/components/reveal";
 import { speakers } from "@/data";
@@ -10,13 +11,17 @@ export const metadata = pageMetadata(speakersPage);
 
 export default function SpeakersPage() {
   return (
-    <div className="shell flex flex-col gap-10 py-16">
-      <PageHeader {...speakersPage}>
-        <p className="text-ink-muted">
-          Photographs and biographies follow once the committee confirms them.
-        </p>
-      </PageHeader>
+    <>
+      <Band>
+        <PageHeader {...speakersPage}>
+          <p className="text-ink-muted">
+            Photographs and biographies follow once the committee confirms
+            them.
+          </p>
+        </PageHeader>
+      </Band>
 
+      <Band tone="muted">
       {/* Four cards read as one set, so they stagger. This is the size of
           group the stagger is for; a long list is not.
 
@@ -36,6 +41,7 @@ export default function SpeakersPage() {
           </RevealItem>
         ))}
       </RevealGroup>
-    </div>
+      </Band>
+    </>
   );
 }

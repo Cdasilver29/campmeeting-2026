@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Band } from "@/components/band";
 import { eventInfo, program } from "@/data";
 import { dayPath } from "@/features/schedule/lib/url";
 import { pageMetadata } from "@/lib/metadata";
@@ -36,88 +37,95 @@ const needsSignal = [
  */
 export default function OfflinePage() {
   return (
-    <div className="shell flex flex-col gap-10 py-16">
-      <header className="prose-column flex flex-col gap-3">
-        <h1 className="font-display text-4xl text-balance">
-          This page needs a connection
-        </h1>
-        <p className="text-lg text-ink-muted">
-          The programme itself does not. It was saved to this device on your
-          first visit, so everything below opens with no signal.
-        </p>
-      </header>
+    <>
+      <Band>
+        <header className="prose-column flex flex-col gap-(--space-item)">
+          <h1 className="font-display text-4xl text-balance">
+            This page needs a connection
+          </h1>
+          <p className="text-lg text-ink-muted">
+            The programme itself does not. It was saved to this device on your
+            first visit, so everything below opens with no signal.
+          </p>
+        </header>
+      </Band>
 
-      <section
-        aria-labelledby="offline-programme"
-        className="prose-column flex flex-col gap-4"
+      <Band
+        tone="muted"
+        innerClassName="flex flex-col gap-(--space-section)"
       >
-        <h2 id="offline-programme" className="font-display text-2xl">
-          Available now
-        </h2>
-        <ul className="flex flex-col gap-2 text-base">
-          <li>
-            <Link href="/" className={linkClassName}>
-              Today
-            </Link>{" "}
-            <span className="text-ink-muted">
-              — what is on, on {eventInfo.timezone.split("/")[1]} time
-            </span>
-          </li>
-          <li>
-            <Link href="/schedule" className={linkClassName}>
-              The full programme
-            </Link>
-            <span className="text-ink-muted">, all {program.length} days</span>
-          </li>
-          <li>
-            <Link href="/schedule?view=mine" className={linkClassName}>
-              My schedule
-            </Link>
-            <span className="text-ink-muted">, the sessions you saved</span>
-          </li>
-          <li>
-            <Link href="/speakers" className={linkClassName}>
-              Speakers
-            </Link>{" "}
-            <span className="text-ink-muted">and</span>{" "}
-            <Link href="/ministries" className={linkClassName}>
-              ministries
-            </Link>
-          </li>
-        </ul>
-      </section>
-
-      <section
-        aria-labelledby="offline-days"
-        className="prose-column flex flex-col gap-4"
-      >
-        <h2 id="offline-days" className="font-display text-2xl">
-          Go straight to a day
-        </h2>
-        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-base">
-          {program.map((day) => (
-            <li key={day.id}>
-              <Link href={dayPath(day.id)} className={linkClassName}>
-                {day.displayLabel}
+        <section
+          aria-labelledby="offline-programme"
+          className="prose-column flex flex-col gap-(--space-item)"
+        >
+          <h2 id="offline-programme" className="font-display text-2xl">
+            Available now
+          </h2>
+          <ul className="flex flex-col gap-2 text-base">
+            <li>
+              <Link href="/" className={linkClassName}>
+                Today
+              </Link>{" "}
+              <span className="text-ink-muted">
+                — what is on, on {eventInfo.timezone.split("/")[1]} time
+              </span>
+            </li>
+            <li>
+              <Link href="/schedule" className={linkClassName}>
+                The full programme
+              </Link>
+              <span className="text-ink-muted">, all {program.length} days</span>
+            </li>
+            <li>
+              <Link href="/schedule?view=mine" className={linkClassName}>
+                My schedule
+              </Link>
+              <span className="text-ink-muted">, the sessions you saved</span>
+            </li>
+            <li>
+              <Link href="/speakers" className={linkClassName}>
+                Speakers
+              </Link>{" "}
+              <span className="text-ink-muted">and</span>{" "}
+              <Link href="/ministries" className={linkClassName}>
+                ministries
               </Link>
             </li>
-          ))}
-        </ul>
-      </section>
+          </ul>
+        </section>
 
-      <section
-        aria-labelledby="offline-limits"
-        className="prose-column flex flex-col gap-4"
-      >
-        <h2 id="offline-limits" className="font-display text-2xl">
-          Waiting on signal
-        </h2>
-        <ul className="flex list-disc flex-col gap-2 pl-5 text-base text-ink-muted">
-          {needsSignal.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </section>
-    </div>
+        <section
+          aria-labelledby="offline-days"
+          className="prose-column flex flex-col gap-(--space-item)"
+        >
+          <h2 id="offline-days" className="font-display text-2xl">
+            Go straight to a day
+          </h2>
+          <ul className="flex flex-wrap gap-x-4 gap-y-2 text-base">
+            {program.map((day) => (
+              <li key={day.id}>
+                <Link href={dayPath(day.id)} className={linkClassName}>
+                  {day.displayLabel}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section
+          aria-labelledby="offline-limits"
+          className="prose-column flex flex-col gap-(--space-item)"
+        >
+          <h2 id="offline-limits" className="font-display text-2xl">
+            Waiting on signal
+          </h2>
+          <ul className="flex list-disc flex-col gap-2 pl-5 text-base text-ink-muted">
+            {needsSignal.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      </Band>
+    </>
   );
 }

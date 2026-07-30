@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Band } from "@/components/band";
 import { JsonLd } from "@/components/json-ld";
 import { Reveal } from "@/components/reveal";
 import { Hero } from "@/features/home/components/hero";
@@ -40,10 +41,29 @@ export default function Home() {
 
       {/* One reveal for the whole clock-dependent block, not one per
           session inside it. */}
-      <Reveal className="shell flex flex-col gap-6 py-16">
-        <p className="text-sm text-ink-muted">All times are East Africa Time.</p>
-        <TodayView />
-      </Reveal>
+      {/*
+        One band below the hero, not two or three.
+
+        The photograph is already a full-bleed band, and it is the strongest
+        surface change on the site — so the page has a boundary without
+        needing one manufactured. Everything under it is TodayView, which is
+        a single clock-dependent block whose internal sections change with
+        the event phase and are painted client-side. Banding those would put
+        a surface change on markup that is a skeleton on first paint, which
+        is exactly the layout shift the hero's phase attribute exists to
+        avoid.
+
+        A second band here would have meant inventing content for it. It was
+        not invented.
+      */}
+      <Band innerClassName="flex flex-col gap-(--space-item)">
+        <Reveal className="flex flex-col gap-(--space-item)">
+          <p className="text-sm text-ink-muted">
+            All times are East Africa Time.
+          </p>
+          <TodayView />
+        </Reveal>
+      </Band>
     </>
   );
 }

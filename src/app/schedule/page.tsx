@@ -1,3 +1,4 @@
+import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { ScheduleProgramme } from "@/features/schedule/components/schedule-programme";
 import { pageMetadata } from "@/lib/metadata";
@@ -19,10 +20,18 @@ export const metadata = pageMetadata(schedulePage);
  */
 export default function SchedulePage() {
   return (
-    <div className="shell flex flex-col gap-10 py-16">
-      <PageHeader {...schedulePage} />
+    <>
+      {/* The header is its own band so the programme below starts on the
+          page surface the sticky day rail is painted in. Two bands, not
+          three: the programme is one thing, 27,000px of it, and striping
+          it would be the decoration this site does not do. */}
+      <Band tone="muted">
+        <PageHeader {...schedulePage} />
+      </Band>
 
-      <ScheduleProgramme />
-    </div>
+      <Band>
+        <ScheduleProgramme />
+      </Band>
+    </>
   );
 }

@@ -1,0 +1,45 @@
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+/**
+ * A full-bleed horizontal band: it spans the viewport, its contents sit on
+ * the shell, and it owns the vertical air above and below them.
+ *
+ * This is the piece that was missing. Every page was one column of one
+ * width on one white surface with one `py-16` between everything, which is
+ * why they read as a single long document regardless of what was in them.
+ * A band breaks the column without moving the content off the grid: the
+ * background runs edge to edge, the type does not move a pixel sideways.
+ *
+ * Adjacent bands alternate tone, and two or three per page is the ceiling.
+ * More than that and the alternation stops being rhythm and becomes
+ * stripes — at which point it is decoration, which is the one thing the
+ * brief for this site rules out.
+ *
+ * Flat colour only. No image, no gradient, no pattern, in any band.
+ *
+ * A plain `div`, not a `section`. An unlabelled `section` is either
+ * ignored by assistive technology or announced as an anonymous region, and
+ * the pages already carry properly labelled `section` elements inside
+ * these bands. Adding a second, nameless one around each would be noise.
+ */
+export function Band({
+  tone = "surface",
+  children,
+  className,
+  innerClassName,
+}: {
+  /** `muted` paints --color-surface-muted; `surface` leaves the page ground. */
+  tone?: "surface" | "muted";
+  children: ReactNode;
+  /** Applied to the full-bleed element. */
+  className?: string;
+  /** Applied to the shell inside it. */
+  innerClassName?: string;
+}) {
+  return (
+    <div className={cn("band", tone === "muted" && "bg-surface-muted", className)}>
+      <div className={cn("shell", innerClassName)}>{children}</div>
+    </div>
+  );
+}

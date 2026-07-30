@@ -95,7 +95,7 @@ function SectionHeading({
 
 export default function StyleguidePage() {
   return (
-    <div className="shell flex flex-col gap-16 py-16">
+    <div className="shell band flex flex-col gap-(--space-band)">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-8">
         <div className="flex flex-col gap-2">
           <p className="text-sm tracking-wide text-ink-muted uppercase">

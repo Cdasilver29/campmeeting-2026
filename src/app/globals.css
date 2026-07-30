@@ -385,6 +385,51 @@
   max-width: var(--width-prose);
 }
 
+/* ── Vertical rhythm ──────────────────────────────────────────────────
+   Three steps, by role, replacing the flat py-16 every page carried.
+
+   The pages read as one long document not because of the palette but
+   because every gap on them was the same gap: a page's outer padding, the
+   space between two unrelated sections and the space between a heading
+   and its own first line were all within a step of each other, so nothing
+   grouped. Air is what says "these belong together and that does not".
+
+   --space-band     a band's own top and bottom padding. Two adjacent
+                    bands therefore put twice this between their contents,
+                    which is right: a band boundary is the largest break
+                    on a page and it also changes surface colour.
+   --space-section  between sections inside one band.
+   --space-item     between a heading and the items under it.
+
+   The ratio matters more than the values: roughly 4 : 2.5 : 1 at md, so a
+   section opening always has visibly more above it than its own contents
+   have between them. */
+:root {
+  --space-band: 3rem;
+  --space-section: 2rem;
+  --space-item: 0.75rem;
+}
+
+@media (width >= 48rem) {
+  :root {
+    --space-band: 4rem;
+    --space-section: 2.5rem;
+    --space-item: 1rem;
+  }
+}
+
+/* A full-bleed band. Spans the viewport; its contents sit on the shell.
+   Background comes from a utility at the call site rather than from here,
+   because half the bands are meant to be the page surface and painting
+   them all would be a rule that mostly needs undoing.
+
+   Flat surfaces only: no image, no gradient, no pattern. The band is a
+   change of ground colour and a change of rhythm, and that is all it is
+   allowed to be. */
+@utility band {
+  padding-block: var(--space-band);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

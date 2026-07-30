@@ -50,6 +50,12 @@ export const DOC_BODY = `${MEASURE} leading-7 text-ink-muted`;
  * The vertical rhythm of a document: one gap between a heading and its
  * paragraphs, a larger one between sections, and a hairline where a
  * section ends so the rhythm is visible rather than merely felt.
+ *
+ * Both now read the shared rhythm tokens rather than fixed steps off
+ * Tailwind's scale. A document's internal spacing and a band's spacing
+ * being the same two numbers is what makes a page read as one system; a
+ * gap-3/gap-12 pair here and a py-16 in the layout was two systems that
+ * happened to look adjacent.
  */
-export const DOC_SECTION = "flex flex-col gap-3";
-export const DOC_STACK = "flex flex-col gap-12";
+export const DOC_SECTION = "flex flex-col gap-(--space-item)";
+export const DOC_STACK = "flex flex-col gap-(--space-section)";

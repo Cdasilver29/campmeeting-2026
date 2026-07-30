@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { ProgramView } from "@/features/schedule/components/program-view";
@@ -50,23 +51,27 @@ export default async function MinistryPage({
   const count = groups.reduce((total, group) => total + group.count, 0);
 
   return (
-    <div className="shell flex flex-col gap-10 py-16">
-      <PageHeader {...ministryPageDefinition(tag)}>
-        <p className="text-ink-muted">
-          {copy.description}{" "}
-          <span className="tabular-figures">
-            {count} programme {count === 1 ? "entry" : "entries"} across{" "}
-            {groups.length} {groups.length === 1 ? "day" : "days"}.
-          </span>
-        </p>
-      </PageHeader>
+    <>
+      <Band tone="muted">
+        <PageHeader {...ministryPageDefinition(tag)}>
+          <p className="prose-column text-ink-muted">
+            {copy.description}{" "}
+            <span className="tabular-figures">
+              {count} programme {count === 1 ? "entry" : "entries"} across{" "}
+              {groups.length} {groups.length === 1 ? "day" : "days"}.
+            </span>
+          </p>
+        </PageHeader>
+      </Band>
 
       {/* Gaps are only meaningful on the unfiltered block; a ministry
           view is a slice of a block, so any hole is the filter's, not
           the programme's. */}
-      <BookmarksProvider>
-        <ProgramView groups={groups} showGaps={false} />
-      </BookmarksProvider>
-    </div>
+      <Band>
+        <BookmarksProvider>
+          <ProgramView groups={groups} showGaps={false} />
+        </BookmarksProvider>
+      </Band>
+    </>
   );
 }

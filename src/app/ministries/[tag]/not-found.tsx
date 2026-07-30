@@ -13,7 +13,7 @@ const linkClasses =
  */
 export default function MinistryNotFound() {
   return (
-    <div className="shell flex flex-col gap-8 py-16">
+    <div className="shell band flex flex-col gap-(--space-item)">
       <h1 className="font-display text-4xl text-balance">Ministry not found</h1>
       <EmptyState
         icon={Tag}

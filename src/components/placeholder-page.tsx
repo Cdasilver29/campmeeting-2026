@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Band } from "@/components/band";
 import { EmptyState } from "@/components/empty-state";
 import { eventInfo } from "@/data";
 import { pageMetadata } from "@/lib/metadata";
@@ -16,10 +17,14 @@ export function PlaceholderPage({
   description: string;
 }) {
   return (
-    <div className="shell flex flex-col gap-8 py-16">
-      <h1 className="font-display text-4xl text-balance">{title}</h1>
-      <EmptyState title="Not published yet" description={description} />
-    </div>
+    <>
+      <Band>
+        <h1 className="font-display text-4xl text-balance">{title}</h1>
+      </Band>
+      <Band tone="muted">
+        <EmptyState title="Not published yet" description={description} />
+      </Band>
+    </>
   );
 }
 
