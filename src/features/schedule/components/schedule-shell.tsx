@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SearchX } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
+import { ACTION_LINK } from "@/lib/link-styles";
 import { type DayGroup } from "../lib/entries";
 import { describeFilters, joinPhrases } from "../lib/filter";
 import {
@@ -13,9 +14,6 @@ import { MyScheduleEmpty } from "./my-schedule-empty";
 import { ProgramView } from "./program-view";
 import { ScheduleFiltersBar } from "./schedule-filters";
 import { ViewSwitch } from "./view-switch";
-
-const clearLinkClasses =
-  "inline-flex h-8 items-center rounded-control px-2 text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
 
 /**
  * Layout for the programme: controls, then how many entries survived
@@ -44,11 +42,28 @@ export function ScheduleShell({
   const clearHref = scheduleHref({ day: filters.day });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-(--space-item)">
       <ScheduleFiltersBar filters={filters} />
-      <ViewSwitch filters={filters} />
+
+      {/* The day rail moved above the results bar. It is navigation, and
+          navigation belongs over the thing it navigates; it is also the
+          sticky element, so everything below it is what should scroll
+          underneath it. */}
       <DayRail filters={filters} />
-      <ResultSummary count={count} total={total} clearHref={clearHref} filters={filters} />
+
+      {/* View switch and count on one line from sm, which is what the
+          shell width bought: three stacked full-width rows of controls
+          above a programme is a lot of chrome before any content. */}
+      <div className="flex flex-col gap-3 border-y border-line py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <ViewSwitch filters={filters} />
+        <ResultSummary
+          count={count}
+          total={total}
+          clearHref={clearHref}
+          filters={filters}
+        />
+      </div>
+
       {count > 0 ? (
         <ProgramView groups={groups} showGaps={showGaps} />
       ) : filters.mine ? (
@@ -84,14 +99,16 @@ function ResultSummary({
   filters: ScheduleFilters;
 }) {
   return (
-    <div className="flex min-h-8 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-y border-line py-1">
+    // The border moved to the row this shares with the view switch, so the
+    // two read as one bar rather than as a bordered strip under a control.
+    <div className="flex min-h-8 flex-wrap items-center gap-x-4 gap-y-2 sm:justify-end">
       <p role="status" className="text-sm text-ink-muted">
         Showing{" "}
         <span className="tabular-figures font-medium text-ink">{count}</span> of{" "}
         <span className="tabular-figures">{total}</span> programme entries
       </p>
       {hasActiveFilters(filters) ? (
-        <Link href={clearHref} scroll={false} className={clearLinkClasses}>
+        <Link href={clearHref} scroll={false} className={ACTION_LINK}>
           Clear filters
         </Link>
       ) : null}
@@ -114,7 +131,7 @@ function NoResults({
       title="Nothing matches those filters"
       description={`${description} Clear them to see the whole programme again.`}
       action={
-        <Link href={clearHref} scroll={false} className={clearLinkClasses}>
+        <Link href={clearHref} scroll={false} className={ACTION_LINK}>
           Clear filters
         </Link>
       }

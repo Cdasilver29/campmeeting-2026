@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/page-header";
 import { Reveal } from "@/components/reveal";
 import { pageMetadata } from "@/lib/metadata";
 import { downloadsPage } from "@/lib/page-identity";
+import { ACTION_LINK } from "@/lib/link-styles";
 
 export const metadata = pageMetadata(downloadsPage);
 
@@ -70,7 +71,7 @@ export default function DownloadsPage() {
           action={
             <Link
               href="/schedule"
-              className="inline-flex h-8 items-center rounded-control px-2 text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+              className={ACTION_LINK}
             >
               See the full programme online
             </Link>

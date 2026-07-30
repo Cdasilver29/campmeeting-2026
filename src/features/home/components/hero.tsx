@@ -24,11 +24,18 @@ import {
  * wraps them, it does not replace them.
  *
  * HEIGHT AND PHASE
- * Full bleed before the event, when the countdown is the point. Roughly
- * 60svh during and after it, so the live session card clears the fold.
- * svh rather than vh or dvh: vh ignores mobile browser chrome and overflows
- * behind it, dvh changes as that chrome retracts and would resize the band
- * mid-scroll. svh is the one of the three that is both correct and stable.
+ * From md: full bleed before the event, when the countdown is the point,
+ * and roughly 60svh during and after it, so the live session card clears
+ * the fold. svh rather than vh or dvh: vh ignores mobile browser chrome and
+ * overflows behind it, dvh changes as that chrome retracts and would resize
+ * the band mid-scroll. svh is the one of the three that is both correct and
+ * stable.
+ *
+ * Below md, height is not driven by the viewport at all — the frame takes a
+ * 4:3 ratio close to the source's own shape and the text moves off the
+ * photograph onto the page. A 0.46:1 portrait viewport crops a 1.70:1
+ * photograph to 27% of its width, and no scrim or object-position fixes
+ * that. See the frame below.
  *
  * The phase is one attribute on the section, resolved at build time and
  * corrected before first paint — see ../lib/hero-phase.ts for why it
@@ -83,11 +90,14 @@ const HERO_ID = "home-hero";
  * descendant and is correctly `group-data-`.
  */
 const COMPACT_HERO_HEIGHT =
-  "data-[hero-phase=during]:h-[60svh] data-[hero-phase=after]:h-[60svh]";
+  "md:data-[hero-phase=during]:h-[60svh] md:data-[hero-phase=after]:h-[60svh]";
 const COMPACT_SCRIM_HEIGHT =
   "group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact)] group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact)]";
+// md-scoped, unlike the type rules below it: below md the text block is
+// not inside the frame, so its padding is the page's business and not the
+// phase's.
 const COMPACT_BOTTOM_PADDING =
-  "group-data-[hero-phase=during]/hero:pb-8 group-data-[hero-phase=after]/hero:pb-8";
+  "md:group-data-[hero-phase=during]/hero:pb-8 md:group-data-[hero-phase=after]/hero:pb-8";
 const COMPACT_STACK_GAP =
   "group-data-[hero-phase=during]/hero:gap-2 group-data-[hero-phase=after]/hero:gap-2";
 const COMPACT_TITLE =
@@ -109,7 +119,13 @@ export function Hero() {
         // the header's own height, so the photograph runs full bleed behind
         // it while the content that follows the hero still starts where it
         // would have. Both sides read --spacing-header; see globals.css.
-        className={`group/hero relative isolate -mt-header flex flex-col justify-end overflow-hidden bg-navy-900 h-svh ${COMPACT_HERO_HEIGHT}`}
+        // Below md the section is a plain block: the frame sits in flow at
+        // its own aspect ratio and the text block follows it on the page
+        // surface. From md the section becomes the frame — full height,
+        // clipped, navy behind — and the text block is laid over the
+        // bottom of it. One text block either way; see below for why that
+        // matters more than it looks.
+        className={`group/hero relative -mt-header md:isolate md:flex md:flex-col md:justify-end md:overflow-hidden md:bg-navy-900 md:h-svh ${COMPACT_HERO_HEIGHT}`}
         style={
           {
             "--scrim-h": HERO_SCRIM_BOTTOM_HEIGHT.before,
@@ -118,7 +134,30 @@ export function Hero() {
         }
       >
         {HERO_IMAGE ? (
-          <>
+          /*
+           * THE FRAME, AND WHY ITS SHAPE CHANGES AT md.
+           *
+           * The source is 1634x962, a 1.70:1 landscape photograph. A
+           * 390x844 phone in portrait is 0.46:1. `object-fit: cover`
+           * against that frame keeps 0.46 / 1.70 = 27% of the image's
+           * width: the middle third, which is roof and tarmac with the
+           * building's own edges outside the frame. There is no crop of a
+           * landscape photograph that survives a portrait frame, and
+           * letterboxing a hero is not an answer.
+           *
+           * So below md the frame stops being driven by the viewport at
+           * all and takes a 4:3 ratio of its own. 1.33 / 1.70 = 78% of the
+           * image's width is kept, and its full height, at every phone
+           * width — the crop no longer varies with the device, because the
+           * frame's shape no longer does.
+           *
+           * From md the existing phase-driven svh behaviour is untouched.
+           */
+          // md:-z-10 is load-bearing. From md this becomes an absolutely
+          // positioned box, and a positioned box paints above the static
+          // in-flow content that follows it — which is the text block. The
+          // section's md:isolate keeps the negative index contained.
+          <div className="relative isolate aspect-[4/3] overflow-hidden bg-navy-900 md:absolute md:inset-0 md:-z-10 md:aspect-auto">
             <Image
               src={HERO_IMAGE.src}
               alt=""
@@ -129,57 +168,87 @@ export function Hero() {
               quality={90}
               // Rendered sharp: no blur filter, no transform. The building
               // and its sign are meant to be legible.
-              className="-z-20 object-cover"
+              //
+              // 38% horizontal below md, centre from md. At 4:3 the crop
+              // takes 22% off the width and nothing off the height, so the
+              // vertical half of the value is inert there and is written
+              // only because object-position needs both. 38% rather than
+              // 50% moves the kept window from x 11%-89% to x 8%-87%,
+              // which trades the right-hand edge of the neighbouring tower
+              // block for the church's own left-hand roofline. The green
+              // sign sits at x 24%-44% and is inside every possible
+              // window, so it was never the thing at risk.
+              className="-z-20 object-cover [object-position:38%_50%] md:[object-position:50%_50%]"
             />
 
-            {/* Behind the header, and stopping well short of the roofline. */}
+            {/* Behind the header, and stopping well short of the roofline.
+                Shorter below md, where it is covering the same 80px of
+                header inside a frame less than a third as tall. */}
             <div
               aria-hidden
-              className="absolute inset-x-0 top-0 -z-10 h-44"
+              className="absolute inset-x-0 top-0 -z-10 h-32 md:h-44"
               style={{ backgroundImage: HERO_SCRIM_TOP }}
             />
 
-            {/* Behind the text block. Height is phase-dependent because
-                the type is: the compact phases set a smaller title, so
-                their footprint is smaller and the scrim that covers it can
-                be shorter. See HERO_SCRIM_BOTTOM_HEIGHT for the measured
-                footprints both values are derived from. */}
+            {/* Behind the text block, and therefore only from md, since
+                below that the text is not on the photograph at all.
+                Height is phase-dependent because the type is: the compact
+                phases set a smaller title, so their footprint is smaller
+                and the scrim that covers it can be shorter. See
+                HERO_SCRIM_BOTTOM_HEIGHT for the measured footprints both
+                values are derived from. */}
             <div
               aria-hidden
-              className={`absolute inset-x-0 bottom-0 -z-10 h-[var(--scrim-h)] ${COMPACT_SCRIM_HEIGHT}`}
+              className={`absolute inset-x-0 bottom-0 -z-10 hidden h-[var(--scrim-h)] md:block ${COMPACT_SCRIM_HEIGHT}`}
               style={{ backgroundImage: HERO_SCRIM_BOTTOM }}
             />
-          </>
+          </div>
         ) : null}
 
         {/*
-          Bottom-left, inside the bottom scrim.
+          ONE TEXT BLOCK, TWO PLACES.
 
-          Every string is pure white, never white/80. The measured ratios
-          are the figures for white; knocking the meta line back to 80%
-          opacity over the same pixels costs about a quarter of the
-          contrast and fails. Hierarchy comes from size and weight.
+          Below md it sits in normal flow under the frame, set in --color-ink
+          on the page surface. From md it is the same element laid over the
+          bottom of the photograph in white, inside the bottom scrim.
+
+          One block rather than a mobile copy and a desktop copy, because
+          two copies means two h1 elements on the page — a real
+          accessibility and structured-data fault, not a tidiness
+          preference — and because the two would drift the first time the
+          date range or the CTA wording changed.
+
+          Over the photograph every string is pure white, never white/80.
+          The measured ratios are the figures for white; knocking the meta
+          line back to 80% opacity over the same pixels costs about a
+          quarter of the contrast and fails. Hierarchy comes from size and
+          weight. Off the photograph the ink tokens do the same job at
+          16.56:1 and 6.32:1, so no phone reader is now depending on a
+          scrim at all.
 
           The compact phases set a smaller title and tighter spacing. That
-          is not decoration: it is what lets the bottom scrim stay at 45%
-          of a 60svh band instead of covering the whole of it.
+          is not decoration: it is what lets the bottom scrim stay at 15rem
+          in a 60svh band instead of covering the whole of it.
         */}
-        <div className={`shell pb-16 ${COMPACT_BOTTOM_PADDING}`}>
+        <div className={`shell pt-6 pb-10 md:pt-0 md:pb-16 ${COMPACT_BOTTOM_PADDING}`}>
           <div className={`flex max-w-2xl flex-col gap-4 ${COMPACT_STACK_GAP}`}>
             <h1
-              className={`font-display text-hero text-balance text-white ${COMPACT_TITLE}`}
+              className={`font-display text-hero text-balance text-ink md:text-white ${COMPACT_TITLE}`}
             >
               {eventInfo.edition}
             </h1>
 
-            <p className={`text-lg text-white ${COMPACT_META}`}>
+            <p className={`text-lg text-ink-muted md:text-white ${COMPACT_META}`}>
               {eventDateRange()} at {eventInfo.church.address}
             </p>
 
             <div className={`mt-2 ${COMPACT_CTA_OFFSET}`}>
+              {/* Primary fill off the photograph, white fill on it. A
+                  white button on the white page surface would be an
+                  outline of nothing. */}
               <Link
                 href="/schedule"
-                className="inline-flex items-center gap-2 rounded-control bg-white px-5 py-2.5 text-sm font-medium text-navy-900 transition-colors duration-fast ease-out-soft hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="inline-flex min-h-11 items-center gap-2 rounded-control bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-[background-color,translate] duration-fast ease-out-soft hover:bg-accent-600 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 md:bg-white md:text-navy-900 md:hover:bg-white/90 md:focus-visible:outline-white"
               >
                 See the programme
                 <ArrowRight aria-hidden className="size-4" />

@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { Tag } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
-
-const linkClasses =
-  "inline-flex h-8 items-center rounded-control px-2 text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
+import { ACTION_LINK } from "@/lib/link-styles";
 
 /**
  * A /ministries/{tag} URL for a tag that does not exist, or one with no
@@ -20,7 +18,7 @@ export default function MinistryNotFound() {
         title="That ministry is not in this programme"
         description="The link you followed points at a ministry tag that is not listed, or one that currently has no sessions."
         action={
-          <Link href="/ministries" className={linkClasses}>
+          <Link href="/ministries" className={ACTION_LINK}>
             See all ministries
           </Link>
         }

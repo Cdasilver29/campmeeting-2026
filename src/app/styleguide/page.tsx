@@ -158,7 +158,12 @@ export default function StyleguidePage() {
               >
                 Camp Meeting
               </span>
-              <span className="whitespace-nowrap text-sm text-ink-muted">
+              {/* Was whitespace-nowrap, which pushed the document 110px
+                  past a 360px viewport and gave the whole site a
+                  horizontal scrollbar at that width. The label is a
+                  four-part description and there is no reason it cannot
+                  wrap. */}
+              <span className="text-sm text-ink-muted">
                 {step.label} · {step.size} · font-{step.font} · {step.role}
               </span>
             </div>

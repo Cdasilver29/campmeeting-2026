@@ -21,7 +21,13 @@ export function SpeakerCard({
       // card left makes the name the subject and lets the avatar sit
       // beside it as one element among several. It also gives four cards
       // a shared left edge, which is what makes the row read as a grid.
-      className="flex h-full flex-col items-start gap-4 rounded-card bg-surface p-5 ring-1 ring-line transition-[background-color,translate] duration-fast ease-out-soft hover:-translate-y-px hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+      // Three states, not one. Hover is the tint plus a 1px lift; active
+      // puts the lift back and deepens the ring, so a press is confirmed
+      // before the next page paints; focus-visible is the accent outline.
+      // The ring moving is what makes the change legible without colour —
+      // the tint alone is a two-percent shift a lot of screens will not
+      // show at all.
+      className="flex h-full flex-col items-start gap-4 rounded-card bg-surface p-5 ring-1 ring-line transition-[background-color,box-shadow,translate] duration-fast ease-out-soft hover:-translate-y-px hover:bg-surface-muted hover:ring-ink-muted/30 active:translate-y-0 active:ring-2 active:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
     >
       <SpeakerAvatar speaker={speaker} size="lg" />
       <div className="flex flex-col gap-1">

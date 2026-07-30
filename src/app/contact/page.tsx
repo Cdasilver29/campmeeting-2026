@@ -5,13 +5,15 @@ import { Reveal } from "@/components/reveal";
 import { eventInfo } from "@/data";
 import { ContactForm } from "@/features/forms/contact-form";
 import { pageMetadata } from "@/lib/metadata";
+import { INLINE_LINK } from "@/lib/link-styles";
 import { contactPage } from "@/lib/page-identity";
 import { DOC_BODY, DOC_HEADING } from "@/lib/typography";
 
 export const metadata = pageMetadata(contactPage);
 
-const linkClassName =
-  "rounded-control underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
+// A list of contact facts is not running prose, so these take a real
+// target height. Measured at 20-24px before this.
+const linkClassName = INLINE_LINK;
 
 const mapQuery = encodeURIComponent(
   `${eventInfo.church.name}, ${eventInfo.church.address}`,
@@ -111,7 +113,7 @@ export default function ContactPage() {
               href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
               target="_blank"
               rel="noreferrer"
-              className={`inline-flex w-fit items-center gap-1 text-sm ${linkClassName}`}
+              className={`gap-1 text-sm ${linkClassName}`}
             >
               Open in Google Maps
               <ExternalLink aria-hidden className="size-3.5" />

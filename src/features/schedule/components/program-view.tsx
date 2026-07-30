@@ -117,7 +117,11 @@ function DaySection({ group, showGaps }: { group: DayGroup; showGaps: boolean })
     <section
       id={`day-${group.day.id}`}
       aria-labelledby={headingId}
-      className="flex scroll-mt-40 flex-col gap-6 [content-visibility:auto]"
+      // scroll-margin from --scroll-offset, which day-rail-behaviour.tsx
+      // sets to the measured header plus the measured rail. The 10rem
+      // fallback is what this was hardcoded to and is what applies before
+      // hydration, which is also when a deep link is most likely to land.
+      className="flex scroll-mt-[var(--scroll-offset,10rem)] flex-col gap-6 [content-visibility:auto]"
       style={{ containIntrinsicSize: `auto ${intrinsicHeight(group)}px` }}
     >
       <header className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b-2 border-ink/15 pb-2">

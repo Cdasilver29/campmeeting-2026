@@ -51,7 +51,11 @@ export function BrandLockup({
     <Link
       href="/"
       className={cn(
-        "group flex items-center gap-2.5 rounded-control text-ink transition-colors duration-fast ease-out-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
+        // w-fit and min-h-11: in the footer this was a 379x40 link running
+        // the full width of its column, which is both under the tap-target
+        // floor and a mis-hit magnet — a click anywhere in that band went
+        // to the home page.
+        "group flex w-fit min-h-11 min-w-11 items-center gap-2.5 rounded-control text-ink transition-colors duration-fast ease-out-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
         isFooter && "gap-2",
         // Over the hero photograph the lockup goes pure white, mark
         // included: the mark is painted with `bg-current` so it follows

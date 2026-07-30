@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { eventInfo } from "@/data";
+import { ACTION_LINK } from "@/lib/link-styles";
 import { NowCard } from "@/features/schedule/components/now-card";
 import { eventStartInstant } from "@/features/schedule/lib/time";
 import { getTodayState, type TodayState } from "@/features/schedule/lib/today";
@@ -10,8 +11,7 @@ import { useNow } from "@/features/schedule/use-now";
 import { LIVESTREAM_CHANNEL_URL } from "../config";
 import { LiveEmbed } from "./live-embed";
 
-const linkClassName =
-  "inline-flex w-fit items-center rounded-control text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
+const linkClassName = `${ACTION_LINK} -ml-2`;
 
 const startLabel = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",

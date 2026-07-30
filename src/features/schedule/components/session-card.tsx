@@ -81,7 +81,43 @@ export function TimeRange({
  * conflict rather than escalating it with `!important`.
  */
 export const ENTRY_GRID =
-  "grid gap-x-4 gap-y-1.5 sm:grid-cols-[9.5rem_minmax(0,1fr)] sm:[&>*:not(:first-child)]:col-start-2";
+  "grid gap-x-4 gap-y-1.5" +
+  " sm:grid-cols-[9.5rem_minmax(0,1fr)]" +
+  // From lg the row opens out: the title keeps column two and the
+  // presenter and ministry chips move up beside it into columns three and
+  // four of the same row, instead of stacking underneath. At 768px there
+  // was no room for that; at the 80rem shell the content column is 944px
+  // at lg and 1200px above it, and a title, a name and a ministry on one
+  // line is how a programme is read.
+  //
+  // Placed by data-entry rather than by position, because which children
+  // exist varies per entry — notices, presenters, ministry and note are
+  // each optional — so nth-child cannot address them, and by element type
+  // two pairs collide (notices and presenters are both ul, ministry and
+  // note are both p).
+  //
+  // Written as :not() exclusions on the sm rule rather than as lg
+  // overrides of it. `.parent > *:not(:first-child)` and
+  // `.parent > [data-entry=presenters]` have identical specificity, so an
+  // override would have been settled by Tailwind's sort order — which is
+  // exactly the tie that once put every time in the title's place. Taking
+  // the two elements out of the general rule removes the conflict instead
+  // of betting on it.
+  " sm:[&>*:not(:first-child):not([data-entry=presenters]):not([data-entry=ministry])]:col-start-2" +
+  " sm:[&>[data-entry=presenters]]:col-start-2 sm:[&>[data-entry=ministry]]:col-start-2" +
+  // minmax(0,auto) rather than plain auto on the two chip tracks, so a
+  // long presenter name shrinks its own column instead of squeezing the
+  // title out of the 1fr one.
+  " lg:grid-cols-[9.5rem_minmax(0,1fr)_minmax(0,auto)_minmax(0,auto)]" +
+  " lg:[&>[data-entry=presenters]]:col-start-3 lg:[&>[data-entry=presenters]]:row-start-1" +
+  " lg:[&>[data-entry=ministry]]:col-start-4 lg:[&>[data-entry=ministry]]:row-start-1" +
+  // Everything that stays in column two spans the two new columns at lg,
+  // so a long title or a programme notice still uses the full row rather
+  // than being squeezed into a third of it.
+  " lg:[&>*:not(:first-child):not([data-entry=presenters]):not([data-entry=ministry])]:col-end-[-1]" +
+  // The chips sit on the title's baseline rather than at the top of the
+  // row, so a two-line title does not leave them floating.
+  " lg:[&>[data-entry=presenters]]:self-start lg:[&>[data-entry=ministry]]:self-start";
 
 /**
  * Column one: the time and the save control, on one line.
@@ -108,7 +144,10 @@ export function PresenterChips({ session }: { session: FlatSession }) {
   if (names.length === 0) return null;
 
   return (
-    <ul className="flex flex-wrap gap-1.5">
+    // data-entry is what ENTRY_GRID places this by at lg. An attribute
+    // rather than a wrapper element: /schedule renders 237 entries and a
+    // wrapper each would be 237 more boxes to lay out.
+    <ul data-entry="presenters" className="flex flex-wrap gap-1.5">
       {names.map((name) => (
         <li key={name}>
           <Badge variant="secondary">{name}</Badge>
@@ -136,7 +175,7 @@ export function MinistryChip({
   if (!session.ministry) return null;
 
   return (
-    <p className={cn("flex flex-wrap gap-1.5", className)}>
+    <p data-entry="ministry" className={cn("flex flex-wrap gap-1.5", className)}>
       <span
         className={cn(
           "inline-flex items-center rounded-control px-2 py-0.5 text-xs font-medium",
@@ -199,11 +238,18 @@ export function SessionCard({
       className={cn(
         ENTRY_GRID,
         "rounded-card bg-surface p-4 ring-1 ring-line",
+        // A row is not a link and must not pretend to be one, so the hover
+        // is on the hairline only — enough to say "this is the row under
+        // your cursor", not enough to promise a click. The one thing in it
+        // that IS interactive is a 16px bookmark icon, and it gains
+        // contrast on the same hover so it can be found.
+        "transition-[box-shadow] duration-fast ease-out-soft hover:ring-ink-muted/30",
         // Featured sessions carry real weight rather than an icon alone:
         // the ring takes the featured colour and the surface a trace of
         // it. Still not colour on its own — the star and its sr-only
         // label say the same thing.
         session.featured && "bg-featured/[0.04] ring-featured/35",
+        "group/entry",
         className,
       )}
     >

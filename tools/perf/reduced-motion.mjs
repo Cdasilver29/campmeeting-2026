@@ -102,5 +102,54 @@ for (const route of ROUTES) {
   await page.close();
 }
 
+/*
+ * The live indicator's pulse, checked directly.
+ *
+ * It is the only looping animation on the site and the route sweep above
+ * cannot reach it: the dot renders only while the event is running, the
+ * ?now= clock override is development-only, and these runs are against a
+ * production build in July. So the class is put on an element in a real
+ * page under the emulated preference and asked what it resolves to.
+ *
+ * Two assertions, because the global reduced-motion block alone is not
+ * enough: collapsing animation-duration to 0.01ms stops the movement but
+ * leaves the ring painted at its first keyframe — a permanent 45% halo.
+ * The rule that removes it is what is being verified here.
+ */
+{
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+  await page.setRequestInterception(true);
+  page.on("request", (r) => {
+    if (/\/serwist\/|sw\.js/.test(r.url())) r.abort().catch(() => {});
+    else r.continue().catch(() => {});
+  });
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await page.goto(`${BASE}/`, { waitUntil: "load", timeout: 180000 });
+
+  const pulse = await page.evaluate(() => {
+    const el = document.createElement("span");
+    el.className = "live-pulse";
+    document.body.appendChild(el);
+    const s = getComputedStyle(el);
+    const result = {
+      display: s.display,
+      animationName: s.animationName,
+      animationDuration: s.animationDuration,
+      running: document.getAnimations().length,
+    };
+    el.remove();
+    return result;
+  });
+
+  const pulseOk = pulse.display === "none" && pulse.running === 0;
+  if (!pulseOk) failures++;
+  console.log(`\n.live-pulse under reduced motion  ${pulseOk ? "STOPPED" : "STILL RUNNING"}`);
+  console.log(`  display ${pulse.display}   animation ${pulse.animationName} ${pulse.animationDuration}   getAnimations() ${pulse.running}`);
+  await page.close();
+}
+
 await browser.close();
-console.log(`\n${failures === 0 ? "ALL ROUTES STATIC UNDER REDUCED MOTION" : `${failures} route(s) not static`}`);
+console.log(`\n${failures === 0 ? "ALL ROUTES STATIC UNDER REDUCED MOTION" : `${failures} check(s) failed`}`);

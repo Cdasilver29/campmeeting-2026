@@ -14,13 +14,22 @@
  * is hidden, and every descendant is hidden rather than a chosen list of
  * tags.
  *
- * WHY THE HEADER IS NOT MEASURED AGAINST WHITE IN BOTH STATES
+ * WHY NOTHING HERE IS MEASURED AGAINST WHITE UNCONDITIONALLY
  *
  * Over the photograph the header's type is white, so the hazard is the
  * BRIGHTEST backdrop pixel. Once the header takes its own glass surface
  * the type is --color-ink, so the hazard inverts: the risk is a DARK
  * pixel showing through the translucent surface. Measuring white against
  * the glass state would be measuring a colour that is never used there.
+ *
+ * The hero text now needs the same treatment, for the same reason. Below
+ * md the frame is 4:3 and the text block sits under it on the page
+ * surface in --color-ink; from md it is white over the photograph. So the
+ * type's own computed colour is read at each width and the ratio is
+ * computed against the extreme that can actually hurt it — brightest for
+ * light type, darkest for dark type. Hardcoding white would have reported
+ * 1.00:1 for a 390px hero whose text is ink on white and is fine, which
+ * is precisely the failure mode the header block above documents.
  *
  * Usage: node verify-hero.mjs <screenshot-output-dir> [forcePhase]
  *
@@ -85,13 +94,20 @@ for (const v of VIEWPORTS) {
     const header = document.querySelector("header");
     const img = hero.querySelector("img");
     const box = (el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; };
-    const scrims = [...hero.querySelectorAll(":scope > div[aria-hidden]")].map((e) =>
-      Math.round(e.getBoundingClientRect().height));
+    /* Any depth, not `:scope >`. The scrims moved inside the frame element
+       when the frame stopped being the section itself, and a `:scope >`
+       query silently returned [] rather than failing. */
+    const scrims = [...hero.querySelectorAll("div[aria-hidden]")]
+      .filter((e) => getComputedStyle(e).display !== "none")
+      .map((e) => Math.round(e.getBoundingClientRect().height));
+    /* The colour the title is actually set in at this width, so the ratio
+       below is computed against the extreme that can hurt it. */
+    const typeColor = getComputedStyle(h1).color;
     const rs = [h1, meta, cta].map((e) => e.getBoundingClientRect());
     const x = Math.min(...rs.map((r) => r.x)), y = Math.min(...rs.map((r) => r.y));
     const x2 = Math.max(...rs.map((r) => r.right)), y2 = Math.max(...rs.map((r) => r.bottom));
     return {
-      text: { x, y, width: x2 - x, height: y2 - y }, header: box(header),
+      text: { x, y, width: x2 - x, height: y2 - y }, header: box(header), typeColor,
       heroH: Math.round(hero.getBoundingClientRect().height),
       /* How far the type reaches from the bottom of the frame, and how
          tall the bottom scrim is, so coverage can be judged against the
@@ -190,14 +206,31 @@ await browser.close();
 const pad = (s, n) => String(s).padEnd(n);
 const verdict = (r) => `${r.toFixed(2)}:1 ${r >= 4.5 ? "PASS" : "FAIL"}`;
 
-console.log("\n=== hero text, white on the brightest composited pixel, phase=" + rows[0].geo.phase + " ===");
-console.log(pad("viewport", 12) + pad("heroH", 8) + pad("scrims", 14) + pad("footprint", 12) + pad("worst px", 18) + "white AA");
-console.log("-".repeat(80));
+/*
+ * The title's own colour decides which extreme is the hazard and which
+ * formula applies. Light type (over the photograph, md and up) is scored
+ * against the brightest backdrop pixel; dark type (below md, where the
+ * text sits under the frame on the page surface) against the darkest.
+ */
+const typeIsLight = (css) => {
+  const [r, g, b] = css.match(/\d+/g).map(Number);
+  return lum(r, g, b) > 0.4;
+};
+const heroRatio = (r) =>
+  typeIsLight(r.geo.typeColor) ? cw(r.t.hi) : ci(r.t.lo);
+const heroWorstPx = (r) =>
+  typeIsLight(r.geo.typeColor) ? r.t.hiRgb : r.t.loRgb;
+
+console.log("\n=== hero text, against the colour the title is actually set in, phase=" + rows[0].geo.phase + " ===");
+console.log(pad("viewport", 12) + pad("heroH", 8) + pad("scrims", 14) + pad("footprint", 12)
+  + pad("type", 18) + pad("worst px", 18) + "AA");
+console.log("-".repeat(96));
 for (const r of rows) {
   console.log(pad(`${r.v.w}x${r.v.h}`, 12) + pad(r.geo.heroH, 8)
-    + pad(r.geo.scrimHeights.join("/") + "px", 14)
+    + pad((r.geo.scrimHeights.join("/") || "-") + "px", 14)
     + pad(`${r.geo.textFootprint}px`, 12)
-    + pad(`rgb(${r.t.hiRgb})`, 18) + verdict(cw(r.t.hi)));
+    + pad(typeIsLight(r.geo.typeColor) ? "white" : `ink ${r.geo.typeColor}`, 18)
+    + pad(`rgb(${heroWorstPx(r)})`, 18) + verdict(heroRatio(r)));
 }
 
 console.log("\n=== header, each state against the colour its type actually is ===");
@@ -218,7 +251,7 @@ for (const r of rows) {
     + `vs served ${r.geo.natW}w ${served.toFixed(3)}x`);
 }
 
-const wt = Math.min(...rows.map((r) => cw(r.t.hi)));
+const wt = Math.min(...rows.map(heroRatio));
 const wh = Math.min(...rows.map((r) => cw(r.hd.hi)));
 const wg = Math.min(...rows.map((r) => ci(r.hg.lo)));
 console.log(`\nworst: hero text ${wt.toFixed(2)}:1   header transparent ${wh.toFixed(2)}:1   header glass ${wg.toFixed(2)}:1`);

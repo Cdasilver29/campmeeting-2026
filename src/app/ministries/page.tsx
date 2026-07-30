@@ -74,7 +74,10 @@ export default function MinistriesPage() {
                 <li key={tag}>
                   <Link
                     href={scheduleHref({ ministry: tag })}
-                    className="flex items-center gap-2.5 rounded-control border border-line px-3 py-2 text-sm text-ink transition-colors duration-fast hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+                    // min-h-11: these rows measured 38px, under the tap
+                    // target floor, and they are a list of thirteen links
+                    // stacked on a phone.
+                    className="flex min-h-11 items-center gap-2.5 rounded-control border border-line px-3 py-2 text-sm text-ink transition-colors duration-fast hover:border-ink-muted/40 hover:bg-surface-muted active:bg-surface-muted active:ring-1 active:ring-primary/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
                   >
                     <span
                       aria-hidden

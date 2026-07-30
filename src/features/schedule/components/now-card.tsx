@@ -51,7 +51,7 @@ export function NowCard({ current }: { current: CurrentEntry }) {
             {current.activity.title}
           </h3>
           {current.activity.ministry ? (
-            <p className="flex flex-wrap gap-1.5">
+            <p data-entry="ministry" className="flex flex-wrap gap-1.5">
               <span
                 className={`inline-flex items-center rounded-control px-2 py-0.5 text-xs font-medium ${ministryChipClasses(current.activity.ministry)}`}
               >

@@ -52,7 +52,7 @@ export function AllBlockCard({
       <p className="text-sm text-ink-muted">Runs through {blockLabel}</p>
 
       {activity.ministry ? (
-        <p className="flex flex-wrap gap-1.5">
+        <p data-entry="ministry" className="flex flex-wrap gap-1.5">
           <span
             className={cn(
               "inline-flex items-center rounded-control px-2 py-0.5 text-xs font-medium",

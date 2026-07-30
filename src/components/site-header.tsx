@@ -56,7 +56,11 @@ function NavLink({
       onClick={onNavigate}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "rounded-control px-1 py-1 text-sm font-medium text-ink-muted transition-colors duration-fast hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
+        // inline-flex + min-h-11 so the link is a 44px tap target without
+        // taking any more horizontal room, which the desktop bar has none
+        // of to spare. The underline on hover is the non-colour half of
+        // the state change: colour alone is not a signal.
+        "inline-flex min-h-11 items-center rounded-control px-1.5 text-sm font-medium text-ink-muted underline-offset-8 transition-colors duration-fast hover:text-ink hover:underline hover:decoration-2 active:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
         isActive && "text-ink",
         // Over the photograph the muted/active pair cannot carry the
         // distinction: ink-muted on the top scrim fails AA, and dimming
@@ -160,9 +164,21 @@ export function SiteHeader() {
         <div className="shell flex h-full items-center justify-between gap-4">
           <BrandLockup />
 
+          {/*
+            lg, not md. Eight links plus the lockup plus the theme toggle
+            do not fit in a 768px viewport: measured, the bar overflowed
+            the document by 126px at 768 and 74px at 820, on every route,
+            which is a horizontal scrollbar on every page of the site at
+            tablet width. It had been there since the nav was written and
+            was invisible because nothing ever measured it.
+
+            The gap steps rather than sitting at 6 throughout, because at
+            exactly 1024 the shell's content box is 944px and the bar needs
+            all of it.
+          */}
           <nav
             aria-label="Primary"
-            className="hidden md:flex md:items-center md:gap-6"
+            className="hidden lg:flex lg:items-center lg:gap-4 xl:gap-6"
           >
             {navLinks.map((link) => (
               <NavLink key={link.href} {...link} />
@@ -177,7 +193,11 @@ export function SiteHeader() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="md:hidden group-data-[header-state=transparent]/header:text-white"
+                  // size-8 is a 32px control. The pseudo-element takes the
+                  // hit area to 44px without changing anything that is
+                  // painted, which is the right trade in a header whose
+                  // height is a token two other components depend on.
+                  className="relative before:absolute before:-inset-1.5 before:content-[''] lg:hidden group-data-[header-state=transparent]/header:text-white"
                   aria-label="Open menu"
                 >
                   <Menu aria-hidden />
@@ -189,7 +209,7 @@ export function SiteHeader() {
                 </SheetHeader>
                 <nav
                   aria-label="Primary"
-                  className="flex flex-col gap-1 px-4 pb-4"
+                  className="flex flex-col gap-0.5 px-4 pb-4"
                 >
                   {navLinks.map((link) => (
                     <NavLink
