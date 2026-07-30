@@ -18,7 +18,19 @@ import { launch } from "puppeteer-core";
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const IMAGE = "http://localhost:3100/hero/church.webp";
 
-const NAVY = "5, 34, 82"; /* --color-navy-900 #052252 */
+/*
+ * The scrim ink. Near-black #0b0f14 rather than the brand navy: black is
+ * darker, so it protects type at a lower alpha, and it darkens without
+ * tinting so the photograph keeps its own colour. Measured over a pure-
+ * white pixel, the alpha each ink needs before white type reaches 4.5:1:
+ *
+ *   navy #052252   0.62
+ *   #0b0f14        0.57
+ *   pure black     0.54
+ *
+ * Keep in sync with SCRIM_INK in src/lib/hero.ts.
+ */
+const INK = "11, 15, 20"; /* #0b0f14 */
 
 /** width x height pairs: the crop depends on container aspect ratio. */
 const VIEWPORTS = [
@@ -37,17 +49,17 @@ const heightMode = process.argv[2] ?? "full";
  * two (a 44%-tall element whose gradient also ends at 44%) kills the
  * gradient at 19% of the frame and leaves the top of the text block bare.
  *
- * The floor both scrims have to clear: navy over a pure-white pixel needs
- * alpha >= ~0.63 for white type to reach 4.5:1. 0.60 gives 4.33:1 and
- * fails. So wherever type sits, alpha stays above that and only then
- * fades.
+ * The floor both scrims have to clear: #0b0f14 over a pure-white pixel
+ * needs alpha >= 0.57 for white type to reach 4.5:1, and 0.58 is used so
+ * the margin is not one rounding step wide. Wherever type sits, alpha
+ * stays above that and only then fades.
  */
 const topStops =
   process.argv[3] ??
-  `rgba(${NAVY}, 0.85) 0px, rgba(${NAVY}, 0.82) 48px, rgba(${NAVY}, 0.72) 76px, rgba(${NAVY}, 0.40) 120px, rgba(${NAVY}, 0) 176px`;
+  `rgba(${INK}, 0.62) 0px, rgba(${INK}, 0.60) 80px, rgba(${INK}, 0.44) 104px, rgba(${INK}, 0.22) 130px, rgba(${INK}, 0.08) 152px, rgba(${INK}, 0) 176px`;
 const bottomStops =
   process.argv[4] ??
-  `rgba(${NAVY}, 0.95) 0%, rgba(${NAVY}, 0.93) 34%, rgba(${NAVY}, 0.86) 52%, rgba(${NAVY}, 0.66) 70%, rgba(${NAVY}, 0.34) 86%, rgba(${NAVY}, 0) 100%`;
+  `rgba(${INK}, 0.62) 0%, rgba(${INK}, 0.60) 70%, rgba(${INK}, 0.58) 82%, rgba(${INK}, 0.40) 88%, rgba(${INK}, 0.20) 93%, rgba(${INK}, 0.07) 97%, rgba(${INK}, 0) 100%`;
 /*
  * A percentage alone cannot work. The text block is a fixed number of
  * pixels tall, the hero is not, so at 60svh on a short viewport 45% of
@@ -55,7 +67,7 @@ const bottomStops =
  * title lands where the scrim has already faded out. The floor keeps the
  * dense part of the gradient behind the type at every height.
  */
-const bottomHeight = process.argv[5] ?? "max(45%, 28rem)";
+const bottomHeight = process.argv[5] ?? "max(30%, 20rem)";
 
 function srgbToLinear(channel) {
   const c = channel / 255;
@@ -89,10 +101,10 @@ function heroHtml(mode) {
   .hero img { position: absolute; inset: 0; width: 100%; height: 100%;
               object-fit: cover; z-index: -20; }
   /* Top scrim: sits only behind the header. */
-  .scrim-top { position: absolute; top: 0; left: 0; right: 0; height: 168px;
+  .scrim-top { position: absolute; top: 0; left: 0; right: 0; height: 176px;
                z-index: -10; pointer-events: none;
                background: linear-gradient(to bottom, ${topStops}); }
-  /* Bottom scrim: lower 44%, behind the text block. */
+  /* Bottom scrim: behind the text block and no further. */
   .scrim-bottom { position: absolute; bottom: 0; left: 0; right: 0;
                   height: ${bottomHeight};
                   z-index: -10; pointer-events: none;
@@ -107,10 +119,13 @@ function heroHtml(mode) {
   .cta { align-self: flex-start; background: #fff; color: #052252;
          padding: .625rem 1.25rem; border-radius: 5px;
          font: 500 0.875rem/1.25rem system-ui; }
-  /* The header strip, so the top scrim is measured where the nav sits. */
-  #headerblock { position: absolute; top: 0; left: 0; right: 0;
+  /* The header strip, so the top scrim is measured where the nav sits.
+     5rem tall, matching --spacing-header: the box the type sits in is
+     what the top scrim has to cover, and a shorter mock box would sample
+     only the densest part of the gradient and pass too easily. */
+  #headerblock { position: absolute; top: 0; left: 0; right: 0; height: 5rem;
                  display: flex; align-items: center; justify-content: space-between;
-                 max-width: 64rem; margin: 0 auto; padding: 1rem 1.5rem;
+                 max-width: 64rem; margin: 0 auto; padding: 0 1.5rem;
                  color: #fff; font: 500 0.875rem/1.25rem system-ui; }
 </style></head>
 <body>

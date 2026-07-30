@@ -46,46 +46,66 @@ export const HERO_IMAGE: HeroImage | undefined = {
   height: 962,
 };
 
-/*
- * The navy the scrims are painted in: --color-navy-900 #052252, as an
- * "r, g, b" triplet so alpha can vary per stop.
+/**
+ * The ink the scrims are painted in, as an "r, g, b" triplet so alpha can
+ * vary per stop.
+ *
+ * Near-black, not the brand navy, for two reasons. Black is darker, so it
+ * buys the same protection at a lower alpha and lets more of the frame
+ * through. And it darkens without tinting, so the photograph keeps its own
+ * colour instead of reading as a blue wash over the car park. Measured
+ * over a pure-white pixel, the alpha each candidate needs before white
+ * type reaches 4.5:1:
+ *
+ *   navy #052252   0.62
+ *   #0b0f14        0.57
+ *   pure black     0.54
+ *
+ * #0b0f14 rather than #000: it keeps a trace of the navy's hue, so the
+ * scrim sits in the brand's family where it meets the flat --color-navy-900
+ * fallback band, and it costs 0.03 of alpha against pure black to do it.
  */
-const NAVY = "5, 34, 82";
+const INK = "11, 15, 20"; /* #0b0f14 */
 
 /**
  * The alpha any scrim must reach where white text sits.
  *
- * Derived, not chosen. Navy composited over a pure-white pixel has to
+ * Derived, not chosen. #0b0f14 composited over a pure-white pixel has to
  * land at or below 0.1833 relative luminance for white to reach 4.5:1.
  * Solving for alpha over rgb(255,255,255):
  *
- *   0.55 -> 3.72:1  fail
- *   0.60 -> 4.33:1  fail
- *   0.63 -> 4.52:1  pass, the floor
- *   0.65 -> 5.07:1  pass
- *   0.70 -> 5.97:1  pass
+ *   0.54 -> 4.29:1  fail
+ *   0.57 -> 4.55:1  pass, but the margin is one rounding step wide
+ *   0.58 -> 4.71:1  the floor used below
+ *   0.60 -> 5.05:1  pass
+ *   0.62 -> 5.42:1  pass
  *
- * Every stop that sits behind type is kept above 0.63 with margin, and
- * the gradients only fall below it above the type.
+ * The pure-white premise is not hypothetical. Sweeping object-position
+ * across eleven horizontal and five vertical crops (tools/perf/crop-sweep.mjs)
+ * the brightest raw pixel inside the text block never drops below 0.97 at
+ * 1024, 1440 or 1920, and is 0.99 at the default centre crop. There is no
+ * crop of this photograph that puts the text over anything but white.
  */
-export const SCRIM_ALPHA_FLOOR = 0.63;
+export const SCRIM_ALPHA_FLOOR = 0.58;
 
 /**
  * Top scrim: sits behind the site header and nowhere else.
  *
  * Stops are in px, not percentages, because what it has to cover is a
- * fixed-height header (about 68px) rather than a fraction of a frame that
- * changes height with the phase. Holds 0.72 through the header, then
- * fades out by 176px so there is no visible edge across the sky.
+ * fixed-height header (--spacing-header, 5rem) rather than a fraction of a
+ * frame that changes height with the phase. Holds the 0.58 floor with
+ * margin through the full 80px of the header box, then eases out by 176px
+ * so there is no edge across the sky.
  *
- * Measured against the brightest composited pixel in the header's own box
- * at five widths: 5.91:1 at 390, 7.86:1 at 768, 7.78:1 at 1024, 7.86:1 at
- * 1440, 7.78:1 at 1920.
+ * Only as heavy as the header needs. The old navy version opened at 0.85
+ * and was still at 0.72 under the nav; it was sized to a floor of 0.63 in
+ * a darker-tinting ink, and it flattened the top fifth of the sky to do
+ * it.
  */
-export const HERO_SCRIM_TOP = `linear-gradient(to bottom, rgba(${NAVY}, 0.85) 0px, rgba(${NAVY}, 0.82) 48px, rgba(${NAVY}, 0.72) 76px, rgba(${NAVY}, 0.40) 120px, rgba(${NAVY}, 0) 176px)`;
+export const HERO_SCRIM_TOP = `linear-gradient(to bottom, rgba(${INK}, 0.62) 0px, rgba(${INK}, 0.60) 80px, rgba(${INK}, 0.44) 104px, rgba(${INK}, 0.24) 128px, rgba(${INK}, 0.10) 150px, rgba(${INK}, 0) 176px)`;
 
 /**
- * Bottom scrim: covers the car park and the text block over it, and stops.
+ * Bottom scrim: covers the text block and its own padding, and stops.
  *
  * Stops run across the scrim element's own height, and the element's
  * height decides how much of the frame is covered. Those two must not
@@ -93,26 +113,40 @@ export const HERO_SCRIM_TOP = `linear-gradient(to bottom, rgba(${NAVY}, 0.85) 0p
  * ended at 45% died at 19% of the frame and left the top of the title
  * bare, which is how the first version of this measured 2.12:1.
  *
- * The curve holds above the 0.63 floor to roughly 80% of the scrim and
- * only then falls away, because the type occupies the lower three
- * quarters of it. Above that the photograph is untouched.
+ * The curve holds 0.58 or better to 85% of the element, which is where the
+ * measured type footprint reaches (352px of a 416px element at every width
+ * from 1024 up), and eases out over the remaining 62px. The ease is
+ * concave on purpose: a straight ramp to zero terminates with a visible
+ * derivative change that reads as a band edge across the photograph,
+ * whereas dropping fast and then trailing puts the last, most noticeable
+ * part of the transition below 0.10 alpha where nothing can be seen.
  */
-export const HERO_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${NAVY}, 0.95) 0%, rgba(${NAVY}, 0.93) 42%, rgba(${NAVY}, 0.88) 64%, rgba(${NAVY}, 0.76) 78%, rgba(${NAVY}, 0.44) 90%, rgba(${NAVY}, 0) 100%)`;
+export const HERO_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${INK}, 0.62) 0%, rgba(${INK}, 0.60) 60%, rgba(${INK}, 0.58) 85%, rgba(${INK}, 0.42) 90%, rgba(${INK}, 0.24) 94%, rgba(${INK}, 0.10) 97%, rgba(${INK}, 0) 100%)`;
 
 /**
  * How tall the bottom scrim is, per phase.
  *
- * A bare percentage cannot do this job. The text block is a fixed number
- * of pixels tall and the hero is not, so on a short viewport 45% of the
- * frame is shorter than the type standing in it. The full-bleed phase
- * therefore carries a px floor, which only engages below a 1024-tall
- * viewport and takes the scrim to at most 54% of the frame.
+ * A percentage of the frame is the wrong unit and the old `max(45%, 26rem)`
+ * was mostly paying the percentage. What the scrim exists to cover is the
+ * text block, and the text block is type: its height is a number of pixels
+ * that changes with the breakpoint, not with the height of the viewport.
+ * Measured footprints, from the bottom of the frame to the top of the h1
+ * and including the block's own bottom padding:
  *
- * The compact phase needs no floor because its type is smaller: 45% is
- * genuinely enough there, so the shorter hero does not end up with a
- * scrim across the whole of it.
+ *   390   290px      1440  352px
+ *   768   236px      1920  352px
+ *   1024  325px      2560  352px
+ *
+ * So 26rem (416px) covers the worst case with 64px left over for the
+ * fade, and a flat rem value stops the scrim growing with the frame. That
+ * is the whole of the coverage saving on a large display: at 2560 the old
+ * rule painted 648px of scrim to protect 352px of type.
+ *
+ * The compact phase is the same calculation against its smaller type,
+ * whose footprint measures 154px at every width except 390, where the
+ * title takes a second line and it reaches 180px.
  */
 export const HERO_SCRIM_BOTTOM_HEIGHT = {
-  before: "max(45%, 26rem)",
-  compact: "45%",
+  before: "26rem",
+  compact: "15rem",
 } as const;

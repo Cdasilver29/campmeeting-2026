@@ -50,10 +50,14 @@ import {
  * against the bright sky by flattening the building as well, and the
  * building is the reason to run a photograph at all.
  *
- * Top scrim sits behind the header only. Bottom scrim covers the car park
- * and the text over it. The middle of the frame — the roof, the glass, the
- * church sign — is untouched. Alphas are measured, not chosen; the method
- * and the numbers are in src/lib/hero.ts.
+ * Painted in near-black rather than the brand navy. Black protects type at
+ * a lower alpha and darkens without tinting, so the car park now reads as
+ * a darkened photograph instead of a blue cast. Both scrims are sized to
+ * the box they exist to protect and no further: the top one to the
+ * header's 80px, the bottom one to the text block's measured footprint.
+ * The middle of the frame — the roof, the glass, the church sign — is
+ * untouched. Alphas are measured, not chosen; the method and the numbers
+ * are in src/lib/hero.ts.
  *
  * SOFTNESS
  * The source is 1634x962, so at full bleed it is upscaled 1.18x at a 1920
@@ -70,8 +74,16 @@ const HERO_ID = "home-hero";
  * are styled identically, so each pair below says the same thing twice
  * rather than a third rule existing for a third look.
  */
+/*
+ * This one is `data-`, not `group-data-`, and the difference is not
+ * cosmetic. `group-data-*` compiles to a DESCENDANT selector — the group
+ * element carries the attribute, the styled element sits inside it — so on
+ * the section that carries the attribute itself it matches nothing and the
+ * band silently stayed at h-svh in every phase. Everything below is on a
+ * descendant and is correctly `group-data-`.
+ */
 const COMPACT_HERO_HEIGHT =
-  "group-data-[hero-phase=during]/hero:h-[60svh] group-data-[hero-phase=after]/hero:h-[60svh]";
+  "data-[hero-phase=during]:h-[60svh] data-[hero-phase=after]:h-[60svh]";
 const COMPACT_SCRIM_HEIGHT =
   "group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact)] group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact)]";
 const COMPACT_BOTTOM_PADDING =
@@ -127,10 +139,11 @@ export function Hero() {
               style={{ backgroundImage: HERO_SCRIM_TOP }}
             />
 
-            {/* Behind the text block. Height is phase-dependent for the
-                reason given on HERO_SCRIM_BOTTOM_HEIGHT: the compact
-                phase's type is smaller, so 45% is enough there, while the
-                full-bleed phase needs a px floor on short viewports. */}
+            {/* Behind the text block. Height is phase-dependent because
+                the type is: the compact phases set a smaller title, so
+                their footprint is smaller and the scrim that covers it can
+                be shorter. See HERO_SCRIM_BOTTOM_HEIGHT for the measured
+                footprints both values are derived from. */}
             <div
               aria-hidden
               className={`absolute inset-x-0 bottom-0 -z-10 h-[var(--scrim-h)] ${COMPACT_SCRIM_HEIGHT}`}

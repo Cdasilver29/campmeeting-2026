@@ -1,6 +1,6 @@
 # Measurement harnesses
 
-Four standalone scripts used for the visual pass. They are not part of the
+Five standalone scripts used for the visual pass. They are not part of the
 build and nothing in `src/` imports them.
 
 ## Why these exist rather than Lighthouse
@@ -47,8 +47,9 @@ offline behaviour.
 | --- | --- |
 | `layout-cost.mjs` | forced style+layout of the full programme, median of N reflows across M pages. The primary instrument. |
 | `measure.mjs` | CDP trace: long-task total, style recalc, layout, paint, CLS, element count, at a fixed CPU throttle. |
-| `hero-contrast.mjs` | hero scrim contrast against a standalone mock, for iterating on gradient stops. |
-| `verify-hero.mjs` | the same measurement against the real built page at six widths, plus object-cover upscale factors. Use this one to confirm. |
+| `hero-contrast.mjs` | hero scrim contrast against a standalone mock, for iterating on gradient stops without a rebuild. |
+| `verify-hero.mjs` | the same measurement against the real built page at six widths, both header states and either hero phase, plus upscale factors. Use this one to confirm. |
+| `crop-sweep.mjs` | brightest **raw** photographic pixel behind the text block, per `object-position`. Answers "would a different crop let the scrim be lighter" before any scrim is designed. |
 
 Both contrast scripts hide the type with `visibility: hidden` before
 screenshotting, keeping its layout box, and then report the **brightest**
@@ -56,3 +57,27 @@ pixel in that box as a ratio against white. Filtering "near-white" pixels
 out of a shot that still contains white text also filters out the blown
 highlights that are the entire hazard, which is how an early version of
 this returned a passing number for a hero that failed.
+
+## Two traps in the hiding step, both of which produced wrong numbers
+
+**`transition-all` defeats `visibility: hidden`.** `visibility` is a
+transitionable property, so an element carrying `transition-all` — which
+is every shadcn `Button`, including the theme toggle in the header —
+stays visible for the full 150ms and flips at the end. Screenshotting
+immediately after the hide caught the toggle's white icon and reported it
+as the brightest backdrop pixel: 1.00:1, in both header states, on a
+header that actually measures 5.05:1 and 10.31:1. `verify-hero.mjs` now
+injects `transition: none !important` before hiding anything and waits two
+frames.
+
+**A tag list is not a subtree.** Hiding `a, button, span` leaves the
+`<svg>` inside a button visible if the button itself was missed. Hide
+every descendant.
+
+## Measuring the header against the right colour
+
+The header's type is white over the photograph and `--color-ink` once it
+takes its own glass surface. So the transparent state is measured as white
+against the **brightest** backdrop pixel, and the glass state as ink
+against the **darkest** one. Running white against both would be scoring a
+colour that is never used there, and would fail a header that is fine.
