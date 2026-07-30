@@ -95,14 +95,14 @@ function SectionHeading({
 
 export default function StyleguidePage() {
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-16 px-6 py-16">
+    <div className="shell flex flex-col gap-16 py-16">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-8">
         <div className="flex flex-col gap-2">
           <p className="text-sm tracking-wide text-ink-muted uppercase">
             Phase 1 — design system
           </p>
           <h1 className="font-display text-5xl text-ink">Style guide</h1>
-          <p className="max-w-prose text-ink-muted">
+          <p className="prose-column text-ink-muted">
             Every color token, type step, and UI primitive in one place, in
             both themes.
           </p>

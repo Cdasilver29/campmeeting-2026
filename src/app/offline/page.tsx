@@ -36,8 +36,8 @@ const needsSignal = [
  */
 export default function OfflinePage() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
-      <header className="flex flex-col gap-3">
+    <div className="shell flex flex-col gap-10 py-16">
+      <header className="prose-column flex flex-col gap-3">
         <h1 className="font-display text-4xl text-balance">
           This page needs a connection
         </h1>
@@ -47,7 +47,10 @@ export default function OfflinePage() {
         </p>
       </header>
 
-      <section aria-labelledby="offline-programme" className="flex flex-col gap-4">
+      <section
+        aria-labelledby="offline-programme"
+        className="prose-column flex flex-col gap-4"
+      >
         <h2 id="offline-programme" className="font-display text-2xl">
           Available now
         </h2>
@@ -84,7 +87,10 @@ export default function OfflinePage() {
         </ul>
       </section>
 
-      <section aria-labelledby="offline-days" className="flex flex-col gap-4">
+      <section
+        aria-labelledby="offline-days"
+        className="prose-column flex flex-col gap-4"
+      >
         <h2 id="offline-days" className="font-display text-2xl">
           Go straight to a day
         </h2>
@@ -99,7 +105,10 @@ export default function OfflinePage() {
         </ul>
       </section>
 
-      <section aria-labelledby="offline-limits" className="flex flex-col gap-4">
+      <section
+        aria-labelledby="offline-limits"
+        className="prose-column flex flex-col gap-4"
+      >
         <h2 id="offline-limits" className="font-display text-2xl">
           Waiting on signal
         </h2>

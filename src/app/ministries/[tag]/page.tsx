@@ -50,7 +50,7 @@ export default async function MinistryPage({
   const count = groups.reduce((total, group) => total + group.count, 0);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <div className="shell flex flex-col gap-10 py-16">
       <PageHeader {...ministryPageDefinition(tag)}>
         <p className="text-ink-muted">
           {copy.description}{" "}

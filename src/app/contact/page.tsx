@@ -18,9 +18,13 @@ const mapQuery = encodeURIComponent(
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
+    <div className="shell flex flex-col gap-12 py-16">
       <PageHeader {...contactPage} />
 
+      {/* Everything below the header is either prose, a form or a map, and
+          none of the three wants to be 80rem wide. They nest at the
+          measure; the header's rule above them still spans the shell. */}
+      <div className="prose-column flex flex-col gap-12">
       <Reveal>
         <section className="flex flex-col gap-4">
         <h2 className={DOC_HEADING}>Send a message</h2>
@@ -141,6 +145,7 @@ export default function ContactPage() {
         </div>
         </section>
       </Reveal>
+      </div>
     </div>
   );
 }

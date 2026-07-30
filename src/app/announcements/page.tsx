@@ -11,9 +11,10 @@ export const metadata = pageMetadata(announcementsPage);
 
 export default function AnnouncementsPage() {
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-16">
+    <div className="shell flex flex-col gap-8 py-16">
       <PageHeader {...announcementsPage} />
 
+      <div className="prose-column">
       {announcementsByDate.length === 0 ? (
         <EmptyState
           icon={CheckCircle2}
@@ -31,6 +32,7 @@ export default function AnnouncementsPage() {
       ) : (
         <AnnouncementsList announcements={announcementsByDate} />
       )}
+      </div>
     </div>
   );
 }

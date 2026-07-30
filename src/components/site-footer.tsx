@@ -28,7 +28,7 @@ const headingClassName = "text-xs font-medium tracking-wide text-ink uppercase";
 export function SiteFooter() {
   return (
     <footer className="border-t border-line bg-surface-muted">
-      <div className="mx-auto grid max-w-5xl gap-8 px-6 py-10 text-sm text-ink-muted sm:grid-cols-2 lg:grid-cols-3">
+      <div className="shell grid gap-8 py-10 text-sm text-ink-muted sm:grid-cols-2 lg:grid-cols-3">
         <div className="flex flex-col gap-1">
           <BrandLockup size="footer" className="mb-2" />
           <p>{eventInfo.church.address}</p>
@@ -73,8 +73,13 @@ export function SiteFooter() {
         </nav>
       </div>
 
-      <div className="border-t border-line px-6 py-4 text-center text-xs text-ink-muted">
-        © {eventInfo.year} {eventInfo.church.name}. All rights reserved.
+      {/* The rule spans the viewport; the line of type inside it sits on
+          the shell, so the copyright starts where the lockup above it
+          does rather than on its own margin. */}
+      <div className="border-t border-line">
+        <p className="shell py-4 text-center text-xs text-ink-muted">
+          © {eventInfo.year} {eventInfo.church.name}. All rights reserved.
+        </p>
       </div>
     </footer>
   );

@@ -164,9 +164,7 @@ export function Hero() {
           is not decoration: it is what lets the bottom scrim stay at 45%
           of a 60svh band instead of covering the whole of it.
         */}
-        <div
-          className={`mx-auto w-full max-w-5xl px-6 pb-16 ${COMPACT_BOTTOM_PADDING}`}
-        >
+        <div className={`shell pb-16 ${COMPACT_BOTTOM_PADDING}`}>
           <div className={`flex max-w-2xl flex-col gap-4 ${COMPACT_STACK_GAP}`}>
             <h1
               className={`font-display text-hero text-balance text-white ${COMPACT_TITLE}`}

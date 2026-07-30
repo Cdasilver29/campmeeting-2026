@@ -19,7 +19,7 @@ export const metadata = pageMetadata(schedulePage);
  */
 export default function SchedulePage() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <div className="shell flex flex-col gap-10 py-16">
       <PageHeader {...schedulePage} />
 
       <ScheduleProgramme />

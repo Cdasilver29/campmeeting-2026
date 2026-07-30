@@ -10,7 +10,7 @@ export const metadata = pageMetadata(speakersPage);
 
 export default function SpeakersPage() {
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-10 px-6 py-16">
+    <div className="shell flex flex-col gap-10 py-16">
       <PageHeader {...speakersPage}>
         <p className="text-ink-muted">
           Photographs and biographies follow once the committee confirms them.

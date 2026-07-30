@@ -37,10 +37,10 @@ export default function DownloadsPage() {
   const pdf = programPdf();
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <div className="shell flex flex-col gap-10 py-16">
       <PageHeader {...downloadsPage} />
 
-      <Reveal>
+      <Reveal className="prose-column">
       {pdf ? (
         <a
           href={PROGRAM_PDF_PATH}

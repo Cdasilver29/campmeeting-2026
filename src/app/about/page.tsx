@@ -3,16 +3,26 @@ import { Reveal } from "@/components/reveal";
 import { aboutSections } from "@/features/about/copy";
 import { pageMetadata } from "@/lib/metadata";
 import { aboutPage } from "@/lib/page-identity";
-import { DOC_BODY, DOC_HEADING, DOC_SECTION, DOC_STACK } from "@/lib/typography";
+import {
+  DOC_BODY,
+  DOC_HEADING,
+  DOC_SECTION,
+  DOC_STACK,
+  PROSE_COLUMN,
+} from "@/lib/typography";
 
 export const metadata = pageMetadata(aboutPage);
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
+    <div className="shell flex flex-col gap-12 py-16">
       <PageHeader {...aboutPage} />
 
-      <div className={DOC_STACK}>
+      {/* The document nests at the measure inside the shell: the header
+          above rules the full 80rem, the reading column does not. Putting
+          the cap on the column rather than on each paragraph is what keeps
+          the headings, the rules and the body on one left and right edge. */}
+      <div className={`${PROSE_COLUMN} ${DOC_STACK}`}>
         {aboutSections.map((section, index) => (
           // One Reveal per section, which is the granularity Reveal is
           // for: a heading and the paragraphs under it, never a paragraph

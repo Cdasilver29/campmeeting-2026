@@ -153,7 +153,11 @@ export function SiteHeader() {
           // transparent type over a photograph.
         )}
       >
-        <div className="mx-auto flex h-full max-w-5xl items-center justify-between gap-4 px-6">
+        {/* `shell`, the same utility every page wrapper carries, so the
+            lockup's left edge and the page h1's left edge are the same
+            number at every breakpoint rather than two numbers that happen
+            to agree. See the width system block in globals.css. */}
+        <div className="shell flex h-full items-center justify-between gap-4">
           <BrandLockup />
 
           <nav

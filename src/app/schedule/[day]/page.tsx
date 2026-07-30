@@ -41,7 +41,7 @@ export default async function ScheduleDayPage({
   if (!day) notFound();
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <div className="shell flex flex-col gap-10 py-16">
       {/* This day as an Event, with every session and untimed activity
           nested as a subEvent. */}
       <JsonLd data={dayEventDocument(day)} />

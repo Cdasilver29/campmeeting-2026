@@ -47,7 +47,7 @@ export default async function SpeakerPage({
   const total = groups.reduce((count, group) => count + group.sessions.length, 0);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <div className="shell flex flex-col gap-10 py-16">
       {/* Left-aligned like every other page now, rather than centred: the
           role has moved into the eyebrow, where the share card already put
           it, so the name no longer needs a subtitle under it. */}
@@ -55,7 +55,7 @@ export default async function SpeakerPage({
         {...speakerPageDefinition(speaker)}
         media={<SpeakerAvatar speaker={speaker} size="lg" />}
       >
-        <p className="max-w-prose text-ink-muted italic">
+        <p className="prose-column text-ink-muted italic">
           {speaker.bio ?? "Biography to follow."}
         </p>
       </PageHeader>

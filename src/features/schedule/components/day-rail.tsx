@@ -31,7 +31,11 @@ export function DayRail({ filters }: { filters: ScheduleFilters }) {
       // a 34,000px page. top-header is the same token the header sets its
       // own height from, so the two cannot drift apart. The background is
       // opaque because the programme scrolls underneath it.
-      className="sticky top-header z-30 -mx-6 border-b border-line bg-surface px-6 py-2"
+      // shell-bleed rather than a hardcoded -mx-6/px-6 pair: the gutter is
+      // now one variable that steps at md and lg, so a literal 6 here
+      // would leave the rail's bar out of step with its own page from the
+      // first breakpoint onward.
+      className="shell-bleed sticky top-header z-30 border-b border-line bg-surface py-2"
     >
       <ul className="flex gap-2 overflow-x-auto pb-1">
         <li>

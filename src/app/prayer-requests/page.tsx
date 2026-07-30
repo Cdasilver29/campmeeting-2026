@@ -7,14 +7,18 @@ export const metadata = pageMetadata(prayerRequestsPage);
 
 export default function PrayerRequestsPage() {
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-16">
+    <div className="shell flex flex-col gap-8 py-16">
       <PageHeader {...prayerRequestsPage}>
         <p className="text-ink-muted">
           Whatever you are carrying, you are welcome to share it here.
         </p>
       </PageHeader>
 
-      <PrayerRequestForm />
+      {/* A form field is read the way a line of prose is, so it takes the
+          same measure rather than the full shell. */}
+      <div className="prose-column">
+        <PrayerRequestForm />
+      </div>
     </div>
   );
 }

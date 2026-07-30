@@ -26,7 +26,7 @@ export default function MinistriesPage() {
   const otherTags = programMinistries.filter((tag) => !hasOwnPage(tag));
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-14 px-6 py-16">
+    <div className="shell flex flex-col gap-14 py-16">
       <PageHeader {...ministriesPage}>
         <p className="text-ink-muted">
           These run enough of the programme to be worth a page of their own.

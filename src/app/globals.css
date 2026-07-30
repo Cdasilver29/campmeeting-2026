@@ -310,6 +310,81 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ── Width system ─────────────────────────────────────────────────────
+   Two widths, and every box on the site is one of them.
+
+   --width-shell is the outer grid. The header lockup, the footer columns,
+   the hero text block and every page wrapper resolve to it with the same
+   gutter, so a page's h1 starts at exactly the x position the wordmark
+   above it does. Before this there were four competing widths — 48rem on
+   eleven page wrappers, 42rem on two, 64rem on the shell and the hero,
+   56rem on the styleguide — which is why nothing lined up: at 1920 the
+   content column was 768px with 576px of dead margin either side, and the
+   lockup began 128px to the left of every page title.
+
+   80rem rather than the 64rem the shell used to run at, because the
+   programme is a four-part row (time, title, presenter, ministry) and
+   768px was starving it. Much past 80rem and the day rail's nine tiles
+   start to look marooned in their own bar.
+
+   --width-prose is a measure, not a container. Body copy nests at it
+   INSIDE the shell: the container is wide, the line length is not. 68ch
+   sits inside the 45-75 characters typographic practice settles on.
+
+   --shell-gutter is one value stepped by breakpoint rather than a
+   px-5/md:px-8/lg:px-10 triple repeated at every call site. Anything that
+   needs to break out of the gutter and paint to the column edge — the
+   sticky day rail — can read it back, which a utility triple cannot
+   offer.
+
+   None of the three is in @theme. They generate no utilities of their own
+   (`shell`, `shell-bleed` and `prose-column` below are the whole
+   interface), and a @theme variable that no generated utility references
+   is liable to be tree-shaken out of the built stylesheet. :root always
+   emits. */
+:root {
+  --width-shell: 80rem;
+  --width-prose: 68ch;
+  --shell-gutter: 1.25rem;
+}
+
+@media (width >= 48rem) {
+  :root {
+    --shell-gutter: 2rem;
+  }
+}
+
+@media (width >= 64rem) {
+  :root {
+    --shell-gutter: 2.5rem;
+  }
+}
+
+/* The one alignment rule. Every page wrapper, the header inner, the footer
+   inner and the hero text block carry this and nothing else width-related,
+   so they cannot drift: there is no second copy of the number to update. */
+@utility shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--width-shell);
+  padding-inline: var(--shell-gutter);
+}
+
+/* For a child that must paint edge to edge of the shell's content box
+   while its own contents stay on the gutter — the sticky day rail's bar.
+   Reads the same variable, so it cannot fall out of step with `shell`. */
+@utility shell-bleed {
+  margin-inline: calc(var(--shell-gutter) * -1);
+  padding-inline: var(--shell-gutter);
+}
+
+/* The measure, applied to the column that holds prose rather than to each
+   paragraph in it, so headings, rules and body all share one left edge and
+   one right edge. */
+@utility prose-column {
+  max-width: var(--width-prose);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

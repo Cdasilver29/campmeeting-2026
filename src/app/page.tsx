@@ -40,7 +40,7 @@ export default function Home() {
 
       {/* One reveal for the whole clock-dependent block, not one per
           session inside it. */}
-      <Reveal className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-16">
+      <Reveal className="shell flex flex-col gap-6 py-16">
         <p className="text-sm text-ink-muted">All times are East Africa Time.</p>
         <TodayView />
       </Reveal>

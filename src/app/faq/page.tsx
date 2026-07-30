@@ -10,7 +10,7 @@ export const metadata = pageMetadata(faqPage);
 
 export default function FaqPage() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <div className="shell flex flex-col gap-10 py-16">
       {/* The badge sentence carries markup, so it goes in the slot below
           the rule rather than into the meta line, which is a plain string
           shared with the share card. */}
@@ -27,7 +27,7 @@ export default function FaqPage() {
       {/* A question and its answer are one section, so one Reveal covers
           the pair. A rule above each entry after the first gives the list
           a visible rhythm instead of relying on the gap alone. */}
-      <dl className="flex flex-col">
+      <dl className="prose-column flex flex-col">
         {faqItems.map((item, index) => (
           <Reveal
             key={item.question}

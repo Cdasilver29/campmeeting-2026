@@ -14,12 +14,27 @@
  */
 
 /**
- * The measure. 68 characters is inside the 45-75 that typographic practice
- * settles on, and at --text-base it lands around 34rem — comfortably
- * narrower than the 48rem column the pages are built in, which is what
- * makes it do anything.
+ * The measure, read from --width-prose rather than written as a literal
+ * here. It is one half of the width system in globals.css and the shell is
+ * the other; keeping the number in one place is what stops a document page
+ * and a schedule page from disagreeing about how wide a line of text is.
+ *
+ * 68 characters is inside the 45-75 that typographic practice settles on,
+ * and at --text-base it lands around 34rem — less than half the 80rem
+ * shell the pages are now built in, which is what makes it do anything.
  */
-export const MEASURE = "max-w-[68ch]";
+export const MEASURE = "max-w-(--width-prose)";
+
+/**
+ * The container a document's sections sit in, so the headings, the rules
+ * between sections and the paragraphs all share one left and right edge.
+ *
+ * This is the piece the old layout could not have: at a 48rem wrapper the
+ * paragraphs were capped at 68ch and everything else ran to 48rem, which
+ * is close enough to look like a mistake rather than a decision. At an
+ * 80rem shell the difference would have been unmissable.
+ */
+export const PROSE_COLUMN = MEASURE;
 
 /** A section heading: display face, and the space above it that separates sections. */
 export const DOC_HEADING = "font-display text-2xl text-ink";
