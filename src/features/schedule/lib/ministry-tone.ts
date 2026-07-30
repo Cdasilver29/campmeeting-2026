@@ -63,3 +63,23 @@ const chipByFamily: Record<MinistryFamily, string> = {
 export function ministryChipClasses(tag: MinistryTag): string {
   return chipByFamily[familyByTag[tag]];
 }
+
+/**
+ * The family's ink as a fill, for a swatch rather than a chip.
+ *
+ * A swatch has no text on it, so it takes the ink and not the tint: the
+ * tint exists to be legible under type and is far too pale to read as a
+ * mark on its own. Used on /ministries, where the label beside it carries
+ * the meaning and the swatch only ties the row back to the families the
+ * programme uses.
+ */
+const dotByFamily: Record<MinistryFamily, string> = {
+  devotion: "bg-tag-devotion",
+  word: "bg-tag-word",
+  care: "bg-tag-care",
+  community: "bg-tag-community",
+};
+
+export function ministryDotClasses(tag: MinistryTag): string {
+  return dotByFamily[familyByTag[tag]];
+}

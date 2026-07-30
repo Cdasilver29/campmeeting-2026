@@ -1,7 +1,9 @@
 import { PageHeader } from "@/components/page-header";
+import { Reveal } from "@/components/reveal";
 import { aboutSections } from "@/features/about/copy";
 import { pageMetadata } from "@/lib/metadata";
 import { aboutPage } from "@/lib/page-identity";
+import { DOC_BODY, DOC_HEADING, DOC_SECTION, DOC_STACK } from "@/lib/typography";
 
 export const metadata = pageMetadata(aboutPage);
 
@@ -10,18 +12,23 @@ export default function AboutPage() {
     <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
       <PageHeader {...aboutPage} />
 
-      <div className="flex flex-col gap-10">
-        {aboutSections.map((section) => (
-          <section key={section.heading} className="flex flex-col gap-3">
-            <h2 className="font-display text-2xl text-ink">
-              {section.heading}
-            </h2>
-            {section.paragraphs.map((paragraph, index) => (
-              <p key={index} className="text-ink-muted">
+      <div className={DOC_STACK}>
+        {aboutSections.map((section, index) => (
+          // One Reveal per section, which is the granularity Reveal is
+          // for: a heading and the paragraphs under it, never a paragraph
+          // at a time. Same treatment /speakers and /ministries already
+          // use, which is the point of extending it here.
+          <Reveal key={section.heading} className={DOC_SECTION}>
+            <h2 className={DOC_HEADING}>{section.heading}</h2>
+            {section.paragraphs.map((paragraph, paragraphIndex) => (
+              <p key={paragraphIndex} className={DOC_BODY}>
                 {paragraph}
               </p>
             ))}
-          </section>
+            {index < aboutSections.length - 1 ? (
+              <hr className="mt-6 h-px w-full border-0 bg-line" />
+            ) : null}
+          </Reveal>
         ))}
       </div>
     </div>

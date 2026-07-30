@@ -1,9 +1,11 @@
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
+import { Reveal } from "@/components/reveal";
 import { eventInfo } from "@/data";
 import { ContactForm } from "@/features/forms/contact-form";
 import { pageMetadata } from "@/lib/metadata";
 import { contactPage } from "@/lib/page-identity";
+import { DOC_BODY, DOC_HEADING } from "@/lib/typography";
 
 export const metadata = pageMetadata(contactPage);
 
@@ -19,13 +21,16 @@ export default function ContactPage() {
     <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-16">
       <PageHeader {...contactPage} />
 
-      <section className="flex flex-col gap-4">
-        <h2 className="font-display text-2xl text-ink">Send a message</h2>
+      <Reveal>
+        <section className="flex flex-col gap-4">
+        <h2 className={DOC_HEADING}>Send a message</h2>
         <ContactForm />
-      </section>
+        </section>
+      </Reveal>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="font-display text-2xl text-ink">Get in touch</h2>
+      <Reveal>
+        <section className="flex flex-col gap-3">
+        <h2 className={DOC_HEADING}>Get in touch</h2>
         <ul className="flex flex-col gap-2 text-ink-muted">
           <li className="flex items-center gap-2">
             <Phone aria-hidden className="size-4 shrink-0" />
@@ -69,11 +74,13 @@ export default function ContactPage() {
             </a>
           </li>
         </ul>
-      </section>
+        </section>
+      </Reveal>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="font-display text-2xl text-ink">Find us</h2>
-        <p className="flex items-start gap-2 text-ink-muted">
+      <Reveal>
+        <section className="flex flex-col gap-3">
+        <h2 className={DOC_HEADING}>Find us</h2>
+        <p className={`flex items-start gap-2 ${DOC_BODY}`}>
           <MapPin aria-hidden className="mt-0.5 size-4 shrink-0" />
           <span>
             {eventInfo.church.name}, {eventInfo.church.address}.
@@ -97,10 +104,12 @@ export default function ContactPage() {
           Open in Google Maps
           <ExternalLink aria-hidden className="size-3.5" />
         </a>
-      </section>
+        </section>
+      </Reveal>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="font-display text-2xl text-ink">Give</h2>
+      <Reveal>
+        <section className="flex flex-col gap-3">
+        <h2 className={DOC_HEADING}>Give</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1 rounded-card bg-surface p-4 ring-1 ring-line">
             <p className="text-xs font-medium tracking-wide text-ink-muted uppercase">
@@ -130,7 +139,8 @@ export default function ContactPage() {
             </p>
           </div>
         </div>
-      </section>
+        </section>
+      </Reveal>
     </div>
   );
 }

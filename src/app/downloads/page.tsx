@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Download, FileText } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
+import { Reveal } from "@/components/reveal";
 import { pageMetadata } from "@/lib/metadata";
 import { downloadsPage } from "@/lib/page-identity";
 
@@ -39,6 +40,7 @@ export default function DownloadsPage() {
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
       <PageHeader {...downloadsPage} />
 
+      <Reveal>
       {pdf ? (
         <a
           href={PROGRAM_PDF_PATH}
@@ -71,6 +73,7 @@ export default function DownloadsPage() {
           }
         />
       )}
+      </Reveal>
     </div>
   );
 }
