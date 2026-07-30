@@ -1,8 +1,21 @@
 import { ministryLabels, type CurrentEntry } from "../lib/today";
+import { ministryChipClasses } from "../lib/ministry-tone";
 import { LiveDot } from "./live-dot";
-import { SessionCard, TimeRange } from "./session-card";
+import { ENTRY_GRID, SessionCard, TimeRange } from "./session-card";
 
 const sectionHeading = "font-display text-2xl text-ink";
+
+/*
+ * What makes the now card unmistakable, in one place because both
+ * branches below have to look identical.
+ *
+ * Four cues, so none of them is doing the job alone: a 2px accent ring
+ * where every other card has a 1px hairline, a tinted surface, the
+ * heading's live dot, and the size of the title. Deliberately not a
+ * shadow — the brief rules out oversized shadows and a ring reads as
+ * emphasis at any elevation.
+ */
+const NOW_SURFACE = "bg-primary/[0.06] ring-2 ring-primary";
 
 /**
  * The live indicator card: a timed session and an all-block activity are
@@ -22,22 +35,28 @@ export function NowCard({ current }: { current: CurrentEntry }) {
       {current.kind === "session" ? (
         <SessionCard
           session={current.session}
-          className="bg-surface-muted ring-2 ring-primary"
+          className={`${NOW_SURFACE} [&>h3]:text-lg`}
         />
       ) : (
-        <article className="flex flex-col gap-2 rounded-card bg-surface-muted p-4 ring-2 ring-primary">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <article
+          className={`${ENTRY_GRID} rounded-card p-4 ${NOW_SURFACE}`}
+        >
+          <span className="flex min-h-6 items-center sm:col-start-1 sm:row-start-1">
             <TimeRange />
-            <span className="text-xs text-ink-muted">
-              {current.block.label}
-            </span>
-          </div>
-          <h3 className="text-base leading-snug font-medium text-ink">
+          </span>
+          <span className="text-xs tracking-wide text-ink-muted uppercase">
+            {current.block.label}
+          </span>
+          <h3 className="text-lg leading-6 font-semibold text-ink">
             {current.activity.title}
           </h3>
           {current.activity.ministry ? (
-            <p className="text-xs text-ink-muted">
-              {ministryLabels[current.activity.ministry]}
+            <p className="flex flex-wrap gap-1.5">
+              <span
+                className={`inline-flex items-center rounded-control px-2 py-0.5 text-xs font-medium ${ministryChipClasses(current.activity.ministry)}`}
+              >
+                {ministryLabels[current.activity.ministry]}
+              </span>
             </p>
           ) : null}
           {current.activity.note ? (

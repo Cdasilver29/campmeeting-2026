@@ -21,6 +21,13 @@ const URL = process.argv[2] ?? "http://localhost:3100/schedule";
 const ITERATIONS = Number(process.argv[3] ?? 60);
 const PAGES = Number(process.argv[4] ?? 5);
 const LABEL = process.argv[5] ?? "run";
+/*
+ * Optional CSS injected before measuring, so a candidate rule can be A/B'd
+ * against the same build rather than against a rebuild taken minutes
+ * apart on a machine whose load moves. Used for the content-visibility
+ * trial: pass the exact declaration the component would ship.
+ */
+const EXTRA_CSS = process.argv[6] ?? "";
 
 function median(values) {
   const sorted = [...values].sort((a, b) => a - b);
@@ -48,25 +55,52 @@ for (let p = 0; p < PAGES; p++) {
   });
 
   await page.goto(URL, { waitUntil: "load", timeout: 180000 });
+  if (EXTRA_CSS) await page.addStyleTag({ content: EXTRA_CSS });
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
   const result = await page.evaluate((iterations) => {
-    // The widest element that contains the whole programme. Changing its
-    // width invalidates layout for every descendant, which is the work
-    // being priced.
-    const target =
-      document.querySelector("main > div > div, main > div") ?? document.body;
+    /*
+     * The element that actually constrains the programme, found rather
+     * than hardcoded.
+     *
+     * The first version of this selected `main > div` and set `width`. That
+     * silently stopped measuring anything: the programme sits inside an
+     * `mx-auto max-w-3xl` container, so its used width is 768px whatever
+     * the 1440px-wide wrapper does, and Chrome correctly skipped the
+     * subtree. The instrument reported 0.80ms for a 4,773-element page and
+     * would have reported the same number for any change made to it.
+     *
+     * So: walk down from main and take the deepest element that still
+     * holds essentially the whole tree. That is the narrowest box every
+     * session depends on, and it re-derives itself when the markup moves.
+     */
+    const main = document.querySelector("main") ?? document.body;
+    const total = main.getElementsByTagName("*").length;
+    let target = main;
+    for (;;) {
+      const next = [...target.children].find(
+        (c) => c.getElementsByTagName("*").length >= total * 0.9,
+      );
+      if (!next) break;
+      target = next;
+    }
 
+    /*
+     * max-width, not width. The container is max-width-capped, and `width`
+     * loses to `max-width`, which is exactly how the previous version
+     * measured nothing. Alternating the cap by a hundredth of a pixel
+     * changes the used width of every descendant and cannot be coalesced
+     * away, while moving nothing a reader could see.
+     */
+    const base = target.getBoundingClientRect().width;
     const samples = [];
     for (let i = 0; i < iterations; i++) {
-      // Alternating a sub-pixel width forces a real geometry change that
-      // Chrome cannot coalesce away, without moving anything visibly.
-      target.style.width = i % 2 ? "calc(100% - 0.01px)" : "100%";
+      target.style.maxWidth = `${base - (i % 2) * 0.01}px`;
       const start = performance.now();
       void document.body.offsetHeight; // synchronous recalc + layout
       samples.push(performance.now() - start);
     }
-    target.style.width = "";
+    target.style.maxWidth = "";
 
     const sorted = samples.slice().sort((a, b) => a - b);
     const mid = sorted.length % 2
@@ -79,6 +113,10 @@ for (let p = 0; p < PAGES; p++) {
       p90: sorted[Math.floor(sorted.length * 0.9)],
       elements: document.getElementsByTagName("*").length,
       scrollHeight: document.documentElement.scrollHeight,
+      // Reported so a run that measured the wrong box is visible as such
+      // rather than as a good result.
+      target: `${target.tagName}.${(target.getAttribute("class") ?? "").slice(0, 40)}`,
+      targetDescendants: target.getElementsByTagName("*").length,
     };
   }, ITERATIONS);
 
@@ -101,3 +139,4 @@ console.log(
 );
 console.log(`  elements     ${perPage.map((r) => r.elements).join(", ")}`);
 console.log(`  scrollHeight ${perPage.map((r) => r.scrollHeight).join(", ")} px`);
+console.log(`  target       ${perPage[0].target} (${perPage[0].targetDescendants} descendants)`);

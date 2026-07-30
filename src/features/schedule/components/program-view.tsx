@@ -1,4 +1,4 @@
-import { blockGaps, type BlockGroup, type DayGroup, type ScheduleGap } from "../lib/entries";
+import { blockGaps, dayNumber, type BlockGroup, type DayGroup, type ScheduleGap } from "../lib/entries";
 import { AllBlockCard } from "./all-block-card";
 import { BookmarkToggle } from "./bookmark-toggle";
 import { SessionCard } from "./session-card";
@@ -34,14 +34,22 @@ function BlockSection({
 
   return (
     <section aria-labelledby={headingId} className="flex flex-col gap-3">
+      {/* A real divider in the display face, not bold body text. The block
+          is the second level of the programme's structure and reads as
+          one. */}
       <h3
         id={headingId}
-        className="text-sm font-medium tracking-wide text-ink-muted uppercase"
+        className="border-b border-line pb-1.5 font-display text-xl text-ink"
       >
         {group.block.label}
       </h3>
 
-      <ol className="flex flex-col gap-3">
+      {/*
+        The rail connecting a block's sessions is a border on this list,
+        drawn once per block. Not an element per row: `/schedule` renders
+        237 entries and a rail segment each would be 237 more.
+      */}
+      <ol className="flex flex-col gap-3 border-l-2 border-line pl-4 sm:pl-6">
         {group.entries.map((entry) => {
           const gap = gaps?.get(entry.key);
           return (
@@ -75,27 +83,53 @@ function BlockSection({
   );
 }
 
+/**
+ * How tall a day is likely to be, for `contain-intrinsic-size`.
+ *
+ * Only used for days that have never been on screen: the `auto` keyword
+ * means the browser replaces this with the real measurement the first
+ * time it renders one. So this needs to be roughly right, not exact —
+ * being roughly right is what keeps the scrollbar honest before anything
+ * has scrolled.
+ *
+ * Derived from the parts rather than measured and pasted, so a future
+ * year's programme with different day lengths still gets a sane number.
+ * Against the 2026 programme it totals about 27,000px where the rendered
+ * document is about 27,700.
+ */
+function intrinsicHeight(group: DayGroup): number {
+  return 140 + group.blocks.length * 64 + group.count * 100;
+}
+
 function DaySection({ group, showGaps }: { group: DayGroup; showGaps: boolean }) {
   const headingId = `day-${group.day.id}-heading`;
 
   return (
-    // The id is the deep-link target for /schedule?day=…; scroll-mt keeps
-    // the heading clear of the sticky site header once scrolled to.
+    // The id is the deep-link target for /schedule?day=…; scroll-mt clears
+    // both the sticky site header and the sticky day rail beneath it.
+    //
+    // content-visibility: auto skips style, layout and paint for days that
+    // are not near the viewport, which on a 27,000px page is nearly all of
+    // them. Measured on /schedule, forced style+layout of the whole
+    // programme: 7.30ms without, 0.90ms with. The content stays in the DOM
+    // and in the accessibility tree, so the page still reads offline and
+    // before hydration, which is the reason it is server-rendered whole.
     <section
       id={`day-${group.day.id}`}
       aria-labelledby={headingId}
-      className="flex scroll-mt-24 flex-col gap-6"
+      className="flex scroll-mt-40 flex-col gap-6 [content-visibility:auto]"
+      style={{ containIntrinsicSize: `auto ${intrinsicHeight(group)}px` }}
     >
-      <header className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-2">
+      <header className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b-2 border-ink/15 pb-2">
         <h2 id={headingId} className="font-display text-3xl text-ink">
           {group.day.displayLabel}
         </h2>
-        <time
-          dateTime={group.day.date}
-          className="tabular-figures text-sm text-ink-muted"
-        >
-          {group.day.date}
-        </time>
+        <p className="flex items-baseline gap-3 text-sm text-ink-muted">
+          <span>Day {dayNumber(group.day.id)}</span>
+          <time dateTime={group.day.date} className="tabular-figures">
+            {group.day.date}
+          </time>
+        </p>
       </header>
 
       <div className="flex flex-col gap-8">

@@ -4,6 +4,7 @@ import { Star, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { announcementsBySessionId, type Announcement, type FlatSession } from "@/data";
 import { cn } from "@/lib/utils";
+import { ministryChipClasses } from "../lib/ministry-tone";
 import { presenterNames } from "../lib/presenters";
 import { ministryLabels } from "../lib/today";
 
@@ -11,6 +12,11 @@ import { ministryLabels } from "../lib/today";
  * Times are set in tabular figures so the column stays flush down a
  * timeline. Rendered as a <time> pair rather than one string so the
  * machine-readable values survive for the Phase 6 structured data.
+ *
+ * Light weight and muted ink on purpose. A time is how you find the
+ * session you want, not what the session is, and it reads better as a
+ * quiet index down the left edge than as a competing headline. The title
+ * carries the weight.
  */
 export function TimeRange({
   start,
@@ -28,11 +34,21 @@ export function TimeRange({
   }
 
   return (
-    <span className={cn("tabular-figures text-sm text-ink-muted", className)}>
+    <span
+      className={cn(
+        // nowrap, and the column is sized to fit the longest range. A
+        // wrapped range reads as two times rather than one span, and the
+        // dash ends up stranded at the end of the first line.
+        "tabular-figures text-sm leading-6 font-normal whitespace-nowrap text-ink-muted",
+        className,
+      )}
+    >
       <time dateTime={start}>{start}</time>
       {end ? (
         <>
-          <span aria-hidden> – </span>
+          <span aria-hidden className="text-ink-muted/70">
+            {" – "}
+          </span>
           <span className="sr-only"> to </span>
           <time dateTime={end}>{end}</time>
         </>
@@ -40,6 +56,52 @@ export function TimeRange({
     </span>
   );
 }
+
+/**
+ * The card's own grid.
+ *
+ * One column on a phone, where a 5rem gutter would leave the titles no
+ * room. From `sm` up, a fixed time column and a content column: the time
+ * rail is placed explicitly in column one, everything else declares
+ * column two, so the times line up down the whole programme and the
+ * titles start from one edge.
+ *
+ * A variant on the parent rather than a wrapper element around the
+ * content. `/schedule` server-renders 237 entries, so one wrapper div per
+ * card is 237 more elements to lay out; this costs no markup at all.
+ * Nothing sets an explicit row: auto-placement fills column two from row
+ * one, which is what puts the first line of content level with the time
+ * whether that line is the title or the block eyebrow.
+ *
+ * `:not(:first-child)` is load-bearing. Written as `[&>*]:col-start-2` the
+ * rule also matches the rail, and `.parent > *` and `.sm\:col-start-1` have
+ * identical specificity, so the tie broke on stylesheet order — column 2
+ * won and every card rendered with an empty gutter and its times sitting
+ * where the titles should be. Excluding the first child removes the
+ * conflict rather than escalating it with `!important`.
+ */
+export const ENTRY_GRID =
+  "grid gap-x-4 gap-y-1.5 sm:grid-cols-[9.5rem_minmax(0,1fr)] sm:[&>*:not(:first-child)]:col-start-2";
+
+/**
+ * Column one: the time and the save control, on one line.
+ *
+ * One line rather than stacked, and this is why the gutter is 9.5rem
+ * rather than the 7rem the times alone would need. Stacked, the rail was
+ * the tallest thing in row one — a time plus a 24px control — so the
+ * title sat alone at the top of a 56px row and the ministry chip was
+ * pushed 38px clear of it. Every card carried that hole.
+ *
+ * `row-span-full` looks like the fix and is not: it compiles to
+ * `grid-row: 1 / -1`, and with no explicit row template `-1` resolves back
+ * to the first line, so the rail stays in row one and nothing changes.
+ * Keeping the rail one line tall solves it at the source.
+ *
+ * min-h-6 holds the line at the height of a 24px control, so the bookmark
+ * toggle appearing after mount shifts nothing.
+ */
+const CARD_RAIL =
+  "flex min-h-6 items-center justify-between gap-2 sm:col-start-1 sm:row-start-1 sm:justify-start";
 
 export function PresenterChips({ session }: { session: FlatSession }) {
   const names = presenterNames(session);
@@ -53,6 +115,37 @@ export function PresenterChips({ session }: { session: FlatSession }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * The ministry, as a tinted chip rather than a grey line of text.
+ *
+ * The tint groups seventeen tags into four families (see
+ * ../lib/ministry-tone.ts). It is a second cue, never the only one: the
+ * ministry's name is written in the chip, so nothing here depends on
+ * telling one muted hue from another.
+ */
+export function MinistryChip({
+  session,
+  className,
+}: {
+  session: Pick<FlatSession, "ministry">;
+  className?: string;
+}) {
+  if (!session.ministry) return null;
+
+  return (
+    <p className={cn("flex flex-wrap gap-1.5", className)}>
+      <span
+        className={cn(
+          "inline-flex items-center rounded-control px-2 py-0.5 text-xs font-medium",
+          ministryChipClasses(session.ministry),
+        )}
+      >
+        {ministryLabels[session.ministry]}
+      </span>
+    </p>
   );
 }
 
@@ -104,27 +197,32 @@ export function SessionCard({
   return (
     <article
       className={cn(
-        "flex flex-col gap-2 rounded-card bg-surface p-4 ring-1 ring-line",
+        ENTRY_GRID,
+        "rounded-card bg-surface p-4 ring-1 ring-line",
+        // Featured sessions carry real weight rather than an icon alone:
+        // the ring takes the featured colour and the surface a trace of
+        // it. Still not colour on its own — the star and its sr-only
+        // label say the same thing.
+        session.featured && "bg-featured/[0.04] ring-featured/35",
         className,
       )}
     >
-      {/* min-h-6 holds the row at the height of a 24px control, so a
-          bookmark toggle appearing after mount shifts nothing. */}
-      <div className="flex min-h-6 flex-wrap items-center justify-between gap-x-3 gap-y-1">
+      <div className={CARD_RAIL}>
         <TimeRange start={session.start} end={session.end} />
-        <div className="flex items-center gap-2">
-          {showBlockLabel ? (
-            <span className="text-xs text-ink-muted">{session.blockLabel}</span>
-          ) : null}
-          {meta}
-        </div>
+        {meta}
       </div>
 
-      <Heading className="flex items-start gap-1.5 text-base leading-snug font-medium text-ink">
+      {showBlockLabel ? (
+        <span className="text-xs tracking-wide text-ink-muted uppercase">
+          {session.blockLabel}
+        </span>
+      ) : null}
+
+      <Heading className="flex items-start gap-1.5 text-base leading-6 font-semibold text-ink">
         {session.featured ? (
           <Star
             aria-hidden
-            className="mt-0.5 size-4 shrink-0 fill-featured text-featured"
+            className="mt-1 size-3.5 shrink-0 fill-featured text-featured"
           />
         ) : null}
         <span>
@@ -139,11 +237,7 @@ export function SessionCard({
 
       <PresenterChips session={session} />
 
-      {session.ministry ? (
-        <p className="text-xs text-ink-muted">
-          {ministryLabels[session.ministry]}
-        </p>
-      ) : null}
+      <MinistryChip session={session} />
 
       {session.note ? (
         <p className="text-sm text-ink-muted">{session.note}</p>

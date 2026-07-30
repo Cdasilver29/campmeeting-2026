@@ -9,7 +9,13 @@ import { getTodayState, type TodayState } from "../lib/today";
 import { useNow } from "../use-now";
 import { Countdown } from "./countdown";
 import { NowCard } from "./now-card";
-import { PresenterChips, SessionCard, TimeRange } from "./session-card";
+import {
+  ENTRY_GRID,
+  MinistryChip,
+  PresenterChips,
+  SessionCard,
+  TimeRange,
+} from "./session-card";
 
 const sectionHeading =
   "font-display text-2xl text-ink";
@@ -42,17 +48,20 @@ function NextUpCard({ next, todayDate }: { next: FlatSession; todayDate: string 
       <h2 id="next-heading" className={sectionHeading}>
         Next up
       </h2>
-      <article className="flex flex-col gap-2 rounded-card bg-surface p-4 ring-1 ring-line">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+      {/* Same grid as SessionCard, so "Next up" and the timeline under it
+          share one time column rather than each inventing a layout. */}
+      <article className={`${ENTRY_GRID} rounded-card bg-surface p-4 ring-1 ring-line`}>
+        <span className="flex min-h-6 items-center sm:col-start-1 sm:row-start-1">
           <TimeRange start={next.start} end={next.end} />
-          <span className="text-xs text-ink-muted">
-            {isToday ? next.blockLabel : (day?.displayLabel ?? next.date)}
-          </span>
-        </div>
-        <h3 className="text-base leading-snug font-medium text-ink">
+        </span>
+        <span className="text-xs tracking-wide text-ink-muted uppercase">
+          {isToday ? next.blockLabel : (day?.displayLabel ?? next.date)}
+        </span>
+        <h3 className="text-base leading-6 font-semibold text-ink">
           {next.title}
         </h3>
         <PresenterChips session={next} />
+        <MinistryChip session={next} />
       </article>
     </section>
   );

@@ -93,6 +93,18 @@
      This lands at 5.65:1, matching the light-mode reading. */
   --color-featured: #e8695c;
 
+  /* Ministry families invert: the ink lightens and the tint darkens, both
+     by the same amount for all four, so the set stays a set. Ink on tint
+     measures 7.80:1 to 7.87:1 here, matching the light-mode readings. */
+  --color-tag-devotion: oklch(0.86 0.075 262);
+  --color-tag-devotion-tint: oklch(0.335 0.055 262);
+  --color-tag-word: oklch(0.86 0.075 300);
+  --color-tag-word-tint: oklch(0.335 0.055 300);
+  --color-tag-care: oklch(0.86 0.07 168);
+  --color-tag-care-tint: oklch(0.335 0.045 168);
+  --color-tag-community: oklch(0.86 0.075 62);
+  --color-tag-community-tint: oklch(0.335 0.05 62);
+
   /* shadcn base, pointed at the brand dark values above so dark mode
      is navy throughout instead of shadcn's own neutral grey scale. */
   --background: var(--color-surface);
@@ -172,6 +184,30 @@
   --color-featured: #c8271d; /* [program] use sparingly, never as a fill behind text */
   --color-live: #16a34a;     /* [functional] current-session indicator */
   --color-bookmark: #d97706; /* [functional] saved-session marker */
+
+  /* ── Ministry families ─────────────────────────────────────────────
+     [functional] The programme carries seventeen ministry tags. Seventeen
+     colours would be a rainbow, so the tags are grouped into four families
+     and the family is what carries a hue — see
+     src/features/schedule/lib/ministry-tone.ts for which tag sits where.
+
+     Related rather than arbitrary: every value is one oklch lightness and
+     one chroma with only the hue rotated, so the four read as a set and
+     none of them shouts. The ink sits at L 0.42 in light mode and 0.86 in
+     dark, the tint at 0.96 and 0.335, which puts ink on its own tint at
+     7.2:1 to 7.9:1 in both modes (measured, not modelled).
+
+     Colour is never the only signal. Every chip carries its ministry name
+     as text; the tint is a second, redundant cue for people who are
+     scanning rather than reading. */
+  --color-tag-devotion: oklch(0.42 0.1 262);
+  --color-tag-devotion-tint: oklch(0.96 0.02 262);
+  --color-tag-word: oklch(0.42 0.1 300);
+  --color-tag-word-tint: oklch(0.96 0.02 300);
+  --color-tag-care: oklch(0.42 0.08 168);
+  --color-tag-care-tint: oklch(0.96 0.02 168);
+  --color-tag-community: oklch(0.42 0.09 62);
+  --color-tag-community-tint: oklch(0.96 0.024 62);
 
   /* ── Type ──────────────────────────────────────────────────────────
      Display: Fraunces — a reverent, editorial serif with enough
