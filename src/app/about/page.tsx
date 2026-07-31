@@ -1,7 +1,10 @@
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { Reveal } from "@/components/reveal";
 import { aboutSections } from "@/features/about/copy";
+import { ACTION_LINK } from "@/lib/link-styles";
 import { pageMetadata } from "@/lib/metadata";
 import { aboutPage } from "@/lib/page-identity";
 import {
@@ -44,6 +47,27 @@ export default function AboutPage() {
                   {paragraph}
                 </p>
               ))}
+              {/* An outbound link rather than a restatement. The one on the
+                  first section is what keeps the denomination's own account
+                  of its beliefs where it belongs, on the denomination's
+                  site. Internal links use Link; external ones cannot. */}
+              {section.link ? (
+                section.link.external ? (
+                  <a
+                    href={section.link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`${ACTION_LINK} gap-1`}
+                  >
+                    {section.link.label}
+                    <ExternalLink aria-hidden className="size-3.5" />
+                  </a>
+                ) : (
+                  <Link href={section.link.href} className={ACTION_LINK}>
+                    {section.link.label}
+                  </Link>
+                )
+              ) : null}
               {index < aboutSections.length - 1 ? (
                 <hr className="mt-6 h-px w-full border-0 bg-line" />
               ) : null}
