@@ -345,6 +345,8 @@
 :root {
   --width-shell: 80rem;
   --width-prose: 68ch;
+  --width-field: 34rem;
+  --width-field-wide: 42rem;
   --shell-gutter: 1.25rem;
 }
 
@@ -383,6 +385,35 @@
    one right edge. */
 @utility prose-column {
   max-width: var(--width-prose);
+}
+
+/* ── Form field widths ────────────────────────────────────────────────
+   A field is not prose and does not want the prose measure. At 68ch the
+   Name field on /contact measured 686px, which is a text box eight times
+   longer than the longest name anyone will type into it: the eye has to
+   travel the whole box to find the caret, and a field that wide reads as
+   an invitation to write a paragraph.
+
+   34rem (544px) is the single-line cap. It is comfortably past the
+   longest realistic value in any of these fields and still short enough
+   to look like one control rather than a band across the page.
+
+   42rem for the containing column, so the message textarea — which IS
+   somewhere prose gets written, and where a cramped box is its own
+   usability problem — can be wider than the fields above it without ever
+   reaching the shell. The two together are what make the form read as a
+   column: a consistent left edge, a short ragged right edge on the
+   single-line fields, one wider box at the bottom.
+
+   `field-column` is the container; `field-control` caps the individual
+   control inside it. Both here rather than as utility strings in the
+   components, for the same reason `shell` is: one number, one place. */
+@utility field-column {
+  max-width: var(--width-field-wide);
+}
+
+@utility field-control {
+  max-width: var(--width-field);
 }
 
 /* ── Vertical rhythm ──────────────────────────────────────────────────

@@ -44,7 +44,12 @@ export function PrayerRequestForm() {
   });
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      noValidate
+      className="field-column flex flex-col gap-6"
+    >
       <HoneypotField />
 
       <fieldset className="flex flex-col gap-3">

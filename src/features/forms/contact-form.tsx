@@ -52,7 +52,12 @@ export function ContactForm() {
   });
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      noValidate
+      className="field-column flex flex-col gap-5"
+    >
       <HoneypotField />
 
       <TextField
