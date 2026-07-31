@@ -49,21 +49,19 @@ export default async function SpeakerPage({
 
   return (
     <>
-      {/* Left-aligned like every other page now, rather than centred: the
-          role has moved into the eyebrow, where the share card already put
-          it, so the name no longer needs a subtitle under it. */}
-      <Band>
-        <PageHeader
-          {...speakerPageDefinition(speaker)}
-          media={<SpeakerAvatar speaker={speaker} size="lg" />}
-        >
-          <p className="prose-column text-ink-muted italic">
-            {speaker.bio ?? "Biography to follow."}
-          </p>
-        </PageHeader>
-      </Band>
+      {/* The portrait sits in the header's media slot, above the eyebrow,
+          and the header band centres it. The role is in the eyebrow, where
+          the share card already put it, so the name needs no subtitle. */}
+      <PageHeader
+        {...speakerPageDefinition(speaker)}
+        media={<SpeakerAvatar speaker={speaker} size="lg" />}
+      >
+        <p className="text-ink-muted italic">
+          {speaker.bio ?? "Biography to follow."}
+        </p>
+      </PageHeader>
 
-      <Band tone="muted">
+      <Band>
       {total === 0 ? (
         <p className="text-ink-muted">
           No sessions are listed for {speakerLabel(speaker)} yet.

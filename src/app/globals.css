@@ -331,6 +331,11 @@
    INSIDE the shell: the container is wide, the line length is not. 68ch
    sits inside the 45-75 characters typographic practice settles on.
 
+   --width-header is the page header's own measure, inside its band. It is
+   narrower than --width-prose because the header is three short strings
+   set large and centred, not a document: at the prose measure the meta
+   line under a one-word title ran the full column and read as stranded.
+
    --shell-gutter is one value stepped by breakpoint rather than a
    px-5/md:px-8/lg:px-10 triple repeated at every call site. Anything that
    needs to break out of the gutter and paint to the column edge — the
@@ -347,6 +352,7 @@
   --width-prose: 68ch;
   --width-field: 34rem;
   --width-field-wide: 42rem;
+  --width-header: 55ch;
   --shell-gutter: 1.25rem;
 }
 

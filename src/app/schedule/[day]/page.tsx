@@ -47,9 +47,7 @@ export default async function ScheduleDayPage({
           nested as a subEvent. */}
       <JsonLd data={dayEventDocument(day)} />
 
-      <Band tone="muted">
-        <PageHeader {...dayPageDefinition(day)} />
-      </Band>
+      <PageHeader {...dayPageDefinition(day)} />
 
       <Band>
         <ScheduleProgramme day={day} />

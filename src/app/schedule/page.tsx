@@ -21,13 +21,11 @@ export const metadata = pageMetadata(schedulePage);
 export default function SchedulePage() {
   return (
     <>
-      {/* The header is its own band so the programme below starts on the
-          page surface the sticky day rail is painted in. Two bands, not
+      {/* The header carries its own band, so the programme below starts on
+          the page surface the sticky day rail is painted in. Two bands, not
           three: the programme is one thing, 27,000px of it, and striping
           it would be the decoration this site does not do. */}
-      <Band tone="muted">
-        <PageHeader {...schedulePage} />
-      </Band>
+      <PageHeader {...schedulePage} />
 
       <Band>
         <ScheduleProgramme />

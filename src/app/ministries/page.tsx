@@ -28,16 +28,17 @@ export default function MinistriesPage() {
 
   return (
     <>
-      {/* The four ministries with pages of their own sit with the header:
-          they are what the page is. The long tail gets its own band. */}
-      <Band innerClassName="flex flex-col gap-(--space-section)">
-        <PageHeader {...ministriesPage}>
-          <p className="text-ink-muted">
-            These run enough of the programme to be worth a page of their own.
-            Every other ministry is still searchable on the full programme.
-          </p>
-        </PageHeader>
+      <PageHeader {...ministriesPage}>
+        <p className="text-ink-muted">
+          These run enough of the programme to be worth a page of their own.
+          Every other ministry is still searchable on the full programme.
+        </p>
+      </PageHeader>
 
+      {/* The four ministries with pages of their own are what this page is,
+          so they take the first band under the header. The long tail gets
+          the one after it. */}
+      <Band>
         <section className="flex flex-col gap-(--space-item)">
           <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {ministryPages.map((tag) => (

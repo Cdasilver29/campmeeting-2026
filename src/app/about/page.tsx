@@ -17,9 +17,7 @@ export const metadata = pageMetadata(aboutPage);
 export default function AboutPage() {
   return (
     <>
-      <Band>
-        <PageHeader {...aboutPage} />
-      </Band>
+      <PageHeader {...aboutPage} />
 
       {/*
         The document nests at the measure inside the shell: the header band
@@ -32,7 +30,7 @@ export default function AboutPage() {
         element makes the result depend on Tailwind's sort order rather than
         on anything written here.
       */}
-      <Band tone="muted">
+      <Band>
         <div className={`${PROSE_COLUMN} ${DOC_STACK}`}>
           {aboutSections.map((section, index) => (
             // One Reveal per section, which is the granularity Reveal is

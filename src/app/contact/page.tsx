@@ -25,18 +25,19 @@ const mapQuery = encodeURIComponent(
  * white column of four `gap-12` sections they read as one undifferentiated
  * list, which is the specific complaint this pass exists to answer.
  *
- * The form stays at the prose measure — a text field is read the way a
- * line of prose is — while the address-and-map band uses the shell width
- * properly by putting the details beside the map from `lg`. That pairing
+ * The form caps itself at the field column, which is narrower than the
+ * prose measure because a field is aimed at rather than read line by line,
+ * while the address-and-map band uses the shell width properly by putting
+ * the details beside the map from `lg`. That pairing
  * is the one place on this page where the extra width buys something: the
  * map stops being a 288px-tall letterbox under a short list.
  */
 export default function ContactPage() {
   return (
     <>
-      <Band innerClassName="flex flex-col gap-(--space-section)">
-        <PageHeader {...contactPage} />
+      <PageHeader {...contactPage} />
 
+      <Band>
         <Reveal className="prose-column">
           <section className="flex flex-col gap-(--space-item)">
             <h2 className={DOC_HEADING}>Send a message</h2>

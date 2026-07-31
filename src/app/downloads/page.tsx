@@ -40,11 +40,9 @@ export default function DownloadsPage() {
 
   return (
     <>
-      <Band>
-        <PageHeader {...downloadsPage} />
-      </Band>
+      <PageHeader {...downloadsPage} />
 
-      <Band tone="muted">
+      <Band>
       <Reveal className="prose-column">
       {pdf ? (
         <a

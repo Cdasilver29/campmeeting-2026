@@ -52,17 +52,19 @@ export default async function MinistryPage({
 
   return (
     <>
-      <Band tone="muted">
-        <PageHeader {...ministryPageDefinition(tag)}>
-          <p className="prose-column text-ink-muted">
-            {copy.description}{" "}
-            <span className="tabular-figures">
-              {count} programme {count === 1 ? "entry" : "entries"} across{" "}
-              {groups.length} {groups.length === 1 ? "day" : "days"}.
-            </span>
-          </p>
-        </PageHeader>
-      </Band>
+      <PageHeader {...ministryPageDefinition(tag)}>
+        {/* No prose-column here any more: the header block is already
+            capped at its own measure and centred, so a second, wider cap
+            inside it would only be able to make this line longer than the
+            meta line above it. */}
+        <p className="text-ink-muted">
+          {copy.description}{" "}
+          <span className="tabular-figures">
+            {count} programme {count === 1 ? "entry" : "entries"} across{" "}
+            {groups.length} {groups.length === 1 ? "day" : "days"}.
+          </span>
+        </p>
+      </PageHeader>
 
       {/* Gaps are only meaningful on the unfiltered block; a ministry
           view is a slice of a block, so any hole is the filter's, not

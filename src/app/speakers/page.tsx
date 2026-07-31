@@ -12,16 +12,14 @@ export const metadata = pageMetadata(speakersPage);
 export default function SpeakersPage() {
   return (
     <>
-      <Band>
-        <PageHeader {...speakersPage}>
-          <p className="text-ink-muted">
-            Photographs and biographies follow once the committee confirms
-            them.
-          </p>
-        </PageHeader>
-      </Band>
+      <PageHeader {...speakersPage}>
+        <p className="text-ink-muted">
+          Photographs and biographies follow once the committee confirms
+          them.
+        </p>
+      </PageHeader>
 
-      <Band tone="muted">
+      <Band>
       {/* Four cards read as one set, so they stagger. This is the size of
           group the stagger is for; a long list is not.
 

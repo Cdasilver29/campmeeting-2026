@@ -15,22 +15,20 @@ export default function FaqPage() {
       {/* The badge sentence carries markup, so it goes in the slot below
           the rule rather than into the meta line, which is a plain string
           shared with the share card. */}
-      <Band>
-        <PageHeader {...faqPage}>
-          <p className="text-ink-muted">
-            Answers marked{" "}
-            <Badge variant="outline" className="align-middle">
-              Provisional
-            </Badge>{" "}
-            are still awaiting the organising committee&rsquo;s final wording.
-          </p>
-        </PageHeader>
-      </Band>
+      <PageHeader {...faqPage}>
+        <p className="text-ink-muted">
+          Answers marked{" "}
+          <Badge variant="outline" className="align-middle">
+            Provisional
+          </Badge>{" "}
+          are still awaiting the organising committee&rsquo;s final wording.
+        </p>
+      </PageHeader>
 
       {/* A question and its answer are one section, so one Reveal covers
           the pair. A rule above each entry after the first gives the list
           a visible rhythm instead of relying on the gap alone. */}
-      <Band tone="muted">
+      <Band>
         <dl className="prose-column flex flex-col">
           {faqItems.map((item, index) => (
             <Reveal

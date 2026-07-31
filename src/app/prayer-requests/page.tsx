@@ -9,17 +9,15 @@ export const metadata = pageMetadata(prayerRequestsPage);
 export default function PrayerRequestsPage() {
   return (
     <>
-      <Band>
-        <PageHeader {...prayerRequestsPage}>
-          <p className="text-ink-muted">
-            Whatever you are carrying, you are welcome to share it here.
-          </p>
-        </PageHeader>
-      </Band>
+      <PageHeader {...prayerRequestsPage}>
+        <p className="text-ink-muted">
+          Whatever you are carrying, you are welcome to share it here.
+        </p>
+      </PageHeader>
 
-      {/* A form field is read the way a line of prose is, so it takes the
-          same measure rather than the full shell. */}
-      <Band tone="muted">
+      {/* The form caps itself at the field column; this wrapper is the
+          outer bound the notes and banners around it read at. */}
+      <Band>
         <div className="prose-column">
           <PrayerRequestForm />
         </div>

@@ -9,19 +9,18 @@ export const metadata = pageMetadata(livestreamPage);
 export default function LivestreamPage() {
   return (
     <>
-      <Band>
-        <PageHeader {...livestreamPage} />
-      </Band>
+      <PageHeader {...livestreamPage} />
 
       {/*
-        The player band is muted, and the player is capped at the measure
-        rather than run to the shell: a 16:9 frame at 80rem is 720px tall,
+        The player sits on the page surface under the muted header band,
+        capped at the measure rather than run to the shell: a 16:9 frame at
+        80rem is 720px tall,
         which is taller than the viewport it is meant to sit inside on most
         laptops. The measure puts it at roughly 620x350, which is close to
         where it already was and does not push the "what is on now" card off
         the fold.
       */}
-      <Band tone="muted">
+      <Band>
         <div className="prose-column">
           <LivestreamView />
         </div>

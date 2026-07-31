@@ -13,11 +13,9 @@ export const metadata = pageMetadata(announcementsPage);
 export default function AnnouncementsPage() {
   return (
     <>
-      <Band>
-        <PageHeader {...announcementsPage} />
-      </Band>
+      <PageHeader {...announcementsPage} />
 
-      <Band tone="muted">
+      <Band>
         <div className="prose-column">
           {announcementsByDate.length === 0 ? (
             <EmptyState
