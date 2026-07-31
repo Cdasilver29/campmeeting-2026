@@ -65,7 +65,12 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <div className="band bg-surface-muted">
+    // data-page-header is a hook for tools/perf/align.mjs, which has to
+    // tell this band apart from an ordinary one. Sniffing for `main
+    // header` is not good enough: /offline and /styleguide both hand-roll
+    // a <header> inside a plain Band, and the harness scored both as
+    // uncentred page headers before this attribute existed.
+    <div className="band bg-surface-muted" data-page-header>
       <div className="shell">
         <header
           className={cn(

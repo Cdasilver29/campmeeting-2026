@@ -55,9 +55,41 @@ offline behaviour.
 | `hero-contrast.mjs` | hero scrim contrast against a standalone mock, for iterating on gradient stops without a rebuild. |
 | `verify-hero.mjs` | the same measurement against the real built page at six widths, both header states and either hero phase, plus upscale factors. Use this one to confirm. |
 | `crop-sweep.mjs` | brightest **raw** photographic pixel behind the text block, per `object-position`. Answers "would a different crop let the scrim be lighter" before any scrim is designed. |
-| `align.mjs` | the x position of the header lockup against the x position of the page `h1`, at five widths on seventeen routes, plus the content column's width, left offset and gutter. Fails if any pair disagrees. |
+| `align.mjs` | the x position of the header lockup against the x position of the **first left-aligned content below the page-header band**, at five widths on seventeen routes, plus the content column's width and gutter. Also checks that the header block is centred inside its own shell. Fails if either disagrees. It used to measure the `h1`; see the note below. |
 | `responsive.mjs` | nine widths x seventeen routes: horizontal overflow with the offending elements named, clipped text, tap targets under 44px, and whether the day rail is scrollable. |
 | `reduced-motion.mjs` | emulates the preference before the document runs, byte-compares eight frames per route, and reports where they differ. Also checks `.live-pulse` directly, since the live dot only renders during the event. |
+
+## Why `align.mjs` stopped measuring the `h1`
+
+`PageHeader` became a full-bleed band whose contents are centred, so on
+the thirteen routes that carry one the `h1` is deliberately not on the
+left edge. Left as written the harness reported **65 failures for a
+layout doing exactly what it was asked to do**, which is worse than no
+harness: the next person to run it un-fixes the thing it complains about.
+
+The grid check moved down one element, to the first left-aligned content
+below the band, which is where left-aligned reading actually resumes. A
+second assertion replaces the one that was lost: the header block's
+midpoint against its shell's midpoint, so the band's own intent is
+checked rather than merely exempted.
+
+Three things had to be right before the new version was worth reading,
+and all three produced confident wrong answers first:
+
+- **`main header` is not the page header.** `/offline` hand-rolls a
+  `<header>` inside a plain `Band` and `/styleguide` has one too, so
+  shape-sniffing scored both as uncentred page headers. `PageHeader` now
+  carries `data-page-header` and the harness selects on that.
+- **The honeypot escaped the hidden filter.** The spam trap is a 1x1
+  clipped wrapper at `left: -9999px` holding a full-size input. The input
+  is statically positioned, so an element-only check saw a 215px-wide
+  field and reported `/prayer-requests` as aligning at **x = -9999**.
+  Ancestors are now walked, not just the element.
+- **Centred content is not misaligned content.** `/downloads` and
+  `/announcements` both open with an `EmptyState`, which is `text-center`
+  by design, and measuring its paragraph reported a 120px offset on ten
+  combinations. Centred elements are skipped, and a page with no
+  left-aligned body content at all is reported as that rather than failed.
 
 ## Three false positives `responsive.mjs` filters, and why each had to be
 
