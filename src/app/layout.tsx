@@ -94,7 +94,10 @@ export default function RootLayout({
           otherwise reloads the page the moment signal returns, which on
           this site would throw away a half-typed prayer request. The
           worker is disabled in development so it cannot cache a page over
-          the top of a hot reload, or over the ?now= clock override.
+          the top of a hot reload. It stays on for preview builds carrying
+          NEXT_PUBLIC_ENABLE_CLOCK_OVERRIDE, which is harmless: ?now= is
+          read from window.location at render time, not baked into the
+          HTML, so a cached page still honours it.
         */}
         <SerwistProvider
           swUrl={SW_URL}
