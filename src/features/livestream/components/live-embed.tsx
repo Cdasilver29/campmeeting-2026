@@ -61,13 +61,31 @@ export function LiveEmbed({ label }: { label: string }) {
   }
 
   return (
+    /*
+     * Three states, the same three the speaker and ministry cards use, so
+     * the largest control on the site does not respond differently from
+     * the smallest. Hover tints the poster and grows the disc; active puts
+     * the disc back and deepens the ring to 2px accent; focus-visible is
+     * the outline.
+     *
+     * The pressed state was the gap. This control loads a third-party
+     * iframe over whatever connection the reader is on, so the gap between
+     * the click and anything visible happening is longer here than
+     * anywhere else on the site, and it was the one place giving no
+     * acknowledgement that the press had landed.
+     *
+     * `group` is named-less on purpose and it IS consumed — by
+     * group-hover and group-active on the disc below. The transition list
+     * is explicit rather than transition-colors, because the ring is a
+     * box-shadow and was previously not transitioning at all.
+     */
     <button
       type="button"
       onClick={() => setActivated(true)}
       aria-label={`Load the livestream video from YouTube: ${label}`}
-      className="group flex aspect-video w-full items-center justify-center rounded-card bg-navy-950 ring-1 ring-line transition-colors hover:bg-navy-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
+      className="group flex aspect-video w-full items-center justify-center rounded-card bg-navy-950 ring-1 ring-line transition-[background-color,box-shadow] duration-fast ease-out-soft hover:bg-navy-900 active:ring-2 active:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
     >
-      <span className="flex size-16 items-center justify-center rounded-full bg-white text-navy-950 transition-transform group-hover:scale-105">
+      <span className="flex size-16 items-center justify-center rounded-full bg-white text-navy-950 transition-transform duration-fast ease-out-soft group-hover:scale-105 group-active:scale-100">
         <Play aria-hidden className="ml-1 size-7 fill-current" />
       </span>
     </button>

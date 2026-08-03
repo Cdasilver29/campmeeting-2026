@@ -60,7 +60,17 @@ function NavLink({
         // taking any more horizontal room, which the desktop bar has none
         // of to spare. The underline on hover is the non-colour half of
         // the state change: colour alone is not a signal.
-        "inline-flex min-h-11 items-center rounded-control px-1.5 text-sm font-medium text-ink-muted underline-offset-8 transition-colors duration-fast hover:text-ink hover:underline hover:decoration-2 active:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
+        //
+        // active:translate-y-px is the pressed state, and it was missing.
+        // The rule here used to be `active:text-ink`, which is the same
+        // value hover already sets, so pressing a nav link changed nothing
+        // — the one interactive surface on the site that did not confirm a
+        // press, while cards deepen a ring, the day rail returns its lift
+        // and every Button translates. A 1px translate rather than a
+        // colour because this link is white over the photograph, where
+        // there is no darker white to go to and dimming it fails AA for
+        // the same reason the hero never uses white/80.
+        "inline-flex min-h-11 items-center rounded-control px-1.5 text-sm font-medium text-ink-muted underline-offset-8 transition-[color,translate] duration-fast ease-out-soft hover:text-ink hover:underline hover:decoration-2 active:translate-y-px active:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
         isActive && "text-ink",
         // Over the photograph the muted/active pair cannot carry the
         // distinction: ink-muted on the top scrim fails AA, and dimming
