@@ -1,5 +1,5 @@
-import { eventInfo } from "@/data";
 import { eventPhase, type EventPhase } from "@/features/schedule/lib/time";
+import { eventPhaseScript } from "@/lib/event-phase-script";
 
 /**
  * Which phase the hero is drawn in, resolved without a layout shift.
@@ -44,18 +44,10 @@ export function buildTimeHeroPhase(): HeroPhase {
 /**
  * The pre-paint correction, as a string for dangerouslySetInnerHTML.
  *
- * Everything interpolated is a build-time constant from event.ts, passed
- * through JSON.stringify, so there is no user input anywhere near it.
- *
- * Wrapped in try/catch on purpose: if Intl or the time zone is somehow
- * unavailable the attribute simply keeps its server value, which is a
- * correct height rather than a broken one.
+ * The generator moved to src/lib/event-phase-script.ts when /livestream
+ * turned out to need exactly the same correction for exactly the same
+ * reason — see the note there. This is the hero's binding of it.
  */
 export function heroPhaseScript(elementId: string): string {
-  return `(function(){try{
-var d=new Intl.DateTimeFormat("en-CA",{timeZone:${JSON.stringify(eventInfo.timezone)},year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-var p=d<${JSON.stringify(eventInfo.startDate)}?"before":d>${JSON.stringify(eventInfo.endDate)}?"after":"during";
-var e=document.getElementById(${JSON.stringify(elementId)});
-if(e)e.setAttribute(${JSON.stringify(HERO_PHASE_ATTRIBUTE)},p);
-}catch(_){}})();`;
+  return eventPhaseScript(elementId, HERO_PHASE_ATTRIBUTE);
 }
