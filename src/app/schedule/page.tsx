@@ -50,7 +50,9 @@ export default function SchedulePage() {
         The nearest thing to an exception is /ministries/[tag], which shows
         a slice of the programme small enough to move as one section.
       */}
-      <Band>
+      {/* drift={false} for the same reasons. The scroll-linked band settle
+          is on by default everywhere else; here the band IS the document. */}
+      <Band drift={false}>
         <ScheduleProgramme />
       </Band>
     </>

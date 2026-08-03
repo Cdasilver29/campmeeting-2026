@@ -55,7 +55,7 @@ export default async function ScheduleDayPage({
           is no granularity at which an entrance would be section-sized
           rather than per-row. The full reasoning is in
           src/app/schedule/page.tsx. */}
-      <Band>
+      <Band drift={false}>
         <ScheduleProgramme day={day} />
       </Band>
     </>

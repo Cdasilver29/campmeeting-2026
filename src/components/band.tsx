@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BandDrift } from "@/components/band-drift";
 import { cn } from "@/lib/utils";
 
 /**
@@ -28,6 +29,7 @@ export function Band({
   children,
   className,
   innerClassName,
+  drift = true,
 }: {
   /** `muted` paints --color-surface-muted; `surface` leaves the page ground. */
   tone?: "surface" | "muted";
@@ -36,10 +38,28 @@ export function Band({
   className?: string;
   /** Applied to the shell inside it. */
   innerClassName?: string;
+  /**
+   * Scroll-linked settle on the band's contents — see band-drift.tsx.
+   *
+   * On by default, because a band boundary that reads as a transition on
+   * eleven routes and as a join on the twelfth is not a system. Opted out
+   * on `/schedule` and `/schedule/[day]` only, for the same reasons those
+   * pages are excluded from Reveal: the programme is 27,000px of
+   * server-rendered content behind `content-visibility: auto`, and tying a
+   * transform to the scroll position of a band that IS the document is
+   * both pointless and the one place it could cost something.
+   */
+  drift?: boolean;
 }) {
+  const inner = cn("shell", innerClassName);
+
   return (
     <div className={cn("band", tone === "muted" && "bg-surface-muted", className)}>
-      <div className={cn("shell", innerClassName)}>{children}</div>
+      {drift ? (
+        <BandDrift className={inner}>{children}</BandDrift>
+      ) : (
+        <div className={inner}>{children}</div>
+      )}
     </div>
   );
 }
