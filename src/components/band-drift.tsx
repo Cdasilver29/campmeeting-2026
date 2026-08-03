@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { m, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
 /**
@@ -66,6 +66,31 @@ export function BandDrift({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
+  /*
+   * The drift is not applied until after mount, and that is a bug fix
+   * rather than a nicety.
+   *
+   * A scroll MotionValue is 0 on the server, because there is no scroll
+   * position there. Bound straight into style, that made every band on
+   * every route server-render as
+   *   style="opacity:0.92;transform:translateY(8px)"
+   * — the entry state — so band contents painted 8px low and 8% pale on
+   * first paint and then snapped into place at hydration. On every page,
+   * on every load, including the ones already on screen.
+   *
+   * CLS could not catch it and did not: `y` is a transform, and a
+   * transform is not a layout shift. It was found by byte-comparing frames
+   * under reduced motion, which is the one instrument that looks at what
+   * was actually painted.
+   *
+   * So the server and the first client render carry no inline style at
+   * all, and the scroll binding is attached once there is a scroll
+   * position to read. A band already in view resolves mid-ramp, at rest,
+   * so nothing changes for it; a band below the fold resolves to the entry
+   * state, which is exactly what it should be and nobody can see it.
+   */
+  const [bound, setBound] = useState(false);
+  useEffect(() => setBound(true), []);
 
   /*
    * "start end" to "end start": progress 0 when the band's top reaches the
@@ -96,7 +121,11 @@ export function BandDrift({
   }
 
   return (
-    <m.div ref={ref} className={className} style={{ opacity, y }}>
+    <m.div
+      ref={ref}
+      className={className}
+      style={bound ? { opacity, y } : undefined}
+    >
       {children}
     </m.div>
   );

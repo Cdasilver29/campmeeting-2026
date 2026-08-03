@@ -388,9 +388,18 @@
 
 /* The measure, applied to the column that holds prose rather than to each
    paragraph in it, so headings, rules and body all share one left edge and
-   one right edge. */
+   one right edge.
+
+   Centred in the shell, not ranged left. The measure is about 34rem and
+   the shell is 80rem, so a left-ranged column left 46rem of empty page to
+   the right of every document — under a page header that is itself
+   centred. That reads as a layout that lost its right half rather than as
+   a decision, which is the same reasoning that centred the page header in
+   the first place. The TEXT stays left-aligned; only the column is
+   centred. */
 @utility prose-column {
   max-width: var(--width-prose);
+  margin-inline: auto;
 }
 
 /* ── Form field widths ────────────────────────────────────────────────

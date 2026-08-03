@@ -26,6 +26,20 @@
 export const MEASURE = "max-w-(--width-prose)";
 
 /**
+ * The measure, centred in whatever holds it. This is the one for a column
+ * that sits directly on the 80rem shell: ranged left there, a 34rem column
+ * leaves 46rem of empty page to its right, under a page header that is
+ * centred — which reads as a layout that lost its right half. The text
+ * inside stays left-aligned; only the column moves.
+ *
+ * DOC_BODY keeps the uncentred MEASURE on purpose. Those paragraphs sit
+ * inside a column that is already this wide, so centring them again would
+ * be a no-op that invites someone to widen one of the two and wonder why
+ * the page drifts.
+ */
+export const MEASURE_CENTRED = `${MEASURE} mx-auto`;
+
+/**
  * The container a document's sections sit in, so the headings, the rules
  * between sections and the paragraphs all share one left and right edge.
  *
@@ -34,7 +48,7 @@ export const MEASURE = "max-w-(--width-prose)";
  * is close enough to look like a mistake rather than a decision. At an
  * 80rem shell the difference would have been unmissable.
  */
-export const PROSE_COLUMN = MEASURE;
+export const PROSE_COLUMN = MEASURE_CENTRED;
 
 /** A section heading: display face, and the space above it that separates sections. */
 export const DOC_HEADING = "font-display text-2xl text-ink";
