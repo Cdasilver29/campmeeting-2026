@@ -220,6 +220,58 @@ for (const route of ROUTES) {
             (below.id ? `#${below.id}` : "") +
             `:${(below.textContent ?? "").trim().slice(0, 18)}`
           : null,
+
+        /*
+         * Is the column holding that content centred in its shell?
+         *
+         * A prose column is capped at the measure (~34rem) and centred in
+         * an 80rem shell, so on a wide viewport its left edge is NOT the
+         * shell's left edge and never can be. Asserting it against the
+         * header lockup's x reports six routes as broken for doing exactly
+         * what they are designed to do. What is actually true of a centred
+         * column is that its two gutters are equal, so that is what gets
+         * measured.
+         *
+         * Found geometrically rather than by class name: the wrapper stack
+         * between the shell and the type varies (BandDrift, Reveal, a
+         * document stack), and matching on `.prose-column` would miss the
+         * pages that use the max-w-(--width-prose) form instead.
+         */
+        bodyColumnCentred: (() => {
+          // Falls back to the h1 for the same reason the x measurement
+          // does: /offline and /styleguide hand-roll a header and have no
+          // page-header band, and their content is centred too.
+          const anchor = below ?? h1;
+          if (!anchor || !pageShell) return null;
+          const shellBox = pageShell.getBoundingClientRect();
+          const shellStyle = getComputedStyle(pageShell);
+          const innerLeft = shellBox.left + parseFloat(shellStyle.paddingLeft);
+          const innerRight = shellBox.right - parseFloat(shellStyle.paddingRight);
+          const innerWidth = innerRight - innerLeft;
+
+          /*
+           * The OUTERMOST ancestor narrower than the shell, not the
+           * innermost. /prayer-requests nests a field column (34rem)
+           * inside the prose column (68ch), and the field column is
+           * ranged left inside it — correctly, a form is not centred type.
+           * Taking the innermost match measured the field column against
+           * the shell and reported the page as off the grid. What is being
+           * asked is where the page's content column sits, which is the
+           * last one before the shell.
+           */
+          let outermost = null;
+          for (let el = anchor; el && el !== pageShell; el = el.parentElement) {
+            const box = el.getBoundingClientRect();
+            if (box.width < innerWidth - 1) outermost = box;
+          }
+          if (!outermost) return null;
+
+          const gapLeft = outermost.left - innerLeft;
+          const gapRight = innerRight - outermost.right;
+          // Only meaningful when there is real slack to distribute.
+          if (gapLeft + gapRight < 2) return null;
+          return Math.abs(gapLeft - gapRight) <= 1;
+        })(),
         // Centring of the header block inside its own shell content box.
         headerCentreOffset:
           headerRect && headerShellBox
@@ -260,6 +312,7 @@ console.log(
     num("body x") +
     num("basis", 7) +
     num("match", 7) +
+    num("how", 8) +
     num("centred", 9) +
     num("content") +
     num("gutter") +
@@ -281,10 +334,23 @@ for (const r of rows) {
     : "h1";
   const bodyLeft = r.hasBand ? r.belowLeft : r.h1Left;
 
-  const match =
+  /*
+   * Two ways to be on the grid, not one.
+   *
+   * A full-width column starts where the header lockup starts. A prose
+   * column is capped at the measure and CENTRED in the shell, so it
+   * cannot start there and is on the grid when its gutters are equal.
+   * Before this distinction existed the harness scored /about, /faq,
+   * /contact, /livestream, /prayer-requests and /offline as 24 failures
+   * for being centred on purpose.
+   */
+  const flushLeft =
     r.lockupLeft !== null && bodyLeft !== null
       ? Math.abs(r.lockupLeft - bodyLeft) < 0.5
       : null;
+  const match =
+    flushLeft === true ? true : r.bodyColumnCentred === true ? true : flushLeft;
+  const basisKind = flushLeft === true ? "flush" : match === true ? "centrd" : "-";
   if (match === false) gridFailures++;
   // A band with genuinely nothing below it is not a pass. A band whose
   // body content is all deliberately centred (an EmptyState page) is:
@@ -307,7 +373,8 @@ for (const r of rows) {
       num(r.lockupLeft) +
       num(bodyLeft) +
       num(basis, 7) +
-      num(match === null ? "n/a" : match ? "YES" : "NO", 7) +
+      num(match === null ? "n/a" : match ? `YES` : "NO", 7) +
+      num(basisKind, 8) +
       num(r.headerCentreOffset === null ? "n/a" : centred ? "YES" : `NO ${r.headerCentreOffset}`, 9) +
       num(r.pageShell?.width) +
       num(r.pageShell?.gutter) +
