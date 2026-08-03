@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo } from "@/data";
 import { eventDateRange } from "@/lib/event-dates";
 import {
@@ -71,7 +72,10 @@ import {
  * viewport and 1.57x at 2560, before device pixel ratio. The file is not
  * upscaled to hide that. A larger source is worth asking the committee for.
  *
- * Nothing here animates: no parallax, no ken burns, no fade-in.
+ * MOTION
+ * The photograph does not animate: no parallax, no ken burns, no fade. The
+ * text block does, once, on load — title, meta, then call to action, 100ms
+ * apart, 520ms end to end. See the note on the RevealGroup below.
  */
 
 const HERO_ID = "home-hero";
@@ -231,18 +235,58 @@ export function Hero() {
           in a 60svh band instead of covering the whole of it.
         */}
         <div className={`shell pt-6 pb-10 md:pt-0 md:pb-16 ${COMPACT_BOTTOM_PADDING}`}>
-          <div className={`flex max-w-2xl flex-col gap-4 ${COMPACT_STACK_GAP}`}>
-            <h1
-              className={`font-display text-hero text-balance text-ink md:text-white ${COMPACT_TITLE}`}
-            >
-              {eventInfo.edition}
-            </h1>
+          {/*
+            THE ENTRANCE.
 
-            <p className={`text-lg text-ink-muted md:text-white ${COMPACT_META}`}>
-              {eventDateRange()} at {eventInfo.church.address}
-            </p>
+            Title, then meta, then call to action, each a short fade and a
+            12px lift, 100ms apart. 520ms end to end. It is the first thing
+            anyone sees and it used to arrive as one block, carried in by
+            the page transition; sequencing it is what makes it read as
+            composed rather than as switched on.
 
-            <div className={`mt-2 ${COMPACT_CTA_OFFSET}`}>
+            `immediate`, not the default scroll trigger: this is on screen
+            at load by definition, so observing it would be asking a
+            question whose answer is already known.
+
+            There is no eyebrow in this sequence because there is no eyebrow
+            in this hero. The "Seventh-day Adventist Church Newlife" line
+            was removed deliberately — the header lockup carries it, and so
+            does the green sign in the photograph. PageHeader's eyebrow is a
+            different component on the other twelve routes, and it is not
+            animated: it opens every interior page, and the page transition
+            already moves that whole block on every navigation. Two
+            entrances on one element is the thing this pass is meant to
+            avoid.
+
+            RevealGroup and RevealItem are client components; their children
+            are not. The hero stays a server component and these are slots
+            around already-rendered markup, so nothing here ships as
+            JavaScript beyond the wrappers themselves.
+
+            The group-data phase variants below still resolve: they compile
+            to descendant selectors against group/hero on the section, and
+            wrapping an element in a div leaves it a descendant.
+          */}
+          <RevealGroup
+            immediate
+            stagger={0.1}
+            className={`flex max-w-2xl flex-col gap-4 ${COMPACT_STACK_GAP}`}
+          >
+            <RevealItem>
+              <h1
+                className={`font-display text-hero text-balance text-ink md:text-white ${COMPACT_TITLE}`}
+              >
+                {eventInfo.edition}
+              </h1>
+            </RevealItem>
+
+            <RevealItem>
+              <p className={`text-lg text-ink-muted md:text-white ${COMPACT_META}`}>
+                {eventDateRange()} at {eventInfo.church.address}
+              </p>
+            </RevealItem>
+
+            <RevealItem className={`mt-2 ${COMPACT_CTA_OFFSET}`}>
               {/* Primary fill off the photograph, white fill on it. A
                   white button on the white page surface would be an
                   outline of nothing. */}
@@ -253,8 +297,8 @@ export function Hero() {
                 See the programme
                 <ArrowRight aria-hidden className="size-4" />
               </Link>
-            </div>
-          </div>
+            </RevealItem>
+          </RevealGroup>
         </div>
       </section>
 

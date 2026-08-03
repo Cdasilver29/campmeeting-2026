@@ -51,6 +51,14 @@ const ROUTES = args.slice(1).length
 // CLS_VIEWPORT=390x844.
 const [vw, vh] = (process.env.CLS_VIEWPORT ?? "1440x900").split("x").map(Number);
 const VIEWPORT = { width: vw, height: vh, deviceScaleFactor: 1 };
+
+/**
+ * CPU throttle, off by default. CLS does not need it (it is geometric), but
+ * LCP very much does: a JS-driven entrance animation cannot start until
+ * hydration, so on an unthrottled desktop it looks free and on a phone it
+ * is not. Set CLS_THROTTLE=4 to read the number the audience gets.
+ */
+const THROTTLE = Number(process.env.CLS_THROTTLE ?? 1);
 // Long enough for hydration, the useNow() tick that follows it, and any
 // shift either of them causes. The livestream skeleton collapses on the
 // first effect pass, so a shorter wait would have scored it as clean.
@@ -73,6 +81,8 @@ const summary = [];
 
 for (const route of ROUTES) {
   const scores = [];
+  const lcps = [];
+  let lcpElement = "";
   /** selector -> { score, maxTravel } accumulated across runs */
   const movers = new Map();
 
@@ -80,6 +90,11 @@ for (const route of ROUTES) {
     const page = await browser.newPage();
     await page.setViewport(VIEWPORT);
     await page.setCacheEnabled(false);
+
+    if (THROTTLE > 1) {
+      const client = await page.createCDPSession();
+      await client.send("Emulation.setCPUThrottlingRate", { rate: THROTTLE });
+    }
 
     // Same reason as measure.mjs: left alone the service worker precaches
     // the whole site on load and its work lands inside the window.
@@ -92,6 +107,23 @@ for (const route of ROUTES) {
     await page.evaluateOnNewDocument(() => {
       window.__cls = 0;
       window.__shifts = [];
+      window.__lcp = 0;
+      window.__lcpElement = "";
+
+      // LCP is reported alongside CLS because an entrance animation is the
+      // one thing that can improve the second and quietly wreck the first:
+      // an element at opacity 0 is not a candidate, so fading in the
+      // largest text block moves LCP by however long the fade is delayed.
+      // Measuring it here is what says whether a reveal cost anything.
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          window.__lcp = entry.startTime;
+          window.__lcpElement = entry.element
+            ? entry.element.tagName.toLowerCase() +
+              (entry.element.id ? `#${entry.element.id}` : "")
+            : "(none)";
+        }
+      }).observe({ type: "largest-contentful-paint", buffered: true });
 
       // A short, stable description of a node. id wins, then a data
       // attribute, then tag plus the first two class names — enough to
@@ -139,9 +171,13 @@ for (const route of ROUTES) {
     const result = await page.evaluate(() => ({
       cls: window.__cls,
       shifts: window.__shifts,
+      lcp: window.__lcp,
+      lcpElement: window.__lcpElement,
     }));
 
     scores.push(result.cls);
+    lcps.push(result.lcp);
+    lcpElement = result.lcpElement || lcpElement;
     for (const shift of result.shifts) {
       const existing = movers.get(shift.selector) ?? { score: 0, maxTravel: 0 };
       // Divided by RUNS so the printed score is per-load, comparable to
@@ -158,20 +194,29 @@ for (const route of ROUTES) {
     .sort((a, b) => b[1].score - a[1].score)
     .slice(0, 4);
 
-  summary.push({ route, median: median(scores), max: Math.max(...scores), top });
+  summary.push({
+    route,
+    median: median(scores),
+    max: Math.max(...scores),
+    lcp: median(lcps),
+    lcpElement,
+    top,
+  });
   process.stderr.write(`  ${route} done\n`);
 }
 
 await browser.close();
 
 console.log(
-  `\n=== CLS — ${RUNS} runs per route, ${VIEWPORT.width}x${VIEWPORT.height}, ${SETTLE_MS}ms settle ===\n`,
+  `\n=== CLS — ${RUNS} runs per route, ${VIEWPORT.width}x${VIEWPORT.height}, ${SETTLE_MS}ms settle, ${THROTTLE}x CPU ===\n`,
 );
-console.log(`${"route".padEnd(20)} ${"median".padStart(8)} ${"max".padStart(8)}   verdict`);
+console.log(
+  `${"route".padEnd(20)} ${"median".padStart(8)} ${"max".padStart(8)} ${"LCP ms".padStart(8)}   verdict / LCP element`,
+);
 for (const row of summary) {
   const verdict = row.max < 0.01 ? "ok" : row.max < 0.1 ? "NEEDS WORK" : "FAIL";
   console.log(
-    `${row.route.padEnd(20)} ${row.median.toFixed(4).padStart(8)} ${row.max.toFixed(4).padStart(8)}   ${verdict}`,
+    `${row.route.padEnd(20)} ${row.median.toFixed(4).padStart(8)} ${row.max.toFixed(4).padStart(8)} ${row.lcp.toFixed(0).padStart(8)}   ${verdict}  ${row.lcpElement}`,
   );
 }
 

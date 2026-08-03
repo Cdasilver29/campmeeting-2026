@@ -87,6 +87,22 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${fraunces.variable} ${inter.variable}`}
     >
+      <head>
+        {/*
+          Reveal sections are born at opacity 0 and are brought in by
+          JavaScript, so with scripting disabled they would never arrive
+          and most of the site would render blank. This is the floor under
+          that: no script, no motion, everything visible.
+
+          In <head> and inside <noscript>, so it costs a scripted visitor
+          nothing — the rule is never parsed when scripting is on — and it
+          applies before first paint when it is off. See
+          src/components/reveal.tsx for what sets data-reveal.
+        */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
       <body className="antialiased">
         {/*
           Registers the service worker that makes the programme readable
