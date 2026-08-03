@@ -49,6 +49,12 @@ export default async function ScheduleDayPage({
 
       <PageHeader {...dayPageDefinition(day)} />
 
+      {/* NO REVEAL HERE, AND THAT IS DELIBERATE. DO NOT "FIX" IT. This is
+          programme content and it follows the same rule as /schedule: it
+          server-renders so it reads offline and before hydration, and there
+          is no granularity at which an entrance would be section-sized
+          rather than per-row. The full reasoning is in
+          src/app/schedule/page.tsx. */}
       <Band>
         <ScheduleProgramme day={day} />
       </Band>

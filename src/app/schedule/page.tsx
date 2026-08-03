@@ -27,6 +27,29 @@ export default function SchedulePage() {
           it would be the decoration this site does not do. */}
       <PageHeader {...schedulePage} />
 
+      {/*
+        NO REVEAL HERE, AND THAT IS DELIBERATE. DO NOT "FIX" IT.
+
+        Every other content route wraps its sections in Reveal so the site
+        moves as one system. This page and /schedule/[day] are the two
+        exceptions, for three reasons that all point the same way:
+
+        1. The programme is server-rendered in full, ~4,700 elements, so it
+           reads offline and before hydration. That is the whole point of
+           the page. Reveal starts an element at opacity 0 and brings it in
+           with JavaScript, which would make the one page that must not
+           need hydration depend on it.
+        2. There is no "section" here to reveal at the right granularity. A
+           Reveal around the whole programme would fade 27,000px of document
+           as a single unit, and one per day, block or row is per-row motion,
+           which this page rules out on cost and on legibility.
+        3. content-visibility: auto skips offscreen subtrees, and an
+           entrance animation on content the browser has been told not to
+           render is work fighting work.
+
+        The nearest thing to an exception is /ministries/[tag], which shows
+        a slice of the programme small enough to move as one section.
+      */}
       <Band>
         <ScheduleProgramme />
       </Band>

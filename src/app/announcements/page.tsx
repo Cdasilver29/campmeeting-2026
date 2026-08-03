@@ -3,6 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 import { Band } from "@/components/band";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
+import { Reveal } from "@/components/reveal";
 import { announcementsByDate } from "@/data";
 import { AnnouncementsList } from "@/features/announcements/components/announcements-list";
 import { pageMetadata } from "@/lib/metadata";
@@ -15,8 +16,12 @@ export default function AnnouncementsPage() {
     <>
       <PageHeader {...announcementsPage} />
 
+      {/* One Reveal for the whole list, not one per announcement. An
+          announcement is a list item, and the rule for this system is
+          sections only — a stagger down a list of updates would turn a
+          notice board into a slideshow. */}
       <Band>
-        <div className="prose-column">
+        <Reveal className="prose-column">
           {announcementsByDate.length === 0 ? (
             <EmptyState
               icon={CheckCircle2}
@@ -34,7 +39,7 @@ export default function AnnouncementsPage() {
           ) : (
             <AnnouncementsList announcements={announcementsByDate} />
           )}
-        </div>
+        </Reveal>
       </Band>
     </>
   );

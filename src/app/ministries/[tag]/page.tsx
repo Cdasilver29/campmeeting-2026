@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
+import { Reveal } from "@/components/reveal";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { ProgramView } from "@/features/schedule/components/program-view";
 import { ministryCopy, ministryPages, type MinistryPageTag } from "@/features/ministries/copy";
@@ -69,10 +70,16 @@ export default async function MinistryPage({
       {/* Gaps are only meaningful on the unfiltered block; a ministry
           view is a slice of a block, so any hole is the filter's, not
           the programme's. */}
+      {/* One Reveal around the whole slice, never one per entry. This is
+          programme content: the same rule that keeps /schedule out of the
+          reveal system entirely applies to the rows inside it here. The
+          section moves as one thing or not at all. */}
       <Band>
-        <BookmarksProvider>
-          <ProgramView groups={groups} showGaps={false} />
-        </BookmarksProvider>
+        <Reveal>
+          <BookmarksProvider>
+            <ProgramView groups={groups} showGaps={false} />
+          </BookmarksProvider>
+        </Reveal>
       </Band>
     </>
   );

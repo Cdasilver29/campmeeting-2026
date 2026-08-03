@@ -1,5 +1,6 @@
 import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
+import { Reveal } from "@/components/reveal";
 import { LivestreamView } from "@/features/livestream/components/livestream-view";
 import { pageMetadata } from "@/lib/metadata";
 import { livestreamPage } from "@/lib/page-identity";
@@ -20,10 +21,16 @@ export default function LivestreamPage() {
         where it already was and does not push the "what is on now" card off
         the fold.
       */}
+      {/* One Reveal for the player and its card together. In practice this
+          is above the fold on every width, so it paints rather than
+          animates — see the note in components/reveal.tsx about why a
+          section already in view is not given an entrance. It is here so
+          the page belongs to the same system as the rest, not so the
+          player fades in. */}
       <Band>
-        <div className="prose-column">
+        <Reveal className="prose-column">
           <LivestreamView />
-        </div>
+        </Reveal>
       </Band>
     </>
   );

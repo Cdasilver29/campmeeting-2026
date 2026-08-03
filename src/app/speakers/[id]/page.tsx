@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
+import { Reveal, RevealGroup, RevealItem } from "@/components/reveal";
 import { speakerById, speakers } from "@/data";
 import { TimeRange } from "@/features/schedule/components/session-card";
 import { speakerLabel } from "@/features/schedule/lib/presenters";
@@ -63,19 +64,32 @@ export default async function SpeakerPage({
 
       <Band>
       {total === 0 ? (
-        <p className="text-ink-muted">
-          No sessions are listed for {speakerLabel(speaker)} yet.
-        </p>
-      ) : (
-        <div className="flex flex-col gap-(--space-section)">
-          <p className="tabular-figures text-sm text-ink-muted">
-            {total} {total === 1 ? "session" : "sessions"} across{" "}
-            {groups.length} {groups.length === 1 ? "day" : "days"}.
+        <Reveal>
+          <p className="text-ink-muted">
+            No sessions are listed for {speakerLabel(speaker)} yet.
           </p>
+        </Reveal>
+      ) : (
+        /* The count line and one item per day the speaker appears on. A
+           day is a major section and there are at most eight of them, so
+           this is the size of set the stagger is for. The session rows
+           inside each day are not touched: they are programme content and
+           the group moves as one. */
+        <RevealGroup className="flex flex-col gap-(--space-section)">
+          <RevealItem>
+            <p className="tabular-figures text-sm text-ink-muted">
+              {total} {total === 1 ? "session" : "sessions"} across{" "}
+              {groups.length} {groups.length === 1 ? "day" : "days"}.
+            </p>
+          </RevealItem>
 
           {groups.map(({ day, sessions }) => (
+            /* The <section> stays inside RevealItem rather than being
+               replaced by its div: the landmark and its aria-labelledby
+               are the page's structure, and a wrapper must not swallow
+               them. */
+            <RevealItem key={day.id}>
             <section
-              key={day.id}
               aria-labelledby={`day-${day.id}-heading`}
               className="flex flex-col gap-3"
             >
@@ -117,8 +131,9 @@ export default async function SpeakerPage({
                 ))}
               </ol>
             </section>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       )}
       </Band>
     </>
