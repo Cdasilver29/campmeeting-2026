@@ -39,10 +39,10 @@ import type { PageIdentity } from "@/lib/page-identity";
  * per-page decision left to get wrong. `/schedule` and `/schedule/[day]`,
  * which had the muted surface first, are unchanged in colour by this.
  *
- * The card's colours are navy-on-navy because it sits on its own
+ * The card's colours are Emperor-on-Emperor because it sits on its own
  * background; here the tokens do the same job on the muted surface. The
  * accent carries the eyebrow in both, and in dark mode --primary resolves
- * to exactly the #7ea6f2 the card uses.
+ * to exactly the #b89ae0 the card uses.
  *
  * `children` is for the occasional page that needs a sentence with markup
  * in it — /faq explains its Provisional badge, /ministries/[tag] adds its
@@ -87,17 +87,24 @@ export function PageHeader({
               readable, which is also what keeps it from competing with the
               title.
 
-              accent-600 in light, not --primary. --primary is accent-500,
-              which the brand note above calls 4.71:1 on white and scopes
-              to interactive elements for that reason. Measured on the
-              muted band it is 4.39:1 — under the AA floor, since 14px
-              semibold is not large text. accent-600 is the token the scale
-              already provides for this and measures 5.51:1 there.
+              accent-600 in light, not --primary, and the reason has
+              changed with the palette. It used to be a contrast fix:
+              accent-500 was #2e6de7 and measured 4.39:1 on this band,
+              under the AA floor for 14px semibold. Emperor measures
+              10.86:1 there, so contrast no longer decides it.
 
-              Dark mode keeps accent-300: --primary already resolves to it
-              and it measures 6.95:1 on the dark muted surface, so nothing
-              needed changing on that side. */}
-          <p className="text-sm font-semibold tracking-[0.18em] text-accent-600 uppercase dark:text-accent-300">
+              What decides it now is that Emperor is the ink's own hue at
+              near-ink darkness, so an eyebrow set in it reads as slightly
+              faded body text rather than as an accent. accent-600 is
+              Grapevine: a different hue, 8.64:1 on this band, and legibly
+              a colour rather than a shade.
+
+              The dark override is gone. It existed because accent-600 had
+              no dark value under the navy palette and would have painted
+              a 2:1 mid-blue on the dark band; it now resolves to the
+              lightened Grapevine and measures 7.06:1 there, so one class
+              covers both modes and the eyebrow is the same hue in each. */}
+          <p className="text-sm font-semibold tracking-[0.18em] text-accent-600 uppercase">
             {eyebrow}
           </p>
 

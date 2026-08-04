@@ -27,6 +27,17 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * `fg` is optional, and its absence is information.
+ *
+ * A swatch carries type ONLY where the site ships type on that fill. The
+ * previous version put a label on every swatch, which meant this page —
+ * whose entire job is to show what passes — was itself rendering 2.3:1
+ * white on amber and 4.1:1 white on green. The mid-tones in the palette
+ * cannot carry small text against either white or ink, by definition:
+ * that is what "no headroom" means. So they are shown as colour, and the
+ * name and the measurement sit underneath on the page surface.
+ */
 const swatches: Array<{
   group: string;
   name: string;
@@ -34,27 +45,44 @@ const swatches: Array<{
   value: string;
   role: string;
   bg: string;
-  fg: string;
+  fg?: string;
   border?: boolean;
 }> = [
-  { group: "Brand — navy", name: "navy-950", cssVar: "--color-navy-950", value: "#031635", role: "Deepest header/footer surfaces", bg: "bg-navy-950", fg: "text-white" },
-  { group: "Brand — navy", name: "navy-900", cssVar: "--color-navy-900", value: "#052252", role: "Program header bars, copyright bar", bg: "bg-navy-900", fg: "text-white" },
-  { group: "Brand — navy", name: "navy-800", cssVar: "--color-navy-800", value: "#0d3170", role: "Deep brand surfaces", bg: "bg-navy-800", fg: "text-white" },
-  { group: "Brand — navy", name: "navy-700", cssVar: "--color-navy-700", value: "#133c86", role: "Brand surfaces, 10.40:1 on white", bg: "bg-navy-700", fg: "text-white" },
-  { group: "Brand — accent", name: "accent-700", cssVar: "--color-accent-700", value: "#2053b3", role: "Pressed state", bg: "bg-accent-700", fg: "text-white" },
-  { group: "Brand — accent", name: "accent-600", cssVar: "--color-accent-600", value: "#265ec9", role: "Hover state, 5.95:1 on white", bg: "bg-accent-600", fg: "text-white" },
-  { group: "Brand — accent", name: "accent-500", cssVar: "--color-accent-500", value: "#2e6de7 (dark: #7ea6f2)", role: "Interactive surfaces only — 4.71:1 on white, never body text", bg: "bg-accent-500", fg: "text-white" },
-  { group: "Brand — accent", name: "accent-300", cssVar: "--color-accent-300", value: "#7ea6f2", role: "Accent as text on dark surfaces, 7.37:1", bg: "bg-accent-300", fg: "text-navy-950" },
-  { group: "Brand — accent", name: "accent-50", cssVar: "--color-accent-50", value: "#eef3fd", role: "Subtle accent fills", bg: "bg-accent-50", fg: "text-ink", border: true },
-  { group: "Neutrals", name: "surface", cssVar: "--color-surface", value: "#ffffff (dark: #031635)", role: "Page background", bg: "bg-surface", fg: "text-ink", border: true },
-  { group: "Neutrals", name: "surface-muted", cssVar: "--color-surface-muted", value: "#f5f7fa (dark: #041b42)", role: "Muted panels", bg: "bg-surface-muted", fg: "text-ink", border: true },
-  { group: "Neutrals", name: "surface-warm", cssVar: "--color-surface-warm", value: "#ecebe9 (dark: #041b42)", role: "Call-to-action band", bg: "bg-surface-warm", fg: "text-ink", border: true },
-  { group: "Neutrals", name: "ink", cssVar: "--color-ink", value: "#10202e (dark: #eaf0fd)", role: "Body text, 16.56:1 on white", bg: "bg-ink", fg: "text-surface" },
-  { group: "Neutrals", name: "ink-muted", cssVar: "--color-ink-muted", value: "#4e6274 (dark: #b6ccf7)", role: "Secondary text, 6.32:1 on white", bg: "bg-ink-muted", fg: "text-surface" },
-  { group: "Neutrals", name: "line", cssVar: "--color-line", value: "#e2e8ef (dark: #0d3170)", role: "Borders, dividers", bg: "bg-line", fg: "text-ink" },
-  { group: "Semantic", name: "featured", cssVar: "--color-featured", value: "#c8271d", role: "Featured-session marker, use sparingly", bg: "bg-featured", fg: "text-white" },
-  { group: "Semantic", name: "live", cssVar: "--color-live", value: "#16a34a", role: "Current-session indicator", bg: "bg-live", fg: "text-white" },
-  { group: "Semantic", name: "bookmark", cssVar: "--color-bookmark", value: "#d97706", role: "Saved-session marker", bg: "bg-bookmark", fg: "text-white" },
+  // ── The official palette ────────────────────────────────────────────
+  // Under its own names, with the measured on-white ratio and the use it
+  // permits. This group is the source; every group below it is a mapping.
+  { group: "Palette — safe for text", name: "emperor", cssVar: "--color-emperor", value: "#4b207f", role: "11.59:1 on white. The primary. Anchors the poster.", bg: "bg-emperor", fg: "text-white" },
+  { group: "Palette — safe for text", name: "earth", cssVar: "--color-earth", value: "#5e3929", role: "10.03:1 on white. Warm neutral; the community family.", bg: "bg-earth" },
+  { group: "Palette — safe for text", name: "grapevine", cssVar: "--color-grapevine", value: "#7f264a", role: "9.22:1 on white. Hover, eyebrow, featured.", bg: "bg-grapevine", fg: "text-white" },
+  { group: "Palette — safe for text", name: "denim", cssVar: "--color-denim", value: "#2f557f", role: "7.70:1 on white. The word family.", bg: "bg-denim" },
+  { group: "Palette — safe for text", name: "cool", cssVar: "--color-cool", value: "#4d7549", role: "5.31:1 on white. Safe, least headroom. Currently unmapped.", bg: "bg-cool" },
+  { group: "Palette — fills and borders only", name: "ming", cssVar: "--color-ming", value: "#3e8391", role: "4.32:1 on white. AA with no headroom — tags and fills, not body copy.", bg: "bg-ming" },
+  { group: "Palette — fills and borders only", name: "tree-frog", cssVar: "--color-treefrog", value: "#448d21", role: "4.14:1 on white. AA with no headroom — the live indicator.", bg: "bg-treefrog" },
+  { group: "Palette — fills and borders only", name: "campfire", cssVar: "--color-campfire", value: "#e36520", role: "3.42:1 on white. FAILS as text. Icons and fills only — the bookmark.", bg: "bg-campfire" },
+  { group: "Palette — dark grounds only", name: "warm", cssVar: "--color-warm", value: "#ffa92d", role: "1.92:1 on white — FAILS AS TEXT ON WHITE. 6.84:1 on the poster plum, 9.39:1 on the dark surface. Hero only; there is no semantic token pointing at it.", bg: "bg-warm" },
+
+  // ── Superseded ──────────────────────────────────────────────────────
+  { group: "Superseded — navy (do not use)", name: "navy-950", cssVar: "--color-navy-950", value: "#031635", role: "Reverse-engineered from the parent theme. Nothing references it. Removed in a follow-up commit.", bg: "bg-navy-950" },
+  { group: "Superseded — navy (do not use)", name: "navy-900", cssVar: "--color-navy-900", value: "#052252", role: "Superseded by Emperor.", bg: "bg-navy-900" },
+  { group: "Superseded — navy (do not use)", name: "navy-800", cssVar: "--color-navy-800", value: "#0d3170", role: "Superseded.", bg: "bg-navy-800" },
+  { group: "Superseded — navy (do not use)", name: "navy-700", cssVar: "--color-navy-700", value: "#133c86", role: "Superseded.", bg: "bg-navy-700" },
+
+  { group: "Interactive", name: "accent-700", cssVar: "--color-accent-700", value: "#301451 (dark: #9d85b9)", role: "Pressed. Emperor darkened; 15.62:1 with white on it.", bg: "bg-accent-700", fg: "text-primary-foreground" },
+  { group: "Interactive", name: "accent-600", cssVar: "--color-accent-600", value: "#7f264a (dark: #c59cad)", role: "Hover, and the page-header eyebrow. Grapevine — a hue step, not a darkening, because Emperor at 11.59 has nowhere darker to visibly go.", bg: "bg-accent-600", fg: "text-primary-foreground" },
+  { group: "Interactive", name: "accent-500", cssVar: "--color-accent-500", value: "#4b207f (dark: #b89ae0)", role: "Emperor. Ring, focus outline, primary fill. 11.59:1 on white — unlike the blue it replaced, it can carry text.", bg: "bg-accent-500", fg: "text-primary-foreground" },
+  { group: "Interactive", name: "accent-300", cssVar: "--color-accent-300", value: "#b89ae0", role: "Lightened Emperor for dark surfaces, 7.48:1.", bg: "bg-accent-300", fg: "text-emperor" },
+  { group: "Interactive", name: "accent-50", cssVar: "--color-accent-50", value: "#f2eff6 (dark: #331550)", role: "Subtle accent fills; the secondary chip.", bg: "bg-accent-50", fg: "text-secondary-foreground", border: true },
+
+  { group: "Neutrals", name: "surface", cssVar: "--color-surface", value: "#ffffff (dark: #1f0d35)", role: "Page background", bg: "bg-surface", fg: "text-ink", border: true },
+  { group: "Neutrals", name: "surface-muted", cssVar: "--color-surface-muted", value: "#f8f7fa (dark: #271041)", role: "Muted panels", bg: "bg-surface-muted", fg: "text-ink", border: true },
+  { group: "Neutrals", name: "surface-warm", cssVar: "--color-surface-warm", value: "#eeebe9 (dark: #281912)", role: "Call-to-action band. Derived from Earth.", bg: "bg-surface-warm", fg: "text-ink", border: true },
+  { group: "Neutrals", name: "ink", cssVar: "--color-ink", value: "#251637 (dark: #f2eef6)", role: "Body text, 16.82:1 on white", bg: "bg-ink", fg: "text-surface" },
+  { group: "Neutrals", name: "ink-muted", cssVar: "--color-ink-muted", value: "#68597a (dark: #d2c7df)", role: "Secondary text, 6.37:1 on white", bg: "bg-ink-muted", fg: "text-surface" },
+  { group: "Neutrals", name: "line", cssVar: "--color-line", value: "#eae6f0 (dark: #451e75)", role: "Borders, dividers", bg: "bg-line", fg: "text-ink" },
+
+  { group: "Semantic", name: "featured", cssVar: "--color-featured", value: "#7f264a (dark: #c398aa)", role: "Featured-session marker. Grapevine, because this fill carries a label: 9.22:1 light, 7.19:1 dark.", bg: "bg-featured", fg: "text-featured-foreground" },
+  { group: "Semantic", name: "live", cssVar: "--color-live", value: "#448d21", role: "Current-session indicator. Tree Frog, a 10px dot and never text: 4.14:1 on white against a 3:1 floor.", bg: "bg-live" },
+  { group: "Semantic", name: "bookmark", cssVar: "--color-bookmark", value: "#e36520", role: "Saved-session marker. Campfire, a 16px icon and never text: 3.42:1 on white against a 3:1 floor.", bg: "bg-bookmark" },
 ];
 
 const swatchGroups = Array.from(new Set(swatches.map((s) => s.group)));
@@ -121,18 +149,27 @@ export default function StyleguidePage() {
               {swatches
                 .filter((s) => s.group === group)
                 .map((s) => (
-                  <div
-                    key={s.name}
-                    className={`flex flex-col justify-between gap-8 rounded-card p-3 ${s.bg} ${s.fg} ${
-                      s.border ? "border border-line" : ""
-                    }`}
-                  >
-                    <span className="text-xs font-medium">{s.name}</span>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-xs tabular-figures opacity-90">
+                  <div key={s.name} className="flex flex-col gap-2">
+                    {/* The colour itself. Type appears on it only where
+                        `fg` is set, which is only where the site puts
+                        type on that fill; see the note on the array. */}
+                    <div
+                      className={`flex h-24 items-end rounded-card p-3 ${s.bg} ${
+                        s.fg ?? ""
+                      } ${s.border ? "border border-line" : ""}`}
+                    >
+                      {s.fg ? (
+                        <span className="text-sm font-medium">
+                          Aa {s.name}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-col gap-0.5 text-ink">
+                      <span className="text-xs font-medium">{s.name}</span>
+                      <span className="text-xs tabular-figures text-ink-muted">
                         {s.value}
                       </span>
-                      <span className="text-xs opacity-75">{s.role}</span>
+                      <span className="text-xs text-ink-muted">{s.role}</span>
                     </div>
                   </div>
                 ))}

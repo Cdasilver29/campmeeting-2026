@@ -34,7 +34,12 @@ function AnnouncementItem({
         <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
           <div className="flex items-start gap-2">
             {urgent ? (
-              <span className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-4xl bg-featured px-2 py-0.5 text-xs font-medium text-white">
+              // text-featured-foreground, not text-white. In dark mode
+              // --color-featured is a LIGHT fill, so white on it measured
+              // 2.14:1 and this badge had been failing AA there since dark
+              // mode was written. The token inverts with the fill: white in
+              // light (9.22:1), the dark surface in dark (7.19:1).
+              <span className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-4xl bg-featured px-2 py-0.5 text-xs font-medium text-featured-foreground">
                 <TriangleAlert aria-hidden className="size-3" />
                 Urgent
               </span>

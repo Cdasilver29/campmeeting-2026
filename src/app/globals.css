@@ -2,16 +2,22 @@
  * Camp Meeting 2026 — design tokens (Tailwind v4 CSS-first config).
  *
  * PROVENANCE
- * Values marked [site] are exact, extracted from
- *   wp-content/themes/Newlife/css/salient-dynamic-styles.css
- * which Salient generates from the theme options panel, so these are
- * deliberate brand choices rather than framework defaults.
- * Values marked [derived] are computed from those anchors (linear mix,
- * ratio noted). Values marked [program] come from the printed program
- * artwork. Values marked [functional] are new, chosen for UI states the
- * parent site has no equivalent for.
+ * Values marked [brand] are the official Seventh-day Adventist palette,
+ * supplied by the church as a brand sheet. They are exact and they are the
+ * top of the chain: everything else on this page is derived from them.
+ * Values marked [derived] are computed from those anchors (linear mix in
+ * sRGB, target noted). Values marked [functional] are new, chosen for UI
+ * states the brand sheet has no equivalent for.
  *
- * Every text/background pair below is WCAG-checked; ratios are in comments.
+ * The [site] values that used to head this file were reverse-engineered
+ * from the parent WordPress theme (Salient's generated stylesheet) before
+ * the real palette existed. They are superseded. The navy family is still
+ * declared below, unused, so that the change from navy to Emperor can be
+ * bisected; it is removed in a separate commit.
+ *
+ * Every text/background pair below is WCAG-checked and the ratio is in a
+ * comment beside it. tools/perf/contrast.mjs asserts every one of them, so
+ * a comment that stops being true fails a check rather than sitting there.
  *
  * Layering: shadcn's neutral base sits underneath, the brand @theme block
  * sits on top. Where the two name the same token, the brand value wins.
@@ -37,26 +43,28 @@
   --card-foreground: var(--color-ink);
   --popover: var(--color-surface);
   --popover-foreground: var(--color-ink);
-  /* Interactive fills and the focus ring use the brand accent, never
-     navy (navy is for header/footer surfaces, not fills behind text). */
-  --primary: #2e6de7;           /* --color-accent-500 */
-  --primary-foreground: #ffffff;
+  /* Interactive fills and the focus ring use the brand accent, which is
+     Emperor. White on Emperor is 11.59:1, so unlike the blue this
+     replaced (#2e6de7, 4.71:1) it has headroom for a filled button at
+     any size. */
+  --primary: #4b207f;           /* --color-accent-500, Emperor */
+  --primary-foreground: #ffffff; /* 11.59:1 on Emperor */
   /* Low-emphasis fill. Badge/Button `secondary` is the workhorse for
      ministry and presenter chips in the schedule, so it gets the subtle
-     brand tint rather than a neutral grey. 9.35:1. */
-  --secondary: #eef3fd;         /* --color-accent-50 */
-  --secondary-foreground: #133c86; /* --color-navy-700 */
+     brand tint rather than a neutral grey. 10.18:1. */
+  --secondary: #f2eff6;         /* --color-accent-50 */
+  --secondary-foreground: #4b207f; /* Emperor, 10.18:1 on accent-50 */
   --muted: var(--color-surface-muted);
   --muted-foreground: var(--color-ink-muted);
   /* shadcn's `accent` is its hover/active surface, not the brand accent.
      Pointed at the muted surface so hovers stay a shade apart from the
-     secondary chips above. 16.11:1. */
+     secondary chips above. 15.76:1. */
   --accent: var(--color-surface-muted);
   --accent-foreground: var(--color-ink);
   --destructive: oklch(0.577 0.245 27.325);
   --border: var(--color-line);
   --input: var(--color-line);
-  --ring: #2e6de7;              /* --color-accent-500, 4.68:1 on white */
+  --ring: #4b207f;              /* --color-accent-500, Emperor, 11.59:1 on white */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -74,39 +82,58 @@
 }
 
 /* Dark mode: class strategy so shadcn/ui and next-themes align.
-   Brand dark values below are entirely [derived] — the parent site has
-   no dark mode. Surfaces are the brand navy pushed toward black, ink is
-   white pulled slightly toward the accent so the neutrals stay in family.
-   ink on surface 15.71:1, muted ink on surface 11.08:1. */
-.dark {
-  /* Brand */
-  --color-surface: #031635;
-  --color-surface-muted: #041b42;
-  --color-surface-warm: #041b42;
-  --color-ink: #eaf0fd;
-  --color-ink-muted: #b6ccf7;
-  --color-line: #0d3170;
-  /* interactive accent must lighten on dark, see --color-accent-300 */
-  --color-accent-500: #7ea6f2;
-  /* Featured red lightens for the same reason the accent does: the
-     printed #c8271d is 5.58:1 on white but only 3.22:1 on this surface.
-     This lands at 5.65:1, matching the light-mode reading. */
-  --color-featured: #e8695c;
+   Every value below is [derived] — the brand sheet has no dark mode.
+   Rebuilt from Emperor rather than carried over from the navy version:
+   the surfaces are Emperor pushed toward black, held at the same
+   luminance the navy surfaces sat at, and the inks are Emperor pulled
+   toward white so the neutrals stay in the brand's family.
 
-  /* Ministry families invert: the ink lightens and the tint darkens, both
-     by the same amount for all four, so the set stays a set. Ink on tint
-     measures 7.80:1 to 7.87:1 here, matching the light-mode readings. */
-  --color-tag-devotion: oklch(0.86 0.075 262);
-  --color-tag-devotion-tint: oklch(0.335 0.055 262);
-  --color-tag-word: oklch(0.86 0.075 300);
-  --color-tag-word-tint: oklch(0.335 0.055 300);
-  --color-tag-care: oklch(0.86 0.07 168);
-  --color-tag-care-tint: oklch(0.335 0.045 168);
-  --color-tag-community: oklch(0.86 0.075 62);
-  --color-tag-community-tint: oklch(0.335 0.05 62);
+   Measured after the rebuild: ink on surface 15.71:1, ink on the muted
+   surface 14.83:1, muted ink on surface 11.12:1, muted ink on the muted
+   surface 10.49:1. The full table is in tools/perf/contrast.mjs. */
+.dark {
+  /* Brand. Surfaces: Emperor -> black, solved to the luminance the navy
+     surfaces held (0.0085 and 0.0116) so the rebuild does not quietly
+     darken or lighten the whole app. */
+  --color-surface: #1f0d35;       /* [derived] Emperor -> black */
+  --color-surface-muted: #271041; /* [derived] Emperor -> black */
+  --color-surface-warm: #281912;  /* [derived] Earth -> black, same luminance */
+  --color-ink: #f2eef6;           /* [derived] Emperor -> white, 15.71:1 on surface */
+  --color-ink-muted: #d2c7df;     /* [derived] Emperor -> white, 11.12:1 on surface */
+  --color-line: #451e75;          /* [derived] Emperor -> black */
+  /* The interactive accent has to lighten on dark: Emperor itself is
+     1.63:1 on this surface. See --color-accent-300. */
+  --color-accent-500: #b89ae0;    /* 7.48:1 on surface */
+  --color-accent-600: #c59cad;    /* Grapevine lightened, 7.48:1 — same hue step as light mode */
+  --color-accent-700: #9d85b9;    /* 5.56:1 on surface, pressed still recedes */
+  /* accent-50 had no dark value at all under the navy palette, so in dark
+     mode `bg-accent-50` painted a near-white #eef3fd fill. Nothing on a
+     shipped page used it, which is why it was never seen; it is given a
+     value here rather than left as a trap. 6.41:1 with accent-500 on it. */
+  --color-accent-50: #331550;     /* [derived] Emperor -> black */
+  /* Featured lightens for the same reason the accent does: Grapevine is
+     1.95:1 on this surface. This lands at 7.19:1. */
+  --color-featured: #c398aa;
+  /* And the fill's own foreground inverts with it. White on the light
+     featured colour is 2.14:1 — the urgent badge in announcements was
+     shipping white on a light fill in dark mode and failing. */
+  --color-featured-foreground: #1f0d35; /* 7.19:1 on --color-featured */
+
+  /* Ministry families invert: the ink lightens and the tint darkens, each
+     family staying on its own palette hue. Every ink is solved to 7.5:1
+     on its own tint, so the four read as one set at one weight — the
+     same rule the light values follow. Measured 7.49-7.55:1. */
+  --color-tag-devotion: #b7a5cc;      /* Emperor */
+  --color-tag-devotion-tint: #271041;
+  --color-tag-word: #9caec2;          /* Denim */
+  --color-tag-word-tint: #101d2c;
+  --color-tag-care: #88b3bb;          /* Ming */
+  --color-tag-care-tint: #0e1e22;
+  --color-tag-community: #b9aaa3;     /* Earth */
+  --color-tag-community-tint: #281912;
 
   /* shadcn base, pointed at the brand dark values above so dark mode
-     is navy throughout instead of shadcn's own neutral grey scale. */
+     is Emperor throughout instead of shadcn's own neutral grey scale. */
   --background: var(--color-surface);
   --foreground: var(--color-ink);
   --card: var(--color-surface);
@@ -114,12 +141,13 @@
   --popover: var(--color-surface);
   --popover-foreground: var(--color-ink);
   /* Lightened accent, same reasoning as --color-accent-300 above:
-     raw accent-500 fails AA on this dark surface. */
-  --primary: #7ea6f2;           /* --color-accent-300 */
-  --primary-foreground: #031635;
-  /* Dark counterpart of the light secondary: navy-800 is the same step
-     away from the dark surface that accent-50 is from white. 10.87:1. */
-  --secondary: #0d3170;         /* --color-navy-800 */
+     raw Emperor fails AA on this dark surface. */
+  --primary: #b89ae0;           /* --color-accent-300 */
+  --primary-foreground: #1f0d35; /* 7.48:1 on --primary */
+  /* Dark counterpart of the light secondary: the line colour is the same
+     step away from the dark surface that accent-50 is from white.
+     10.81:1 with --color-ink on it. */
+  --secondary: #451e75;
   --secondary-foreground: var(--color-ink);
   --muted: var(--color-surface-muted);
   --muted-foreground: var(--color-ink-muted);
@@ -128,7 +156,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: var(--color-line);
   --input: var(--color-line);
-  --ring: #7ea6f2;               /* --color-accent-300 */
+  --ring: #b89ae0;               /* --color-accent-300 */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -147,43 +175,108 @@
 /* ── Brand tokens ───────────────────────────────────────────────────── */
 
 @theme {
-  /* ── Brand anchors ─────────────────────────────────────────────────
-     The parent site's accent is #2e6de7 and its extra-color-1 is
-     #052252. Note #2e6de7 clears AA on white by only 4.71:1, so it is
-     scoped to interactive elements and never used for body text. Deep
-     navy carries the brand weight instead (15.47:1 on white). */
-  --color-navy-950: #031635; /* [derived] navy -> black 35% */
-  --color-navy-900: #052252; /* [site] extra-color-1, copyright bar */
-  --color-navy-800: #0d3170; /* [derived] navy -> accent 20% */
-  --color-navy-700: #133c86; /* [derived] navy -> accent 35%, 10.40:1 on white */
+  /* ── The official palette ──────────────────────────────────────────
+     [brand] The nine Seventh-day Adventist colours, under their own
+     names, exact. Nothing here is a design decision; the decisions are
+     in the semantic block below, which points at these.
 
-  --color-accent-700: #2053b3; /* [derived] accent -> navy 35%, pressed state */
-  --color-accent-600: #265ec9; /* [derived] accent -> navy 20%, 5.95:1 on white, hover */
-  --color-accent-500: #2e6de7; /* [site] Salient accent-color, 4.71:1 on white */
-  --color-accent-50: #eef3fd;  /* [derived] accent -> white 92%, subtle fills */
+     The ratio on each line is the measured contrast against white, and
+     it is what governs how the colour may be used. Three bands:
 
-  /* Lightened accent for dark mode. Raw #2e6de7 on the dark surface is
-     only 3.81:1, which fails AA for text. This clears it at 7.37:1. */
-  --color-accent-300: #7ea6f2; /* [derived] */
+       >= 7    safe anywhere: body copy, links, headings, fills.
+       4.1-5.4 passes AA at 4.5 with no headroom. Tags, fills, borders,
+               icons. NOT body copy — a colour with 0.1 of margin has
+               nowhere to go when a designer knocks it back to 90%.
+       < 3.5   FAILS as text on white. Fills and large display only.
+  */
+  --color-emperor: #4b207f;   /* 11.59 — safe for text. Anchors the poster; the primary. */
+  --color-earth: #5e3929;     /* 10.03 — safe for text. Warm neutral counterpart. */
+  --color-grapevine: #7f264a; /* 9.22  — safe for text. The accent's warm step; featured. */
+  --color-denim: #2f557f;     /* 7.70  — safe for text. */
+  --color-cool: #4d7549;      /* 5.31  — safe for text, least headroom of the safe five. */
+  --color-ming: #3e8391;      /* 4.32  — AA, no headroom. Tags, fills, borders. Not body copy. */
+  --color-treefrog: #448d21;  /* 4.14  — AA, no headroom. Fills and indicators only. */
+  --color-campfire: #e36520;  /* 3.42  — FAILS as text on white. Icons and fills (>= 3:1) only. */
+  /* Warm is a DARK-SURFACE ACCENT AND NOTHING ELSE. 1.92:1 on white is
+     not a near miss, it is invisible: knocked back it disappears, and at
+     display size it still fails. On the poster's plum ground it measures
+     6.84:1, which is where it belongs and the only place it is used —
+     the hero, over the gradient. If you are reaching for this as a link,
+     a label or an icon on a light surface, you want Campfire (3.42, and
+     still only for fills) or Grapevine (9.22, and safe). There is no
+     semantic token pointing at Warm, on purpose: it has to be asked for
+     by name, and /styleguide labels it FAILS ON WHITE. */
+  --color-warm: #ffa92d;      /* 1.92 on white — dark grounds only, 6.84 on the poster plum. */
+
+  /* ── Superseded, kept for one commit ───────────────────────────────
+     The navy family was reverse-engineered from the parent WordPress
+     theme before the brand sheet existed. Nothing references it any
+     more. It is still declared so that the navy -> Emperor change can be
+     bisected; the removal is its own commit. DO NOT USE. */
+  --color-navy-950: #031635;
+  --color-navy-900: #052252;
+  --color-navy-800: #0d3170;
+  --color-navy-700: #133c86;
+
+  /* ── Interactive scale ─────────────────────────────────────────────
+     Emperor is the interactive colour, so `accent-500` and `primary` are
+     one value as they were before. What changed is the headroom: the old
+     #2e6de7 cleared AA by 4.71:1 and had to be kept off body text;
+     Emperor clears it by 11.59:1 and can carry anything.
+
+     500 -> 600 is a HUE STEP, not a darkening, and that is deliberate.
+     Emperor is already at 11.59: darkening it for hover produces a
+     change nobody can see. Emperor -> Grapevine is the poster's own
+     gradient, it is legible as a change, and Grapevine is text-safe at
+     9.22 so the hover state is not a downgrade.
+
+     600 -> 700 is a darkening, because pressed should recede. */
+  --color-accent-700: #301451; /* [derived] Emperor -> black 36%, 15.62:1, pressed */
+  --color-accent-600: #7f264a; /* [brand] Grapevine, 9.22:1, hover and the page-header eyebrow */
+  --color-accent-500: #4b207f; /* [brand] Emperor, 11.59:1 */
+  --color-accent-50: #f2eff6;  /* [derived] Emperor -> white 93%, subtle fills */
+
+  /* Lightened Emperor for dark mode. Raw Emperor on the dark surface is
+     1.63:1. This clears it at 7.48:1. */
+  --color-accent-300: #b89ae0; /* [derived] */
 
   /* ── Neutrals ──────────────────────────────────────────────────────
-     Parent site uses #333333 as extra-color-3 and a warm #ecebe9 for
-     its call-to-action band. Body ink is cooled slightly toward the
-     navy so the greys sit in the same family as the brand. */
-  --color-surface: #ffffff;       /* [site] header background */
-  --color-surface-muted: #f5f7fa; /* [derived] */
-  --color-surface-warm: #ecebe9;  /* [site] call-to-action band */
-  --color-ink: #10202e;           /* [derived] 16.56:1 on white */
-  --color-ink-muted: #4e6274;     /* [derived] 6.32:1 on white */
-  --color-line: #e2e8ef;          /* [derived] */
+     Every neutral is Emperor mixed toward black or white and then solved
+     to the luminance its navy predecessor held, so the page's overall
+     value structure is unchanged and only its hue moved. The ink and the
+     muted ink are pulled part-way back to a neutral of the same
+     luminance: undesaturated they came out as visible purple text, which
+     is a colour scheme, not ink. */
+  --color-surface: #ffffff;       /* [brand] white */
+  --color-surface-muted: #f8f7fa; /* [derived] Emperor -> white 96% */
+  --color-surface-warm: #eeebe9;  /* [derived] Earth -> white, the call-to-action band */
+  --color-ink: #251637;           /* [derived] 16.82:1 on white, 15.76:1 on surface-muted */
+  --color-ink-muted: #68597a;     /* [derived] 6.37:1 on white, 5.96:1 on surface-muted */
+  --color-line: #eae6f0;          /* [derived] same luminance step off white as #e2e8ef was */
 
   /* ── Functional ────────────────────────────────────────────────────
-     No parent-site equivalents exist for these. Featured red has
-     precedent in the printed program, where highlighted sessions and
-     the version label are set in red. */
-  --color-featured: #c8271d; /* [program] use sparingly, never as a fill behind text */
-  --color-live: #16a34a;     /* [functional] current-session indicator */
-  --color-bookmark: #d97706; /* [functional] saved-session marker */
+     Each of these is a palette colour chosen for the contrast its job
+     actually needs, not for its mood.
+
+     featured   Grapevine. The printed programme sets highlighted
+                sessions in red and Grapevine is the palette's red. It
+                has to carry WHITE TEXT — the urgent badge on
+                /announcements is `bg-featured` with a foreground on it —
+                so Campfire (3.42) was not available however well it
+                suits a highlight. Grapevine gives 9.22:1.
+     live       Tree Frog. A 10px dot and nothing else, so the 3:1
+                non-text floor applies rather than 4.5; 4.14:1 on white
+                and 3.87:1 on the muted surface, both clear. It is never
+                text, which is exactly the constraint on Tree Frog.
+     bookmark   Campfire. A 16px icon and its fill, again non-text, at
+                3.42:1 on white. This is the one place Campfire is
+                right: it is the poster's orange, saved sessions are the
+                reader's own marks on the programme, and an icon only
+                needs 3:1. Do not put a word in this colour. */
+  --color-featured: #7f264a;            /* [brand] Grapevine */
+  --color-featured-foreground: #ffffff; /* [derived] 9.22:1 on Grapevine */
+  --color-live: #448d21;                /* [brand] Tree Frog, indicator fill only */
+  --color-bookmark: #e36520;            /* [brand] Campfire, icon fill only */
 
   /* ── Ministry families ─────────────────────────────────────────────
      [functional] The programme carries seventeen ministry tags. Seventeen
@@ -191,23 +284,42 @@
      and the family is what carries a hue — see
      src/features/schedule/lib/ministry-tone.ts for which tag sits where.
 
-     Related rather than arbitrary: every value is one oklch lightness and
-     one chroma with only the hue rotated, so the four read as a set and
-     none of them shouts. The ink sits at L 0.42 in light mode and 0.86 in
-     dark, the tint at 0.96 and 0.335, which puts ink on its own tint at
-     7.2:1 to 7.9:1 in both modes (measured, not modelled).
+     The four hues are now four PALETTE COLOURS rather than four points on
+     an oklch hue wheel. Before the brand sheet arrived the hues had to be
+     invented, so they were generated: one lightness, one chroma, the hue
+     rotated. That produced a set, but a set unrelated to anything else on
+     the site. With nine real colours to draw on the families can be the
+     brand's own:
+
+       devotion   Emperor    the service itself, and the colour that
+                             anchors the poster
+       word       Denim      teaching and telling
+       care       Ming       the body. Ming is barred from body copy at
+                             4.32:1, and a chip tint is exactly what it
+                             is allowed to be
+       community  Earth      the congregation, the palette's warm neutral
+
+     Related rather than arbitrary, still: each tint is its own hue mixed
+     96% into white, and each ink is that hue solved to 7.5:1 on that
+     tint. So the four inks land within 0.06 of one another (7.49-7.55
+     measured) and read as one set at one weight, while each carries a
+     hue the rest of the site also uses.
+
+     Note the inks are NOT the raw palette values: Emperor at 11.59 and
+     Ming at 4.32 on a common tint would be a set of four with a 2.7x
+     spread. Normalising them is what makes them a family.
 
      Colour is never the only signal. Every chip carries its ministry name
      as text; the tint is a second, redundant cue for people who are
      scanning rather than reading. */
-  --color-tag-devotion: oklch(0.42 0.1 262);
-  --color-tag-devotion-tint: oklch(0.96 0.02 262);
-  --color-tag-word: oklch(0.42 0.1 300);
-  --color-tag-word-tint: oklch(0.96 0.02 300);
-  --color-tag-care: oklch(0.42 0.08 168);
-  --color-tag-care-tint: oklch(0.96 0.02 168);
-  --color-tag-community: oklch(0.42 0.09 62);
-  --color-tag-community-tint: oklch(0.96 0.024 62);
+  --color-tag-devotion: #623d90;      /* [derived] Emperor, 7.49:1 on its tint */
+  --color-tag-devotion-tint: #f7f5f9;
+  --color-tag-word: #2e537b;          /* [derived] Denim, 7.42:1 on its tint */
+  --color-tag-word-tint: #f6f7f9;
+  --color-tag-care: #295861;          /* [derived] Ming, 7.45:1 on its tint */
+  --color-tag-care-tint: #f6f9fa;
+  --color-tag-community: #6a483a;     /* [derived] Earth, 7.49:1 on its tint */
+  --color-tag-community-tint: #f8f6f5;
 
   /* ── Type ──────────────────────────────────────────────────────────
      Display: Fraunces — a reverent, editorial serif with enough

@@ -16,9 +16,15 @@ import type { MinistryTag } from "@/data";
  *   community  the congregation: family life, children, fellowship,
  *              stewardship
  *
- * The four hues are declared in globals.css as one lightness and one
- * chroma with the hue rotated, so they read as a set. The measured
- * contrast of each ink on its own tint is 7.2:1 to 7.9:1 in both modes.
+ * Each family now carries a colour from the official palette rather than
+ * a generated hue: devotion is Emperor, word is Denim, care is Ming,
+ * community is Earth. They are declared in globals.css, where each ink is
+ * solved to 7.5:1 on its own tint so the four still read as one set at one
+ * weight. Measured 7.42:1 to 7.55:1 in both modes.
+ *
+ * Care is Ming on purpose. Ming is the palette colour barred from body
+ * copy (4.32:1 on white, no headroom), and a chip tint is precisely the
+ * job it is allowed to do.
  */
 export type MinistryFamily = "devotion" | "word" | "care" | "community";
 
