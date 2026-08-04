@@ -53,24 +53,32 @@ import {
  * name it never generates and the rule silently does not exist.
  *
  * THE SCRIMS
- * Two localised gradients and nothing between them. The flat navy wash
- * that used to cover the whole frame is gone: it was protecting text
- * against the bright sky by flattening the building as well, and the
- * building is the reason to run a photograph at all.
+ * Two localised gradients and nothing between them. The flat wash that
+ * used to cover the whole frame is gone and stays gone.
  *
- * Painted in near-black rather than the brand navy. Black protects type at
- * a lower alpha and darkens without tinting, so the car park now reads as
- * a darkened photograph instead of a blue cast. Both scrims are sized to
- * the box they exist to protect and no further: the top one to the
- * header's 80px, the bottom one to the text block's measured footprint.
- * The middle of the frame — the roof, the glass, the church sign — is
- * untouched. Alphas are measured, not chosen; the method and the numbers
- * are in src/lib/hero.ts.
+ * Painted in the poster's plum, built from Emperor and Grapevine rather
+ * than colour-picked off the poster: the poster's ground is this same
+ * photograph already tinted, so picking it would be copying an output.
+ * Each scrim runs BETWEEN the two inks — warm at the outer edge, cool as
+ * it eases in — which is what gives the frame the poster's shift instead
+ * of a flat wash. Both are sized to the box they exist to protect and no
+ * further: the top one to the header's 80px, the bottom one to the text
+ * block's measured footprint. The middle of the frame — the hands and the
+ * page they rest on — is untouched. Alphas are measured, not chosen; the
+ * method and the numbers are in src/lib/hero.ts.
+ *
+ * The top scrim is now almost entirely art direction. This photograph's
+ * top three deciles have a maximum luminance of 0.027, so the header's
+ * white type is at 19:1 there before anything is painted. What the
+ * gradient buys is the plum reaching up over the header, which is what
+ * the poster does.
  *
  * SOFTNESS
- * The source is 1634x962, so at full bleed it is upscaled 1.18x at a 1920
- * viewport and 1.57x at 2560, before device pixel ratio. The file is not
- * upscaled to hide that. A larger source is worth asking the committee for.
+ * The source is 735x616, so at full bleed it is upscaled 2.61x at a 1920
+ * viewport and 3.48x at 2560, before device pixel ratio. That is worse
+ * than the church photograph this replaced, which was 1634x962. The file
+ * is not upscaled to hide it. The original behind the poster is the thing
+ * to ask the committee for; see src/lib/hero.ts.
  *
  * MOTION
  * The photograph does not animate: no parallax, no ken burns, no fade. The
@@ -79,6 +87,7 @@ import {
  */
 
 const HERO_ID = "home-hero";
+const HERO_TEXT_ID = "home-hero-text";
 
 /*
  * The compact treatment, once per phase that uses it. `during` and `after`
@@ -129,7 +138,7 @@ export function Hero() {
         // clipped, navy behind — and the text block is laid over the
         // bottom of it. One text block either way; see below for why that
         // matters more than it looks.
-        className={`group/hero relative -mt-header md:isolate md:flex md:flex-col md:justify-end md:overflow-hidden md:bg-navy-900 md:h-svh ${COMPACT_HERO_HEIGHT}`}
+        className={`group/hero relative -mt-header md:isolate md:flex md:flex-col md:justify-end md:overflow-hidden md:bg-emperor md:h-svh ${COMPACT_HERO_HEIGHT}`}
         style={
           {
             "--scrim-h": HERO_SCRIM_BOTTOM_HEIGHT.before,
@@ -161,7 +170,7 @@ export function Hero() {
           // positioned box, and a positioned box paints above the static
           // in-flow content that follows it — which is the text block. The
           // section's md:isolate keeps the negative index contained.
-          <div className="relative isolate aspect-[4/3] overflow-hidden bg-navy-900 md:absolute md:inset-0 md:-z-10 md:aspect-auto">
+          <div className="relative isolate aspect-[4/3] overflow-hidden bg-emperor md:absolute md:inset-0 md:-z-10 md:aspect-auto">
             <Image
               src={HERO_IMAGE.src}
               alt=""
@@ -270,6 +279,12 @@ export function Hero() {
           <RevealGroup
             immediate
             stagger={0.1}
+            // The hook tools/perf/verify-hero.mjs uses to find the block.
+            // It used to scan the h1 plus its next two siblings, which
+            // stopped describing this block the moment it grew a fourth
+            // line and quietly excluded the call to action from every
+            // reading.
+            id={HERO_TEXT_ID}
             className={`flex max-w-2xl flex-col gap-4 ${COMPACT_STACK_GAP}`}
           >
             <RevealItem>
@@ -292,7 +307,7 @@ export function Hero() {
                   outline of nothing. */}
               <Link
                 href="/schedule"
-                className="inline-flex min-h-11 items-center gap-2 rounded-control bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-[background-color,translate] duration-fast ease-out-soft hover:bg-accent-600 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 md:bg-white md:text-navy-900 md:hover:bg-white/90 md:focus-visible:outline-white"
+                className="inline-flex min-h-11 items-center gap-2 rounded-control bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-[background-color,translate] duration-fast ease-out-soft hover:bg-accent-600 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 md:bg-white md:text-emperor md:hover:bg-white/90 md:focus-visible:outline-white"
               >
                 See the programme
                 <ArrowRight aria-hidden className="size-4" />

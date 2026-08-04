@@ -16,21 +16,21 @@
 import { launch } from "puppeteer-core";
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-const IMAGE = "http://localhost:3100/hero/church.webp";
+const IMAGE = "http://localhost:3100/hero/hands-bible.webp";
 
 /*
- * The scrim ink. Near-black #0b0f14 rather than the brand navy: black is
- * darker, so it protects type at a lower alpha, and it darkens without
- * tinting so the photograph keeps its own colour. Measured over a pure-
- * white pixel, the alpha each ink needs before white type reaches 4.5:1:
+ * The scrim inks: the poster's plum, built from the two palette colours
+ * nearest its ground rather than colour-picked off it. Measured over a
+ * pure-white pixel, the alpha each needs before white type reaches 4.5:1:
  *
- *   navy #052252   0.62
- *   #0b0f14        0.57
- *   pure black     0.54
+ *   #0b0f14 (the near-black this replaced)   0.570
+ *   #291246 (Emperor -> black 45%)           0.600
+ *   #461529 (Grapevine -> black 45%)         0.620
  *
- * Keep in sync with SCRIM_INK in src/lib/hero.ts.
+ * Keep in sync with PLUM_WARM / PLUM_DEEP in src/lib/hero.ts.
  */
-const INK = "11, 15, 20"; /* #0b0f14 */
+const PLUM_WARM = "70, 21, 41"; /* #461529 */
+const PLUM_DEEP = "41, 18, 70"; /* #291246 */
 
 /** width x height pairs: the crop depends on container aspect ratio. */
 const VIEWPORTS = [
@@ -39,6 +39,7 @@ const VIEWPORTS = [
   { width: 1024, height: 768, note: "iPad landscape" },
   { width: 1440, height: 900, note: "laptop" },
   { width: 1920, height: 1080, note: "desktop" },
+  { width: 2560, height: 1440, note: "large desktop" },
 ];
 
 const heightMode = process.argv[2] ?? "full";
@@ -56,10 +57,10 @@ const heightMode = process.argv[2] ?? "full";
  */
 const topStops =
   process.argv[3] ??
-  `rgba(${INK}, 0.62) 0px, rgba(${INK}, 0.60) 80px, rgba(${INK}, 0.44) 104px, rgba(${INK}, 0.22) 130px, rgba(${INK}, 0.08) 152px, rgba(${INK}, 0) 176px`;
+  `rgba(${PLUM_DEEP}, 0.55) 0px, rgba(${PLUM_DEEP}, 0.52) 80px, rgba(${PLUM_WARM}, 0.38) 104px, rgba(${PLUM_WARM}, 0.22) 128px, rgba(${PLUM_WARM}, 0.09) 150px, rgba(${PLUM_WARM}, 0) 176px`;
 const bottomStops =
   process.argv[4] ??
-  `rgba(${INK}, 0.62) 0%, rgba(${INK}, 0.60) 70%, rgba(${INK}, 0.58) 82%, rgba(${INK}, 0.40) 88%, rgba(${INK}, 0.20) 93%, rgba(${INK}, 0.07) 97%, rgba(${INK}, 0) 100%`;
+  `rgba(${PLUM_WARM}, 0.74) 0%, rgba(${PLUM_WARM}, 0.70) 40%, rgba(${PLUM_DEEP}, 0.68) 70%, rgba(${PLUM_DEEP}, 0.66) 88%, rgba(${PLUM_DEEP}, 0.44) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%`;
 /*
  * A percentage alone cannot work. The text block is a fixed number of
  * pixels tall, the hero is not, so at 60svh on a short viewport 45% of
@@ -67,7 +68,7 @@ const bottomStops =
  * title lands where the scrim has already faded out. The floor keeps the
  * dense part of the gradient behind the type at every height.
  */
-const bottomHeight = process.argv[5] ?? "max(30%, 20rem)";
+const bottomHeight = process.argv[5] ?? "26rem";
 
 function srgbToLinear(channel) {
   const c = channel / 255;
@@ -94,9 +95,9 @@ function heroHtml(mode) {
   return `<!doctype html>
 <html><head><meta charset="utf-8"><style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #052252; }
+  body { background: #4b207f; }
   .hero { position: relative; isolation: isolate; height: ${height};
-          overflow: hidden; background: #052252;
+          overflow: hidden; background: #4b207f;
           display: flex; flex-direction: column; justify-content: flex-end; }
   .hero img { position: absolute; inset: 0; width: 100%; height: 100%;
               object-fit: cover; z-index: -20; }
@@ -116,7 +117,7 @@ function heroHtml(mode) {
              text-transform: uppercase; }
   .title { font: 400 clamp(2.75rem, 1.5rem + 5vw, 5.5rem)/1.02 Georgia, serif; }
   .meta { font: 400 1.125rem/1.75rem system-ui; }
-  .cta { align-self: flex-start; background: #fff; color: #052252;
+  .cta { align-self: flex-start; background: #fff; color: #4b207f;
          padding: .625rem 1.25rem; border-radius: 5px;
          font: 500 0.875rem/1.25rem system-ui; }
   /* The header strip, so the top scrim is measured where the nav sits.

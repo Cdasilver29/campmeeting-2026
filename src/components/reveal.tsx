@@ -315,11 +315,23 @@ export function Reveal({
 export function RevealGroup({
   children,
   className,
+  id,
   stagger = STAGGER,
   immediate = false,
 }: {
   children: ReactNode;
   className?: string;
+  /**
+   * An id on the group's own element. Only the hero uses it, so that
+   * tools/perf/verify-hero.mjs can find the text block by name rather
+   * than by walking siblings off the h1 — a walk that silently stopped
+   * describing the block when the block grew a fourth line.
+   *
+   * It has to be set on both branches below, because the reduced-motion
+   * branch renders a different element and a harness run under the
+   * preference would otherwise find nothing.
+   */
+  id?: string;
   stagger?: number;
   immediate?: boolean;
 }) {
@@ -327,12 +339,17 @@ export function RevealGroup({
   const { ref, hidden } = useRevealed<HTMLDivElement>(immediate);
 
   if (shouldReduceMotion) {
-    return <div className={className}>{children}</div>;
+    return (
+      <div id={id} className={className}>
+        {children}
+      </div>
+    );
   }
 
   return (
     <m.div
       ref={ref}
+      id={id}
       {...REVEAL_ATTRIBUTE}
       className={className}
       animate={hidden ? "hidden" : "shown"}

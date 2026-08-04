@@ -31,12 +31,33 @@
  * 1.00:1 for a 390px hero whose text is ink on white and is fine, which
  * is precisely the failure mode the header block above documents.
  *
- * Usage: node verify-hero.mjs <screenshot-output-dir> [forcePhase]
+ * WHY THE COLOUR SCHEME IS FORCED, AND WHAT IT WAS REPORTING BEFORE
+ *
+ * This harness never set `prefers-color-scheme`, so it measured whatever
+ * the machine's headless Chrome happened to report. On the box this pass
+ * was run on that is DARK, and the consequence was not a small one: the
+ * glass header's backdrop is `bg-surface/80`, which in dark mode is a
+ * dark plum at 80% and not a white at 80%. The harness then scored it
+ * with a hardcoded light-mode ink luminance and against the DARKEST
+ * pixel, which is the wrong extreme for light type. It returned 0.93:1
+ * for a header that is fine, and it would have returned a passing number
+ * for one that was not.
+ *
+ * So the scheme is now an argument, both schemes are measured, and the
+ * ink colour and the hazard direction are read out of the page at each
+ * width rather than compiled in. Light type is scored against the
+ * brightest backdrop pixel and dark type against the darkest, in both
+ * schemes, because which one the type is is now a question with two
+ * answers rather than one.
+ *
+ * Usage: node verify-hero.mjs <screenshot-output-dir> [forcePhase] [scheme]
  *
  * forcePhase is "before" | "during" | "after". Everything phase-dependent
  * in the hero reads one data-hero-phase attribute through group-data
  * variants, so setting that attribute is enough to measure a phase the
  * calendar is not currently in.
+ *
+ * scheme is "light" | "dark" | "both" (default "both").
  */
 import { launch } from "puppeteer-core";
 
@@ -49,16 +70,21 @@ const VIEWPORTS = [
 
 /* The file on disk, for the true upscale factor. img.naturalWidth reports
    the srcset variant Chrome chose, which is a different question. */
-const SOURCE = { w: 1634, h: 962 };
+const SOURCE = { w: 735, h: 616 };
 
 const lin = (v) => { const x = v / 255; return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); };
 const lum = (r, g, b) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-/** Contrast of white against a backdrop luminance. */
-const cw = (L) => 1.05 / (L + 0.05);
-/** --color-ink #10202e, relative luminance 0.01341. */
-const INK_L = lum(16, 32, 46);
-/** Contrast of ink against a backdrop luminance. */
-const ci = (L) => (L + 0.05) / (INK_L + 0.05);
+const parse = (css) => css.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number);
+/** Contrast of an arbitrary type colour against a backdrop luminance. */
+const against = (typeCss, L) => {
+  const tl = lum(...parse(typeCss));
+  return (Math.max(tl, L) + 0.05) / (Math.min(tl, L) + 0.05);
+};
+/** Light type is hurt by a bright backdrop; dark type by a dark one. */
+const isLight = (css) => lum(...parse(css)) > 0.4;
+
+const schemeArg = process.argv[4] ?? "both";
+const SCHEMES = schemeArg === "both" ? ["light", "dark"] : [schemeArg];
 
 const browser = await launch({
   executablePath: CHROME, headless: true,
@@ -66,9 +92,13 @@ const browser = await launch({
 });
 const rows = [];
 
+for (const scheme of SCHEMES) {
 for (const v of VIEWPORTS) {
   const page = await browser.newPage();
   await page.setViewport({ width: v.w, height: v.h, deviceScaleFactor: 1 });
+  // Before the navigation, so the very first paint is already in the
+  // scheme being measured and next-themes resolves "system" to it.
+  await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: scheme }]);
   await page.setRequestInterception(true);
   page.on("request", (r) => {
     if (/\/serwist\/|sw\.js/.test(r.url())) r.abort().catch(() => {});
@@ -89,8 +119,12 @@ for (const v of VIEWPORTS) {
   const geo = await page.evaluate(() => {
     const hero = document.getElementById("home-hero");
     const h1 = hero.querySelector("h1");
-    const meta = h1.nextElementSibling;
-    const cta = meta.nextElementSibling;
+    /* The whole text block, not h1 + its two next siblings. The hero
+       gained the poster's theme, key verse and theme song, so "the h1 and
+       the next two elements" stopped describing it and the region being
+       scanned quietly excluded the call to action. home-hero-text is the
+       RevealGroup, which is the block itself. */
+    const block = document.getElementById("home-hero-text");
     const header = document.querySelector("header");
     const img = hero.querySelector("img");
     const box = (el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; };
@@ -103,11 +137,18 @@ for (const v of VIEWPORTS) {
     /* The colour the title is actually set in at this width, so the ratio
        below is computed against the extreme that can hurt it. */
     const typeColor = getComputedStyle(h1).color;
-    const rs = [h1, meta, cta].map((e) => e.getBoundingClientRect());
+    /* And the colour the HEADER type is actually set in, in each state.
+       Read here, before anything is hidden. In the transparent state
+       every string in the header is forced white; in the glass state it
+       follows --color-ink, which is dark in light mode and light in dark
+       mode. Hardcoding either one is how this reported 0.93:1 for a
+       header that passes. */
+    const headerLinkColor = getComputedStyle(header.querySelector("a")).color;
+    const rs = [block.getBoundingClientRect()];
     const x = Math.min(...rs.map((r) => r.x)), y = Math.min(...rs.map((r) => r.y));
     const x2 = Math.max(...rs.map((r) => r.right)), y2 = Math.max(...rs.map((r) => r.bottom));
     return {
-      text: { x, y, width: x2 - x, height: y2 - y }, header: box(header), typeColor,
+      text: { x, y, width: x2 - x, height: y2 - y }, header: box(header), typeColor, headerLinkColor,
       heroH: Math.round(hero.getBoundingClientRect().height),
       /* How far the type reaches from the bottom of the frame, and how
          tall the bottom scrim is, so coverage can be judged against the
@@ -182,11 +223,15 @@ for (const v of VIEWPORTS) {
   await new Promise((r) => setTimeout(r, 400));
   await hideType();
   await settle();
-  const glassState = await page.evaluate(() =>
-    document.querySelector("header").getAttribute("data-header-state"));
+  const glass = await page.evaluate(() => ({
+    state: document.querySelector("header").getAttribute("data-header-state"),
+    // The glass state resets the header type to --color-ink, so its colour
+    // has to be re-read here rather than reused from the transparent state.
+    linkColor: getComputedStyle(document.querySelector("header a")).color,
+  }));
   const hg = extremes((await scan({ header: geo.header })).header);
 
-  rows.push({ v, geo, t, hd, hg, glassState });
+  rows.push({ scheme, v, geo, t, hd, hg, glassState: glass.state, glassLinkColor: glass.linkColor });
 
   if (v.w === 1920 || v.w === 2560) {
     await page.evaluate(() => window.scrollTo(0, 0));
@@ -195,11 +240,12 @@ for (const v of VIEWPORTS) {
     await page.screenshot({
       // Phase in the name: two runs into one directory otherwise leaves
       // the second phase's shots labelled as the first's.
-      path: `${process.argv[2]}/hero-${geo.phase}-${v.w}.png`,
+      path: `${process.argv[2]}/hero-${geo.phase}-${scheme}-${v.w}.png`,
       clip: { x: 0, y: 0, width: v.w, height: Math.min(v.h, 900) },
     });
   }
   await page.close();
+}
 }
 await browser.close();
 
@@ -207,43 +253,50 @@ const pad = (s, n) => String(s).padEnd(n);
 const verdict = (r) => `${r.toFixed(2)}:1 ${r >= 4.5 ? "PASS" : "FAIL"}`;
 
 /*
- * The title's own colour decides which extreme is the hazard and which
- * formula applies. Light type (over the photograph, md and up) is scored
- * against the brightest backdrop pixel; dark type (below md, where the
- * text sits under the frame on the page surface) against the darkest.
+ * The type's own colour decides which extreme is the hazard: light type is
+ * scored against the BRIGHTEST backdrop pixel it sits on, dark type against
+ * the DARKEST. Both cases now occur in both schemes — the hero title is
+ * white over the photograph and ink under it, and the header's type is
+ * white when transparent and --color-ink when glass — so neither the
+ * colour nor the direction can be compiled in.
  */
-const typeIsLight = (css) => {
-  const [r, g, b] = css.match(/\d+/g).map(Number);
-  return lum(r, g, b) > 0.4;
-};
-const heroRatio = (r) =>
-  typeIsLight(r.geo.typeColor) ? cw(r.t.hi) : ci(r.t.lo);
-const heroWorstPx = (r) =>
-  typeIsLight(r.geo.typeColor) ? r.t.hiRgb : r.t.loRgb;
+const pick = (typeCss, ex) => ({
+  ratio: against(typeCss, isLight(typeCss) ? ex.hi : ex.lo),
+  rgb: isLight(typeCss) ? ex.hiRgb : ex.loRgb,
+});
 
-console.log("\n=== hero text, against the colour the title is actually set in, phase=" + rows[0].geo.phase + " ===");
-console.log(pad("viewport", 12) + pad("heroH", 8) + pad("scrims", 14) + pad("footprint", 12)
-  + pad("type", 18) + pad("worst px", 18) + "AA");
-console.log("-".repeat(96));
-for (const r of rows) {
-  console.log(pad(`${r.v.w}x${r.v.h}`, 12) + pad(r.geo.heroH, 8)
-    + pad((r.geo.scrimHeights.join("/") || "-") + "px", 14)
-    + pad(`${r.geo.textFootprint}px`, 12)
-    + pad(typeIsLight(r.geo.typeColor) ? "white" : `ink ${r.geo.typeColor}`, 18)
-    + pad(`rgb(${heroWorstPx(r)})`, 18) + verdict(heroRatio(r)));
+for (const scheme of SCHEMES) {
+  const group = rows.filter((r) => r.scheme === scheme);
+  console.log(`
+=== ${scheme.toUpperCase()} — hero text, phase=${group[0].geo.phase} ===`);
+  console.log(pad("viewport", 12) + pad("heroH", 8) + pad("scrims", 14) + pad("footprint", 12)
+    + pad("type", 22) + pad("worst px", 18) + "AA");
+  console.log("-".repeat(100));
+  for (const r of group) {
+    const p = pick(r.geo.typeColor, r.t);
+    console.log(pad(`${r.v.w}x${r.v.h}`, 12) + pad(r.geo.heroH, 8)
+      + pad((r.geo.scrimHeights.join("/") || "-") + "px", 14)
+      + pad(`${r.geo.textFootprint}px`, 12)
+      + pad(isLight(r.geo.typeColor) ? "white (brightest px)" : "ink (darkest px)", 22)
+      + pad(`rgb(${p.rgb})`, 18) + verdict(p.ratio));
+  }
+
+  console.log(`
+=== ${scheme.toUpperCase()} — header, each state against the colour its type actually is ===`);
+  console.log(pad("viewport", 12) + pad("transparent", 36) + "glass");
+  console.log("-".repeat(84));
+  for (const r of group) {
+    const t = pick(r.geo.headerLinkColor, r.hd);
+    const g = pick(r.glassLinkColor, r.hg);
+    console.log(pad(`${r.v.w}x${r.v.h}`, 12)
+      + pad(`rgb(${t.rgb})  ${verdict(t.ratio)}`, 36)
+      + `rgb(${g.rgb})  ${verdict(g.ratio)}   [${r.glassState}]`);
+  }
 }
 
-console.log("\n=== header, each state against the colour its type actually is ===");
-console.log(pad("viewport", 12) + pad("transparent: white on brightest", 34) + "glass: ink on darkest");
-console.log("-".repeat(80));
-for (const r of rows) {
-  console.log(pad(`${r.v.w}x${r.v.h}`, 12)
-    + pad(`rgb(${r.hd.hiRgb})  ${verdict(cw(r.hd.hi))}`, 34)
-    + `rgb(${r.hg.loRgb})  ${verdict(ci(r.hg.lo))}   [${r.glassState}]`);
-}
-
-console.log(`\n=== upscale (file on disk ${SOURCE.w}x${SOURCE.h}) ===`);
-for (const r of rows) {
+console.log(`
+=== upscale (file on disk ${SOURCE.w}x${SOURCE.h}) ===`);
+for (const r of rows.filter((r) => r.scheme === SCHEMES[0])) {
   const s = Math.max(r.geo.renderW / SOURCE.w, r.geo.renderH / SOURCE.h);
   const served = Math.max(r.geo.renderW / r.geo.natW, r.geo.renderH / r.geo.natH);
   console.log(pad(`${r.v.w}x${r.v.h}`, 12) + `css box ${r.geo.renderW}x${r.geo.renderH}  `
@@ -251,7 +304,9 @@ for (const r of rows) {
     + `vs served ${r.geo.natW}w ${served.toFixed(3)}x`);
 }
 
-const wt = Math.min(...rows.map(heroRatio));
-const wh = Math.min(...rows.map((r) => cw(r.hd.hi)));
-const wg = Math.min(...rows.map((r) => ci(r.hg.lo)));
-console.log(`\nworst: hero text ${wt.toFixed(2)}:1   header transparent ${wh.toFixed(2)}:1   header glass ${wg.toFixed(2)}:1`);
+const worst = (fn) => Math.min(...rows.map(fn));
+const wt = worst((r) => pick(r.geo.typeColor, r.t).ratio);
+const wh = worst((r) => pick(r.geo.headerLinkColor, r.hd).ratio);
+const wg = worst((r) => pick(r.glassLinkColor, r.hg).ratio);
+console.log(`
+worst across both schemes: hero text ${wt.toFixed(2)}:1   header transparent ${wh.toFixed(2)}:1   header glass ${wg.toFixed(2)}:1`);
