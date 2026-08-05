@@ -11,9 +11,12 @@
  *
  * The [site] values that used to head this file were reverse-engineered
  * from the parent WordPress theme (Salient's generated stylesheet) before
- * the real palette existed. They are superseded. The navy family is still
- * declared below, unused, so that the change from navy to Emperor can be
- * bisected; it is removed in a separate commit.
+ * the real palette existed. They are gone. The navy family was kept
+ * declared and unused for two commits so the change from navy to Emperor
+ * could be bisected; every consumer has since been moved onto the tokens
+ * above and the declarations are removed. If a `bg-navy-*` or
+ * `text-navy-*` class appears in a diff from here on it is a class that
+ * generates no rule, not a colour choice.
  *
  * Every text/background pair below is WCAG-checked and the ratio is in a
  * comment beside it. tools/perf/contrast.mjs asserts every one of them, so
@@ -207,16 +210,6 @@
      semantic token pointing at Warm, on purpose: it has to be asked for
      by name, and /styleguide labels it FAILS ON WHITE. */
   --color-warm: #ffa92d;      /* 1.92 on white — dark grounds only, 6.84 on the poster plum. */
-
-  /* ── Superseded, kept for one commit ───────────────────────────────
-     The navy family was reverse-engineered from the parent WordPress
-     theme before the brand sheet existed. Nothing references it any
-     more. It is still declared so that the navy -> Emperor change can be
-     bisected; the removal is its own commit. DO NOT USE. */
-  --color-navy-950: #031635;
-  --color-navy-900: #052252;
-  --color-navy-800: #0d3170;
-  --color-navy-700: #133c86;
 
   /* ── Interactive scale ─────────────────────────────────────────────
      Emperor is the interactive colour, so `accent-500` and `primary` are

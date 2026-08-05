@@ -61,11 +61,10 @@ const swatches: Array<{
   { group: "Palette — fills and borders only", name: "campfire", cssVar: "--color-campfire", value: "#e36520", role: "3.42:1 on white. FAILS as text. Icons and fills only — the bookmark.", bg: "bg-campfire" },
   { group: "Palette — dark grounds only", name: "warm", cssVar: "--color-warm", value: "#ffa92d", role: "1.92:1 on white — FAILS AS TEXT ON WHITE. 6.84:1 on the poster plum, 9.39:1 on the dark surface, 4.81:1 on the share card's Emperor-to-Grapevine ground. Dark grounds only: the hero and the share card's rule and eyebrow. There is no semantic token pointing at it, so it has to be asked for by name.", bg: "bg-warm" },
 
-  // ── Superseded ──────────────────────────────────────────────────────
-  { group: "Superseded — navy (do not use)", name: "navy-950", cssVar: "--color-navy-950", value: "#031635", role: "Reverse-engineered from the parent theme. Nothing references it. Removed in a follow-up commit.", bg: "bg-navy-950" },
-  { group: "Superseded — navy (do not use)", name: "navy-900", cssVar: "--color-navy-900", value: "#052252", role: "Superseded by Emperor.", bg: "bg-navy-900" },
-  { group: "Superseded — navy (do not use)", name: "navy-800", cssVar: "--color-navy-800", value: "#0d3170", role: "Superseded.", bg: "bg-navy-800" },
-  { group: "Superseded — navy (do not use)", name: "navy-700", cssVar: "--color-navy-700", value: "#133c86", role: "Superseded.", bg: "bg-navy-700" },
+  // The superseded navy group stood here while the tokens were kept for
+  // bisecting. The tokens are gone, so the swatches go with them: four
+  // rows whose `bg` classes generate no rule would render as four
+  // transparent boxes labelled with hexes the site no longer has.
 
   { group: "Interactive", name: "accent-700", cssVar: "--color-accent-700", value: "#301451 (dark: #9d85b9)", role: "Pressed. Emperor darkened; 15.62:1 with white on it.", bg: "bg-accent-700", fg: "text-primary-foreground" },
   { group: "Interactive", name: "accent-600", cssVar: "--color-accent-600", value: "#7f264a (dark: #c59cad)", role: "Hover, and the page-header eyebrow. Grapevine — a hue step, not a darkening, because Emperor at 11.59 has nowhere darker to visibly go.", bg: "bg-accent-600", fg: "text-primary-foreground" },
