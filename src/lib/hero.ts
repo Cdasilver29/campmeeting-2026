@@ -91,8 +91,15 @@ export const HERO_IMAGE: HeroImage | undefined = {
  * each sized to the box it protects, and the middle of the frame
  * untouched. Only the ink changed.
  */
-const PLUM_WARM = "70, 21, 41"; /* #461529, Grapevine -> black 45% */
-const PLUM_DEEP = "41, 18, 70"; /* #291246, Emperor -> black 45% */
+/*
+ * Exported since the page-header bands took photographs of their own.
+ * src/lib/page-header-art.ts builds its two scrims from these two
+ * strings rather than from its own copy of the numbers — which is the
+ * difference between the site having one plum and having two that agree
+ * today.
+ */
+export const PLUM_WARM = "70, 21, 41"; /* #461529, Grapevine -> black 45% */
+export const PLUM_DEEP = "41, 18, 70"; /* #291246, Emperor -> black 45% */
 
 /**
  * The alpha the bottom scrim must reach where white text sits.

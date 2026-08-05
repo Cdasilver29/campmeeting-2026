@@ -58,7 +58,10 @@ export default async function MinistryPage({
             capped at its own measure and centred, so a second, wider cap
             inside it would only be able to make this line longer than the
             meta line above it. */}
-        <p className="text-ink-muted">
+        {/* No colour class: PageHeader owns the band's ink, which is
+            white on the three ministry pages that have a photograph and
+            muted on /ministries/children, which has none. */}
+        <p>
           {copy.description}{" "}
           <span className="tabular-figures">
             {count} programme {count === 1 ? "entry" : "entries"} across{" "}

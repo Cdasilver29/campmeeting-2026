@@ -67,7 +67,7 @@ export default async function SpeakerPage({
             programme does not need a sentence apologising for what it
             has not got; see the no-sessions note below for the one
             absence that does have to be stated. */}
-        {speaker.bio ? <p className="text-ink-muted">{speaker.bio}</p> : null}
+        {speaker.bio ? <p>{speaker.bio}</p> : null}
       </PageHeader>
 
       <Band>

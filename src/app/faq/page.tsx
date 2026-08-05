@@ -16,7 +16,10 @@ export default function FaqPage() {
           the rule rather than into the meta line, which is a plain string
           shared with the share card. */}
       <PageHeader {...faqPage}>
-        <p className="text-ink-muted">
+        {/* No colour class: PageHeader owns the band's ink, because
+            /faq is one of the routes whose band now carries a
+            photograph and the type there is white. */}
+        <p>
           Answers marked{" "}
           <Badge variant="outline" className="align-middle">
             Provisional

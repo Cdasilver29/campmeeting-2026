@@ -11,9 +11,8 @@ export default function PrayerRequestsPage() {
   return (
     <>
       <PageHeader {...prayerRequestsPage}>
-        <p className="text-ink-muted">
-          Whatever you are carrying, you are welcome to share it here.
-        </p>
+        {/* No colour class: PageHeader owns the band's ink. */}
+        <p>Whatever you are carrying, you are welcome to share it here.</p>
       </PageHeader>
 
       {/*

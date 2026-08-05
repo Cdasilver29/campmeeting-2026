@@ -14,6 +14,7 @@ import { ministryDayGroups } from "@/features/ministries/lib";
 import { speakerDayGroups } from "@/features/speakers/lib";
 import { faqItems } from "@/features/faq/questions";
 import { eventDateRange } from "@/lib/event-dates";
+import { headerImages, type PageHeaderImage } from "@/lib/page-header-art";
 import type { ProgramDay } from "@/data";
 
 /**
@@ -52,6 +53,20 @@ export interface PageDefinition extends PageIdentity {
   description: string;
   /** Site-relative, for the canonical. */
   path: string;
+  /**
+   * The photograph behind this page's header band, where there is one.
+   *
+   * It lives on the definition rather than on the page, for the same
+   * reason the three strings do: this module is where a page says what it
+   * is, and a page that carries a picture and a page that does not is a
+   * difference of that kind. The share card ignores it — `ogCard` takes
+   * PageIdentity and draws the poster's plum ground, which is a decision
+   * about link previews and not about this band.
+   *
+   * The records themselves, the crops and the scrims are in
+   * src/lib/page-header-art.ts.
+   */
+  image?: PageHeaderImage;
 }
 
 /* The event name is the eyebrow on every page that is simply part of the
@@ -73,6 +88,7 @@ export const schedulePage: PageDefinition = {
   meta: `${program.length} days · ${eventDateRange()} · ${EAT}`,
   description: `Every session of ${EDITION} across all ${program.length} days, ${eventInfo.startDate} to ${eventInfo.endDate} at ${eventInfo.church.address}. Times are East Africa Time.`,
   path: "/schedule",
+  image: headerImages.schedule,
 };
 
 export const speakersPage: PageDefinition = {
@@ -89,6 +105,7 @@ export const ministriesPage: PageDefinition = {
   meta: `${ministryPages.length} ministries with pages of their own`,
   description: `The ministries with their own pages at ${EDITION}, and every other ministry tag searchable on the programme.`,
   path: "/ministries",
+  image: headerImages.ministries,
 };
 
 export const aboutPage: PageDefinition = {
@@ -100,6 +117,7 @@ export const aboutPage: PageDefinition = {
   meta: VENUE,
   description: `What Camp Meeting is, and the details for ${EDITION} at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
   path: "/about",
+  image: headerImages.about,
 };
 
 export const contactPage: PageDefinition = {
@@ -108,6 +126,7 @@ export const contactPage: PageDefinition = {
   meta: VENUE,
   description: `Reach ${eventInfo.church.name}, find directions to ${eventInfo.church.address}, and giving details for ${EDITION}.`,
   path: "/contact",
+  image: headerImages.contact,
 };
 
 export const faqPage: PageDefinition = {
@@ -117,6 +136,7 @@ export const faqPage: PageDefinition = {
   meta: `${faqItems.length} questions answered`,
   description: `Answers to common questions about ${EDITION}: dates, venue, session times, livestream and the children's programme.`,
   path: "/faq",
+  image: headerImages.faq,
 };
 
 export const downloadsPage: PageDefinition = {
@@ -125,6 +145,7 @@ export const downloadsPage: PageDefinition = {
   meta: "The printed programme, as signed off by the committee",
   description: `The printed programme PDF for ${EDITION}.`,
   path: "/downloads",
+  image: headerImages.downloads,
 };
 
 export const announcementsPage: PageDefinition = {
@@ -141,6 +162,7 @@ export const livestreamPage: PageDefinition = {
   meta: `${eventInfo.church.name} · ${EAT}`,
   description: `Watch ${EDITION} live from ${eventInfo.church.name}.`,
   path: "/livestream",
+  image: headerImages.livestream,
 };
 
 export const prayerRequestsPage: PageDefinition = {
@@ -150,6 +172,7 @@ export const prayerRequestsPage: PageDefinition = {
   description:
     "Share a prayer request with the pastoral team, by name or anonymously.",
   path: "/prayer-requests",
+  image: headerImages["prayer-requests"],
 };
 
 /*
@@ -210,5 +233,13 @@ export function ministryPageDefinition(tag: MinistryPageTag): PageDefinition {
     meta: `${eventDateRange()} · ${eventInfo.church.address}`,
     description: `${copy.description} ${count} programme ${count === 1 ? "entry" : "entries"} across ${groups.length} ${groups.length === 1 ? "day" : "days"}.`,
     path: `/ministries/${tag}`,
+    /* Three of the four ministry pages have a photograph. `children` does
+       not, because no artwork was supplied for it, and the lookup is
+       written to return undefined rather than to be told about that: the
+       band falls back to its flat muted surface and reads as it always
+       has. Do not pick a stand-in picture for it — a children's ministry
+       page illustrated with somebody else's stock photograph is worse
+       than one with no picture at all. */
+    image: (headerImages as Partial<Record<MinistryPageTag, PageHeaderImage>>)[tag],
   };
 }
