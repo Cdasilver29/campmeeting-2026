@@ -33,14 +33,14 @@ function html(objectPosition) {
   return `<!doctype html><html><head><meta charset="utf-8"><style>
   * { margin:0; padding:0; box-sizing:border-box; }
   .hero { position:relative; isolation:isolate; height:100svh; overflow:hidden;
-          background:#052252; display:flex; flex-direction:column; justify-content:flex-end; }
+          background:#4b207f; display:flex; flex-direction:column; justify-content:flex-end; }
   .hero img { position:absolute; inset:0; width:100%; height:100%;
               object-fit:cover; object-position:${objectPosition}; z-index:-20; }
   .wrap { width:100%; max-width:64rem; margin:0 auto; padding:0 1.5rem 4rem; }
   #textblock { display:flex; flex-direction:column; gap:1rem; max-width:42rem; color:#fff; }
   .title { font:400 clamp(2.75rem,1.5rem + 5vw,5.5rem)/1.02 Georgia,serif; }
   .meta { font:400 1.125rem/1.75rem system-ui; }
-  .cta { align-self:flex-start; background:#fff; color:#052252; padding:.625rem 1.25rem;
+  .cta { align-self:flex-start; background:#fff; color:#4b207f; padding:.625rem 1.25rem;
          border-radius:5px; font:500 .875rem/1.25rem system-ui; }
   #headerblock { position:absolute; top:0; left:0; right:0; height:5rem; display:flex;
                  align-items:center; max-width:64rem; margin:0 auto; padding:0 1.5rem; color:#fff; }

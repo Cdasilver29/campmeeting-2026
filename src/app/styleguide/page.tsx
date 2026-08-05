@@ -59,7 +59,7 @@ const swatches: Array<{
   { group: "Palette — fills and borders only", name: "ming", cssVar: "--color-ming", value: "#3e8391", role: "4.32:1 on white. AA with no headroom — tags and fills, not body copy.", bg: "bg-ming" },
   { group: "Palette — fills and borders only", name: "tree-frog", cssVar: "--color-treefrog", value: "#448d21", role: "4.14:1 on white. AA with no headroom — the live indicator.", bg: "bg-treefrog" },
   { group: "Palette — fills and borders only", name: "campfire", cssVar: "--color-campfire", value: "#e36520", role: "3.42:1 on white. FAILS as text. Icons and fills only — the bookmark.", bg: "bg-campfire" },
-  { group: "Palette — dark grounds only", name: "warm", cssVar: "--color-warm", value: "#ffa92d", role: "1.92:1 on white — FAILS AS TEXT ON WHITE. 6.84:1 on the poster plum, 9.39:1 on the dark surface. Hero only; there is no semantic token pointing at it.", bg: "bg-warm" },
+  { group: "Palette — dark grounds only", name: "warm", cssVar: "--color-warm", value: "#ffa92d", role: "1.92:1 on white — FAILS AS TEXT ON WHITE. 6.84:1 on the poster plum, 9.39:1 on the dark surface, 4.81:1 on the share card's Emperor-to-Grapevine ground. Dark grounds only: the hero and the share card's rule and eyebrow. There is no semantic token pointing at it, so it has to be asked for by name.", bg: "bg-warm" },
 
   // ── Superseded ──────────────────────────────────────────────────────
   { group: "Superseded — navy (do not use)", name: "navy-950", cssVar: "--color-navy-950", value: "#031635", role: "Reverse-engineered from the parent theme. Nothing references it. Removed in a follow-up commit.", bg: "bg-navy-950" },

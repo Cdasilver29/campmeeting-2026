@@ -11,9 +11,14 @@ import { eventInfo } from "@/data";
  *                    is the surface the browser chrome sits against
  *   background_color --color-surface  #ffffff, the splash behind the icon
  *                    before the first paint
- * The dark-mode counterpart (--color-surface #031635) is served through
- * the theme-color meta tag in src/app/layout.tsx, which a manifest has no
- * way to express.
+ * The dark-mode counterpart (--color-surface #1f0d35, Emperor pushed
+ * toward black) is served through the theme-color meta tag in
+ * src/app/layout.tsx, which a manifest has no way to express.
+ *
+ * theme_color and background_color are both #ffffff and both correct:
+ * --color-surface is white in light mode and was white under the navy
+ * palette too, so the palette change did not move them. The stale value
+ * was only ever in this comment and in the layout's dark entry.
  *
  * ── COMMITTEE OWES THIS ──────────────────────────────────────────────
  * The three icons below are geometric placeholders, not artwork. Replace

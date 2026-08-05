@@ -169,7 +169,7 @@ export function Hero() {
         // Below md the section is a plain block: the frame sits in flow at
         // its own aspect ratio and the text block follows it on the page
         // surface. From md the section becomes the frame — full height,
-        // clipped, navy behind — and the text block is laid over the
+        // clipped, Emperor behind — and the text block is laid over the
         // bottom of it. One text block either way; see below for why that
         // matters more than it looks.
         className={`group/hero relative -mt-header md:isolate md:flex md:flex-col md:justify-end md:overflow-hidden md:bg-emperor md:h-svh ${COMPACT_HERO_HEIGHT}`}

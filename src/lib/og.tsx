@@ -11,9 +11,9 @@ import type { PageIdentity } from "@/lib/page-identity";
  * previews, so the card is generated from the same data the metadata
  * comes from: whatever a page calls itself is what its card says.
  *
- * The design is the site's, not a template's — brand navy, the display
- * face for the title, the accent as a single rule along the top. No
- * gradient, no photography, no religious iconography, in keeping with
+ * The design is the site's, not a template's: the poster's plum ground,
+ * the display face for the title, the accent as a single rule along the
+ * top. No photography and no religious iconography, in keeping with
  * CLAUDE.md.
  *
  * Every card is prerendered during `next build` (each opengraph-image
@@ -40,14 +40,50 @@ export const CARD_ID = "card";
 /*
  * Colours are the tokens from src/app/globals.css, written as literals
  * because Satori resolves no CSS variables and has no stylesheet to read.
- * Navy carries the brand weight; the accent appears once, as a rule.
+ *
+ * THE GROUND IS THE POSTER'S GRADIENT, not a flat fill and not the navy
+ * this replaces. Emperor to Grapevine is the one gradient the palette
+ * actually names: globals.css calls the 500 -> 600 step "the poster's own
+ * gradient", and it is a hue step between two colours that are both
+ * text-safe (11.59:1 and 9.22:1 against white), so nothing on the card
+ * gets weaker as it crosses. That is what makes it usable as a ground
+ * rather than gradient soup: the type is scored against the WORSE of the
+ * two ends and passes there.
+ *
+ * Ratios below are measured against Grapevine, the worse end:
+ *
+ *   #f2eef6 on the ground      8.05:1   the title
+ *   #d2c7df on the ground      5.69:1   the meta line
+ *   #ffa92d on the ground      4.81:1   the eyebrow
+ *
+ * The 12px bar along the top and the hairline under the title are
+ * ornament, not text, so the floor for those two is 3:1 rather than 4.5.
+ *
+ * WARM, AND WHY IT IS ALLOWED HERE. globals.css bars Warm from light
+ * surfaces in the strongest terms it uses about any colour: 1.92:1 on
+ * white is not a near miss, it is invisible. What it is FOR is dark
+ * grounds, and it says so. This card is a dark plum ground, which is the
+ * same condition the hero satisfies, so this is the second place Warm is
+ * used and the second place it belongs. It is also the poster's own warm
+ * accent against the poster's own plum.
+ *
+ * The old card ran a two-tier blue: #2e6de7 for the rule and #7ea6f2 for
+ * the eyebrow. One accent in one colour replaces it, which is closer to
+ * the "the accent appears once" the card was designed around than two
+ * shades of it ever were.
  */
-const NAVY = "#052252"; /* --color-navy-900 */
-const RULE = "#133c86"; /* --color-navy-700 */
-const ACCENT = "#2e6de7"; /* --color-accent-500 */
-const ACCENT_LIGHT = "#7ea6f2"; /* --color-accent-300 */
-const INK = "#eaf0fd"; /* dark --color-ink */
-const INK_MUTED = "#b6ccf7"; /* dark --color-ink-muted */
+const GROUND_FROM = "#4b207f"; /* --color-emperor, --color-accent-500 */
+const GROUND_TO = "#7f264a"; /* --color-grapevine, --color-accent-600 */
+const GROUND = `linear-gradient(135deg, ${GROUND_FROM} 0%, ${GROUND_TO} 100%)`;
+/* The hairline under the title. White at low alpha rather than a fourth
+   named colour, so it reads the same against both ends of the ground
+   instead of matching one of them and disappearing into it. The navy
+   version used a flat --color-navy-700, which on a gradient would be a
+   stripe that agrees with the left of the card and fights the right. */
+const RULE = "rgba(255, 255, 255, 0.28)";
+const ACCENT = "#ffa92d"; /* --color-warm, dark grounds only */
+const INK = "#f2eef6"; /* dark --color-ink */
+const INK_MUTED = "#d2c7df"; /* dark --color-ink-muted */
 
 /**
  * Static instances of the two site faces, vendored in src/assets/fonts.
@@ -123,7 +159,11 @@ export function ogCard({ eyebrow, title, meta }: OgCardProps): ImageResponse {
           flexDirection: "column",
           width: "100%",
           height: "100%",
-          backgroundColor: NAVY,
+          // Both, not just the gradient: backgroundColor is what shows if
+          // Satori ever fails to resolve the gradient, and Emperor alone
+          // is a card rather than a blank one.
+          backgroundColor: GROUND_FROM,
+          backgroundImage: GROUND,
           fontFamily: "Inter",
         }}
       >
@@ -146,7 +186,7 @@ export function ogCard({ eyebrow, title, meta }: OgCardProps): ImageResponse {
               fontWeight: 600,
               letterSpacing: 4,
               textTransform: "uppercase",
-              color: ACCENT_LIGHT,
+              color: ACCENT,
             }}
           >
             {eyebrow}

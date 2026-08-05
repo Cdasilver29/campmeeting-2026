@@ -24,7 +24,7 @@ export function LiveEmbed({ label }: { label: string }) {
 
   if (!embeddable) {
     return (
-      <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-card bg-navy-950 p-6 text-center ring-1 ring-line">
+      <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-card bg-accent-700 p-6 text-center ring-1 ring-line">
         <p className="max-w-sm text-sm text-white/80">
           The stream link has not been published yet. Watch on the church&apos;s
           YouTube channel once it goes live.
@@ -33,7 +33,7 @@ export function LiveEmbed({ label }: { label: string }) {
           href={LIVESTREAM_CHANNEL_URL}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-control bg-white px-3 py-1.5 text-sm font-medium text-navy-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
+          className="inline-flex items-center gap-1.5 rounded-control bg-white px-3 py-1.5 text-sm font-medium text-accent-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
         >
           Open the YouTube channel
           <ExternalLink aria-hidden className="size-3.5" />
@@ -78,14 +78,27 @@ export function LiveEmbed({ label }: { label: string }) {
      * group-hover and group-active on the disc below. The transition list
      * is explicit rather than transition-colors, because the ring is a
      * box-shadow and was previously not transitioning at all.
+     *
+     * The poster is accent-700 (Emperor taken 36% to black) and hovers to
+     * Emperor itself, which is the same direction the navy pair it
+     * replaces moved in: a step lighter, not darker, because the poster is
+     * already the darkest thing on the page.
+     *
+     * THE PRESSED RING CHANGED COLOUR, and it had to. It was
+     * `ring-primary/50`, which under the navy palette was #2e6de7 — a
+     * bright blue that read clearly against #031635. --primary is now
+     * Emperor, and Emperor at 50% over an Emperor-derived ground is a
+     * pressed state nobody can see. accent-300 is the lightened Emperor
+     * that exists for exactly this problem, and it is what dark mode
+     * already points --primary at.
      */
     <button
       type="button"
       onClick={() => setActivated(true)}
       aria-label={`Load the livestream video from YouTube: ${label}`}
-      className="group flex aspect-video w-full items-center justify-center rounded-card bg-navy-950 ring-1 ring-line transition-[background-color,box-shadow] duration-fast ease-out-soft hover:bg-navy-900 active:ring-2 active:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
+      className="group flex aspect-video w-full items-center justify-center rounded-card bg-accent-700 ring-1 ring-line transition-[background-color,box-shadow] duration-fast ease-out-soft hover:bg-accent-500 active:ring-2 active:ring-accent-300/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
     >
-      <span className="flex size-16 items-center justify-center rounded-full bg-white text-navy-950 transition-transform duration-fast ease-out-soft group-hover:scale-105 group-active:scale-100">
+      <span className="flex size-16 items-center justify-center rounded-full bg-white text-accent-700 transition-transform duration-fast ease-out-soft group-hover:scale-105 group-active:scale-100">
         <Play aria-hidden className="ml-1 size-7 fill-current" />
       </span>
     </button>
