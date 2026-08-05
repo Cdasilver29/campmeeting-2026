@@ -205,18 +205,32 @@ export function ogCard({ eyebrow, title, meta }: OgCardProps): ImageResponse {
               {title}
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                height: 1,
-                backgroundColor: RULE,
-                margin: "40px 0 28px",
-              }}
-            />
+            {/* The rule and the meta line travel together, the same way
+                they do in the page header. Four routes have no meta —
+                see the note on PageIdentity — and on their cards the
+                title simply sits on the baseline the padding gives it.
 
-            <div style={{ display: "flex", fontSize: 28, color: INK_MUTED }}>
-              {meta}
-            </div>
+                Drawn conditionally rather than with an empty string,
+                because Satori lays out a zero-height flex row as a real
+                row: the card would keep the rule, keep the 28px under
+                it, and read as a card whose last line failed to
+                render. */}
+            {meta ? (
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    height: 1,
+                    backgroundColor: RULE,
+                    margin: "40px 0 28px",
+                  }}
+                />
+
+                <div style={{ display: "flex", fontSize: 28, color: INK_MUTED }}>
+                  {meta}
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       </div>

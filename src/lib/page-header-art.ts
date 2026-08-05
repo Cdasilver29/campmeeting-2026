@@ -161,8 +161,17 @@ export const headerImages = {
     src: "/headers/about.webp",
     width: 1600,
     height: 1067,
-    position: "50% 45%",
-    keeps: "the open Bible across the full width, and the bokeh above its top edge",
+    // 70%, and this is the only page whose crop had to be re-solved after
+    // the meta line came off it. /about is now the shortest band on the
+    // site — 213px — so at 1920 it keeps 17% of the source height, less
+    // than any other route. At 45% that 17% landed on the join between
+    // the bokeh and the Bible's top edge: a soft horizontal gradient with
+    // no legible subject in it, which is the strip of background this
+    // whole exercise is meant to avoid. 70% drops the window onto the
+    // open pages, where the printed text and the gutter survive the
+    // scrim. Checked by rendering, at 390, 768 and 1920, not by arithmetic.
+    position: "50% 70%",
+    keeps: "the open pages, their printed text and the gutter between them; loses the bokeh and the crate",
   },
   contact: {
     // The church photograph the home hero used to carry. It is still in

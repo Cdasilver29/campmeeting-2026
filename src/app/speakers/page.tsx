@@ -12,12 +12,13 @@ export const metadata = pageMetadata(speakersPage);
 export default function SpeakersPage() {
   return (
     <>
-      <PageHeader {...speakersPage}>
-        <p className="text-ink-muted">
-          Photographs and biographies follow once the committee confirms
-          them.
-        </p>
-      </PageHeader>
+      {/* Eyebrow and title, and nothing under them. The meta line counted
+          the presenters above a grid of exactly those presenters, and the
+          paragraph promised photographs that have since arrived for seven
+          of the eight. What is still missing — biographies, and Eld. Ken
+          Ochuka's photograph — is visible on the cards themselves and on
+          his page, which is where a reader would look for it. */}
+      <PageHeader {...speakersPage} />
 
       <Band>
       {/* Four cards read as one set, so they stagger. This is the size of

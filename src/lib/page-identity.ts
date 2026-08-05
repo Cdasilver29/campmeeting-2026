@@ -1,4 +1,4 @@
-import { eventInfo, program, speakers, type Speaker } from "@/data";
+import { eventInfo, program, type Speaker } from "@/data";
 import {
   dayNumber,
   fullDayLabel,
@@ -45,8 +45,34 @@ export interface PageIdentity {
   eyebrow: string;
   /** The page's own name, set in the display face. */
   title: string;
-  /** One line under the rule: dates, venue, counts. */
-  meta: string;
+  /**
+   * One line under the rule: dates, venue, counts.
+   *
+   * OPTIONAL, and four pages leave it out. It is for a fact the title
+   * does not already carry, and on those four it had drifted into
+   * repeating something the reader already had:
+   *
+   *   /speakers    "8 presenters across the programme", above a grid of
+   *                exactly those presenters
+   *   /about       the church name and address, which the header lockup
+   *                sets on every page and the page itself sets again
+   *   /contact     the same line, on the page whose whole job is that
+   *                address, with a map of it two bands below
+   *   /livestream  the church name and "East Africa Time", neither of
+   *                which is what a viewer opening a livestream needs
+   *
+   * A meta line that restates the page is worse than no meta line: it
+   * teaches a reader that the line under the rule is not worth reading,
+   * on the pages where it still is. /schedule, /faq, /ministries,
+   * /downloads, /prayer-requests, /announcements and every day, speaker
+   * and ministry page keep theirs, and each of those says something the
+   * title does not.
+   *
+   * Both surfaces that draw a PageIdentity handle the absence the same
+   * way: the rule goes with it, because a rule between a title and
+   * nothing is not separating anything. See PageHeader and ogCard.
+   */
+  meta?: string;
 }
 
 export interface PageDefinition extends PageIdentity {
@@ -72,7 +98,6 @@ export interface PageDefinition extends PageIdentity {
 /* The event name is the eyebrow on every page that is simply part of the
    event rather than a particular day, speaker or ministry. */
 const EDITION = eventInfo.edition;
-const VENUE = `${eventInfo.church.name} · ${eventInfo.church.address}`;
 const EAT = "East Africa Time";
 
 /** The site's default share card, and the home page's own identity. */
@@ -94,7 +119,6 @@ export const schedulePage: PageDefinition = {
 export const speakersPage: PageDefinition = {
   eyebrow: EDITION,
   title: "Speakers",
-  meta: `${speakers.length} presenters across the programme`,
   description: `The speakers and presenters at ${EDITION}, ${eventInfo.church.name}, with every session they are part of.`,
   path: "/speakers",
 };
@@ -114,7 +138,6 @@ export const aboutPage: PageDefinition = {
   // rather than saying "About", because the whole point of this module is
   // that a page and its preview say the same thing.
   title: "About Camp Meeting",
-  meta: VENUE,
   description: `What Camp Meeting is, and the details for ${EDITION} at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
   path: "/about",
   image: headerImages.about,
@@ -123,7 +146,6 @@ export const aboutPage: PageDefinition = {
 export const contactPage: PageDefinition = {
   eyebrow: EDITION,
   title: "Contact",
-  meta: VENUE,
   description: `Reach ${eventInfo.church.name}, find directions to ${eventInfo.church.address}, and giving details for ${EDITION}.`,
   path: "/contact",
   image: headerImages.contact,
@@ -159,7 +181,6 @@ export const announcementsPage: PageDefinition = {
 export const livestreamPage: PageDefinition = {
   eyebrow: EDITION,
   title: "Livestream",
-  meta: `${eventInfo.church.name} · ${EAT}`,
   description: `Watch ${EDITION} live from ${eventInfo.church.name}.`,
   path: "/livestream",
   image: headerImages.livestream,

@@ -216,22 +216,40 @@ export function PageHeader({
             {title}
           </h1>
 
-          {/* The card's one piece of ornament, and the only one here. */}
-          <hr
-            className={cn(
-              "mt-6 h-px w-full border-0",
-              onPhoto ? "bg-white/45" : "bg-line",
-            )}
-          />
+          {/* The card's one piece of ornament, and the only one here.
+              It is a SEPARATOR, so it is drawn only when there is
+              something under it to separate the title from — the meta
+              line, or the occasional paragraph a page passes as
+              children.
 
-          <p
-            className={cn(
-              "mt-5 text-lg text-pretty",
-              onPhoto ? "text-white" : "text-ink-muted",
-            )}
-          >
-            {meta}
-          </p>
+              /speakers, /about, /contact and /livestream now have
+              neither, and there the header is eyebrow and title and
+              stops. Keeping the rule as a terminal flourish was the
+              other option and is worse: a full-width hairline with
+              nothing after it does not read as ornament, it reads as a
+              line of type that failed to render. Nothing else moves —
+              the band's padding and the mt-3 / mt-6 / mt-5 rhythm are
+              untouched, so those four bands are shorter by exactly the
+              meta line and its own top margin and by nothing else. */}
+          {meta || children ? (
+            <hr
+              className={cn(
+                "mt-6 h-px w-full border-0",
+                onPhoto ? "bg-white/45" : "bg-line",
+              )}
+            />
+          ) : null}
+
+          {meta ? (
+            <p
+              className={cn(
+                "mt-5 text-lg text-pretty",
+                onPhoto ? "text-white" : "text-ink-muted",
+              )}
+            >
+              {meta}
+            </p>
+          ) : null}
 
           {/* The colour lives here, not on each page's paragraph. It used
               to be written as `text-ink-muted` inside three different

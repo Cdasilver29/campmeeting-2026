@@ -28,12 +28,15 @@ export default function MinistriesPage() {
 
   return (
     <>
-      <PageHeader {...ministriesPage}>
-        <p className="text-ink-muted">
-          These run enough of the programme to be worth a page of their own.
-          Every other ministry is still searchable on the full programme.
-        </p>
-      </PageHeader>
+      {/* No children paragraph. It said "these run enough of the
+          programme to be worth a page of their own" above four cards
+          that each carry their own description and entry count, and
+          "every other ministry is still searchable on the full
+          programme" above a band headed "More ministries" that says the
+          same thing in its own first sentence. The meta line stays: "4
+          ministries with pages of their own" is a count, and the page
+          does not otherwise state one. */}
+      <PageHeader {...ministriesPage} />
 
       {/* The four ministries with pages of their own are what this page is,
           so they take the first band under the header. The long tail gets
