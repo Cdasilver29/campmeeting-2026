@@ -1,13 +1,16 @@
 # Visual design pass — progress and handoff
 
-Sessions of 2026-07-29 and 2026-07-30. Art direction and typographic
-hierarchy, then the layout system underneath it. **All chunks are done and
-pushed.**
+Sessions of 2026-07-29, 2026-07-30 and 2026-08-05. Art direction and
+typographic hierarchy, then the layout system underneath it, then the
+photography. **All chunks are done and pushed.**
 
 Session 3 is the layout system, responsiveness and interaction pass and is
-written up at the bottom of this file, after the two art-direction
-sessions. If you are only reading one part, read that one: it contains the
-width system every page now depends on.
+written up after the two art-direction sessions. If you are only reading
+one part, read that one: it contains the width system every page now
+depends on.
+
+Session 4 is the photography pass — speaker portraits and header bands —
+and is at the very bottom.
 
 Constraints that held throughout and still hold: no unnecessary gradients,
 no oversized shadows, no decorative religious icons, no excessive
@@ -927,3 +930,336 @@ Called out so they can be reverted cleanly.
 - **PowerShell paths containing `[...]` need `-LiteralPath`.** Every
   `src/app/schedule/[day]/` path fails silently with wildcard globbing
   otherwise; the Read tool and `node` handle them fine.
+
+---
+
+# Session 4 (2026-08-05) — the photographs
+
+Three commits: `ba70067`, `d39ba56`, `4dbe5a4`. The site had no photography
+outside the home hero: eight monogram avatars and thirteen header bands on
+flat `--color-surface-muted`. It has both now.
+
+Two converters are checked in alongside the harnesses, for the same reason
+they are — the crops and the `object-position` values in them are
+decisions, and a decision that lives only in a shell history is one the
+next person has to re-make by eye:
+
+    tools/assets/speaker-photos.mjs   -> public/speakers/<id>.webp
+    tools/assets/header-photos.mjs    -> public/headers/<route>.webp
+
+## The supplied artwork is not photographs
+
+**Read this before re-cutting anything.** None of the seven speaker files
+is a photograph. Each is a 1:1 SOCIAL POSTER card: the person cut out onto
+the camp meeting's plum ground, with their role in a script face and their
+name in a heavy sans burnt into the lower fifth of the frame.
+
+That text cannot ship. The site sets the name and role in type directly
+beside the picture, so the burnt-in line is the same words a second time in
+someone else's typeface, and at the 48px the card avatar renders it is four
+illegible grey bars. **The crop is not art direction, it is the only way to
+use these files at all.**
+
+What is actually wanted from the committee is the source photographs: no
+crop needed, not pre-tinted to the poster's plum, and lightable
+consistently with each other.
+
+### The crop, and the two numbers per speaker
+
+A 3:4 portrait window, as tall as each caption allows, centred on the
+head-and-shoulders mass. `cx` is not 0.5 on any of them, because every card
+sets the person off-centre to leave room for the type.
+
+`imagePosition` — a new optional field on `Speaker` — is the vertical
+`object-position` the round card avatar needs. A 1:1 window onto a 3:4
+frame keeps the full width and 75% of the height, so the value decides
+which 75%. It is derived rather than chosen: it puts the face's centre at
+42% of the circle. The script renders the resulting circle to a PNG with
+`--preview`, so the choice is checked instead of assumed.
+
+| id | source px | crop taken | output px | KB | object-position |
+| --- | --- | --- | --- | --- | --- |
+| kennedy-mfune | 1024x1024 | 261,0 522x696 | 522x696 | 18.0 | 50% 0% |
+| allan-okoth | 1264x1264 | 324,0 654x872 | 540x720 | 46.9 | 50% 19% |
+| priskillah-munda | 1264x1264 | 284,0 721x961 | 540x720 | 55.0 | 50% 69% |
+| janet-oyiende | 1264x1264 | 319,0 701x935 | 540x720 | 49.7 | 50% 4% |
+| john-clement | 1024x1024 | 271,0 553x737 | 540x720 | 43.0 | 50% 24% |
+| isaac-oenga | 1264x1264 | 270,0 673x897 | 540x720 | 50.5 | 50% 60% |
+| barrack-bosire | 1264x1264 | 332,0 664x885 | 540x720 | 65.0 | 50% 0% |
+
+The values that come out at 0% are the well-composed frames: a portrait's
+face is already high, so centring it in a square crop means starting at the
+top edge. **720px tall is the 160x213 CSS portrait at device pixel ratio 3
+and not a byte more.** Never upscaled — kennedy-mfune's crop is 696px and
+is written at 696.
+
+Eld. Ken Ochuka has no photograph, so the initials monogram stays. It is
+not dead code waiting to be deleted: it is the state this list is in
+whenever it grows.
+
+## Four speakers with no sessions
+
+janet-oyiende, john-clement, isaac-oenga and barrack-bosire appear in no
+session in `program.ts`, because `Draft_Program_v2` predates their
+appointment. **No session and no ministry tag was invented to fill that
+in.** Note that Morning Devotion and Teens are not existing `MinistryTag`
+values either, so adding these sessions may mean adding tags to
+`types.ts`.
+
+Their cards say "Sessions to be confirmed"; their pages say it through the
+site's own `EmptyState`, with the sentence that they are on the programme
+and the sessions have not been published yet, and a link to the full
+programme. The share descriptions say the same, so a reader meets one
+sentence wherever they arrive. `programSpeakers` already kept a profile
+with no sessions out of the programme's speaker filter, so no facet offers
+a search that returns nothing. DATA-NOTES.md items 7-10.
+
+## The header bands
+
+`src/lib/page-header-art.ts` holds one record per route — file, intrinsic
+size, `position`, and `keeps`, a sentence saying what that crop leaves
+visible. `PageDefinition` carries the record, so a page still says what it
+is in one place.
+
+### The band's height does not move, and that is structural
+
+The image and both scrims are absolutely positioned, so they are out of
+flow and contribute nothing. The band goes on being exactly as tall as
+`band`'s own padding and the type inside it. Measured before and after at
+390/768/1024/1440/1920 on all fourteen routes: identical to the pixel. That
+is also why the image is `fill` rather than sized — a sized image has an
+intrinsic height and wants to be in flow.
+
+`-z-20` on the picture and `-z-10` on the scrims, against `isolate` on the
+band. Negative z-index puts a positioned element behind the static in-flow
+content that follows it; `isolate` keeps that index inside the band.
+
+### The scrim is the hero's, and the coverage is not
+
+Same two inks — now **exported** from `lib/hero.ts` rather than copied,
+which is the difference between the site having one plum and having two
+that agree today. Same 0.66 alpha floor, derived there against a pure white
+pixel. Same warm-at-the-outer-edge, cool-as-it-eases-in direction.
+
+What is not the hero's is that the scrim covers the whole band, and it
+could not be otherwise. The hero leaves the middle of an 88svh frame
+untouched because there is a middle with no type in it. On a 286px band
+whose padding is 3rem, rising to 4rem at md, the type IS the middle. Two
+scrim elements that **abut** at the half rather than overlapping: two 0.66
+layers composite to 0.88, which is a third alpha nobody chose.
+
+Composited over a pure white pixel, white type measures 5.49:1 under
+PLUM_DEEP at 0.66 and 6.22:1 under PLUM_WARM at 0.72. The outer edges take
+0.72 because that is where the band meets the page surface above and below
+it, and the extra is what stops the join reading as a seam.
+
+### The eyebrow goes white too
+
+Grapevine over this scrim is about 1.3:1. Warm was the other candidate —
+the share card uses it as an eyebrow on the poster plum and clears 4.81:1
+there — but the card's ground is SOLID Grapevine, and over a 0.66 scrim on
+a white pixel Warm measures **2.87:1 and fails**. Making it pass needs
+about 0.85 alpha, at which point there is no photograph left to have put
+behind the band. So: white, and hierarchy from size and weight.
+
+The `children` colour moved out of /faq, /prayer-requests and
+/ministries/[tag] and into `PageHeader`, because /faq's Provisional badge
+is `text-foreground` on a `border-border` outline — ink on a hairline, and
+invisible on the scrim. The badge override is scoped by its own
+`data-slot`, not by a class name.
+
+### Contrast, all five widths, both schemes
+
+`tools/perf/verify-page-header.mjs`. 420 readings: fourteen routes, five
+widths, three strings, two schemes. Eyebrow, title and meta are scored
+**separately**, each against the brightest composited pixel inside its own
+box — a union box lets the eyebrow's worst pixel score the title, which is
+how a band with one blown highlight under one line reports as passing.
+
+**All clear 4.5:1.** Worst per route, across both schemes and all widths:
+
+| route | worst | string | at |
+| --- | --- | --- | --- |
+| /ministries/christian-education | **5.55:1** | meta | 390 |
+| /ministries/health | 5.63:1 | title | 1024 |
+| /schedule | 5.68:1 | title | 768 |
+| /ministries/family-life | 5.72:1 | meta | 390 |
+| /ministries | 5.80:1 | meta | 390 |
+| /downloads | 5.89:1 | title | 768 |
+| /contact | 6.04:1 | eyebrow | 1024 |
+| /livestream | 6.05:1 | title | 390 |
+| /prayer-requests | 6.11:1 | title | 390 |
+| /about | 6.34:1 | title | 768 |
+| /faq | 6.90:1 | title | 1920 |
+
+Photo bands read identically in light and dark: white type on a fixed
+scrim is scheme-independent. No page failed, so no scrim was deepened and
+no text moved.
+
+### One crop that did not survive, and what fixed it
+
+`/about`. Removing its meta line — see below — made it the shortest band on
+the site at 213px, so at 1920 it keeps **17% of the source height**, less
+than any other route. At `50% 45%` that slice landed on the join between
+the bokeh and the Bible's top edge: a soft horizontal gradient with no
+legible subject, which is the strip of background this exercise exists to
+avoid. `50% 70%` drops the window onto the open pages, where the printed
+text and the gutter survive the scrim. Checked by rendering at 390, 768 and
+1920, not by arithmetic. Nothing else failed.
+
+### What actually limits these pictures
+
+Not the 1600px ceiling. **Seven of the ten supplied sources are between 555
+and 736 pixels wide**, and they are not upscaled to disguise it — an
+upscaled file is the same softness at four times the bytes. So the browser
+stretches them itself, against the file on disk:
+
+| route | file | 390 | 768 | 1024 | 1440 | 1920 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /livestream | 555x260 | 0.70x | 1.38x | 1.85x | 2.59x | **3.46x** |
+| /prayer-requests | 588x306 | 1.00x | 1.31x | 1.74x | 2.45x | 3.27x |
+| /schedule | 612x328 | 0.82x | 1.25x | 1.67x | 2.35x | 3.14x |
+| /ministries | 735x245 | 0.98x | 1.17x | 1.39x | 1.96x | 2.61x |
+| /downloads | 736x404 | 0.67x | 1.04x | 1.39x | 1.96x | 2.61x |
+| /ministries/health | 736x412 | 0.87x | 1.04x | 1.39x | 1.96x | 2.61x |
+| /ministries/christian-education | 735x414 | 0.86x | 1.04x | 1.39x | 1.96x | 2.61x |
+| /about, /faq, /family-life | 1600x1067 | ~0.30x | 0.48x | 0.64x | 0.90x | 1.20x |
+| /contact | 1634x962 | 0.24x | 0.47x | 0.63x | 0.88x | 1.18x |
+
+**Larger sources from the committee are the only fix.** Ask in the same
+request as the hero's original and the poster lockup.
+
+`/contact` reuses `public/hero/church.webp`, the photograph the home hero
+carried before the poster's own picture replaced it. It costs nothing — the
+file never left the repo and was already precached — and it was always a
+better wayfinding picture than a home hero. `50% 31%` is the one crop on
+the site with a name in it: the green NEWLIFE SDA CHURCH sign spans
+y 0.29-0.38 and a centred crop at 1920 lands on the car park.
+
+`/ministries/children` has no photograph, and the lookup returns undefined
+rather than being told about it. **Do not pick a stand-in** — a children's
+ministry page illustrated with somebody else's stock photograph is worse
+than one with no picture.
+
+## The meta line is optional now
+
+Four pages had one that restated the page. /speakers counted the presenters
+above a grid of exactly those presenters; /about and /contact set the
+church name and address the header lockup already sets on every page, and
+that /contact then sets again beside a map of it; /livestream named the
+church and the timezone. /ministries had a paragraph saying its four cards
+are worth a page of their own, above four cards each carrying its own
+description and count, and a second sentence the band below repeats in its
+own first line.
+
+A meta line that restates the page is worse than none: it teaches a reader
+that the line under the rule is not worth reading, on the seven pages where
+it still is.
+
+**The rule is a separator, so it is drawn only when something is under it**
+— the meta line, or the paragraph a page passes as children. Keeping it as
+a terminal flourish was the other option and is worse: a full-width
+hairline with nothing after it reads as a line of type that failed to
+render. `ogCard` does the same, so a preview and the page it opens still
+describe themselves identically; conditionally rather than with an empty
+string, because Satori lays out a zero-height flex row as a real row.
+
+**This is the one place the brief could not be met literally.** The padding
+and the mt-3 / mt-6 / mt-5 rhythm are untouched, so nothing was re-tuned —
+but a band whose height is content-driven cannot lose a line of type and
+stay the same height without inventing filler to replace it. At 768 and up:
+
+| route | before | after |
+| --- | --- | --- |
+| /speakers | 326px | 213px |
+| /about | 314px | 213px |
+| /contact | 314px | 213px |
+| /livestream | 286px | 213px |
+| /ministries | 350px | 286px (children only; its meta stays) |
+
+Every other band is identical to the pixel.
+
+## Payload
+
+**Every file in `public/` is precached** — confirmed by grepping the built
+worker, not assumed. So a picture is bytes a phone on campground signal
+pays for whether or not it opens that page.
+
+| | KB | precache total |
+| --- | --- | --- |
+| `public/speakers/` (7 files) | 328.2 | 1961.68 -> 2290.62 KiB |
+| `public/headers/` (10 files) | 576.2 | 2290.62 -> 2764.87 KiB |
+| /contact | 0 | reuses a file already in the precache |
+
+**576.2 KB is about 176 KB over the ~400 KB line, and three files are the
+whole of it:** family-life 202, faq 120, about 106 — 428 KB between them.
+The other seven come to 148 KB.
+
+**Recommendation, not applied:** serve those three outside the precache.
+/about, /faq and /ministries/family-life are documents read once, and the
+campground case is the schedule. That drops the added precache to about
+148 KB with no loss to the offline programme.
+
+q82 effort 6 throughout. q88 was measured and not kept: it costs 213 KB
+more across the ten and puts no visible difference behind a scrim holding
+0.66 alpha over every pixel of them.
+
+## Gate
+
+`npx tsc --noEmit`, `pnpm lint` and `pnpm build` all pass on `4dbe5a4`.
+
+**CLS 0.0000** — median, min and max — on /schedule, /about, /contact,
+/speakers, /livestream, /faq and /ministries/health.
+
+**Reduced motion:** eleven of twelve routes pixel-identical across eight
+frames; **zero running animations and zero stalled transforms on all
+twelve.** `/schedule` is not fully static: 50px in a region at y 485, over
+a day-rail tile. **Verified against a build of the pre-session commit
+rather than assumed** — it was already not static there, 33px at the same
+y 485 over `select#schedule-ministry`, in two runs of three. Both are
+control repaints on hydration, below the header band, which ends at y 366.
+The extra image request plausibly shifts hydration timing so a second
+control's repaint also lands after the first frame.
+
+## Harness correction
+
+`verify-page-header.mjs` reported /schedule's source as 525px wide. The
+file is 612px. `naturalWidth` on an image chosen from a `w`-descriptor
+srcset is the **density-corrected** intrinsic width, so it moves when
+`sizes` moves and it is smaller than the file — every upscale in that
+column was understated by about 15%, in the direction that makes a soft
+picture look sharper than it is. It now carries the source dimensions as a
+constant, the way `verify-hero.mjs` already did.
+
+## Not asked for, done anyway
+
+Called out so they can be reverted cleanly.
+
+1. **The speaker crops.** The brief said convert, not crop. The burnt-in
+   captions made it unavoidable.
+2. **`SpeakerPortrait`.** The speaker page's media slot takes a 160x213
+   portrait instead of the 80px circle, and "Biography to follow." is gone
+   with it. An 80px circle was right while every speaker was a monogram; a
+   monogram repeated at 160px is just a bigger absence, and these pages
+   have a photograph, no biography, and no prospect of one soon.
+3. **`imagePosition` on the `Speaker` type**, so the crop lives with the
+   photograph rather than in a lookup somewhere else.
+4. **`PLUM_WARM` / `PLUM_DEEP` exported** from `lib/hero.ts`.
+5. **The header `children` colour** moved into `PageHeader`.
+6. **`verify-page-header.mjs`** and the two `tools/assets/` converters.
+7. **Zero-session wording in `speakerPageDefinition`**, so a share card
+   does not say "0 sessions across the programme".
+
+## Still open with the committee
+
+Everything the previous sessions listed, minus the speaker photographs,
+plus:
+
+- **The speaker source photographs**, not the poster cards.
+- **Eld. Ken Ochuka's photograph**, still absent.
+- **Speaker biographies**, still absent for all eight.
+- **Sessions for the four new speakers**, and the ministry tags they need.
+- **Two names that disagree with their own artwork**: "Dr. Preskilla
+  Munda" against the PDF's Priskillah, and "Janet Oyende Kariuki" against
+  `janet-oyiende` — a different surname spelling and a third name.
+- **Larger header sources** for the seven that are under 740px wide.

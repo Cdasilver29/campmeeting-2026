@@ -1,7 +1,14 @@
 # Measurement harnesses
 
-Eight standalone scripts used for the visual pass. They are not part of the
+Nine standalone scripts used for the visual pass. They are not part of the
 build and nothing in `src/` imports them.
+
+`tools/assets/` is a different kind of thing and lives next door: two
+converters that write `public/speakers/` and `public/headers/` from the
+committee's supplied artwork. They are checked in for the same reason
+these are — the crops and the `object-position` values in them are
+decisions, and a decision that lives only in a shell history is one the
+next person has to re-make by eye.
 
 **Every one of these has, at some point, returned a confident wrong
 number.** Four separate instances are documented below and in
@@ -54,6 +61,7 @@ offline behaviour.
 | `measure.mjs` | CDP trace: long-task total, style recalc, layout, paint, CLS, element count, at a fixed CPU throttle. |
 | `hero-contrast.mjs` | hero scrim contrast against a standalone mock, for iterating on gradient stops without a rebuild. |
 | `verify-hero.mjs` | the same measurement against the real built page at six widths, both header states and either hero phase, plus upscale factors. Use this one to confirm. |
+| `verify-page-header.mjs` | the eleven interior header bands that carry a photograph, plus three that do not. Eyebrow, title and meta scored **separately** against the brightest composited pixel inside each of their own boxes, five widths, both colour schemes. Also prints band height, how far the file on disk is stretched, and what fraction of the source each crop keeps. |
 | `crop-sweep.mjs` | brightest **raw** photographic pixel behind the text block, per `object-position`. Answers "would a different crop let the scrim be lighter" before any scrim is designed. |
 | `align.mjs` | the x position of the header lockup against the x position of the **first left-aligned content below the page-header band**, at five widths on seventeen routes, plus the content column's width and gutter. Also checks that the header block is centred inside its own shell. Fails if either disagrees. It used to measure the `h1`; see the note below. |
 | `responsive.mjs` | nine widths x seventeen routes: horizontal overflow with the offending elements named, clipped text, tap targets under 44px, and whether the day rail is scrollable. |
@@ -167,6 +175,20 @@ used there. Then on the hero text, which below `md` is now ink on the page
 surface rather than white over the photograph: hardcoding white would have
 returned **1.00:1 for a 390px hero that measures 16.56:1 and is fine**.
 Both scripts now read `getComputedStyle(el).color` and branch on it.
+
+## `naturalWidth` is not the width of the file
+
+`verify-page-header.mjs` reported /schedule's source as 525px wide. The
+file is 612px. On an image chosen from a `w`-descriptor srcset,
+`naturalWidth` is the **density-corrected** intrinsic width — the served
+variant divided by the ratio between its descriptor and the CSS slot
+`sizes` declares — so it moves when `sizes` moves and it is smaller than
+the file. Every upscale in that column was understated by about 15%, in
+the direction that makes a soft picture look sharper than it is.
+
+Both header harnesses now carry the source dimensions as a constant and
+compute the stretch from the rendered box, the way `verify-hero.mjs`
+already did with its `SOURCE`.
 
 ## Scope an animation assertion to the element
 
