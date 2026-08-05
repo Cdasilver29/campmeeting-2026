@@ -7,6 +7,20 @@ export const eventInfo: EventInfo = {
   startDate: "2026-08-15",
   endDate: "2026-08-22",
   timezone: "Africa/Nairobi",
+  // From the official 2026 poster, which is also where the hero
+  // photograph comes from. This closes the open item that stood since
+  // Phase 1: the main site's pastor's letter showed "The Good News in the
+  // Great Controversy", but that letter carries February dates and a
+  // different pastor, so it was stale and was deliberately kept out of
+  // the hero until the poster settled it.
+  //
+  // The verse is stored as a REFERENCE, not as verse text. Which
+  // translation the church reads from is not recorded anywhere this
+  // project can verify, and printing the wrong wording of Isaiah 1:19-20
+  // under the theme would be worse than printing none.
+  theme: "Obey and Live",
+  keyVerse: "Isaiah 1:19-20",
+  themeSong: "SDAH 590",
   church: {
     name: "Seventh-day Adventist Church Newlife",
     address: "5th Ngong Avenue, Nairobi",

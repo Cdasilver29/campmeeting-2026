@@ -23,11 +23,15 @@
  *            clipped white
  *
  * The shape of that is the inverse of the church photograph this
- * replaced, and it changes what each scrim is for. The top scrim no
- * longer has anything to protect: the top third of this frame is darker
- * than any scrim would make it. Its job is now entirely the tint. The
- * bottom scrim has more to do than before, not less — a third of the
- * pixels under the text block are above 0.75 and some of them are 1.0.
+ * replaced, and it changes what each scrim is for. The bottom scrim has
+ * more to do than before, not less — a third of the pixels under the text
+ * block are above 0.75 and some of them are 1.0.
+ *
+ * The deciles above are of the SOURCE FILE, and that distinction cost a
+ * failing measurement once: they describe what sits at the top of the
+ * frame only while the frame is taller in aspect than the 1.193:1 source.
+ * At 60svh it is not, and the hands land under the header. See
+ * HERO_SCRIM_TOP.
  */
 export type HeroImage = {
   src: string;
@@ -122,18 +126,43 @@ export const SCRIM_ALPHA_FLOOR = 0.66;
  * fixed-height header (--spacing-header, 5rem) rather than a fraction of
  * a frame that changes height with the phase.
  *
- * Lighter than the bottom one, and lighter than the version it replaces,
- * because on THIS photograph it is barely a protection at all. The top
- * three deciles of the source have a maximum luminance of 0.027, so white
- * type over them is already at 19:1 before anything is painted. What this
- * gradient is for is the tint: it carries the plum up over the header so
- * the frame does not start as neutral black, which is what the poster
- * does. 0.55 at the top edge, easing out by 176px.
- *
  * It runs deep-to-warm downward, the opposite direction to the bottom
  * scrim, so the two ends of the frame are not the same colour.
+ *
+ * ── WHY THIS IS NO LONGER THE LIGHT ONE ────────────────────────────────
+ *
+ * It used to hold 0.55 easing to 0.52 across the header, on the reasoning
+ * quoted above the file: the top three deciles of this source have a
+ * MAXIMUM luminance of 0.027, so white type over them is at 19:1 before
+ * anything is painted, and the gradient was therefore almost entirely
+ * tint rather than protection.
+ *
+ * That reasoning is true of the source file and false of the frame. It
+ * assumes the top of the frame shows the top of the photograph, which
+ * only holds while the frame is TALLER in aspect than the 1.193:1 source.
+ * In the compact phase the frame is 60svh — 2.22:1 at a 1024x768
+ * viewport — so `object-fit: cover` crops the height instead of the
+ * width and centres what is left. The band that lands under the header is
+ * then the middle of the image: the hands, whose specular highlights
+ * reach 0.99.
+ *
+ * Measured on the built page, phase=during, white header type against the
+ * brightest pixel under it: 4.45:1 at 1024, 4.49:1 at 1440 and 2560. A
+ * real AA failure, present since the photograph was swapped in and missed
+ * because the phase that exposes it was not re-measured then.
+ *
+ * So the top scrim is now derived the same way the bottom one is —
+ * against a white pixel, because a white pixel is what can appear there —
+ * rather than against the top of the source file. PLUM_DEEP needs 0.600
+ * over pure white for white type to reach 4.5:1; 0.66 is used, matching
+ * SCRIM_ALPHA_FLOOR, and held to 80px because that is --spacing-header.
+ * Past the header there is nothing to protect and it eases out as before.
+ *
+ * The art-direction cost is close to nil. In the full-bleed phase the
+ * pixels underneath are at luminance 0.027, and a plum at 0.66 over
+ * near-black looks like a plum at 0.55 over near-black.
  */
-export const HERO_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_DEEP}, 0.55) 0px, rgba(${PLUM_DEEP}, 0.52) 80px, rgba(${PLUM_WARM}, 0.38) 104px, rgba(${PLUM_WARM}, 0.22) 128px, rgba(${PLUM_WARM}, 0.09) 150px, rgba(${PLUM_WARM}, 0) 176px)`;
+export const HERO_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_DEEP}, 0.66) 0px, rgba(${PLUM_DEEP}, 0.64) 80px, rgba(${PLUM_WARM}, 0.46) 104px, rgba(${PLUM_WARM}, 0.26) 128px, rgba(${PLUM_WARM}, 0.10) 150px, rgba(${PLUM_WARM}, 0) 176px)`;
 
 /**
  * Bottom scrim: covers the text block and its own padding, and stops.
@@ -166,24 +195,36 @@ export const HERO_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, 0.7
  * of the viewport.
  *
  * Measured footprints, from the bottom of the frame to the top of the h1
- * and including the block's own bottom padding:
+ * and including the block's own bottom padding. Re-measured on the built
+ * page now that the block carries the poster's theme, key verse and theme
+ * song (tools/perf/verify-hero.mjs, the `footprint` column):
  *
- *   390   290px      1440  352px
- *   768   236px      1920  352px
- *   1024  325px      2560  352px
+ *   768   310px      1440  336px
+ *   1024  323px      1920  336px
+ *                    2560  336px
  *
- * So 26rem (416px) covers the worst case with 64px left over for the
- * fade, and a flat rem value stops the scrim growing with the frame.
+ * The block gained two lines and got SHORTER at the wide end, 352px to
+ * 336px, which is worth understanding rather than filing as luck. "Camp
+ * Meeting 2026" at the top of the clamp is about 700px of type in a 42rem
+ * measure, so it always took two lines: two lines of 88px display face.
+ * "Obey and Live" is 13 characters and fits on one. Losing that line
+ * releases about 90px, and the kicker and the verse line together cost
+ * about 70px. The remaining +14px at 768, where the title never wrapped,
+ * is the true cost of the new content.
  *
- * The compact phase is the same calculation against its smaller type,
- * whose footprint measures 154px at every width except 390, where the
- * title takes a second line and it reaches 180px.
+ * So 26rem (416px) still covers the worst case: 336px reaches 81% of the
+ * scrim and the curve holds 0.66 to 88%. Unchanged, and measured rather
+ * than assumed.
  *
- * NOTE: these are the footprints of the text block BEFORE the poster's
- * theme, key verse and theme song were added to it. Both values are
- * re-measured and raised in the commit that adds them.
+ * The compact phase did NOT survive unchanged. Its footprint went 154px
+ * to 214px — the compact title was already one line, so it paid for the
+ * kicker and the verse without the wrap saving to offset them. Against
+ * the old 15rem (240px) that is 89% of the scrim, just past where the
+ * curve leaves 0.66, and it measured 4.72:1 at 1024 and 4.86:1 at 768:
+ * passing, but on the wrong side of the design. 16rem (256px) puts the
+ * footprint back at 84%.
  */
 export const HERO_SCRIM_BOTTOM_HEIGHT = {
   before: "26rem",
-  compact: "15rem",
+  compact: "16rem",
 } as const;

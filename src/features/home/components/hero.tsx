@@ -82,8 +82,40 @@ import {
  *
  * MOTION
  * The photograph does not animate: no parallax, no ken burns, no fade. The
- * text block does, once, on load — title, meta, then call to action, 100ms
- * apart, 520ms end to end. See the note on the RevealGroup below.
+ * text block does, once, on load — theme, then the verse and song, then
+ * the meta line, then the call to action, 100ms apart, 620ms end to end.
+ * See the note on the RevealGroup below.
+ *
+ * THE POSTER'S TYPEFACES, AND WHY NEITHER IS HERE
+ *
+ * The 2026 poster sets "Camp Meeting" in a heavy geometric sans carrying a
+ * drawn C-A ligature, and "Obey and Live" in a formal script. Both are set
+ * in Fraunces here, which is the display face the site already loads, and
+ * that is a decision rather than a shortfall:
+ *
+ *   - The ligature is artwork. It is one drawn glyph pair in a lockup, and
+ *     no font on any service has it, because it does not belong to a font.
+ *     Reproducing it means the artwork, not a typeface.
+ *   - A formal script has no honest free equivalent. What is available on
+ *     Google Fonts — Great Vibes, Pinyon Script, Petit Formal Script,
+ *     Italianno, Tangerine — is a set of wedding-stationery faces with
+ *     thin, even strokes and no real contrast modulation. Setting "Obey
+ *     and Live" in one of those alongside a photograph and a measured
+ *     scrim would read as a near-miss of the poster, which is worse than
+ *     not attempting it: a reader who has seen the poster sees a copy that
+ *     did not quite work, and a reader who has not sees a wedding invite.
+ *   - Fraunces is already loaded, already preloaded, and costs nothing
+ *     further. It carries every other heading on the site, so the theme in
+ *     Fraunces reads as this site saying the theme rather than as a
+ *     failed impression of the print.
+ *
+ * ── COMMITTEE OWES THIS ───────────────────────────────────────────────
+ * The real fix is the poster's own lockup as an SVG or a transparent PNG,
+ * from whoever set the poster. That gets the ligature and the script
+ * exactly, at any size, with no licence to buy and no font to ship — an
+ * SVG of two words is smaller than any webfont that could approximate
+ * them. Ask for the lockup, and ask for it in the same request as the
+ * full-resolution photograph src/lib/hero.ts already asks for.
  */
 
 const HERO_ID = "home-hero";
@@ -113,10 +145,12 @@ const COMPACT_BOTTOM_PADDING =
   "md:group-data-[hero-phase=during]/hero:pb-8 md:group-data-[hero-phase=after]/hero:pb-8";
 const COMPACT_STACK_GAP =
   "group-data-[hero-phase=during]/hero:gap-2 group-data-[hero-phase=after]/hero:gap-2";
-const COMPACT_TITLE =
+const COMPACT_THEME =
   "group-data-[hero-phase=during]/hero:text-4xl group-data-[hero-phase=after]/hero:text-4xl";
-const COMPACT_META =
+const COMPACT_VERSE =
   "group-data-[hero-phase=during]/hero:text-base group-data-[hero-phase=after]/hero:text-base";
+const COMPACT_META =
+  "group-data-[hero-phase=during]/hero:text-sm group-data-[hero-phase=after]/hero:text-sm";
 const COMPACT_CTA_OFFSET =
   "group-data-[hero-phase=during]/hero:mt-0 group-data-[hero-phase=after]/hero:mt-0";
 
@@ -239,33 +273,36 @@ export function Hero() {
           16.56:1 and 6.32:1, so no phone reader is now depending on a
           scrim at all.
 
-          The compact phases set a smaller title and tighter spacing. That
-          is not decoration: it is what lets the bottom scrim stay at 15rem
-          in a 60svh band instead of covering the whole of it.
+          The compact phases set a smaller theme, verse and meta line, and
+          tighter spacing. That is not decoration: it is what lets the
+          bottom scrim stay short in a 60svh band instead of covering the
+          whole of it. With the poster's three new strings in the block
+          both scrim heights went up; the measured footprints they are
+          derived from are in src/lib/hero.ts.
         */}
         <div className={`shell pt-6 pb-10 md:pt-0 md:pb-16 ${COMPACT_BOTTOM_PADDING}`}>
           {/*
             THE ENTRANCE.
 
-            Title, then meta, then call to action, each a short fade and a
-            12px lift, 100ms apart. 520ms end to end. It is the first thing
-            anyone sees and it used to arrive as one block, carried in by
-            the page transition; sequencing it is what makes it read as
-            composed rather than as switched on.
+            Theme, then the verse and song, then the meta line, then the
+            call to action, each a short fade and a 12px lift, 100ms apart.
+            620ms end to end. It is the first thing anyone sees and it used
+            to arrive as one block, carried in by the page transition;
+            sequencing it is what makes it read as composed rather than as
+            switched on.
 
             `immediate`, not the default scroll trigger: this is on screen
             at load by definition, so observing it would be asking a
             question whose answer is already known.
 
-            There is no eyebrow in this sequence because there is no eyebrow
-            in this hero. The "Seventh-day Adventist Church Newlife" line
-            was removed deliberately — the header lockup carries it, and so
-            does the green sign in the photograph. PageHeader's eyebrow is a
-            different component on the other twelve routes, and it is not
-            animated: it opens every interior page, and the page transition
-            already moves that whole block on every navigation. Two
-            entrances on one element is the thing this pass is meant to
-            avoid.
+            Four items, not five: the edition kicker is inside the h1 and
+            arrives with the theme it belongs to. It is not the eyebrow
+            this hero used to have and does not reinstate it — the
+            "Seventh-day Adventist Church Newlife" line stays gone, since
+            the header lockup carries it and so does the green sign in the
+            photograph. What the kicker names is the event, which had to
+            stay somewhere in the hero once the theme took the display
+            slot.
 
             RevealGroup and RevealItem are client components; their children
             are not. The hero stays a server component and these are slots
@@ -287,16 +324,71 @@ export function Hero() {
             id={HERO_TEXT_ID}
             className={`flex max-w-2xl flex-col gap-4 ${COMPACT_STACK_GAP}`}
           >
+            {/*
+              THE THEME IS THE SUBJECT, AND THE EDITION IS ITS KICKER.
+
+              Both sit inside the one h1, so the heading a screen reader
+              announces is still "Camp Meeting 2026 Obey and Live" — the
+              event names itself — while the eye goes to the theme, which
+              is what the poster does and what this hero was missing.
+
+              The alternative was an h1 of "Obey and Live" with the edition
+              as a separate eyebrow above it. That would make the home
+              page's only top-level heading not name the event, which is a
+              real cost in a document whose title, share card, manifest and
+              JSON-LD all lead with "Camp Meeting 2026".
+
+              TYPEFACE. The poster sets "Camp Meeting" in a heavy geometric
+              sans with a drawn C-A ligature and "Obey and Live" in a
+              formal script. Neither is reproduced here and neither is
+              approximated: see the note at the foot of this file.
+            */}
             <RevealItem>
-              <h1
-                className={`font-display text-hero text-balance text-ink md:text-white ${COMPACT_TITLE}`}
-              >
-                {eventInfo.edition}
+              {/* The colour lives on the h1, not on the theme span inside
+                  it, and that is load-bearing rather than tidiness.
+                  tools/perf/verify-hero.mjs reads
+                  getComputedStyle(h1).color to decide whether to score the
+                  block against the brightest backdrop pixel or the darkest
+                  — see the note at the top of that file. With the colour
+                  moved down onto a child, the h1 inherited --color-ink at
+                  every width and the harness reported 1.02:1 FAIL at five
+                  of six widths for a hero that is white over a scrim and
+                  fine. Declaring it here is also simply the correct place:
+                  it is the colour of the heading's text, and the kicker
+                  overrides it. */}
+              <h1 className="flex flex-col gap-2 text-balance text-ink md:text-white">
+                {/* Not the display face. Set small and letter-spaced it
+                    would only read as a serif shrunk, and the site's own
+                    eyebrow convention (PageHeader) is sans. Grapevine off
+                    the photograph, matching that eyebrow at 9.22:1 on
+                    white; pure white over it, where Grapevine would be
+                    about 1.3:1 on the scrim. */}
+                <span className="text-sm font-semibold tracking-[0.18em] text-accent-600 uppercase md:text-white">
+                  {eventInfo.edition}
+                </span>
+                <span className={`font-display text-hero ${COMPACT_THEME}`}>
+                  {eventInfo.theme}
+                </span>
               </h1>
             </RevealItem>
 
+            {/* The verse and the song, one line that wraps into two rather
+                than a string with punctuation in it: the separator is
+                aria-hidden, so nothing announces a middle dot, and at 320px
+                of content the two halves break cleanly instead of
+                mid-reference. */}
             <RevealItem>
-              <p className={`text-lg text-ink-muted md:text-white ${COMPACT_META}`}>
+              <p
+                className={`flex flex-wrap items-baseline gap-x-3 gap-y-1 text-lg text-ink md:text-white ${COMPACT_VERSE}`}
+              >
+                <span>{eventInfo.keyVerse}</span>
+                <span aria-hidden>&middot;</span>
+                <span>Theme song {eventInfo.themeSong}</span>
+              </p>
+            </RevealItem>
+
+            <RevealItem>
+              <p className={`text-base text-ink-muted md:text-white ${COMPACT_META}`}>
                 {eventDateRange()} at {eventInfo.church.address}
               </p>
             </RevealItem>

@@ -106,6 +106,18 @@ export interface EventInfo {
   startDate: string;
   endDate: string;
   timezone: string;
+  /**
+   * The three strings the official poster carries above everything else.
+   * Required rather than optional: a future year that swaps the data files
+   * and forgets the theme should fail to compile, not render a hero with a
+   * hole where its subject was.
+   */
+  /** The camp meeting theme, as printed. */
+  theme: string;
+  /** The theme's key verse, as a reference. Not the verse text. */
+  keyVerse: string;
+  /** Theme song as a hymnal reference, e.g. "SDAH 590". */
+  themeSong: string;
   church: {
     name: string;
     address: string;

@@ -50,14 +50,21 @@ const heightMode = process.argv[2] ?? "full";
  * two (a 44%-tall element whose gradient also ends at 44%) kills the
  * gradient at 19% of the frame and leaves the top of the text block bare.
  *
- * The floor both scrims have to clear: #0b0f14 over a pure-white pixel
- * needs alpha >= 0.57 for white type to reach 4.5:1, and 0.58 is used so
- * the margin is not one rounding step wide. Wherever type sits, alpha
- * stays above that and only then fades.
+ * The floor both scrims have to clear: over a pure-white pixel PLUM_DEEP
+ * needs alpha >= 0.600 and PLUM_WARM >= 0.620 for white type to reach
+ * 4.5:1. 0.66 is used in both, which is SCRIM_ALPHA_FLOOR in
+ * src/lib/hero.ts. Wherever type sits, alpha stays above that and only
+ * then fades.
+ *
+ * The TOP scrim is derived the same way as of this pass. It used to run
+ * at 0.55 on the reasoning that the top of this photograph is near-black
+ * and needs no protection — true of the source file, false of the frame,
+ * because at 60svh `cover` crops the height and puts the hands under the
+ * header. It measured 4.45:1 there.
  */
 const topStops =
   process.argv[3] ??
-  `rgba(${PLUM_DEEP}, 0.55) 0px, rgba(${PLUM_DEEP}, 0.52) 80px, rgba(${PLUM_WARM}, 0.38) 104px, rgba(${PLUM_WARM}, 0.22) 128px, rgba(${PLUM_WARM}, 0.09) 150px, rgba(${PLUM_WARM}, 0) 176px`;
+  `rgba(${PLUM_DEEP}, 0.66) 0px, rgba(${PLUM_DEEP}, 0.64) 80px, rgba(${PLUM_WARM}, 0.46) 104px, rgba(${PLUM_WARM}, 0.26) 128px, rgba(${PLUM_WARM}, 0.10) 150px, rgba(${PLUM_WARM}, 0) 176px`;
 const bottomStops =
   process.argv[4] ??
   `rgba(${PLUM_WARM}, 0.74) 0%, rgba(${PLUM_WARM}, 0.70) 40%, rgba(${PLUM_DEEP}, 0.68) 70%, rgba(${PLUM_DEEP}, 0.66) 88%, rgba(${PLUM_DEEP}, 0.44) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%`;
@@ -90,6 +97,29 @@ function contrastWithWhite(bgLuminance) {
 /* White needs 4.5:1, so the background must stay at or below this. */
 const MAX_BG_LUMINANCE = 1.05 / 4.5 - 0.05;
 
+/*
+ * The compact phase shrinks the type as well as the band, and this mock
+ * used not to know that. Its "60" mode rendered the FULL-SIZE text block
+ * inside a 60svh frame, so the block measured 260px where the shipped one
+ * measures 214px. That was survivable while the compact scrim was also
+ * being handed the full-bleed 26rem — the oversized block still landed
+ * inside it — and stopped being survivable the moment the real 16rem was
+ * passed in: the type then sat 126% up a scrim that ends at 100%, and the
+ * harness reported 1.10:1 for a phase that measures 5.83:1 on the built
+ * page.
+ *
+ * A mock that cannot represent the phase it is named after is worse than
+ * no mock, so the sizes below mirror the COMPACT_* class strings in
+ * src/features/home/components/hero.tsx. Keep the two in step.
+ */
+const COMPACT_TYPE = `
+  .hero[data-compact] #textblock { gap: .5rem; }
+  .hero[data-compact] .theme { font-size: 2.25rem; line-height: 2.5rem; }
+  .hero[data-compact] .verse { font-size: 1rem; line-height: 1.625rem; }
+  .hero[data-compact] .meta  { font-size: .875rem; line-height: 1.25rem; }
+  .hero[data-compact] .wrap  { padding-bottom: 2rem; }
+`;
+
 function heroHtml(mode) {
   const height = mode === "full" ? "100svh" : "60svh";
   return `<!doctype html>
@@ -110,13 +140,21 @@ function heroHtml(mode) {
                   height: ${bottomHeight};
                   z-index: -10; pointer-events: none;
                   background: linear-gradient(to top, ${bottomStops}); }
-  .wrap { width: 100%; max-width: 64rem; margin: 0 auto; padding: 0 1.5rem 4rem; }
+  /* 80rem and a 2.5rem gutter, matching --width-shell and the lg step of
+     --shell-gutter. It was 64rem/1.5rem, which is the width system this
+     site had two sessions ago. */
+  .wrap { width: 100%; max-width: 80rem; margin: 0 auto; padding: 0 2.5rem 4rem; }
   #textblock { display: flex; flex-direction: column; gap: 1rem;
                max-width: 42rem; color: #fff; }
-  .eyebrow { font: 600 0.875rem/1.25rem system-ui; letter-spacing: .1em;
-             text-transform: uppercase; }
-  .title { font: 400 clamp(2.75rem, 1.5rem + 5vw, 5.5rem)/1.02 Georgia, serif; }
-  .meta { font: 400 1.125rem/1.75rem system-ui; }
+  /* The h1 now holds the edition as a kicker above the theme, so the
+     block is four items rather than three and its footprint grew. */
+  .title { display: flex; flex-direction: column; gap: .5rem; }
+  .kicker { font: 600 0.875rem/1.25rem system-ui; letter-spacing: .18em;
+            text-transform: uppercase; }
+  .theme { font: 400 clamp(2.75rem, 1.5rem + 5vw, 5.5rem)/1.02 Georgia, serif; }
+  .verse { display: flex; flex-wrap: wrap; gap: .25rem .75rem;
+           font: 400 1.125rem/1.75rem system-ui; }
+  .meta { font: 400 1rem/1.625rem system-ui; }
   .cta { align-self: flex-start; background: #fff; color: #4b207f;
          padding: .625rem 1.25rem; border-radius: 5px;
          font: 500 0.875rem/1.25rem system-ui; }
@@ -128,18 +166,25 @@ function heroHtml(mode) {
                  display: flex; align-items: center; justify-content: space-between;
                  max-width: 64rem; margin: 0 auto; padding: 0 1.5rem;
                  color: #fff; font: 500 0.875rem/1.25rem system-ui; }
+  ${mode === "full" ? "" : COMPACT_TYPE}
 </style></head>
 <body>
-  <section class="hero">
+  <section class="hero"${mode === "full" ? "" : " data-compact"}>
     <img src="${IMAGE}" alt="">
     <div class="scrim-top"></div>
     <div class="scrim-bottom"></div>
     <div id="headerblock"><span>Camp Meeting 2026</span><span>Today Schedule Speakers Ministries About</span></div>
     <div class="wrap">
-      <!-- Matches the shipped block: title, one meta line, CTA. The
-           church-name eyebrow is gone; the header lockup carries it. -->
+      <!-- Matches the shipped block: the h1 (edition kicker over the
+           poster's theme), the key verse and theme song, one meta line,
+           CTA. The church-name eyebrow is still gone; the header lockup
+           carries it. -->
       <div id="textblock">
-        <h1 class="title">Camp Meeting 2026</h1>
+        <h1 class="title">
+          <span class="kicker">Camp Meeting 2026</span>
+          <span class="theme">Obey and Live</span>
+        </h1>
+        <p class="verse"><span>Isaiah 1:19-20</span><span>&middot;</span><span>Theme song SDAH 590</span></p>
         <p class="meta">15 to 22 August 2026 at 5th Ngong Avenue, Nairobi</p>
         <span class="cta">See the programme</span>
       </div>
