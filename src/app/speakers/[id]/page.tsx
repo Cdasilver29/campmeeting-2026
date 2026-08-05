@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CalendarClock } from "lucide-react";
 import { Band } from "@/components/band";
+import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Reveal, RevealGroup, RevealItem } from "@/components/reveal";
-import { speakerById, speakers } from "@/data";
+import { eventInfo, speakerById, speakers } from "@/data";
 import { TimeRange } from "@/features/schedule/components/session-card";
 import { speakerLabel } from "@/features/schedule/lib/presenters";
 import { ministryLabels } from "@/features/schedule/lib/today";
-import { SpeakerAvatar } from "@/features/speakers/components/speaker-avatar";
+import { SCHEDULE_PATH } from "@/features/schedule/lib/url";
+import { SpeakerPortrait } from "@/features/speakers/components/speaker-avatar";
 import { speakerDayGroups } from "@/features/speakers/lib";
+import { ACTION_LINK } from "@/lib/link-styles";
 import { pageMetadata } from "@/lib/metadata";
 import { speakerPageDefinition } from "@/lib/page-identity";
 
@@ -55,19 +59,44 @@ export default async function SpeakerPage({
           the share card already put it, so the name needs no subtitle. */}
       <PageHeader
         {...speakerPageDefinition(speaker)}
-        media={<SpeakerAvatar speaker={speaker} size="lg" />}
+        media={<SpeakerPortrait speaker={speaker} />}
       >
-        <p className="text-ink-muted italic">
-          {speaker.bio ?? "Biography to follow."}
-        </p>
+        {/* Only when there is one. "Biography to follow." was a line of
+            type saying nothing on all four pages that carried it, and it
+            is on eight now. A page with a portrait, a role and a
+            programme does not need a sentence apologising for what it
+            has not got; see the no-sessions note below for the one
+            absence that does have to be stated. */}
+        {speaker.bio ? <p className="text-ink-muted">{speaker.bio}</p> : null}
       </PageHeader>
 
       <Band>
       {total === 0 ? (
+        /*
+         * FOUR SPEAKERS ARE IN THIS STATE TODAY and it is not an error.
+         * janet-oyiende, john-clement, isaac-oenga and barrack-bosire were
+         * appointed after Draft_Program_v2 was transcribed, so the
+         * programme has no session crediting them yet. The wording has to
+         * say that the sessions are coming, not that the page is broken
+         * or that the person has nothing to do: "No sessions are listed"
+         * reads as the latter.
+         *
+         * EmptyState rather than a bare paragraph, because that is the
+         * component this site uses whenever a view has nothing in it, and
+         * a fifth different way of saying "not yet" is how a site stops
+         * having a voice. It is deliberately NOT ErrorState.
+         */
         <Reveal>
-          <p className="text-ink-muted">
-            No sessions are listed for {speakerLabel(speaker)} yet.
-          </p>
+          <EmptyState
+            icon={CalendarClock}
+            title="Sessions to be confirmed"
+            description={`${speakerLabel(speaker)} is on the ${eventInfo.edition} programme, but the sessions have not been published yet. They will appear here, and on the full programme, as soon as the committee confirms them.`}
+            action={
+              <Link href={SCHEDULE_PATH} className={ACTION_LINK}>
+                See the full programme
+              </Link>
+            }
+          />
         </Reveal>
       ) : (
         /* The count line and one item per day the speaker appears on. A

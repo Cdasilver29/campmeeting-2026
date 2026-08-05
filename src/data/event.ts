@@ -61,28 +61,105 @@ export const eventInfo: EventInfo = {
   },
 };
 
+/**
+ * ── ABOUT THE PHOTOGRAPHS ────────────────────────────────────────────
+ *
+ * `image` points at public/speakers/<id>.webp, cropped out of the
+ * committee's own poster cards by tools/assets/speaker-photos.mjs. Read
+ * the note at the top of that file before changing a crop: the supplied
+ * artwork carries each person's name burnt into the lower fifth of the
+ * frame, and the crop is what removes it.
+ *
+ * `imagePosition` is per photo and is not decoration. See types.ts.
+ *
+ * ── ABOUT THE FOUR SPEAKERS WITH NO SESSIONS ─────────────────────────
+ *
+ * janet-oyiende, john-clement, isaac-oenga and barrack-bosire appear in
+ * no session in program.ts, because program.ts is transcribed from
+ * Draft_Program_v2 and these four were appointed after it was drawn. That
+ * is a gap in the programme, not in this file: the sessions are owed by
+ * the committee. Nothing here invents one, and no ministry tag was
+ * attached to make the pages look fuller than the data is. See
+ * DATA-NOTES.md.
+ *
+ * Their pages render, and read as "sessions to be confirmed" rather than
+ * as an error. `programSpeakers` (features/schedule/lib/presenters.ts)
+ * already keeps a profile with no sessions out of the programme filter,
+ * so no facet offers a search that returns nothing.
+ */
 export const speakers: Speaker[] = [
   {
     id: "kennedy-mfune",
     name: "Kennedy Mfune",
     title: "Pr.",
     role: "Main Speaker",
+    image: "/speakers/kennedy-mfune.webp",
+    imagePosition: "50% 0%",
   },
   {
     id: "ken-ochuka",
     name: "Ken Ochuka",
     title: "Eld.",
+    // No photograph supplied. Falls back to the initials monogram, which
+    // is why that fallback stays. Still owed by the committee.
   },
   {
     id: "allan-okoth",
     name: "Allan Okoth",
     role: "Children's Corner",
+    image: "/speakers/allan-okoth.webp",
+    imagePosition: "50% 19%",
   },
   {
     id: "priskillah-munda",
     name: "Priskillah Munda",
     title: "Dr.",
     role: "Health Presenter",
+    // The supplied file is named preskillamunda.jpg and its own caption
+    // reads "Dr. Preskilla Munda". The programme PDF prints Priskillah,
+    // so the PDF wins here and the disagreement is logged rather than
+    // quietly resolved. See DATA-NOTES.md.
+    image: "/speakers/priskillah-munda.webp",
+    imagePosition: "50% 69%",
+  },
+  /*
+   * Appointed after Draft_Program_v2 was drawn. Roles are as printed on
+   * each poster card; honorifics likewise, which is where "Pr." and
+   * "Eld." below come from.
+   */
+  {
+    id: "janet-oyiende",
+    name: "Janet Oyiende",
+    role: "Ambassadors",
+    // The poster caption reads "Janet Oyende Kariuki" — a different
+    // spelling of the surname and a third name this record does not
+    // carry. Logged in DATA-NOTES.md rather than guessed at.
+    image: "/speakers/janet-oyiende.webp",
+    imagePosition: "50% 4%",
+  },
+  {
+    id: "john-clement",
+    name: "John Clement",
+    title: "Pr.",
+    role: "Ambassadors",
+    image: "/speakers/john-clement.webp",
+    imagePosition: "50% 24%",
+  },
+  {
+    id: "isaac-oenga",
+    name: "Isaac Oenga",
+    title: "Eld.",
+    role: "Morning Devotion",
+    image: "/speakers/isaac-oenga.webp",
+    imagePosition: "50% 60%",
+  },
+  {
+    id: "barrack-bosire",
+    name: "Barrack Bosire",
+    title: "Eld.",
+    role: "Teens",
+    image: "/speakers/barrack-bosire.webp",
+    imagePosition: "50% 0%",
   },
 ];
 

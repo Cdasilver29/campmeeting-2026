@@ -38,13 +38,25 @@ export function SpeakerCard({
           <p className="text-sm text-ink-muted">{speaker.role}</p>
         ) : null}
       </div>
-      {sessionCount > 0 ? (
-        // Pushed to the bottom edge so the count sits on one line across
-        // the row however long the names above it run.
-        <p className="mt-auto pt-1 text-xs tracking-wide text-ink-muted uppercase">
-          {sessionCount} {sessionCount === 1 ? "session" : "sessions"}
-        </p>
-      ) : null}
+      {/* Pushed to the bottom edge so the line sits level across the row
+          however long the names above it run.
+
+          A zero count says "to be confirmed" rather than rendering
+          nothing. Four of the eight speakers are in that state today —
+          they were appointed after the programme was transcribed — and a
+          card that simply stops after the role reads as a card that is
+          still loading, or as a data slip. The whole point of saying it
+          is that it is neither. Sentence case rather than the uppercase
+          the count takes, so the two are told apart at a glance. */}
+      <p className="mt-auto pt-1 text-xs tracking-wide text-ink-muted">
+        {sessionCount > 0 ? (
+          <span className="uppercase">
+            {sessionCount} {sessionCount === 1 ? "session" : "sessions"}
+          </span>
+        ) : (
+          "Sessions to be confirmed"
+        )}
+      </p>
     </Link>
   );
 }

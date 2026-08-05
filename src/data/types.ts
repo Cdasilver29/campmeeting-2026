@@ -75,6 +75,20 @@ export interface Speaker {
   role?: string;
   /** Cloudinary public id or /images path — fill in when photos are available */
   image?: string;
+  /**
+   * CSS `object-position` for `image`, e.g. "50% 19%".
+   *
+   * Every portrait is a 3:4 frame and the card avatar is a circle, so the
+   * avatar shows 75% of the file's height and this is which 75%. Centring
+   * is not the default answer: the supplied artwork frames each person
+   * differently, and the same value across seven files cuts a face off
+   * two of them. Derived per photo by tools/assets/speaker-photos.mjs,
+   * which also renders the resulting circle so it can be checked.
+   *
+   * Omitted means "50% 50%", which is what a photograph shot for this
+   * purpose would need.
+   */
+  imagePosition?: string;
   bio?: string;
 }
 

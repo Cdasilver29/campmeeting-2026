@@ -179,6 +179,14 @@ export function speakerPageDefinition(speaker: Speaker): PageDefinition {
     0,
   );
   const roleText = speaker.role ? `${speaker.role} at ` : "Speaking at ";
+  /* Four speakers have no session in the programme yet — see the note in
+     event.ts. "0 sessions across the programme" is a true sentence that
+     says the wrong thing in a link preview and in a search result, so a
+     zero is described rather than counted. */
+  const sessionText =
+    total === 0
+      ? "Sessions to be confirmed."
+      : `${total} ${total === 1 ? "session" : "sessions"} across the programme.`;
 
   return {
     // The role is the eyebrow when there is one. "Speaker" is the honest
@@ -186,7 +194,7 @@ export function speakerPageDefinition(speaker: Speaker): PageDefinition {
     eyebrow: speaker.role ?? "Speaker",
     title: speakerLabel(speaker),
     meta: `${EDITION} · ${eventInfo.church.name}`,
-    description: `${roleText}${EDITION}, ${eventInfo.church.name}. ${total} ${total === 1 ? "session" : "sessions"} across the programme.`,
+    description: `${roleText}${EDITION}, ${eventInfo.church.name}. ${sessionText}`,
     path: `/speakers/${speaker.id}`,
   };
 }
