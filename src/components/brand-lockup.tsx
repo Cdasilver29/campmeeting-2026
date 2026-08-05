@@ -33,10 +33,36 @@ function Mark({ className }: { className?: string }) {
 /**
  * Header and footer lockup: mark, then the church name over "Nairobi".
  *
- * Below `sm` the name collapses to screen-reader-only rather than being
- * removed. The mark alone is what shows, and the accessible name of the
- * link stays the full church name and city at every width, with no
- * aria-label overriding visible text (WCAG 2.5.3).
+ * ── THE SHORT FORM, AND WHY IT IS "Newlife" OVER "Nairobi" ────────────
+ *
+ * The wordmark used to disappear below `sm` and leave the mark on its
+ * own, which meant a phone reader arriving from a shared link saw an
+ * unfamiliar symbol and no name. It is back, in a deliberately designed
+ * short form rather than a shrunk copy of the desktop one, because the
+ * desktop one does not fit and shrinking it further is not a fix: at
+ * 320px the content box is 280px, and a 48px mark, a 48px theme toggle,
+ * a 48px menu button and the gaps between them account for 158px of it.
+ * "Seventh-day Adventist Church Newlife" cannot be set in the 106px
+ * that leaves at any size a person would read.
+ *
+ * The two candidates were "Newlife" over "Camp Meeting 2026" and
+ * "Newlife" over "Nairobi". This is the second, for three reasons:
+ *
+ *   1. It is the desktop lockup truncated, not a different lockup. The
+ *      second line means the same thing at every width, so nothing about
+ *      the mark's identity changes as the viewport does.
+ *   2. Every page on this site is about the camp meeting. What the header
+ *      can usefully add is WHICH CHURCH, which is the one thing the rest
+ *      of the page does not say.
+ *   3. On the home page "Camp Meeting 2026" would sit directly above an
+ *      h1 whose kicker is "Camp Meeting 2026".
+ *
+ * The accessible name is the full church name at every width. The short
+ * form is `aria-hidden` and the full name is `sr-only` below `sm`, so
+ * the announced name never contains the truncation twice, and the
+ * visible "Newlife" is a substring of what is announced, which is what
+ * WCAG 2.5.3 asks. No aria-label is used, so nothing overrides visible
+ * text.
  */
 export function BrandLockup({
   size = "header",
@@ -67,13 +93,30 @@ export function BrandLockup({
       )}
     >
       <Mark className={isFooter ? "size-10" : "size-12"} />
+      {/* data-wordmark is a hook for tools/perf/phone-hero.mjs, which has
+          to measure whether this wraps. Shape-sniffing is not good enough:
+          `a span:not(.sr-only)` matches the 48px mask span first, and the
+          harness reported a two-line wordmark for a mark that has no
+          lines at all. */}
       <span
+        data-wordmark
         className={cn(
-          "sr-only font-display leading-tight sm:not-sr-only sm:flex sm:flex-col",
-          isFooter ? "sm:text-xs" : "sm:text-sm",
+          "flex flex-col font-display leading-tight",
+          isFooter ? "text-xs" : "text-sm",
         )}
       >
-        <span>{eventInfo.church.name}</span>
+        <span>
+          {/* Below sm the short form is what is painted and the full name
+              is what is announced. aria-hidden on the visible one so the
+              accessible name is not "Newlife Seventh-day Adventist Church
+              Newlife". */}
+          <span aria-hidden className="sm:hidden">
+            {eventInfo.church.shortName}
+          </span>
+          <span className="sr-only sm:not-sr-only">
+            {eventInfo.church.name}
+          </span>
+        </span>
         {/* The city, not the street. eventInfo.church.address is the full
             postal line and belongs in the footer contact block, not here.
 

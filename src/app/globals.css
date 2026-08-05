@@ -719,5 +719,34 @@
   .live-pulse {
     display: none !important;
   }
+
+  /* THE SERVER-RENDERED REVEAL STATE, WHICH REDUCED MOTION NEVER WANTED.
+     Same rule as the noscript fallback in src/app/layout.tsx, for a
+     different reader.
+
+     src/components/reveal.tsx returns plain divs under this preference,
+     so nothing animates once hydrated. But `useReducedMotion` is a client
+     hook that cannot resolve during server rendering, so the SERVER emits
+     the motion branch, and the hero opts into `immediate`, which means
+     its variant is `hidden` and Framer serialises that as inline
+     opacity:0 and a 12px translate. The result is that a reader who has
+     asked for no motion gets the hero's opening statement painted
+     invisible until hydration finishes and then popped in — the one
+     thing the preference exists to prevent.
+
+     Measured with tools/perf/reduced-motion.mjs at 1440x900: 26,376px
+     changing in the 582x268 text block at frame 1, on a page reporting
+     zero running animations, because the change is a DOM swap and not an
+     animation at all.
+
+     This rule only ever applies to markup the server produced: the
+     hydrated reduced-motion tree carries no data-reveal, so there is
+     nothing for it to match afterwards. It cannot therefore pin an
+     element open that Framer still wants to animate, which is why it is
+     safe to write with !important. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 

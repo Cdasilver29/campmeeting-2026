@@ -120,6 +120,16 @@ export interface EventInfo {
   themeSong: string;
   church: {
     name: string;
+    /**
+     * The name at the width where the full one cannot be set. The header
+     * lockup uses it below `sm`, where a mark, a wordmark and a 48px
+     * control have to share 280px of content box.
+     *
+     * It must be a SUBSTRING of `name`. The lockup shows this and
+     * announces `name`, and WCAG 2.5.3 requires the visible label to
+     * appear in the accessible name.
+     */
+    shortName: string;
     address: string;
     website: string;
   };

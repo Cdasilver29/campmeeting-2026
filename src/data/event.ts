@@ -23,6 +23,10 @@ export const eventInfo: EventInfo = {
   themeSong: "SDAH 590",
   church: {
     name: "Seventh-day Adventist Church Newlife",
+    // The one word of the full name that identifies this church rather
+    // than the denomination. A substring of `name`, which the header
+    // lockup depends on: see the note on the type.
+    shortName: "Newlife",
     address: "5th Ngong Avenue, Nairobi",
     website: "https://www.newlifesdanairobi.org",
   },

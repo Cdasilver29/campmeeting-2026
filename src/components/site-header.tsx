@@ -203,14 +203,18 @@ export function SiteHeader() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  // size-8 is a 32px control. The pseudo-element takes the
-                  // hit area to 44px without changing anything that is
-                  // painted, which is the right trade in a header whose
-                  // height is a token two other components depend on.
-                  className="relative before:absolute before:-inset-1.5 before:content-[''] lg:hidden group-data-[header-state=transparent]/header:text-white"
+                  // 48px painted, not a 32px control with a pseudo-element
+                  // hit area. See the note in theme-toggle.tsx for why the
+                  // header can afford it: the brand mark next to it is
+                  // already 48px, so --spacing-header's 80px was never the
+                  // constraint it was recorded as. This control only
+                  // exists below lg, so it needs no compact variant.
+                  className="size-12 lg:hidden group-data-[header-state=transparent]/header:text-white"
                   aria-label="Open menu"
                 >
-                  <Menu aria-hidden />
+                  {/* size-6, or the Button base leaves a 16px glyph in a
+                      48px box. */}
+                  <Menu aria-hidden className="size-6" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right">
