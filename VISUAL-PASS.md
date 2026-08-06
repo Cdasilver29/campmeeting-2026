@@ -2301,3 +2301,78 @@ a wash on it, which was the other half of what 0.66 was buying.
 **This is a floor now, not a preference.** Anything lighter needs the
 table above re-derived, and the answer it gives is that there is nothing
 left: 0.62 is exactly what Grapevine needs for white type to reach 4.5:1.
+
+## Session 6 gate
+
+`npx tsc --noEmit`, `pnpm lint` and `pnpm build` all pass on `4f77c05`.
+Lint reports one warning, `alpha` unused in `tools/perf/ab-interleave.mjs`,
+which predates this session and is in a harness.
+
+| | |
+| --- | --- |
+| `public/headers/` | 496.3 -> **460.0 KiB**, 60 KB over the ~400 KB line |
+| precache | 3025.85 -> **2991.18 KiB** |
+| worst contrast, band type | **4.91:1** (/livestream eyebrow, 390) |
+| worst contrast, site header transparent | **5.08:1** (home hero over migori) |
+| worst contrast, site header glass | 9.57:1 |
+| worst contrast, hero text | 5.04:1 (taji, before phase) |
+| CLS | **0.0000 median and max** on `/`, /about, /contact, /faq, /livestream, /schedule, /speakers, /prayer-requests, /ministries/health |
+| align.mjs | 85 of 85 |
+| worst upscale | **3.46x**, /livestream at 1920, unchanged for the fourth session |
+
+## Not asked for, done anyway
+
+Called out so they can be reverted cleanly.
+
+1. **`verify-page-header.mjs` gained the site-header measurement**, both
+   states, per route, per width, per scheme. Unavoidable: the gate asks for
+   header contrast on eleven routes that did not have a transparent header
+   before, and `verify-hero.mjs` is hardcoded to `/` and cannot be pointed
+   elsewhere without gutting its hero geometry.
+2. **`align.mjs` accepts `data-header-align="none"`.** An image-only band
+   has no painted block to centre, and the offset computed from a 1x1
+   clipped box reads as a 600px failure.
+3. **`verify-page-header.mjs` drops parts under 4px in either dimension.**
+   Without it /contact's `sr-only` h1 is scored against one pixel behind an
+   invisible heading, which is a number describing nothing.
+4. **A `quality` field on `tools/assets/header-photos.mjs`**, and a `q`
+   column in the table it prints, so a per-file quality is visible rather
+   than being a thing someone did once by hand.
+5. **Nine `keeps` sentences rewritten.** They document what survives the
+   crop at 1920 and most of them said "loses X" about something the taller
+   band now keeps.
+6. **`imageOnly` and `hideEyebrow` on `PageHeader`.** Rendering flags, not
+   changes to `contactPage` or `aboutPage` — `pageMetadata` and the share
+   cards read the same objects, the same arrangement `lockup` already uses.
+7. **`hasPhotoHeader` and the `HEADER_ROUTES` map**, with the `satisfies`
+   check that makes a new photograph without a route a type error.
+8. **The hero's top scrim held at 0.65** while everything else went to
+   0.62. Measured rather than chosen; the reason is above.
+
+Two of the changes in this session were asked for mid-session rather than
+in the brief, and are marked as such where they appear: **/about's
+eyebrow** and **the scrim alphas**.
+
+## Still open with the committee
+
+Everything sessions 1-5 listed. Two items moved:
+
+- **The header budget is now 60 KB over rather than 96 KB**, and what is
+  left is width and detail rather than slack. Closing it needs a band
+  shorter than 620px, which starts making `object-position` a no-op at
+  1920, or a quality below 78, which is now below what the site uses
+  anywhere. Still the committee's call.
+- **Larger sources for /livestream, /prayer-requests and /schedule**, at
+  3.46x, 3.27x and 3.14x. Fourth session of asking, and the taller bands
+  did not change those numbers by a hundredth: `cover` is width-driven at
+  1920 whatever the band's height, so this is the file and nothing else.
+
+New:
+
+- **The recordings for /livestream**, one line per meeting during the
+  week. Not a question, a task, and DEPLOY.md is written for whoever does
+  it.
+- **Whether /contact should keep a visible "Contact" heading somewhere.**
+  It has an `sr-only` h1 and the reasoning is in the page, but it is the
+  one page on the site with no visible h1 and that is worth someone
+  agreeing to rather than discovering.
