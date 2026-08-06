@@ -1837,3 +1837,57 @@ slack.** Closing it needs either a band shorter than 620px, which starts
 making `object-position` a no-op at 1920, or a quality the site does not use
 anywhere. The committee's call, unchanged from session 5 except that the
 number is smaller.
+
+## /contact's band is the photograph alone
+
+"Camp Meeting 2026" and "Contact" are gone from over the church. The band
+already carries the building's own green NEWLIFE SDA CHURCH, NAIROBI sign
+legible across the middle of it, and the nav item the reader just clicked
+says Contact — so the two lines were the page naming itself twice on top of
+a building that names itself a third time.
+
+### The h1 stayed. It is `sr-only`, not deleted
+
+Two options, and the other one was a visible "Contact" heading below the
+band, which is what /speakers does. On /speakers that is right: "Speakers"
+names the grid of speaker cards it sits directly above, so the word does
+work on the page. **Nothing below this band is called Contact.** The first
+thing under it is "Send a message", then "Get in touch", then "Give", each
+already labelled with its own h2. A visible "Contact" above them would be
+the nav item re-typed one band lower — the same redundancy, moved rather
+than removed.
+
+So the h1 is where it always was, inside the band, and it is not painted.
+A visually hidden h1 is a real h1: it is in the accessibility tree, it is
+heading level one for a screen reader's heading list and for `main`'s
+outline, and it is indexed — a 1px clipped box is not `display: none` and is
+not cloaking, since the same string is the metadata title and the visible
+nav label.
+
+**The metadata title is untouched**, and structurally so: `pageMetadata`
+and the share card read `eyebrow` and `title` off `contactPage`, and this
+change is to how `PageHeader` renders, not to that object. Same arrangement
+as /speakers' lockup. A shared link and a search result still say Contact.
+
+### No layout shift, and the band is now MORE stable than before
+
+`sr-only` is `position: absolute`, so the heading is out of flow and the
+band's height is the aspect-ratio spacer alone. It already was at every
+width — the eyebrow and title together never reached the ratio's height —
+so nothing moved:
+
+| width | 390 | 768 | 1440 |
+| --- | --- | --- | --- |
+| band height, session 5 | 230px | 452px | 848px |
+| band height, now | **230px** | **452px** | **848px** |
+
+CLS on /contact, 5 runs at 1440x900: **0.0000 median and 0.0000 max.**
+Session 5 recorded 0.0000 median with a 0.0004 max from the header element
+resizing by a subpixel on a fractional row height. With no in-flow content
+in that row there is nothing left to round.
+
+**No contrast table for this band, and that is the reading.** It carries no
+painted type, so there is nothing on it to score. `verify-page-header.mjs`
+now reports it as a band with zero strings rather than measuring the 1x1
+sr-only box and printing a number that describes one pixel behind an
+invisible heading.

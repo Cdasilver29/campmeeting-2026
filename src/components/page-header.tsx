@@ -104,6 +104,7 @@ export function PageHeader({
   media,
   image,
   lockup,
+  imageOnly: imageOnlyProp,
   children,
   className,
 }: PageIdentity & {
@@ -129,10 +130,32 @@ export function PageHeader({
    * the exact drift src/lib/page-identity.ts exists to prevent.
    */
   lockup?: ReactNode;
+  /**
+   * The band is the photograph and nothing else: no eyebrow, no rule, no
+   * meta, and the h1 kept but not painted. One route uses it, /contact,
+   * whose picture is the church's own frontage with its green NEWLIFE SDA
+   * CHURCH sign legible across it — so "Camp Meeting 2026 / Contact" set
+   * over it was the nav item the reader just clicked, written a second
+   * time on top of a building that names itself.
+   *
+   * THE H1 IS STILL RENDERED. It is `sr-only`, not deleted. Every other
+   * page has one, and a page whose only heading is the h2 of its first
+   * section reads to a screen reader's heading list, and to a search
+   * result, as a document that starts in the middle. The two options were
+   * this and a visible "Contact" heading below the band; see the note in
+   * src/app/contact/page.tsx for why this one.
+   *
+   * `eyebrow` and `meta` are still accepted and still used — pageMetadata
+   * and the share card read them off the same object, exactly as they do
+   * for `lockup`. Nothing about the link preview changes.
+   */
+  imageOnly?: boolean;
   children?: ReactNode;
   className?: string;
 }) {
   const onPhoto = Boolean(image);
+  /** Only meaningful with a photograph: there is nothing else to show. */
+  const imageOnly = Boolean(image) && Boolean(imageOnlyProp);
   /**
    * `fit: "whole"` — the band takes the photograph's aspect ratio instead
    * of being as tall as its own type. One route, /contact. The reasoning is
@@ -190,7 +213,14 @@ export function PageHeader({
       // next person to centre something that is deliberately ranged left —
       // the same mistake it made before `data-page-header` existed, when it
       // scored /offline's hand-rolled header as an uncentred page header.
-      data-header-align={lockup ? "start" : "center"}
+      // "none" on an image-only band, and it is not the same claim as
+      // "start". There is no painted block in it to be centred or ranged
+      // left, so the offset the harness would compute is the offset of a
+      // zero-width clipped box — a number that describes nothing and reads
+      // as a 600px failure. align.mjs reports the value rather than
+      // skipping it silently, so a band that stops declaring itself still
+      // fails.
+      data-header-align={imageOnly ? "none" : lockup ? "start" : "center"}
     >
       {image ? (
         <>
@@ -274,7 +304,14 @@ export function PageHeader({
             className,
           )}
         >
-          {lockup ?? (
+          {imageOnly ? (
+            /* Kept, not deleted. sr-only is `position: absolute`, so it is
+               out of flow and this band's height is now the aspect-ratio
+               spacer alone — which is what it already was at every width,
+               since the eyebrow and title together never reached it. */
+            <h1 className="sr-only">{title}</h1>
+          ) : (
+            lockup ?? (
             <>
 
           {/* items-center centres the media box itself; the portrait is a
@@ -380,6 +417,7 @@ export function PageHeader({
             </div>
           ) : null}
             </>
+            )
           )}
         </header>
       </div>

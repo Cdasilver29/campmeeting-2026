@@ -35,7 +35,29 @@ const mapQuery = encodeURIComponent(
 export default function ContactPage() {
   return (
     <>
-      <PageHeader {...contactPage} />
+      {/* The band is the photograph alone. See the `imageOnly` note in
+          page-header.tsx for the band; what is decided HERE is where the
+          accessible heading went, and there were two options.
+
+          A visible "Contact" heading below the band was the other. It is
+          what /speakers does, and there it is right: "Speakers" names the
+          grid of speaker cards it sits directly above, so the word does
+          work on the page. Nothing below this band is called Contact —
+          the first thing under it is "Send a message", then "Get in
+          touch", then "Give", each already labelled. A visible "Contact"
+          above them would be the nav item the reader just clicked,
+          re-typed, one band lower down. That is the exact redundancy the
+          brief removed from over the photograph, moved rather than fixed.
+
+          So: sr-only, inside the band, where the h1 already was. It is
+          not a downgrade — a visually hidden h1 is a real h1. It is in
+          the accessibility tree, it is the document's heading level one
+          for a screen reader's heading list and for `main`'s outline, and
+          it is indexed: `clip-path` and a 1px box are not `display: none`
+          and are not cloaking, since the same string is the metadata
+          title and the visible nav label. What it is not is painted, and
+          it is the painting that this page did not need. */}
+      <PageHeader {...contactPage} imageOnly />
 
       <Band>
         <Reveal className="prose-column">

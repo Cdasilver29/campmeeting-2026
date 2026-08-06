@@ -302,11 +302,18 @@ for (const route of ROUTES) {
            is the failure mode the whole `data-page-header` attribute exists
            to avoid, one level down.
 
-           Reported as "start" rather than skipped silently, so a band that
+           "none" is the third value and it is /contact's: an image-only
+           band whose h1 is sr-only, so there is no painted block in it to
+           be centred or ranged left. Its header box is a zero-width
+           clipped rect and the offset computed from it would be half the
+           shell — a 600px "failure" describing nothing.
+
+           Reported by name rather than skipped silently, so a band that
            LOSES its centring without declaring the change still fails. */
         headerAlign: headerBand?.getAttribute("data-header-align") ?? null,
         headerCentreOffset:
-          headerBand?.getAttribute("data-header-align") === "start"
+          headerBand?.getAttribute("data-header-align") === "start" ||
+          headerBand?.getAttribute("data-header-align") === "none"
             ? null
             : headerRect && headerShellBox
               ? round(
@@ -410,8 +417,8 @@ for (const r of rows) {
       num(match === null ? "n/a" : match ? `YES` : "NO", 7) +
       num(basisKind, 8) +
       num(
-        r.headerAlign === "start"
-          ? "start"
+        r.headerAlign === "start" || r.headerAlign === "none"
+          ? r.headerAlign
           : r.headerCentreOffset === null
             ? "n/a"
             : centred

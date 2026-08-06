@@ -207,13 +207,22 @@ for (const scheme of SCHEMES) {
           bandH: Math.round(band.getBoundingClientRect().height),
           art: band.getAttribute("data-header-art"),
           align: band.getAttribute("data-header-align"),
-          parts:
+          parts: (
             parts ??
             [
               eyebrow && { name: "eyebrow", box: box(eyebrow), color: getComputedStyle(eyebrow).color },
               h1 && { name: "title", box: box(h1), color: getComputedStyle(h1).color },
               metaEl && { name: "meta", box: box(metaEl), color: getComputedStyle(metaEl).color },
-            ].filter(Boolean),
+            ].filter(Boolean)
+            /* A string that is IN the band but not PAINTED on it is not a
+               contrast reading. /contact's band is the photograph alone
+               and its h1 is sr-only — a 1x1 clipped box, whose "brightest
+               composited pixel" is one pixel of whatever the crop puts at
+               the shell's left edge, scored against white type nobody can
+               see. Reported as no readings, which is the true answer: that
+               band carries no type to fail. Any element under 4px in
+               either dimension is off the screen by construction. */
+          ).filter((p) => p.box.width >= 4 && p.box.height >= 4),
           img: img
             ? {
                 natW: img.naturalWidth,
