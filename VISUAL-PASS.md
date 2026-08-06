@@ -1891,3 +1891,34 @@ painted type, so there is nothing on it to score. `verify-page-header.mjs`
 now reports it as a band with zero strings rather than measuring the 1x1
 sr-only box and printing a number that describes one pixel behind an
 invisible heading.
+
+## /about drops its eyebrow
+
+Asked for mid-session. The eyebrow on that band is the edition, "Camp
+Meeting 2026", set small above a title that reads "About Camp Meeting" —
+the same three words twice in one band, and the edition is already in the
+header lockup on every page, in the footer, and in this page's own metadata
+title.
+
+`aboutPage.eyebrow` is **not** changed. `hideEyebrow` is a rendering flag on
+`PageHeader`, the same shape as `lockup` and `imageOnly`, so `pageMetadata`
+and the share card go on reading the same object — a card has room for a
+line this band does not.
+
+The title's `mt-3` goes with it. That margin is the gap under the eyebrow;
+with nothing above the title but the band's own padding it is 12px the band
+would grow by for nothing.
+
+| width | 390 | 768 | 1440 |
+| --- | --- | --- | --- |
+| band height before | 208px | 213px | 213px |
+| band height after | 176px | 181px | 181px |
+
+**A content-driven band cannot lose a line of type and keep its height**,
+which is the same thing session 4 recorded when the meta lines came off four
+pages. It is moot two commits later: the immersive-band work below gives
+every photographic band a reserved height that does not come from its type.
+
+Contrast, title only, both schemes: **6.22:1 worst** (768), 6.45 at 390 and
+6.27 at 1440. It went up rather than down — the title now sits where the
+eyebrow was, higher in the band and deeper into the top scrim.

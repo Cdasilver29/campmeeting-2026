@@ -20,7 +20,14 @@ export const metadata = pageMetadata(aboutPage);
 export default function AboutPage() {
   return (
     <>
-      <PageHeader {...aboutPage} />
+      {/* No eyebrow. It is the edition, "Camp Meeting 2026", set small
+          above a title that reads "About Camp Meeting" — the same three
+          words twice in one band, and the edition is already in the header
+          lockup on every page, in the footer, and in this page's own
+          metadata title. `aboutPage.eyebrow` is untouched: the share card
+          still draws it, and a card has room for a line this band does
+          not. */}
+      <PageHeader {...aboutPage} hideEyebrow />
 
       {/*
         The document nests at the measure inside the shell: the header band

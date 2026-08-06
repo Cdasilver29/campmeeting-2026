@@ -105,6 +105,7 @@ export function PageHeader({
   image,
   lockup,
   imageOnly: imageOnlyProp,
+  hideEyebrow,
   children,
   className,
 }: PageIdentity & {
@@ -150,6 +151,19 @@ export function PageHeader({
    * for `lockup`. Nothing about the link preview changes.
    */
   imageOnly?: boolean;
+  /**
+   * Draw the title without the eyebrow above it. One route uses it,
+   * /about, whose eyebrow is the edition — "Camp Meeting 2026" — over a
+   * title that reads "About Camp Meeting". The two lines say the same
+   * three words twice, once small and once large, and the edition is
+   * already in the header lockup, the footer and the metadata title.
+   *
+   * NOT a change to `aboutPage`. `eyebrow` is still required and still
+   * read by pageMetadata and by the share card, exactly as it is under
+   * `lockup` and `imageOnly`. The card's own layout has room for a line
+   * the band does not.
+   */
+  hideEyebrow?: boolean;
   children?: ReactNode;
   className?: string;
 }) {
@@ -344,18 +358,25 @@ export function PageHeader({
               On a photograph none of that survives: Grapevine over the
               scrim is about 1.3:1. White, for the same measured reason
               the hero's kicker is white. */}
-          <p
-            className={cn(
-              "text-sm font-semibold tracking-[0.18em] uppercase",
-              onPhoto ? "text-white" : "text-accent-600",
-            )}
-          >
-            {eyebrow}
-          </p>
+          {hideEyebrow ? null : (
+            <p
+              className={cn(
+                "text-sm font-semibold tracking-[0.18em] uppercase",
+                onPhoto ? "text-white" : "text-accent-600",
+              )}
+            >
+              {eyebrow}
+            </p>
+          )}
 
+          {/* mt-3 is the gap under the eyebrow. With no eyebrow there is
+              nothing above the title but the band's own padding, and 12px
+              of extra space at the top of a band whose height is
+              content-driven is 12px the band grows by for nothing. */}
           <h1
             className={cn(
-              "mt-3 font-display text-4xl text-balance sm:text-5xl",
+              "font-display text-4xl text-balance sm:text-5xl",
+              hideEyebrow ? null : "mt-3",
               onPhoto ? "text-white" : "text-ink",
             )}
           >
