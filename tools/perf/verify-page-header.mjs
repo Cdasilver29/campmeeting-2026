@@ -66,6 +66,7 @@ let WIDTHS = [390, 768, 1024, 1440, 1920];
 /** Every route whose band carries a photograph. */
 const ROUTES = [
   "/schedule",
+  "/speakers",
   "/livestream",
   "/ministries",
   "/about",
@@ -79,7 +80,7 @@ const ROUTES = [
 ];
 
 /** Bands with no photograph, measured so the flat treatment is covered too. */
-const FLAT_ROUTES = ["/speakers", "/ministries/children", "/announcements"];
+const FLAT_ROUTES = ["/ministries/children", "/announcements"];
 
 /**
  * The files on disk, mirroring src/lib/page-header-art.ts.
@@ -96,6 +97,7 @@ const FLAT_ROUTES = ["/speakers", "/ministries/children", "/announcements"];
  */
 const SOURCES = {
   "/schedule": [612, 328],
+  "/speakers": [1492, 865],
   "/livestream": [555, 260],
   "/ministries": [735, 245],
   // Re-cut to 1600x620. The band is never taller than 403px, so the 447
@@ -177,6 +179,25 @@ for (const scheme of SCHEMES) {
           const r = el.getBoundingClientRect();
           return { x: r.x, y: r.y, width: r.width, height: r.height };
         };
+        /* Two shapes of band, and the second is not an exception to skip.
+           Twelve routes draw eyebrow / h1 / meta line. /speakers draws a
+           lockup of four ranged-left paragraphs instead, and its h1 is
+           BELOW the band — so the old queries would have found the eyebrow
+           slot filled by the lockup's first line, `h1` null, and `hr + p`
+           null, and reported one string for a band that carries four.
+
+           Each lockup line carries data-header-line, so they are measured
+           by name and separately, which is the same principle the three
+           standard strings are measured by: a union box lets one blown
+           highlight under one line score all of them. */
+        const lines = [...head.querySelectorAll("[data-header-line]")];
+        const parts = lines.length
+          ? lines.map((el) => ({
+              name: el.getAttribute("data-header-line"),
+              box: box(el),
+              color: getComputedStyle(el).color,
+            }))
+          : null;
         // The three strings, in DOM order, ignoring the media slot.
         const eyebrow = head.querySelector("p");
         const h1 = head.querySelector("h1");
@@ -185,11 +206,14 @@ for (const scheme of SCHEMES) {
         return {
           bandH: Math.round(band.getBoundingClientRect().height),
           art: band.getAttribute("data-header-art"),
-          parts: [
-            eyebrow && { name: "eyebrow", box: box(eyebrow), color: getComputedStyle(eyebrow).color },
-            h1 && { name: "title", box: box(h1), color: getComputedStyle(h1).color },
-            metaEl && { name: "meta", box: box(metaEl), color: getComputedStyle(metaEl).color },
-          ].filter(Boolean),
+          align: band.getAttribute("data-header-align"),
+          parts:
+            parts ??
+            [
+              eyebrow && { name: "eyebrow", box: box(eyebrow), color: getComputedStyle(eyebrow).color },
+              h1 && { name: "title", box: box(h1), color: getComputedStyle(h1).color },
+              metaEl && { name: "meta", box: box(metaEl), color: getComputedStyle(metaEl).color },
+            ].filter(Boolean),
           img: img
             ? {
                 natW: img.naturalWidth,

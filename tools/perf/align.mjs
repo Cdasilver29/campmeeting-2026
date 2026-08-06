@@ -272,15 +272,28 @@ for (const route of ROUTES) {
           if (gapLeft + gapRight < 2) return null;
           return Math.abs(gapLeft - gapRight) <= 1;
         })(),
-        // Centring of the header block inside its own shell content box.
+        /* Centring of the header block inside its own shell content box —
+           for the bands that are centred. /speakers is not: it carries a
+           left-aligned lockup over its photograph and says so with
+           data-header-align="start". Measured anyway it reports a ~300px
+           offset at every width, which is the harness sending the next
+           person to centre something that is deliberately ranged left. That
+           is the failure mode the whole `data-page-header` attribute exists
+           to avoid, one level down.
+
+           Reported as "start" rather than skipped silently, so a band that
+           LOSES its centring without declaring the change still fails. */
+        headerAlign: headerBand?.getAttribute("data-header-align") ?? null,
         headerCentreOffset:
-          headerRect && headerShellBox
-            ? round(
-                headerRect.left +
-                  headerRect.width / 2 -
-                  (headerShellBox.left + headerShellBox.width / 2),
-              )
-            : null,
+          headerBand?.getAttribute("data-header-align") === "start"
+            ? null
+            : headerRect && headerShellBox
+              ? round(
+                  headerRect.left +
+                    headerRect.width / 2 -
+                    (headerShellBox.left + headerShellBox.width / 2),
+                )
+              : null,
         docScrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
       };
@@ -375,7 +388,16 @@ for (const r of rows) {
       num(basis, 7) +
       num(match === null ? "n/a" : match ? `YES` : "NO", 7) +
       num(basisKind, 8) +
-      num(r.headerCentreOffset === null ? "n/a" : centred ? "YES" : `NO ${r.headerCentreOffset}`, 9) +
+      num(
+        r.headerAlign === "start"
+          ? "start"
+          : r.headerCentreOffset === null
+            ? "n/a"
+            : centred
+              ? "YES"
+              : `NO ${r.headerCentreOffset}`,
+        9,
+      ) +
       num(r.pageShell?.width) +
       num(r.pageShell?.gutter) +
       num(overflow, 10),

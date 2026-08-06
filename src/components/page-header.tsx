@@ -102,11 +102,32 @@ export function PageHeader({
   meta,
   media,
   image,
+  lockup,
   children,
   className,
 }: PageIdentity & {
   media?: ReactNode;
   image?: PageHeaderImage;
+  /**
+   * A page's own lockup, ranged LEFT, in place of the eyebrow, title, rule
+   * and meta line. One route uses it: /speakers, whose band carries the
+   * poster's own statement — "Main Speaker", the speaker's name, the theme
+   * and the key text — with the page's h1 moved below the band.
+   *
+   * A slot rather than a second component, because everything else about
+   * this band is load-bearing and shared: the photograph and its `sizes`,
+   * the two abutting scrims and their derived alpha, `isolate` against the
+   * negative z-index, the muted fallback surface, `data-page-header` for
+   * tools/perf/align.mjs and `data-header-art` for
+   * tools/perf/verify-page-header.mjs. A /speakers-shaped copy of all that
+   * would be a second band that has to be kept in step with this one.
+   *
+   * `eyebrow` and `title` are still required and still used — pageMetadata
+   * and the share card read them off the same object, and a link preview
+   * that stopped saying "Speakers" to match a change to the page would be
+   * the exact drift src/lib/page-identity.ts exists to prevent.
+   */
+  lockup?: ReactNode;
   children?: ReactNode;
   className?: string;
 }) {
@@ -126,6 +147,14 @@ export function PageHeader({
       className="band relative isolate overflow-hidden bg-surface-muted"
       data-page-header
       data-header-art={onPhoto ? "photo" : "flat"}
+      // tools/perf/align.mjs asserts that this band's block is centred in
+      // its shell, which is the band's own stated intent everywhere except
+      // the one route that passes a lockup. Without this attribute the
+      // harness would report a left-aligned band as a failure and send the
+      // next person to centre something that is deliberately ranged left —
+      // the same mistake it made before `data-page-header` existed, when it
+      // scored /offline's hand-rolled header as an uncentred page header.
+      data-header-align={lockup ? "start" : "center"}
     >
       {image ? (
         <>
@@ -164,10 +193,20 @@ export function PageHeader({
       <div className="shell">
         <header
           className={cn(
-            "mx-auto flex max-w-(--width-header) flex-col items-center text-center",
+            "flex flex-col",
+            // Centred inside its own measure, or ranged left on the shell.
+            // Not `mx-auto` either way in the lockup case: the whole point
+            // of ranging left is that the block's left edge is the shell's,
+            // which is the edge everything below the band aligns to.
+            lockup
+              ? "max-w-(--width-header) items-start text-left"
+              : "mx-auto max-w-(--width-header) items-center text-center",
             className,
           )}
         >
+          {lockup ?? (
+            <>
+
           {/* items-center centres the media box itself; the portrait is a
               fixed-size element, so it needs the flex alignment rather than
               text-align to land in the middle. */}
@@ -270,6 +309,8 @@ export function PageHeader({
               {children}
             </div>
           ) : null}
+            </>
+          )}
         </header>
       </div>
     </div>

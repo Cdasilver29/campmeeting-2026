@@ -116,11 +116,23 @@ export const schedulePage: PageDefinition = {
   image: headerImages.schedule,
 };
 
+/*
+ * /speakers is the one page whose band does not draw `eyebrow` and `title`.
+ * It passes PageHeader a lockup of its own — the poster's statement, ranged
+ * left over Pr. Kennedy Mfune's photograph — and renders its h1 below the
+ * band. Both strings below are still live and still the only definition of
+ * them: pageMetadata reads the title, and the share card draws both, so a
+ * link preview goes on saying "Camp Meeting 2026 / Speakers" whatever the
+ * band looks like. Removing the eyebrow from the DEFINITION would have
+ * removed it from the preview too, which is not what was asked and is the
+ * drift this module exists to prevent.
+ */
 export const speakersPage: PageDefinition = {
   eyebrow: EDITION,
   title: "Speakers",
   description: `The speakers and presenters at ${EDITION}, ${eventInfo.church.name}, with every session they are part of.`,
   path: "/speakers",
+  image: headerImages.speakers,
 };
 
 export const ministriesPage: PageDefinition = {

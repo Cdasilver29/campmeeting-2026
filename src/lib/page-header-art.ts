@@ -145,6 +145,38 @@ export const headerImages = {
     position: "50% 45%",
     keeps: "the sun between the hands and the fingers down to the palms; loses the fingertips and the grass",
   },
+  speakers: {
+    src: "/headers/speakers.webp",
+    // 1492x865, q82, not resized: the 1600 cap is above it and nothing is
+    // upscaled to reach a cap.
+    width: 1492,
+    height: 865,
+    // 16%, and it is derived. Pr. Kennedy Mfune's head spans y 0.10 to 0.49
+    // of this frame — 40% of its height — and the poster's plum diagonal
+    // fills the left, which is where the page's left-aligned lockup sits.
+    //
+    // `object-position: 50% P` puts the visible window at
+    // [P(1-k), P(1-k)+k], k being the fraction of the height `cover` keeps.
+    // The band is 356px from md (see the note on /speakers/page.tsx for why
+    // it takes extra padding), so:
+    //
+    //   width   k      window at P=0.16
+    //   768     0.80   0.031 - 0.831   everything
+    //   1440    0.43   0.092 - 0.518   the whole head, air above it
+    //   1920    0.32   0.109 - 0.429   the head, chin to crown, no more
+    //
+    // At 50% the 1440 window was 0.287-0.713, which starts at his eyebrows.
+    // Rendered and looked at, not inferred. Below md the band is taller in
+    // aspect than the source, so the full height is kept and this value is
+    // inert there.
+    //
+    // Horizontally centred, not pushed right, and that is a phone decision:
+    // at 390 the band keeps almost the full width, and above md it keeps all
+    // of it, so there is nothing for the horizontal half to choose. Pushed
+    // right it would only start cutting the plum wedge the type reads on.
+    position: "50% 16%",
+    keeps: "the plum diagonal and Pr. Kennedy Mfune's head and shoulders; loses the lower half of the suit",
+  },
   livestream: {
     src: "/headers/livestream.webp",
     width: 555,

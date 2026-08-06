@@ -102,6 +102,7 @@ const QUALITY = 82;
  */
 const HEADERS = [
   { route: "schedule", file: "schedule.jpg" },
+  { route: "speakers", file: "speakers-hero.png" },
   { route: "livestream", file: "livestream.jpg" },
   { route: "ministries", file: "ministries.jpg" },
   { route: "about", file: "about.jpg", band: 620, at: 0.7 },
