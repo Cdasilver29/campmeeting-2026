@@ -2213,3 +2213,91 @@ retracting browser chrome cannot resize a band mid-scroll.
 centred.
 
 Build, `npx tsc --noEmit` and `pnpm lint` all pass.
+
+## The scrims come down 0.04, and it is the derivation that says how far
+
+Asked for mid-session: the plum was too heavy over the photographs.
+
+There was room, and it was room the code had already written down.
+`SCRIM_ALPHA_FLOOR` was 0.66 with a note beside it saying that 0.66 was
+"0.04 above the worse of the two inks" and that the margin was "bought
+deliberately rather than saved". It has now been spent, in the other
+direction.
+
+**0.62 is the derived minimum for Grapevine plum, not a value picked by
+eye.** Over a pure-white pixel, which is the worst case any of these
+photographs can present:
+
+| ink | alpha | white on it |
+| --- | --- | --- |
+| PLUM_DEEP `#291246` | 0.60 | 4.50:1, its own floor |
+| PLUM_DEEP | **0.62** | **4.83:1** |
+| PLUM_WARM `#461529` | **0.62** | **4.54:1**, its own floor |
+| PLUM_WARM | 0.68 | 5.49:1, the band edges |
+
+So this is the last step available without re-deriving that table. Every
+stop came down by the same 0.04, so the **shape** of each gradient is
+untouched and only its depth moved; the tail stops that ease to zero are
+fade rather than protection and were left alone.
+
+### One scrim kept its depth, and the measurement is why
+
+The hero's TOP scrim went 0.66 to **0.65**, one step rather than four.
+At 0.62 the home page's white lockup and nav measured **4.58:1 over the
+migori photograph** — passing, and passing by 0.08, which is one rounding
+step wide on the element that is on every page of the site. That is not a
+margin, it is a coincidence.
+
+It is also the cheapest scrim to keep: it is 176px tall and sits behind
+the site header and nowhere else, so it is not what a reader means by too
+much gradient on a photograph. The bottom scrim is 28rem of the frame and
+it took the full change. 0.65 puts the header back to 5.08:1 and up.
+
+### Measured after, everything, nothing failed
+
+**Bands, worst per route, both schemes, 390/768/1440:**
+
+| route | before | after |
+| --- | --- | --- |
+| **/livestream** | 5.57:1 | **4.91:1** |
+| /ministries/health | 5.59:1 | 4.93:1 |
+| /ministries/christian-education | 5.62:1 | 4.96:1 |
+| /schedule | 5.67:1 | 5.00:1 |
+| /ministries | 5.84:1 | 5.16:1 |
+| /downloads | 5.85:1 | 5.21:1 |
+| /about | 6.23:1 | 5.55:1 |
+| /prayer-requests | 6.39:1 | 5.75:1 |
+| /ministries/family-life | 6.71:1 | 6.01:1 |
+| /faq | 6.91:1 | 6.18:1 |
+| /speakers | 10.19:1 | 9.59:1 |
+
+**Site header over the bands, transparent state, worst per route:**
+5.19:1 (/livestream and /prayer-requests at 390) against 5.88:1 before.
+Glass is unchanged at 10.47 to 13.68 in light and a flat 10.81 in dark:
+the glass state has its own opaque surface and never sees the scrim.
+
+**Home hero**, three photographs, both phases, 390/768/1440:
+
+| | hero text | header transparent | header glass |
+| --- | --- | --- | --- |
+| hands-bible | 5.17 / 5.19 | 6.12 / 15.86 | 9.57 / 10.81 |
+| migori | 5.09 / 5.15 | **5.08** / 5.11 | 9.78 / 10.81 |
+| taji | **5.04** / 5.39 | 5.19 / 5.31 | 10.47 / 10.81 |
+
+**Nothing on the site is below 4.91:1 and the floor is 4.5.** No page
+needed deepening, so `scrimBoost` is still 0 on every hero image.
+
+**CLS 0.0000, median and max**, on `/`, /about, /livestream and /contact.
+A gradient's alpha cannot move layout and this confirms it did not.
+
+### What it looks like
+
+Rendered and looked at at 1440. /ministries/health is the clearest gain:
+the produce reads in its own greens, oranges and reds instead of as a
+plum-toned heap. /livestream's lens keeps the colour in its rings. The
+band still reads as one deliberate ground rather than as a photograph with
+a wash on it, which was the other half of what 0.66 was buying.
+
+**This is a floor now, not a preference.** Anything lighter needs the
+table above re-derived, and the answer it gives is that there is nothing
+left: 0.62 is exactly what Grapevine needs for white type to reach 4.5:1.

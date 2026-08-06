@@ -41,41 +41,43 @@ import { PLUM_DEEP, PLUM_WARM, SCRIM_ALPHA_FLOOR } from "@/lib/hero";
  * same protection the type does. Sizing a scrim "to the box it protects"
  * therefore still means the whole band.
  *
- * The scrim itself is UNCHANGED by the taller band: same two inks, same
- * derived alpha, same stops. It was re-measured rather than re-derived,
- * and every string still clears 4.5:1 with the worst at 5.57:1, so
- * nothing was deepened. Deepening a scrim that passes is how a photograph
- * gets covered up for a number that was already fine.
+ * The scrim's SHAPE is unchanged by the taller band. Its depth came down
+ * separately and for its own reason: every stop is 0.04 lighter than it
+ * was, because the wash read as too much plum over the pictures and every
+ * string was passing with room to spare. See the alpha block below.
  *
  * What is kept from the hero is the part that matters: the same two inks,
  * the same derived alpha floor, and the same warm-at-the-outer-edge,
  * cool-as-it-eases-in direction. Two scrim elements, not one, and they
  * ABUT at the middle rather than overlapping — two 0.66 layers on top of
- * each other composite to 0.88, which is a third alpha nobody chose.
+ * each other composite to 0.86, which is a third alpha nobody chose.
  *
  * ── THE ALPHA IS THE HERO'S, AND IT IS ENOUGH ────────────────────────
  *
- * SCRIM_ALPHA_FLOOR is 0.66, derived in hero.ts against a PURE WHITE
- * pixel. Composited over white, white type measures:
+ * SCRIM_ALPHA_FLOOR is 0.62, derived in hero.ts against a PURE WHITE
+ * pixel, and it came down from 0.66 because the wash read as too much
+ * plum over the photographs. Composited over white, white type measures:
  *
- *   PLUM_DEEP at 0.66   rgb(114, 99,133)   5.49:1
- *   PLUM_WARM at 0.72   rgb(122, 87,101)   6.22:1
+ *   PLUM_DEEP at 0.62   rgb(122,108,140)   4.83:1
+ *   PLUM_WARM at 0.68   rgb(129, 96,109)   5.49:1
  *
- * Both clear 4.5:1 with margin, and a pure white pixel is the worst case
- * any of these photographs can present. The outer edges take 0.72 rather
- * than the floor because that is where a band meets the page surface
- * above and below it, and the extra is what stops the join reading as a
- * seam.
+ * Both clear 4.5:1, and a pure white pixel is the worst case any of these
+ * photographs can present. 0.62 is the DERIVED minimum for the worse of
+ * the two inks rather than a value picked to look right, so there is
+ * nothing further to give here without re-deriving it. The outer edges
+ * take 0.68 rather than the floor because that is where a band meets the
+ * page surface above and below it, and the extra is what stops the join
+ * reading as a seam.
  *
  * ── THE TYPE GOES WHITE, INCLUDING THE EYEBROW ───────────────────────
  *
  * A band with a photograph carries white type in both colour schemes,
  * the way the hero does. The eyebrow cannot stay accent-600: Grapevine
- * over this scrim is about 1.3:1, which is the same measurement that put
+ * over this scrim is about 1.4:1, which is the same measurement that put
  * the hero's kicker in white. Warm was the other candidate, since the
  * share card uses it as an eyebrow on the poster plum and clears 4.81:1
- * there — but the card's ground is SOLID Grapevine, and over a 0.66 scrim
- * on a white pixel Warm measures 2.87:1 and fails. Making it pass needs
+ * there — but the card's ground is SOLID Grapevine, and over a 0.62 scrim
+ * on a white pixel Warm measures 2.72:1 and fails. Making it pass needs
  * about 0.85 alpha, at which point there is no photograph left to have
  * put behind the band. So: white, and hierarchy from size and weight.
  */
@@ -115,17 +117,17 @@ export interface PageHeaderImage {
 
 /*
  * Two scrims, both anchored to an edge, each covering half the band and
- * meeting at 0.66 in the middle so there is no seam. Written as
+ * meeting at the 0.62 floor in the middle so there is no seam. Written as
  * background images rather than as a Tailwind gradient because the stops
  * are measured values, and a class name assembled from them is a class
  * Tailwind never generates.
  */
 const FLOOR = SCRIM_ALPHA_FLOOR;
-const EDGE = 0.72;
+const EDGE = 0.68;
 
-export const HEADER_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.69) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
+export const HEADER_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.65) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
 
-export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.69) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
+export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.65) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
 
 /**
  * The scrim for a `fit: "whole"` band, and it is the HERO's technique
@@ -148,14 +150,14 @@ export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, $
  * type, which is a pixel height, while the element it is painted on is a
  * fraction of a viewport.
  *
- * 0.72 at the top edge rather than the 0.66 floor, matching EDGE above:
+ * 0.68 at the top edge rather than the 0.62 floor, matching EDGE above:
  * that is where the band meets the page surface, and the extra is what stops
  * the join reading as a seam. Held to 190px, which is the band's 4rem
  * padding plus the eyebrow, its margin and a 48px title. The ease below is
  * concave for the reason the hero's is — a straight ramp to zero terminates
  * with a derivative change that reads as a band edge across the photograph.
  */
-export const HEADER_SCRIM_WHOLE = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0px, rgba(${PLUM_WARM}, 0.70) 120px, rgba(${PLUM_DEEP}, ${FLOOR}) 190px, rgba(${PLUM_DEEP}, 0.44) 232px, rgba(${PLUM_DEEP}, 0.24) 268px, rgba(${PLUM_DEEP}, 0.10) 296px, rgba(${PLUM_DEEP}, 0) 320px)`;
+export const HEADER_SCRIM_WHOLE = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0px, rgba(${PLUM_WARM}, 0.66) 120px, rgba(${PLUM_DEEP}, ${FLOOR}) 190px, rgba(${PLUM_DEEP}, 0.44) 232px, rgba(${PLUM_DEEP}, 0.24) 268px, rgba(${PLUM_DEEP}, 0.10) 296px, rgba(${PLUM_DEEP}, 0) 320px)`;
 
 /**
  * `sizes` for the band's image.

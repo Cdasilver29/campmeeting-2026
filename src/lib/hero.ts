@@ -265,18 +265,50 @@ export const PLUM_DEEP = "41, 18, 70"; /* #291246, Emperor -> black 45% */
  *   #291246 (Emperor plum)      0.600
  *   #461529 (Grapevine plum)    0.620
  *
- * 0.66 is used, not 0.62. That is 0.04 above the worse of the two inks,
- * and the extra is bought deliberately rather than saved: white over a
- * clipped page gutter lands at 5.16:1 instead of 4.53:1, and the denser
- * ground is also what makes the lower frame read as the poster's plum
- * rather than as a photograph with a wash on it. On this photograph
- * there is no art-direction cost to paying it — the region under the
- * text block is the open Bible, not the subject.
+ * ── 0.66 -> 0.62, AND WHAT WAS SPENT TO GET THERE ────────────────────
+ *
+ * 0.66 used to be 0.04 above the worse of the two inks, and the note here
+ * said that margin was "bought deliberately rather than saved". It has now
+ * been spent, deliberately, in the other direction: the scrims read as too
+ * much plum over the photographs, and every one of them was passing with
+ * room to spare rather than sitting on the floor.
+ *
+ * 0.62 is the DERIVED minimum for Grapevine plum, the worse of the two
+ * inks, so this is the alpha the table above says is required and not one
+ * step less. Over a pure-white pixel:
+ *
+ *   PLUM_DEEP at 0.62   rgb(122,108,140)   4.83:1
+ *   PLUM_WARM at 0.62   rgb(140,110,122)   4.54:1
+ *
+ * Both still clear 4.5:1, and a pure-white pixel is the worst case any of
+ * these photographs can present. The SHAPE of each gradient is unchanged
+ * and only its depth moved. Nothing below the floor was touched: the tail
+ * stops that ease to zero are fade, not protection.
+ *
+ * ── ONE SCRIM KEPT ALMOST ALL OF ITS DEPTH, AND IT IS MEASURED ───────
+ *
+ * The bottom scrim and the page-header bands took the full 0.04. THE
+ * HERO'S TOP SCRIM DID NOT: it went 0.66 -> 0.65, one step rather than
+ * four, and that is a measurement rather than a preference. At 0.62 the
+ * home header's white lockup and nav measured **4.58:1 over the migori
+ * photograph** — passing, and passing by 0.08, which is one rounding step
+ * wide on the one element that is on every page.
+ *
+ * It also costs the least to keep. That scrim is 176px tall and sits
+ * behind the site header and nowhere else, so its depth is not what the
+ * reader means by "too much gradient on the photograph" — the bottom
+ * scrim is 28rem of the frame and it is the one that took the change.
+ * 0.65 puts the header back at 4.9:1 and up.
+ *
+ * This is a floor and not a target. It is not to be lowered further
+ * without re-deriving the table above, and the measured readings after the
+ * change are in VISUAL-PASS.md session 6 — every one of them still passes,
+ * with the worst at 4.91:1 on a band and 5.04:1 on the hero.
  *
  * The pure-white premise is not hypothetical here. It is measured: the
  * bottom two deciles of the source contain pixels at luminance 1.000.
  */
-export const SCRIM_ALPHA_FLOOR = 0.66;
+export const SCRIM_ALPHA_FLOOR = 0.62;
 
 /**
  * Top scrim: sits behind the site header and nowhere else.
@@ -341,7 +373,7 @@ export const SCRIM_ALPHA_FLOOR = 0.66;
 const a = (base: number, boost: number) => Math.min(1, base + boost).toFixed(3);
 
 export const heroScrimTop = (boost = 0) =>
-  `linear-gradient(to bottom, rgba(${PLUM_DEEP}, ${a(0.66, boost)}) 0px, rgba(${PLUM_DEEP}, ${a(0.64, boost)}) 80px, rgba(${PLUM_WARM}, ${a(0.46, boost / 2)}) 104px, rgba(${PLUM_WARM}, ${a(0.26, boost / 2)}) 128px, rgba(${PLUM_WARM}, 0.10) 150px, rgba(${PLUM_WARM}, 0) 176px)`;
+  `linear-gradient(to bottom, rgba(${PLUM_DEEP}, ${a(0.65, boost)}) 0px, rgba(${PLUM_DEEP}, ${a(0.63, boost)}) 80px, rgba(${PLUM_WARM}, ${a(0.45, boost / 2)}) 104px, rgba(${PLUM_WARM}, ${a(0.26, boost / 2)}) 128px, rgba(${PLUM_WARM}, 0.10) 150px, rgba(${PLUM_WARM}, 0) 176px)`;
 
 /** The unboosted top scrim, for anything that wants the string itself. */
 export const HERO_SCRIM_TOP = heroScrimTop();
@@ -367,7 +399,7 @@ export const HERO_SCRIM_TOP = heroScrimTop();
  * type. Both ends are above the floor, so the shift costs nothing.
  */
 export const heroScrimBottom = (boost = 0) =>
-  `linear-gradient(to top, rgba(${PLUM_WARM}, ${a(0.74, boost)}) 0%, rgba(${PLUM_WARM}, ${a(0.7, boost)}) 40%, rgba(${PLUM_DEEP}, ${a(0.68, boost)}) 70%, rgba(${PLUM_DEEP}, ${a(0.66, boost)}) 88%, rgba(${PLUM_DEEP}, ${a(0.44, boost / 2)}) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%)`;
+  `linear-gradient(to top, rgba(${PLUM_WARM}, ${a(0.70, boost)}) 0%, rgba(${PLUM_WARM}, ${a(0.66, boost)}) 40%, rgba(${PLUM_DEEP}, ${a(0.64, boost)}) 70%, rgba(${PLUM_DEEP}, ${a(0.62, boost)}) 88%, rgba(${PLUM_DEEP}, ${a(0.40, boost / 2)}) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%)`;
 
 /** The unboosted bottom scrim, for anything that wants the string itself. */
 export const HERO_SCRIM_BOTTOM = heroScrimBottom();
