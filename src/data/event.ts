@@ -115,10 +115,23 @@ export const speakers: Speaker[] = [
     name: "Priskillah Munda",
     title: "Dr.",
     role: "Health Presenter",
-    // The supplied file is named preskillamunda.jpg and its own caption
-    // reads "Dr. Preskilla Munda". The programme PDF prints Priskillah,
-    // so the PDF wins here and the disagreement is logged rather than
-    // quietly resolved. See DATA-NOTES.md.
+    // ── SPELLING NOT CONFIRMED. DO NOT CHANGE IT TO MATCH THE ART. ──
+    //
+    // Three spellings are in play and the committee has confirmed none:
+    //
+    //   "Priskillah Munda"   the programme PDF, and what this record says
+    //   "Preskilla Munda"    the supplied poster card's own burnt-in caption
+    //   preskillamunda.jpg   the supplied file name, agreeing with the card
+    //
+    // The PDF wins because it is the signed source and because the id
+    // `priskillah-munda` is stable and already in URLs, the share card and
+    // the sitemap. That is a tie-break, not a decision: it is entirely
+    // possible the artwork is right and the PDF has the typo, in which case
+    // the id has to be migrated with a redirect rather than edited.
+    //
+    // **Needs written confirmation from the committee before launch.**
+    // Whoever gets it: change `name` here and nothing else until you have
+    // decided what happens to the id. DATA-NOTES.md item 8.
     image: "/speakers/priskillah-munda.webp",
     imagePosition: "50% 69%",
   },
@@ -131,9 +144,24 @@ export const speakers: Speaker[] = [
     id: "janet-oyiende",
     name: "Janet Oyiende",
     role: "Ambassadors",
-    // The poster caption reads "Janet Oyende Kariuki" — a different
-    // spelling of the surname and a third name this record does not
-    // carry. Logged in DATA-NOTES.md rather than guessed at.
+    // ── SPELLING NOT CONFIRMED. DO NOT CHANGE IT TO MATCH THE ART. ──
+    //
+    // This one disagrees in two ways at once, not one:
+    //
+    //   "Janet Oyiende"        what this record says
+    //   "Janet Oyende Kariuki" the supplied poster card's burnt-in caption
+    //
+    // A different spelling of the surname — Oyiende against Oyende — AND a
+    // third name the record does not carry at all. Those are two separate
+    // questions: which spelling is hers, and whether Kariuki should be
+    // printed. She appears in no session in `program.ts` (item 7), so the
+    // PDF offers no second opinion on either; this record's spelling comes
+    // from the appointment note and the id `janet-oyiende` follows it.
+    //
+    // **Needs written confirmation from the committee before launch**, and
+    // it is the more urgent of the two: a name printed wrong on a card
+    // introducing someone is worse than a soft photograph. DATA-NOTES.md
+    // item 8.
     image: "/speakers/janet-oyiende.webp",
     imagePosition: "50% 4%",
   },
