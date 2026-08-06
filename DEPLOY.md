@@ -117,6 +117,69 @@ and quietly cannot submit.
 
 ---
 
+## During camp meeting: adding a recording
+
+The recordings listed on `/livestream` are maintained by hand, one line
+per video. **This is the only content edit anyone should need to make
+during the week.**
+
+There is no YouTube API, no key and no quota, and that is deliberate: for
+eight videos a year, an API key to rotate plus a rebuild trigger so a
+static site notices a video posted after its last deploy is more moving
+parts than the typing it saves. Do not add one.
+
+### The one line
+
+Open `src/features/livestream/config.ts`, find `recordings`, and add an
+entry:
+
+```ts
+export const recordings: Recording[] = [
+  { dayId: "sabbath-15", label: "Divine Service", videoId: "dQw4w9WgXcQ" },
+];
+```
+
+| field | what to put in it |
+| --- | --- |
+| `dayId` | the programme day this is a recording of, from `src/data/program.ts`: `sabbath-15`, `sunday-16`, `monday-17`, `tuesday-18`, `wednesday-19`, `thursday-20`, `friday-21`, `sabbath-22` |
+| `label` | what the recording IS, and nothing more: "Divine Service", "Morning Devotion". The day is written around it, so do not repeat it |
+| `videoId` | the **11 characters after `v=`** in the watch URL, not the URL. From `https://www.youtube.com/watch?v=dQw4w9WgXcQ` take `dQw4w9WgXcQ`. A `youtu.be/dQw4w9WgXcQ` share link has the same id after the slash |
+
+Commit and push. Vercel builds on push and the page is live in a couple of
+minutes.
+
+### Four things that are already handled, so do not do them by hand
+
+- **Order.** Paste at the end of the array. The list is sorted by the
+  day's own position in the programme, newest first, so where the line
+  sits in the file does not matter.
+- **The day's name.** "Sabbath 15th August 2026" is read from
+  `program.ts`, so it cannot disagree with the schedule.
+- **The link to the programme.** Each row links to `/schedule/<dayId>` on
+  its own.
+- **The empty state.** While the array is empty the page says recordings
+  are being posted and are listed here as they go up. Nothing needs
+  removing first.
+
+### If the build fails after you add a line
+
+The likely cause is a mistyped `dayId`, and the failure is deliberate:
+
+```
+Error: Recording "Divine Service" has dayId "sabath-15", which is not a
+day in src/data/program.ts. Valid ids: sabbath-15, sunday-16, ...
+```
+
+A wrong day id would otherwise ship a "see that day's programme" link that
+404s, from the page whose whole job that week is catching people up. The
+message lists every valid id; fix the spelling and push again.
+
+### More than one recording of the same day
+
+Add both. They keep the order you wrote them in, under the same day.
+
+---
+
 ## Local
 
 ```

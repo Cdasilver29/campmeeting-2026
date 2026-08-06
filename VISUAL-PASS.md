@@ -1922,3 +1922,91 @@ every photographic band a reserved height that does not come from its type.
 Contrast, title only, both schemes: **6.22:1 worst** (768), 6.45 at 390 and
 6.27 at 1440. It went up rather than down — the title now sits where the
 eyebrow was, higher in the band and deeper into the top scrim.
+
+## Recordings on /livestream, curated by hand
+
+`recordings` is a new array in `src/features/livestream/config.ts`:
+`{ dayId, label, videoId }`, keyed to the day ids in `program.ts`. **It
+ships empty**, with no example entries in it — one line per day gets pasted
+in during the week.
+
+**No YouTube Data API, and it is not a shortcut being taken.** For eight
+videos a year it is a key to hold and rotate, a daily quota to stay under,
+and a rebuild trigger so a statically generated site notices a video posted
+after its last deploy — three moving parts to save eight lines of typing,
+once, in a week that already has someone at a laptop.
+
+### What the after phase renders
+
+**Empty, which is what ships:** one sentence and the channel link.
+
+> Camp Meeting 2026 has ended. Recordings are being posted to the church's
+> YouTube channel, and each one is listed here as it goes up. Nothing has
+> been published yet.
+>
+> Watch for them on YouTube
+
+The wording is the part that had to change, not just the fallback. The old
+line — "Recordings from the week are posted to the church's YouTube
+channel" — describes a habit, so a reader arriving the day after the closing
+Sabbath and finding nothing cannot tell "not yet" from "this page is
+broken". It now names the state and the place, so an empty list is an
+answer.
+
+**With two present:** the count, then the rows, then the channel link
+kept rather than replaced — the list is what somebody chose to publish,
+the channel is everything the church has ever posted, and those are two
+different offers.
+
+> Camp Meeting 2026 has ended. 2 recordings from the week, most recent
+> first.
+>
+> **Evening Service** · Sunday 16th August 2026 · See that day's programme
+> **Divine Service** · Sabbath 15th August 2026 · See that day's programme
+>
+> See the whole channel on YouTube
+
+Two links per row and two destinations on purpose. The video takes the
+row's title; the programme day beside it is what the recording is OF, and
+someone catching up on a Tuesday morning wants to know what else was in
+that morning — a page that already exists and already works offline. The
+day is also in the video link's accessible name, or a screen reader reading
+the page's links out of context hears "Divine Service" eight times.
+
+**During the event**, the same list renders under the live player as
+"Earlier this week", and renders **nothing at all** when empty. That is a
+different decision from the after phase deliberately: there the reader has
+arrived expecting recordings and the page has to say something, while here
+the player is directly above and is what they came for. An empty heading
+under it would be a hole announcing that nobody has done the typing yet.
+
+### The order is derived, not the array's
+
+Sorted by the day's own position in `program`, reversed. **Verified by
+pasting the two test entries oldest-first and getting them back
+newest-first.** The workflow is "append one line", and if the array's order
+were the rendered order then "newest first" would mean pasting at the top —
+the one instruction someone typing at the end of a long day gets wrong, and
+getting it wrong produces a quietly mis-ordered list rather than an error.
+Two recordings of one day keep the order they were written in.
+
+### An unknown dayId fails the build, and that is verified rather than claimed
+
+Tested by mistyping one:
+
+```
+Error: Recording "Divine Service" has dayId "sabath-15", which is not a day
+in src/data/program.ts. Valid ids: sabbath-15, sunday-16, monday-17,
+tuesday-18, wednesday-19, thursday-20, friday-21, sabbath-22.
+> Build error occurred
+[Error: Failed to collect page data for /livestream]
+```
+
+The alternative is a "see that day's programme" link that 404s, from the
+page whose whole job that week is catching people up. Same trade
+`web3forms.ts` already makes: a loud failure at build time is cheaper than a
+quiet one in front of readers.
+
+The paste-one-line workflow is written up in **DEPLOY.md**, including the
+four things it does not ask anyone to do by hand — order, the day's printed
+name, the programme link and clearing the empty state.

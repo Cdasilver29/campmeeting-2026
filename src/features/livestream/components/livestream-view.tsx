@@ -3,9 +3,12 @@ import { eventInfo } from "@/data";
 import { ACTION_LINK } from "@/lib/link-styles";
 import { eventPhaseScript } from "@/lib/event-phase-script";
 import { eventStartInstant, eventPhase } from "@/features/schedule/lib/time";
+import { DOC_HEADING } from "@/lib/typography";
 import { LIVESTREAM_CHANNEL_URL } from "../config";
+import { hasRecordings, resolvedRecordings } from "../lib/recordings";
 import { LiveEmbed } from "./live-embed";
 import { NowSlot } from "./now-slot";
+import { RecordingsList } from "./recordings-list";
 
 const linkClassName = `${ACTION_LINK} -ml-2`;
 
@@ -33,22 +36,82 @@ function BeforeStream() {
   );
 }
 
+/**
+ * The after phase, in its two shapes.
+ *
+ * WITH RECORDINGS: the list, newest first, above the channel link. The
+ * channel link stays rather than being replaced — this list is curated by
+ * hand and is the meetings somebody chose to publish, while the channel is
+ * everything the church has ever posted, which is a different and still
+ * useful thing.
+ *
+ * WITH NONE: one sentence and the channel link, which is what this page
+ * has always said. The wording is the part that had to change. "Recordings
+ * from the week are posted to the church's YouTube channel" describes a
+ * habit, and a reader who arrives the day after the closing Sabbath and
+ * finds nothing cannot tell whether that means "not yet" or "this page is
+ * broken". It now says they are added here as they go up, which is a
+ * promise with a place attached to it.
+ *
+ * The branch is resolved at BUILD time, not by the clock, because
+ * `recordings` is a constant in a source file. There is no state in which
+ * a reader sees the wrong one.
+ */
 function AfterStream() {
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-ink-muted">
-        {eventInfo.edition} has ended. Recordings from the week are posted to
-        the church&apos;s YouTube channel.
-      </p>
+    <div className="flex flex-col gap-4">
+      {hasRecordings ? (
+        <>
+          <p className="text-ink-muted">
+            {eventInfo.edition} has ended. {resolvedRecordings.length}{" "}
+            {resolvedRecordings.length === 1 ? "recording" : "recordings"} from
+            the week, most recent first.
+          </p>
+          <RecordingsList />
+        </>
+      ) : (
+        <p className="text-ink-muted">
+          {eventInfo.edition} has ended. Recordings are being posted to the
+          church&apos;s YouTube channel, and each one is listed here as it goes
+          up. Nothing has been published yet.
+        </p>
+      )}
       <a
         href={LIVESTREAM_CHANNEL_URL}
         target="_blank"
         rel="noreferrer"
         className={linkClassName}
       >
-        Watch recordings on YouTube
+        {hasRecordings
+          ? "See the whole channel on YouTube"
+          : "Watch for them on YouTube"}
       </a>
     </div>
+  );
+}
+
+/**
+ * Catch-up during the event: whatever has been posted so far, below the
+ * live player.
+ *
+ * Nothing at all when the list is empty, and that is not the same decision
+ * the after phase made. There the page has to say something, because a
+ * reader has arrived expecting recordings. Here the live player is
+ * directly above and is what the reader came for, and an empty "Earlier
+ * this week" heading under it would be a hole in the page announcing that
+ * somebody has not done the typing yet.
+ */
+function CatchUp() {
+  if (!hasRecordings) return null;
+  return (
+    <section className="flex flex-col gap-3">
+      <h2 className={DOC_HEADING}>Earlier this week</h2>
+      <p className="text-ink-muted">
+        Meetings already posted, most recent first. Sessions that have not been
+        uploaded yet are not listed.
+      </p>
+      <RecordingsList />
+    </section>
   );
 }
 
@@ -123,6 +186,7 @@ export function LivestreamView() {
         <div className={`${SHOW_DURING} flex-col gap-8`}>
           <LiveEmbed label={`${eventInfo.edition} livestream`} />
           <NowSlot />
+          <CatchUp />
         </div>
       </div>
 
