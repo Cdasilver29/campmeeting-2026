@@ -102,14 +102,24 @@ export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, $
  *
  * 100vw describes the box's WIDTH, and `cover` on a box this shape is
  * driven by its width at every width from 768 up. Below that it is not:
- * at 390 the tallest band on the site is 357px, and a 1.786:1 source
- * filling a 390x357 box renders 638px wide, which is 164vw. The phone
- * branch asks for that rather than under-requesting by a third.
+ * at 390 the tallest band on the site is 357px, so a source filling a
+ * 390x357 box renders (357 x its aspect) wide, and the phone branch has
+ * to ask for that rather than under-requesting by a third.
  *
- * It is a cap, not a promise. Seven of the ten sources are under 740px
- * wide, so what Next can serve is bounded by the file either way.
+ * 240vw, not the 165vw this used to carry, and the reason is the re-cut
+ * files rather than a re-think. 165 was derived from the widest aspect
+ * then present: a 1.786:1 source in a 390x357 box renders 638px, which is
+ * 164vw. about, faq and family-life are now 1600x620, so 2.58:1, and the
+ * tallest of their bands at 390 renders 921px — 236vw. Left at 165 the
+ * three files this session made SHORTER would also have been served
+ * softer, which is the opposite of the point.
+ *
+ * It is a cap, not a promise, and that is why raising it costs the other
+ * eight nothing: seven of the ten sources are under 740px wide, so what
+ * Next can serve is bounded by the file, and asking for 936 CSS px of a
+ * 555px file returns the same 555px it returned before.
  */
-export const HEADER_IMAGE_SIZES = "(max-width: 767px) 165vw, 100vw";
+export const HEADER_IMAGE_SIZES = "(max-width: 767px) 240vw, 100vw";
 
 /*
  * ── THE FILES ────────────────────────────────────────────────────────
@@ -159,19 +169,21 @@ export const headerImages = {
   },
   about: {
     src: "/headers/about.webp",
+    // 1600x620, not 1600x1067. The 70% this page's position used to carry
+    // is now baked into the file — see the `band` note in
+    // tools/assets/header-photos.mjs. The band is never taller than 403px
+    // and is full-bleed, so 447 of those 1067 rows were being thrown away
+    // by `cover` before anything painted, and the three files that had
+    // them were 425 KB of a 576 KB precached directory.
     width: 1600,
-    height: 1067,
-    // 70%, and this is the only page whose crop had to be re-solved after
-    // the meta line came off it. /about is now the shortest band on the
-    // site — 213px — so at 1920 it keeps 17% of the source height, less
-    // than any other route. At 45% that 17% landed on the join between
-    // the bokeh and the Bible's top edge: a soft horizontal gradient with
-    // no legible subject in it, which is the strip of background this
-    // whole exercise is meant to avoid. 70% drops the window onto the
-    // open pages, where the printed text and the gutter survive the
-    // scrim. Checked by rendering, at 390, 768 and 1920, not by arithmetic.
-    position: "50% 70%",
-    keeps: "the open pages, their printed text and the gutter between them; loses the bokeh and the crate",
+    height: 620,
+    // 50% now, and it is doing real work rather than standing in for the
+    // 70% it replaced: at 1920 a 2.58:1 file in a 403px band still has
+    // `cover` keeping only 54% of its height, so this value still chooses
+    // which 54%. Centred is right because the window itself was cut at
+    // 70% of the source, which is where the open pages are.
+    position: "50% 50%",
+    keeps: "the open pages, their printed text and the gutter between them; on a phone it crops in to the gutter and the inner columns",
   },
   contact: {
     // The church photograph the home hero used to carry. It is still in
@@ -189,9 +201,11 @@ export const headerImages = {
     keeps: "the pitched roof, the green NEWLIFE SDA CHURCH sign and the top of the glazing; loses the car park",
   },
   faq: {
+    // 1600x620, cut at 50% of the source, which is where it was already
+    // being read from.
     src: "/headers/faq.webp",
     width: 1600,
-    height: 1067,
+    height: 620,
     position: "50% 50%",
     keeps: "the Psalm 23 heading and the lines under it, which is the legible band of the frame",
   },
@@ -222,11 +236,13 @@ export const headerImages = {
     keeps: "the body of the produce, from the greens on the left to the peppers on the right",
   },
   "family-life": {
+    // 1600x620, cut at 52% of the source, which is the position this page
+    // used to carry.
     src: "/headers/family-life.webp",
     width: 1600,
-    height: 1067,
-    position: "50% 52%",
-    keeps: "the stacked hands and the cuffs around them; loses the outer sleeves",
+    height: 620,
+    position: "50% 50%",
+    keeps: "the stacked hands and the cuffs around them; on a phone it crops in to the two topmost hands",
   },
   "christian-education": {
     src: "/headers/christian-education.webp",

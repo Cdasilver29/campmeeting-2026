@@ -51,14 +51,17 @@
  * asked to fill, because seven of these sources are under 740px wide and
  * that is the honest limit on this band.
  *
- * Usage: node verify-page-header.mjs [scheme]
+ * Usage: node verify-page-header.mjs [scheme] [--routes a,b] [--widths 390,768]
  *   scheme is "light" | "dark" | "both" (default "both").
+ *   --routes and --widths narrow the sweep to the bands a session changed.
+ *     A full run is 140 page loads; re-measuring an unchanged band is not
+ *     evidence, it is time.
  */
 import { launch } from "puppeteer-core";
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const BASE = "http://localhost:3100";
-const WIDTHS = [390, 768, 1024, 1440, 1920];
+let WIDTHS = [390, 768, 1024, 1440, 1920];
 
 /** Every route whose band carries a photograph. */
 const ROUTES = [
@@ -95,13 +98,17 @@ const SOURCES = {
   "/schedule": [612, 328],
   "/livestream": [555, 260],
   "/ministries": [735, 245],
-  "/about": [1600, 1067],
+  // Re-cut to 1600x620. The band is never taller than 403px, so the 447
+  // rows these three used to carry were thrown away by `cover` before
+  // anything painted — 425 KB of a 576 KB precached directory. See the
+  // `band` note in tools/assets/header-photos.mjs.
+  "/about": [1600, 620],
   "/contact": [1634, 962],
-  "/faq": [1600, 1067],
+  "/faq": [1600, 620],
   "/downloads": [736, 404],
   "/prayer-requests": [588, 306],
   "/ministries/health": [736, 412],
-  "/ministries/family-life": [1600, 1067],
+  "/ministries/family-life": [1600, 620],
   "/ministries/christian-education": [735, 414],
 };
 
@@ -120,6 +127,23 @@ const isLight = (css) => lum(...parse(css)) > 0.4;
 const schemeArg = process.argv[2] ?? "both";
 const SCHEMES = schemeArg === "both" ? ["light", "dark"] : [schemeArg];
 
+/*
+ * Optional narrowing. A full run is 14 routes x 5 widths x 2 schemes = 140
+ * page loads, and a session that changes three photographs should not be
+ * paying for the eleven it did not touch — re-measuring an unchanged band
+ * is not evidence, it is time. `--routes` and `--widths` restrict the
+ * sweep; with neither the behaviour is exactly as before.
+ */
+const flag = (name) => {
+  const i = process.argv.indexOf(`--${name}`);
+  return i === -1 ? null : process.argv[i + 1];
+};
+const routeFilter = flag("routes")?.split(",");
+const widthFilter = flag("widths")?.split(",").map(Number);
+if (widthFilter) WIDTHS.splice(0, WIDTHS.length, ...widthFilter);
+const PHOTO = routeFilter ? ROUTES.filter((r) => routeFilter.includes(r)) : ROUTES;
+const FLAT = routeFilter ? FLAT_ROUTES.filter((r) => routeFilter.includes(r)) : FLAT_ROUTES;
+
 const browser = await launch({
   executablePath: CHROME,
   headless: true,
@@ -129,7 +153,7 @@ const browser = await launch({
 const rows = [];
 
 for (const scheme of SCHEMES) {
-  for (const route of [...ROUTES, ...FLAT_ROUTES]) {
+  for (const route of [...PHOTO, ...FLAT]) {
     for (const w of WIDTHS) {
       const page = await browser.newPage();
       await page.setViewport({ width: w, height: 900, deviceScaleFactor: 1 });
@@ -287,7 +311,7 @@ for (const scheme of SCHEMES) {
 console.log("\n=== worst composited pixel per route, across both schemes and all widths ===");
 console.log(pad("route", 34) + pad("worst", 10) + pad("string", 10) + "at");
 console.log("-".repeat(70));
-for (const route of [...ROUTES, ...FLAT_ROUTES]) {
+for (const route of [...PHOTO, ...FLAT]) {
   let worst = null;
   for (const r of rows.filter((x) => x.route === route)) {
     for (const p of r.parts) {
@@ -305,7 +329,7 @@ console.log("\n=== band height, and how far the FILE ON DISK is stretched to fil
 console.log("(cover: the scale is set by whichever axis has to stretch further)");
 console.log(pad("route", 34) + pad("file", 13) + WIDTHS.map((w) => pad(w, 16)).join(""));
 console.log("-".repeat(34 + 13 + WIDTHS.length * 16));
-for (const route of ROUTES) {
+for (const route of PHOTO) {
   const src = SOURCES[route];
   if (!src) continue;
   const cells = WIDTHS.map((w) => {
@@ -323,7 +347,7 @@ for (const route of ROUTES) {
 console.log("\n=== what the crop keeps: fraction of the source width x height ===");
 console.log(pad("route", 34) + pad("position", 12) + WIDTHS.map((w) => pad(w, 14)).join(""));
 console.log("-".repeat(34 + 12 + WIDTHS.length * 14));
-for (const route of ROUTES) {
+for (const route of PHOTO) {
   const src = SOURCES[route];
   if (!src) continue;
   const any = rows.find((x) => x.route === route && x.img);

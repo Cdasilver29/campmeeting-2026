@@ -1,17 +1,45 @@
 /**
  * The supplied page-header artwork -> public/headers/<route>.webp.
  *
- * ── NO CROP, ON PURPOSE ──────────────────────────────────────────────
+ * ── NO CROP, EXCEPT WHERE THE SOURCE IS THE WRONG SHAPE ──────────────
  *
- * Unlike the speaker cards, nothing here is cropped. The band crops these
- * with `object-fit: cover` at render time, and the whole point of
- * choosing an `object-position` per page (src/lib/page-header-art.ts) is
- * that the crop can differ between a 390px phone and a 1920px desktop —
- * which it must, because the band goes from 1.09:1 to 6.71:1 across that
- * range. Baking one crop into the file would throw that away.
+ * Unlike the speaker cards, seven of these are not cropped. The band
+ * crops them with `object-fit: cover` at render time, and the whole point
+ * of choosing an `object-position` per page (src/lib/page-header-art.ts)
+ * is that the crop can differ between a 390px phone and a 1920px desktop
+ * — which it must, because the band goes from 1.09:1 to 6.71:1 across
+ * that range. Baking one crop into the file throws some of that away, so
+ * it is done only where leaving it undone costs more.
  *
- * So the only operations are a downscale, where the source is bigger than
- * anything the band can use, and the WebP encode.
+ * ── `band`, AND WHY THREE FILES HAVE ONE ─────────────────────────────
+ *
+ * about, faq and family-life came off 6000x4000 sources and were written
+ * at the full 1600x1067. Those three alone were 425 KB of a 576 KB
+ * directory, every byte of it precached, and the height was the whole of
+ * the overrun: the band is never taller than 403px and full-bleed, so at
+ * 1920 `cover` was throwing away 62% of a 1067px file before it painted
+ * anything. Nobody was ever going to see those rows.
+ *
+ * So those three carry `band: 620`, which extracts a 1600x620 window from
+ * the full-resolution source at the fraction of the height that page's
+ * `position` already named, and encodes that. 620 is not arbitrary: at
+ * 1920 the band is 403px at most, so a 2.58:1 file still leaves the render
+ * `cover` 54% of its height to move within, which is what keeps
+ * `object-position` a live control on those pages rather than a no-op. The
+ * window is taken from 6000x4000 and downscaled, not cropped out of the
+ * 1600x1067 intermediate, so the surviving rows are resampled from the
+ * source rather than from an already-resampled file.
+ *
+ * What it costs, and it is a real cost: those three are now 2.58:1 rather
+ * than 1.5:1, so on a phone `cover` crops their WIDTH harder — 44% of it
+ * at 390 against the 75% they kept before. Checked by rendering at 390,
+ * 768 and 1920, per page, not by arithmetic. See the `keeps` sentences in
+ * page-header-art.ts, which were re-written against the new window.
+ *
+ * The alternative on the table was serving those three outside the
+ * precache. That was rejected: it trades the offline behaviour the whole
+ * PWA phase exists for against a problem caused by three oversized files,
+ * and resizing fixes the cause.
  *
  * ── THE SIZE CEILING ─────────────────────────────────────────────────
  *
@@ -61,17 +89,27 @@ mkdirSync(OUT, { recursive: true });
 const MAX_W = 1600;
 const QUALITY = 82;
 
-/** route slug -> supplied file. /contact is absent: it reuses public/hero/church.webp. */
+/**
+ * route slug -> supplied file. /contact is absent: it reuses
+ * public/hero/church.webp.
+ *
+ * `band` is the output height in px, for the three sources whose height
+ * the band can never use. `at` is the fraction of the SOURCE height the
+ * window is centred on, and it is not a new decision: it is the vertical
+ * half of that page's `position` in page-header-art.ts, so the window
+ * keeps the subject that page had already chosen. Once the file is the
+ * band, its `position` becomes 50%.
+ */
 const HEADERS = [
   { route: "schedule", file: "schedule.jpg" },
   { route: "livestream", file: "livestream.jpg" },
   { route: "ministries", file: "ministries.jpg" },
-  { route: "about", file: "about.jpg" },
-  { route: "faq", file: "faq.jpg" },
+  { route: "about", file: "about.jpg", band: 620, at: 0.7 },
+  { route: "faq", file: "faq.jpg", band: 620, at: 0.5 },
   { route: "downloads", file: "downloads.jpg" },
   { route: "prayer-requests", file: "prayer-requests.jpg" },
   { route: "health", file: "health.jpg" },
-  { route: "family-life", file: "family-life.jpg" },
+  { route: "family-life", file: "family-life.jpg", band: 620, at: 0.52 },
   { route: "christian-education", file: "christian-education.jpg" },
 ];
 
@@ -88,7 +126,22 @@ for (const h of HEADERS) {
   let img = sharp(src);
   let outW = meta.width;
   let outH = meta.height;
-  if (meta.width > MAX_W) {
+
+  if (h.band) {
+    // The window, in SOURCE pixels, so the surviving rows are resampled
+    // from 6000x4000 rather than from an already-downscaled intermediate.
+    outW = Math.min(MAX_W, meta.width);
+    outH = h.band;
+    const winH = Math.round((meta.width * h.band) / outW);
+    // Centred on `at`, then clamped so the window stays inside the file.
+    const top = Math.max(
+      0,
+      Math.min(meta.height - winH, Math.round(meta.height * h.at - winH / 2)),
+    );
+    img = img
+      .extract({ left: 0, top, width: meta.width, height: winH })
+      .resize({ width: outW, height: outH });
+  } else if (meta.width > MAX_W) {
     outW = MAX_W;
     outH = Math.round((meta.height * MAX_W) / meta.width);
     img = img.resize({ width: MAX_W });
