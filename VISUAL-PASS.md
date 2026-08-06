@@ -1263,3 +1263,505 @@ plus:
   Munda" against the PDF's Priskillah, and "Janet Oyende Kariuki" against
   `janet-oyiende` — a different surname spelling and a third name.
 - **Larger header sources** for the seven that are under 740px wide.
+
+---
+
+# Session 5 (2026-08-06) — the rotating hero, two new bands, and the precache
+
+Six commits: `43a9fdf`, `5717ad7`, `ae4883d`, `00e2ace`, `2d99f11`,
+`059c3f5`. Six rather than five, and the extra one is a fix reported from
+looking at the built page — see "taji" below.
+
+`npx tsc --noEmit`, `pnpm lint` and `pnpm build` all pass on `059c3f5`.
+
+**This session measured narrowly on purpose.** Every new or changed surface
+was measured once at 390 / 768 / 1440, and the eight bands nothing touched
+were not re-swept. Both header harnesses gained `--routes` and `--widths`
+for that: a full `verify-page-header` run is 140 page loads, and
+re-measuring an unchanged band is not evidence, it is time.
+
+## The precache overrun had three files in it
+
+about, faq and family-life came off 6000x4000 sources and were written at
+the full 1600x1067. **The band is never taller than 403px and is
+full-bleed**, so at 1920 `cover` threw away 62% of that height before it
+painted anything. Those three alone were 425 KB of a 576 KB precached
+directory.
+
+They are now **1600x620**, the window extracted from the full-resolution
+source at the fraction of the height each page's own `position` already
+named — so the subject is the one that page had already chosen, resampled
+from 6000x4000 rather than cropped out of the 1600x1067 intermediate.
+
+| file | before | after |
+| --- | --- | --- |
+| about.webp | 105,846 B / 103.4 KiB | **84,140 B / 82.2 KiB** |
+| faq.webp | 122,740 B / 119.9 KiB | **98,964 B / 96.6 KiB** |
+| family-life.webp | 206,840 B / 202.0 KiB | **134,662 B / 131.5 KiB** |
+| `public/headers/` | 576.2 KiB | **461.3 KiB** |
+| precache | 2764.87 KiB | **2649.96 KiB** |
+
+`position` becomes `50% 50%` on all three and is still a live control, not
+a no-op: at 1920 a 2.58:1 file in a 403px band leaves `cover` 54% of its
+height to move within. **Serving those three outside the precache was the
+alternative and is rejected** — it trades the offline programme, which is
+the whole reason Phase 6 exists, against a problem caused by three
+oversized files.
+
+What it costs, stated rather than discovered: those three are 2.58:1 now
+instead of 1.5:1, so on a phone `cover` crops their WIDTH harder — 44% at
+390 where they kept 75%. Checked by rendering. /about's band is short
+enough that it still keeps 73%.
+
+`HEADER_IMAGE_SIZES` went 165vw to **240vw** on the phone branch. That
+number was derived from the widest aspect then present; the re-cut files
+are 2.58:1 and the tallest of their bands at 390 renders 921px, which is
+236vw. Left at 165 the three files this session made shorter would also
+have been served softer. It is a cap, so the eight unchanged files serve
+exactly what they served before.
+
+**Contrast, the three re-cut bands only, both schemes, 390/768/1440:**
+
+| route | worst | string | at |
+| --- | --- | --- | --- |
+| /about | **6.24:1** | title | 1440 |
+| /faq | 6.92:1 | title | 1440 |
+| /ministries/family-life | 6.38:1 | meta | 390 |
+
+Band heights identical to session 4's table at every width.
+
+### True upscale, all eleven headers, corrected method
+
+`SOURCES` as a constant, not `naturalWidth` — the README's note. File on
+disk against the box `cover` has to fill:
+
+| route | file | 390 | 768 | 1024 | 1440 | 1920 |
+| --- | --- | --- | --- | --- | --- | --- |
+| **/livestream** | 555x260 | 0.70x | 1.38x | 1.85x | 2.59x | **3.46x** |
+| **/prayer-requests** | 588x306 | 1.00x | 1.31x | 1.74x | 2.45x | **3.27x** |
+| **/schedule** | 612x328 | 0.82x | 1.25x | 1.67x | 2.35x | **3.14x** |
+| /ministries | 735x245 | 0.98x | 1.17x | 1.39x | 1.96x | 2.61x |
+| /downloads | 736x404 | 0.67x | 1.04x | 1.39x | 1.96x | 2.61x |
+| /ministries/health | 736x412 | 0.87x | 1.04x | 1.39x | 1.96x | 2.61x |
+| /ministries/christian-education | 735x414 | 0.86x | 1.04x | 1.39x | 1.96x | 2.61x |
+| /about | 1600x620 | 0.34x | 0.48x | 0.64x | 0.90x | 1.20x |
+| /faq | 1600x620 | 0.56x | 0.65x | 0.65x | 0.90x | 1.20x |
+| /ministries/family-life | 1600x620 | 0.54x | 0.56x | 0.64x | 0.90x | 1.20x |
+| /contact | 1634x962 | 0.24x | 0.47x | 0.63x | 0.88x | **1.00x** |
+| /speakers | 1492x865 | 0.27x | 0.51x | 0.68x | 0.97x | 1.29x |
+
+**Three will read soft, and /livestream is the worst of them at 3.46x.**
+Then /prayer-requests at 3.27x and /schedule at 3.14x. Those three files are
+555, 588 and 612 pixels wide against a band that is 1920 CSS px and 3840
+device px on a retina laptop. Nothing was upscaled to disguise it: an
+upscaled file is the same softness at four times the bytes. **Larger
+sources from the committee are the only fix**, and this is now the third
+session asking.
+
+Note what the resize did to the /about, /faq and /family-life rows: it did
+not change their upscale at all. Those three were the sharpest bands on the
+site before and still are, because the resize took height the band could
+never use and left the width alone.
+
+/contact reaches 1.00x at 1920 for a different reason: its band is now as
+tall as the photograph, so the picture is served at its own size.
+
+## The home hero rotates three photographs
+
+hands-bible, then migori, then taji. **Background image and caption line
+only.** The theme, the key verse, the theme song, the dates, the venue and
+the call to action do not move and gained no new animation: that block is
+the page's LCP element.
+
+| file | px | KB | caption |
+| --- | --- | --- | --- |
+| hands-bible.webp | 735x616 | 35.9 | none |
+| migori-choir.webp | 1600x885 | 160.1 | Camp Meeting 2026 Guest Choir · Migori Central |
+| taji-choir.webp | 1491x1055 | 150.4 | Camp Meeting 2026 Guest Choir · Taji |
+
+800ms of crossfade, 6000ms of dwell, interval the sum of the two — at 6000
+the next fade would start 800ms before the current one finished and each
+image would be still for 5.2 seconds rather than six.
+
+**Both captions fit on one line at 390**, measured against their own line
+box at 390/768/1440, so neither was shortened. The brief's fallback of
+shortening the prefix was not needed.
+
+**Taji is in neither the programme nor `event.ts`.** Neither is Migori
+Central. `Draft_Program_v2`'s only choir credits are to "Choristers" and to
+"both choirs", unnamed — the same staleness the four session-less speakers
+come from. The captions are the artwork's words and nothing was invented to
+reconcile them. **DATA-NOTES.md item 11 is new**, and the committee owes both
+names as they should be printed and which items each choir is singing.
+
+### The first image is load-bearing three times over
+
+It is the only one with `priority`, the only one the server renders, and the
+only one that exists under `prefers-reduced-motion`. `mounted` is false
+during SSR and on the first client render, so the first paint is one image
+and nothing else: no second request competing with the LCP. The other two
+mount in an effect, which by definition runs after that paint.
+
+A reader with no JavaScript, or one reading before hydration, gets exactly
+the hero that shipped before this existed.
+
+### Two things the measurements failed, both fixed rather than noted
+
+**1. The caption row grew the text footprint and broke AA on two images.**
+The row's height is reserved whether or not the photograph on screen has a
+caption — otherwise the block would move by its own height every six
+seconds — and that pushed the footprint up:
+
+| phase=before | 390 | 768 | 1440 |
+| --- | --- | --- | --- |
+| was, 26rem scrim | 323 | 310 | 336px |
+| now | 341 | 358 | **380px** |
+
+380px against a 416px scrim is 91% of it, and the curve only holds 0.66 to
+88%. Measured on the built page at 1440: **taji 3.78:1, a real AA failure**,
+and migori 4.57:1. hands-bible passed at 6.50:1 only because its bottom two
+deciles are unlit ground.
+
+The scrim heights are derived from the footprint, so they moved with it:
+**before 26rem to 28rem, compact 16rem to 19rem**, putting the footprint at
+85% in both phases. 27rem would have put it at exactly 88.0%, and a floor
+that lands on its own boundary fails the next time a string wraps.
+
+**2. CLS 0.0002 from the pause control appearing at hydration.** It is
+`shrink-0` in a flex row beside a `flex-1` caption, so its arrival narrowed
+that box — a width change, which counts as a shift even though nothing
+moved. `tools/perf/cls.mjs` named the row. The control now sits in a fixed
+20px slot that exists whether or not there is a button in it, which also
+makes the reduced-motion branch the same shape as the rotating one. **CLS
+back to 0.0000, median and max.**
+
+### Contrast, per image, per phase
+
+Each image carries its **own pair of scrims**, so a picture that fails can
+be deepened without darkening the two that did not. `verify-hero.mjs`
+gained `--layer N`, which pins one layer with an injected `!important`
+stylesheet — an inline write is undone on the next render of a six-second
+interval, and a shot taken mid-crossfade is two photographs at partial
+alpha and a number that describes neither.
+
+phase=before, white against the brightest composited pixel in the text box:
+
+| layer | 390 | 768 | 1440 |
+| --- | --- | --- | --- |
+| hands-bible | 5.91:1 | 6.12:1 | 6.61:1 |
+| migori | 6.77:1 | 7.00:1 | 5.84:1 |
+| taji | 6.65:1 | 6.54:1 | **5.78:1** (worst) |
+
+phase=during (compact), same three widths: hands-bible 5.99 / 5.89 / 6.37,
+migori 6.30 / 5.93 / 5.91, taji 6.09 / 6.37 / 6.22.
+
+**All three pass at the derived floor, so `scrimBoost` is 0 on every one of
+them.** The lever exists for the fourth photograph rather than being
+invented then.
+
+### LCP on /
+
+| | median of 5, 1440x900 | element |
+| --- | --- | --- |
+| before | 288 ms | `span` (the theme) |
+| after | **228 ms** | `span` (the theme) |
+
+Same element, and 60ms faster rather than slower — which is what deferring
+two images past first paint buys. CLS 0.0000, median and max.
+
+### Rotation, the pause control, and reduced motion
+
+`tools/perf/hero-rotation.mjs` is new and answers the three questions that
+are not about pixels. Verified in a browser:
+
+- **It rotates**: layers 0, 1 and 2 all seen over 16 seconds.
+- **The pause control is one Tab from the call to action**, reached by
+  keyboard rather than by `el.click()`, and its accessible name changes with
+  its state. **Enter stopped it dead** — one layer over the next 16 seconds
+  — and Enter again resumed it.
+- **Under `prefers-reduced-motion`, emulated before the document runs: 1
+  layer in the DOM, 0 pause controls, first image only over 16 seconds.**
+  Asserted on the DOM, not on opacity: a slowed rotation would also look
+  like three layers held at 0.
+
+`reduced-motion.mjs` on /: **STATIC**, one distinct frame of eight, zero
+running animations, zero stalled transforms.
+
+### taji's crop, reported from looking at the page
+
+The singers stand at the **top** of that frame — heads and microphones span
+y 0.15 to 0.42, and the bottom third is a foreground rank of graduation
+caps. In the compact phase at 1440 the frame is 2.67:1 against a 1.413:1
+source, so `cover` keeps 53% of the height and a centred window is
+y 0.235-0.765, **beginning below the singers' chins**. Every face was cut
+across the forehead.
+
+`object-position` is now per image, on the image, the way the header bands
+already do it. `object-position: 50% P` puts the window at
+`[P(1-k), P(1-k)+k]`, k being the fraction of the height `cover` keeps:
+
+| image | position | why |
+| --- | --- | --- |
+| hands-bible | 50% 50% | unchanged, and its reason is unchanged |
+| migori | 50% 50% | checked, not defaulted. k=0.68 compact, heads at y 0.245-0.41, well inside. It also drops the white hall ceiling, the brightest part of that file |
+| taji | **50% 25%** | window y 0.118-0.648 compact, y 0.029-0.912 full-bleed. Every face complete, with headroom |
+
+Rendered and looked at, not inferred. Contrast re-measured on both changed
+layers afterwards: worst 5.78:1, no scrim moved.
+
+### What the two new photographs cost
+
+310.5 KB into `public/hero/`, all of it precached. q82 effort 6, matching
+the bands. Measured and not kept: migori q86 192.8 / q90 241.3 KiB, taji
+q86 179.9 / q90 223.6 KiB.
+
+**The headers' argument for q82 does not hold here** and it is worth saying
+so: their justification was that a 0.66 scrim covers every pixel, and the
+hero's scrims are sized to the header and the text block with the middle of
+the frame untouched. The argument that does hold is bytes on campground
+signal, and q86 is +63 KiB across the two for a difference nobody has
+demonstrated at this size.
+
+`heroImageSizes` is derived per image now. A single 190vw was there from
+when there was one image, and it described the frame's HEIGHT rather than
+the rendered width — so it under-requested even for hands-bible, by 1.19x.
+Below md the frame is 0.53:1 and `cover` scales by height, so the rendered
+width is 190 x aspect: 227vw, 344vw, 269vw.
+
+## /speakers takes the poster's statement
+
+The first band that draws neither the eyebrow nor the h1:
+
+    Main Speaker
+    Pr. Kennedy Mfune
+    Obey and Live            (larger, display face)
+    Key text: Isaiah 1:19-20
+
+ranged left over Pr. Kennedy Mfune's photograph, with **"Speakers" moved
+below the band**, where the grid it names begins.
+
+`PageHeader` took a `lockup` slot rather than /speakers getting a band of
+its own. Everything else about that band is shared and load-bearing: the
+photograph and its `sizes`, the two abutting scrims and their derived alpha,
+`isolate` against the negative z-index, the muted fallback surface, and both
+harness hooks. A /speakers-shaped copy would be a second band to keep in
+step.
+
+**"Obey and Live", not "Obey and Believe", and this is a discrepancy in the
+brief rather than in the data.** The brief for this band gave the theme as
+"OBEY AND BELIEVE". The poster and `eventInfo.theme` both say Obey and
+Live, and both give the same key text — and Isaiah 1:19-20 is "If ye be
+willing and obedient, ye shall eat the good of the land", which is the verse
+Obey and Live is drawn from. So they are one theme and a misremembering of
+it, and the data wins. **The committee still owes a written confirmation of
+the theme, open since session 1.**
+
+Nothing in the lockup is typed out. The theme and key text come from
+`eventInfo`, the name from `speakerLabel` and the role from the speakers
+list by id, so the band cannot drift from the hero or the share cards.
+
+**The eyebrow is gone from the BAND, not from `speakersPage`.**
+`pageMetadata` and the share card read `eyebrow` and `title` off that
+object, and a preview that stopped saying "Speakers" to match a change to
+the page is exactly the drift `page-identity.ts` exists to prevent.
+
+### The extra padding is the photograph's, not the type's
+
+Four display-size lines already made this the tallest band on the site at
+276px against the standard 213px, and the type needed nothing more. The
+picture did: the band is full-bleed, so at 1440 a 276px band keeps 33% of a
+1.725:1 source's height, and **a head spanning 40% of that source cannot
+survive a 33% window at any `object-position`** — it was cropped through the
+forehead. `md:py-10` takes the band to 356px, which keeps 43%.
+
+`position: 50% 16%`, derived and then rendered:
+
+| width | k | window at P=0.16 | what it holds |
+| --- | --- | --- | --- |
+| 768 | 0.80 | 0.031 - 0.831 | everything |
+| 1440 | 0.43 | 0.092 - 0.518 | the whole head, air above it |
+| 1920 | 0.32 | 0.109 - 0.429 | crown to chin and no more |
+
+**1920 remains the tight one and is stated rather than hidden.** At 50% the
+1440 window was 0.287-0.713, starting at his eyebrows.
+
+| | |
+| --- | --- |
+| contrast | **worst 9.34:1** (role, 390), four lines scored separately, both schemes, 390/768/1440 — the poster's ground is a dark plum |
+| band height | 234px at 390, 356px from 768, identical across runs |
+| CLS | 0.0000, median and max |
+| align.mjs | 85 of 85 pass; /speakers reports `start` rather than failing a centring assertion it is deliberately outside of |
+
+## /contact shows the church whole
+
+**100% x 100% of the source at 390, 768 and 1440.** Nothing is cropped at
+any width. Someone who has not been to 5th Ngong Avenue is looking at this
+picture to recognise the building when they arrive, and the best a 213px
+band could do was 28% of the height: roofline and sign, no building. So the
+band grew to the photograph rather than the photograph shrinking to the
+band.
+
+| width | 390 | 768 | 1024 | 1440 | 1920 |
+| --- | --- | --- | --- | --- | --- |
+| band height | 230px | 452px | 603px | 848px | **1130px** |
+
+**That is three to five times every other band and it is intended.**
+`object-contain` would have kept the standard height and is worse: empty
+letterbox bars above and below a photograph read as a loading state.
+
+### How the height is reserved
+
+This is the one band whose height is not content-driven, so getting the
+reservation wrong is a shift. The picture is still absolutely positioned and
+`fill` and contributes nothing. What reserves the height is an in-flow
+**spacer** carrying `aspect-ratio`, as a GRID SIBLING of the content rather
+than a block above it, so the row is as tall as whichever of the two is
+taller. Its `-my-(--space-band)` cancels the band's own padding for that
+item, so the band's total height is the ratio rather than the ratio plus
+8rem.
+
+**Not `calc(100vw / ratio)`.** `100vw` includes the classic scrollbar, so on
+a desktop showing one it overshoots by about 15px — and a box 9px taller
+than the image's ratio makes `object-cover` scale up and crop the width,
+quietly undoing the entire point of the change.
+
+At a viewport narrow enough that the type is taller than the ratio's height,
+the row grows to the type instead of clipping it, and the photograph crops
+by that difference. That is the correct trade: unreadable type is a fault
+and a 1% crop is not.
+
+### One scrim, not two
+
+The half-and-half pair is right on a 286px band, and the reason is at the
+top of `page-header-art.ts`: there the type IS the middle, so a scrim sized
+to the box it protects is a scrim over the whole band. **That argument is
+exactly false on a 1130px band**, where the type is the top 190px and the
+other 940px is the photograph the tall band exists to show. Scrimming all of
+it would be paying a page of scrolling for a picture and then covering the
+picture.
+
+So `HEADER_SCRIM_WHOLE` is the HERO's top scrim: measured px stops, 0.72 at
+the edge easing to the 0.66 floor, held to 190px — the band's 4rem padding
+plus the eyebrow, its margin and a 48px title — then eased out by 320px.
+Concave, for the reason the hero's is.
+
+| | |
+| --- | --- |
+| contrast | **worst 5.74:1** (title, 1440), both schemes, 390/768/1440 |
+| CLS | median **0.0000** over 7 runs; max 0.0004 in some runs |
+
+**The 0.0004 is reported rather than filed as noise.** It is a size-only
+change of the header element with **0px of travel**, which is subpixel
+rounding on a fractional row height — 1440/1.6985 is 847.8px. /about
+measured 0.0000 median and max in the same run, so it is specific to this
+band and not the instrument. It is two orders of magnitude below the 0.1
+"good" threshold and below the 0.0061 max session 3 recorded as CLS 0.0000.
+
+## Two names, marked and not changed
+
+No spelling changed. Both records carry the disagreement in full, at the
+point where the next person would be tempted to fix it.
+
+- **priskillah-munda**: the PDF's "Priskillah Munda" against the poster
+  card's own caption "Dr. Preskilla Munda" and the supplied file
+  `preskillamunda.jpg`. The PDF wins as a **tie-break, not a decision** —
+  it is the signed source and the id is already in URLs, the share card and
+  the sitemap. If the artwork turns out to be right, the id needs migrating
+  with a redirect rather than editing.
+- **janet-oyiende**: "Janet Oyiende" against the card's "Janet Oyende
+  Kariuki" — a different surname spelling AND a third name, which are two
+  separate questions. She is in no session in `program.ts`, so the PDF
+  offers no second opinion on either.
+
+Both marked as needing written confirmation before launch, cross-referenced
+to DATA-NOTES.md item 8.
+
+## Payload, against the ~400 KB line
+
+| | change | precache |
+| --- | --- | --- |
+| session start | | 2764.87 KiB |
+| after the three resizes | -114.9 KB | **2649.96 KiB** |
+| + migori and taji | +310.5 KB | 2990.38 KiB |
+| + speakers.webp | +35.0 KB | **3025.85 KiB** |
+
+`public/headers/` finished at **496.3 KiB against the ~400 KB line, so it is
+about 96 KB over.** Stating that plainly rather than declaring the item
+closed:
+
+- The resize recovered **115 KB of session 4's 176 KB overrun**, and then
+  /speakers spent 35 KB of it back. Net against session 4: 576.2 to 496.3
+  KiB.
+- What is left of the overrun is two files: **family-life 131.5 KB and faq
+  96.6 KB**, 228 KB between them against 268 KB for the other nine. Both are
+  detailed photographs at 1600px and q82, and neither has slack in it that
+  is not either width or quality.
+- Getting under 400 KB from here means dropping the band height below 620px,
+  which starts making `object-position` a no-op at 1920, or dropping quality
+  below q82, which the site does not do anywhere. **Neither is worth doing
+  without the committee weighing 96 KB against those two costs.**
+
+The precache as a whole is 3025.85 KiB, and **`public/hero/church.webp` at
+410.9 KB is now the largest single file on the site** — bigger than the
+whole of `public/headers/` was after the resize. It was never re-encoded
+because it predates the converters; it is 1634x962 and would come down
+substantially at q82. Not touched this session because it was not asked for
+and because /contact now depends on it at full width, where quality is
+visible in a way it never was behind a crop and a scrim.
+
+## Not asked for, done anyway
+
+Called out so they can be reverted cleanly.
+
+1. **`HEADER_IMAGE_SIZES` 165vw to 240vw.** Derived from the aspect ratios
+   this session changed. It is a cap, so it cannot make an unchanged file
+   worse.
+2. **`heroImageSizes` derived per image.** The single 190vw described the
+   frame's height rather than the rendered width and under-requested for
+   every image, including the one that was already there.
+3. **`HERO_SCRIM_BOTTOM_HEIGHT` raised in both phases.** Not optional: two
+   images failed AA without it.
+4. **`object-position` per hero image.** Reported from the built page; taji
+   was cut across every face in the compact phase.
+5. **`tools/assets/hero-photos.mjs`**, a third converter, checked in for the
+   same reason the other two are.
+6. **`tools/perf/hero-rotation.mjs`**, new. Nothing else could answer "does
+   it stop when told, by keyboard".
+7. **Four harness corrections and three narrowing flags.**
+   - `verify-hero.mjs`: `--layer`, `--widths`; its scrim query scoped to the
+     forced layer, because three aria-hidden layer wrappers now match the
+     old unscoped query and it reported the frame height as a scrim height;
+     `button` added to the hide list, or the pause control's white icon
+     becomes the brightest "backdrop" pixel — the exact trap that file's own
+     header documents.
+   - `verify-page-header.mjs`: `--routes`, `--widths`; /speakers moved from
+     the flat list to the photo list; `data-header-line` parts measured
+     separately, since the old queries would have found one string on a band
+     that carries four.
+   - `align.mjs`: emulates reduced motion, because the bands below an 848px
+     header are off screen at scroll 0 and their Reveal wrappers are still
+     at opacity 0, so the hidden-content filter correctly refused to measure
+     a page that is fine. It also reports `start` for a deliberately
+     left-aligned band instead of failing a centring assertion — and a band
+     that LOSES its centring without declaring it still fails.
+8. **`data-header-align` on `PageHeader`**, which is that last hook.
+9. **`#home-hero-text` moved off the RevealGroup onto a wrapper** holding
+   the entrance and the caption row, so the footprint the harness measures
+   is the block the scrim actually has to protect.
+10. **DATA-NOTES.md item 11**, the two unnamed guest choirs.
+
+## Still open with the committee
+
+Everything sessions 1-4 listed, plus:
+
+- **The two guest choirs' names as they should be printed**, and which
+  programme items each is singing. Neither appears in `program.ts`.
+- **The theme, in writing.** Now with a third variant in circulation:
+  "Obey and Live" (the poster and `event.ts`), "The Good News in the Great
+  Controversy" (the stale pastor's letter on the main site), and "Obey and
+  Believe" (this session's brief).
+- **Larger sources for /livestream, /prayer-requests and /schedule**, at
+  3.46x, 3.27x and 3.14x. Third session of asking.
+- **The two name spellings above.**
+- **Whether 96 KB over the header budget is acceptable**, or whether
+  family-life and faq should lose quality to close it.
