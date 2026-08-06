@@ -6,6 +6,7 @@ import {
   HEADER_IMAGE_SIZES,
   HEADER_SCRIM_BOTTOM,
   HEADER_SCRIM_TOP,
+  HEADER_SCRIM_WHOLE,
   type PageHeaderImage,
 } from "@/lib/page-header-art";
 
@@ -132,6 +133,35 @@ export function PageHeader({
   className?: string;
 }) {
   const onPhoto = Boolean(image);
+  /**
+   * `fit: "whole"` — the band takes the photograph's aspect ratio instead
+   * of being as tall as its own type. One route, /contact. The reasoning is
+   * in page-header-art.ts; what is load-bearing HERE is how the height is
+   * reserved, because getting that wrong is a layout shift on the one band
+   * whose height is not content-driven.
+   *
+   * The picture stays absolutely positioned and `fill`, exactly as in the
+   * other eleven bands, so it still contributes nothing to layout. What
+   * reserves the height is an in-flow SPACER carrying the aspect ratio, and
+   * it is a grid sibling of the content rather than a block above it, so the
+   * row is as tall as whichever of the two is taller. Two consequences, both
+   * wanted:
+   *
+   *   - The height comes from the band's own used width, not from `100vw`.
+   *     `100vw` includes the classic scrollbar, so on a desktop with one
+   *     showing it overshoots by about 15px, and a box 9px taller than the
+   *     image's ratio makes `object-cover` scale up and crop the width —
+   *     which would quietly undo the entire point of `whole`.
+   *   - At a viewport narrow enough that the type is taller than the
+   *     ratio's height, the row grows to the type instead of clipping it.
+   *     The photograph then crops by that difference, which is the correct
+   *     trade: unreadable type is a fault and a 1% crop is not.
+   *
+   * `-my-(--space-band)` on the spacer cancels the band's own padding for
+   * that item, so the band's total height — padding included — is the
+   * ratio's height rather than the ratio plus 8rem.
+   */
+  const whole = image?.fit === "whole";
 
   return (
     // data-page-header is a hook for tools/perf/align.mjs, which has to
@@ -144,7 +174,13 @@ export function PageHeader({
     // which needs to know whether to measure this band's type against the
     // brightest composited pixel or not measure it at all.
     <div
-      className="band relative isolate overflow-hidden bg-surface-muted"
+      className={cn(
+        "band relative isolate overflow-hidden bg-surface-muted",
+        // Grid only on a whole-fit band, so the aspect-ratio spacer and the
+        // content share one cell and the row is as tall as the taller of
+        // them. The other twelve bands stay ordinary block boxes.
+        whole && "grid",
+      )}
       data-page-header
       data-header-art={onPhoto ? "photo" : "flat"}
       // tools/perf/align.mjs asserts that this band's block is centred in
@@ -168,29 +204,63 @@ export function PageHeader({
             // would take bandwidth from the content on a connection that
             // has none to spare. The hero keeps its priority because it
             // IS the largest contentful paint on the home page.
-            sizes={HEADER_IMAGE_SIZES}
+            // 100vw on a whole-fit band, where the box IS the viewport
+            // width and `cover` is driven by it. The 240vw phone branch
+            // exists for the short bands, where a wide source filling a
+            // tall-in-aspect box renders far wider than its slot; here
+            // there is no such gap and asking for 240vw would fetch a
+            // variant twice the size of the box for nothing.
+            sizes={whole ? "100vw" : HEADER_IMAGE_SIZES}
             quality={80}
             style={{ objectPosition: image.position }}
             className="-z-20 object-cover"
           />
-          {/* Two scrims that abut at the middle rather than overlapping:
-              two 0.66 layers composite to 0.88, which is a third alpha
-              nobody chose. Together they cover the band, because on a
-              286px band the type covers the band. */}
-          <div
-            aria-hidden
-            className="absolute inset-x-0 top-0 -z-10 h-1/2"
-            style={{ backgroundImage: HEADER_SCRIM_TOP }}
-          />
-          <div
-            aria-hidden
-            className="absolute inset-x-0 bottom-0 -z-10 h-1/2"
-            style={{ backgroundImage: HEADER_SCRIM_BOTTOM }}
-          />
+          {whole ? (
+            /* One scrim, anchored to the top, sized to the type. The
+               half-and-half pair below is right on a 286px band because
+               there the type IS the middle; on a 1130px band the type is
+               the top 190px and the rest is the photograph the tall band
+               exists to show. See HEADER_SCRIM_WHOLE. */
+            <div
+              aria-hidden
+              className="absolute inset-x-0 top-0 -z-10 h-80"
+              style={{ backgroundImage: HEADER_SCRIM_WHOLE }}
+            />
+          ) : (
+            <>
+              {/* Two scrims that abut at the middle rather than
+                  overlapping: two 0.66 layers composite to 0.88, which is
+                  a third alpha nobody chose. Together they cover the band,
+                  because on a 286px band the type covers the band. */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 -z-10 h-1/2"
+                style={{ backgroundImage: HEADER_SCRIM_TOP }}
+              />
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 -z-10 h-1/2"
+                style={{ backgroundImage: HEADER_SCRIM_BOTTOM }}
+              />
+            </>
+          )}
         </>
       ) : null}
 
-      <div className="shell">
+      {/* The height reservation. Read the note on `whole` above before
+          changing anything about it: it is in flow, it is a grid sibling of
+          the content rather than a block above it, and its negative margins
+          are what keep the band's total height equal to the ratio rather
+          than the ratio plus the band's own 8rem of padding. */}
+      {whole && image ? (
+        <div
+          aria-hidden
+          className="col-start-1 row-start-1 -my-(--space-band) w-full"
+          style={{ aspectRatio: `${image.width} / ${image.height}` }}
+        />
+      ) : null}
+
+      <div className={cn("shell", whole && "col-start-1 row-start-1")}>
         <header
           className={cn(
             "flex flex-col",

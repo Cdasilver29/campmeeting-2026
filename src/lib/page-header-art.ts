@@ -81,6 +81,24 @@ export interface PageHeaderImage {
   position: string;
   /** What survives the crop at 1920. Documentation, not rendered. */
   keeps: string;
+  /**
+   * `"whole"` makes the band take THIS IMAGE'S aspect ratio instead of the
+   * standard short band, so the photograph is shown entire and uncropped at
+   * every width. One route uses it: /contact, where the picture is the
+   * church itself and is doing wayfinding rather than decoration — a reader
+   * who has never been to 5th Ngong Avenue needs to recognise the building,
+   * and a 28%-of-the-height strip of its roofline does not let them.
+   *
+   * The consequence is deliberate and is not small: /contact's band is
+   * 1130px tall at 1920 against every other band's 213-403px. Sizing the
+   * band to the image is chosen over `object-contain`, which would have
+   * kept the standard height and put empty letterbox bars above and below
+   * the picture — a band that looks like a loading state.
+   *
+   * `position` is unused when this is set. Nothing is cropped, so there is
+   * no crop to position.
+   */
+  fit?: "whole";
 }
 
 /*
@@ -96,6 +114,36 @@ const EDGE = 0.72;
 export const HEADER_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.69) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
 
 export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.69) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
+
+/**
+ * The scrim for a `fit: "whole"` band, and it is the HERO's technique
+ * rather than this file's.
+ *
+ * The two above cover half the band each and meet in the middle, and the
+ * reason is stated at the top of this file: on a 286px band the type IS the
+ * middle, so a scrim sized to the box it protects is a scrim over the whole
+ * band. That argument is exactly false on a band that is 1130px tall. There
+ * the type is the top 190px and the other 940px is the photograph the tall
+ * band exists to show — scrimming all of it would be paying a page of
+ * scrolling for a picture and then covering the picture.
+ *
+ * So this is the hero's top scrim: measured px stops, held at the floor for
+ * as far as the type reaches, then eased out. Nothing protects the lower
+ * frame because nothing is written there.
+ *
+ * Stops in px, not percentages, for the same reason the hero's are: what it
+ * has to cover is the band's own padding plus a fixed number of lines of
+ * type, which is a pixel height, while the element it is painted on is a
+ * fraction of a viewport.
+ *
+ * 0.72 at the top edge rather than the 0.66 floor, matching EDGE above:
+ * that is where the band meets the page surface, and the extra is what stops
+ * the join reading as a seam. Held to 190px, which is the band's 4rem
+ * padding plus the eyebrow, its margin and a 48px title. The ease below is
+ * concave for the reason the hero's is — a straight ramp to zero terminates
+ * with a derivative change that reads as a band edge across the photograph.
+ */
+export const HEADER_SCRIM_WHOLE = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0px, rgba(${PLUM_WARM}, 0.70) 120px, rgba(${PLUM_DEEP}, ${FLOOR}) 190px, rgba(${PLUM_DEEP}, 0.44) 232px, rgba(${PLUM_DEEP}, 0.24) 268px, rgba(${PLUM_DEEP}, 0.10) 296px, rgba(${PLUM_DEEP}, 0) 320px)`;
 
 /**
  * `sizes` for the band's image.
@@ -224,13 +272,25 @@ export const headerImages = {
     src: "/hero/church.webp",
     width: 1634,
     height: 962,
-    // 31%, and this is the one position on the site with a name in it.
-    // The green "NEWLIFE SDA CHURCH, NAIROBI" sign spans y 0.29-0.38. At
-    // 1920 the band keeps 28% of the height, so a centred crop lands on
-    // the car park and the sign is gone. 31% puts the window at
-    // 0.221-0.499: roofline, sign, and the top of the glazed frontage.
+    // WHOLE. This band takes the file's own 1.698:1 ratio, so nothing is
+    // cropped at any width and `position` is inert — kept only because the
+    // property needs a value and because the note below is worth keeping.
+    //
+    // What it replaces: `50% 31%`, which was the one position on the site
+    // with a name in it. The green "NEWLIFE SDA CHURCH, NAIROBI" sign spans
+    // y 0.29-0.38, and at 1920 a short band kept 28% of the height, so a
+    // centred crop landed on the car park and the sign was gone. 31% put the
+    // window at 0.221-0.499 to hold roofline, sign and the top of the
+    // glazing — and lost the rest of the building.
+    //
+    // That was the best a 213px band could do, and the point of this page is
+    // the opposite: someone who has not been to 5th Ngong Avenue is looking
+    // at this picture to recognise the building when they arrive. So the
+    // band grew to the photograph instead of the photograph shrinking to the
+    // band.
+    fit: "whole",
     position: "50% 31%",
-    keeps: "the pitched roof, the green NEWLIFE SDA CHURCH sign and the top of the glazing; loses the car park",
+    keeps: "the whole photograph, uncropped, at every width: the pitched roof, the green NEWLIFE SDA CHURCH sign, the glazed frontage end to end, the stone base course and the car park",
   },
   faq: {
     // 1600x620, cut at 50% of the source, which is where it was already

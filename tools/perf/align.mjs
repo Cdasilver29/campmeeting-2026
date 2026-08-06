@@ -80,6 +80,17 @@ for (const route of ROUTES) {
   for (const width of WIDTHS) {
     const page = await browser.newPage();
     await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
+    /* Reduced motion, emulated BEFORE the navigation. Alignment is a
+       question about boxes and this preference changes none of them —
+       src/components/reveal.tsx returns plain divs under it, same element,
+       same measure. What it removes is the reason a correct page could
+       report as unmeasurable: a Reveal below the fold is still at opacity 0
+       because its observer has not fired, and the hidden-content filter
+       below correctly refuses to measure it. /contact's band is 848px tall
+       at 1440, so everything on that page is below the fold at scroll 0. */
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
     await page.setRequestInterception(true);
     page.on("request", (r) => {
       if (/\/serwist\/|sw\.js/.test(r.url())) r.abort().catch(() => {});
@@ -136,6 +147,16 @@ for (const route of ROUTES) {
        * inside it, so an element-only check sees a 215px-wide input and
        * reports /prayer-requests as aligning at x=-9999.
        */
+      /* `cs.opacity === "0"` in here is what made this harness report
+         /contact as having nothing below its band once that band grew to
+         848px. The bands under it are wrapped in Reveal, which starts at
+         opacity 0 and is brought in by an IntersectionObserver — and with a
+         band that tall, none of that content is on screen at scroll 0, so
+         the observer has not fired and every candidate below the band reads
+         as hidden. The filter is right and the band is right; what was
+         wrong was measuring alignment on a page whose entrances have not
+         run. The preference is now emulated before the navigation, which
+         makes Reveal render plain divs. See the note at the launch. */
       const isHidden = (el) => {
         const rect = el.getBoundingClientRect();
         if (rect.width < 2 || rect.height < 2) return true;
