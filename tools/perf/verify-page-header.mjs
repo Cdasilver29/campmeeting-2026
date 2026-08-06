@@ -97,11 +97,17 @@ const ROUTES = [
   "/prayer-requests",
   "/ministries/health",
   "/ministries/family-life",
+  "/ministries/children",
   "/ministries/christian-education",
 ];
 
-/** Bands with no photograph, measured so the flat treatment is covered too. */
-const FLAT_ROUTES = ["/ministries/children", "/announcements"];
+/**
+ * Bands with no photograph, measured so the flat treatment is covered too.
+ *
+ * /ministries/children left this list when artwork was supplied for it, so
+ * /announcements is the only route holding the flat band up now.
+ */
+const FLAT_ROUTES = ["/announcements"];
 
 /**
  * The files on disk, mirroring src/lib/page-header-art.ts.
@@ -117,21 +123,24 @@ const FLAT_ROUTES = ["/ministries/children", "/announcements"];
  * same constant for the same reason.
  */
 const SOURCES = {
-  "/schedule": [612, 328],
+  // Four replaced sources, all now 1600px wide against the 555-735px files
+  // they came from. The upscale column is what this changes: 2.61x, 3.46x,
+  // 2.61x and 1.20x at 1920 become 1.20x across the board.
+  "/schedule": [1600, 854],
   "/speakers": [1492, 865],
-  "/livestream": [555, 260],
-  "/ministries": [735, 245],
-  // Re-cut to 1600x620. The band is never taller than 403px, so the 447
-  // rows these three used to carry were thrown away by `cover` before
-  // anything painted — 425 KB of a 576 KB precached directory. See the
-  // `band` note in tools/assets/header-photos.mjs.
-  "/about": [1600, 620],
+  "/livestream": [1600, 900],
+  "/ministries": [1600, 895],
+  "/about": [1600, 877],
   "/contact": [1634, 962],
+  // Re-cut to 1600x620. The band is never taller than 480px, so the rows
+  // these carried were thrown away by `cover` before anything painted. See
+  // the `band` note in tools/assets/header-photos.mjs.
   "/faq": [1600, 620],
   "/downloads": [736, 404],
   "/prayer-requests": [588, 306],
   "/ministries/health": [736, 412],
   "/ministries/family-life": [1600, 620],
+  "/ministries/children": [1600, 620],
   "/ministries/christian-education": [735, 414],
 };
 

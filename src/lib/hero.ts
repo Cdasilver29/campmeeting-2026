@@ -397,9 +397,28 @@ export const HERO_SCRIM_TOP = heroScrimTop();
  *
  * Warm at the bottom edge, cool by the time it reaches the top of the
  * type. Both ends are above the floor, so the shift costs nothing.
+ *
+ * ── THE THREE STOPS ABOVE THE FLOOR CAME DOWN TO IT ──────────────────
+ *
+ * 0.70 / 0.66 / 0.64 / 0.62 is now 0.66 / 0.64 / 0.63 / 0.62. Asked to
+ * lighten the wash over the photographs, and this is the part of it that
+ * was never protection: the floor is what the derivation requires, and
+ * these three sat above it only so the gradient had somewhere to travel
+ * from. The bottom edge is also the widest, heaviest part of the plum on
+ * screen, which is what the request is about.
+ *
+ * The FLOOR STOP AT 88% IS UNTOUCHED, and that is the whole of the safety
+ * argument: the measured type footprint reaches 85% of this element, so
+ * every pixel of type is still over 0.62 or deeper. What changed is only
+ * how much darker than the requirement the region below the type was.
+ *
+ * The top scrim did NOT take the same change; see its own note. It is
+ * 176px behind the site header, it measured 4.58:1 at 0.62 against the
+ * migori photograph, and 0.08 of margin on the one element that is on
+ * every page is not margin.
  */
 export const heroScrimBottom = (boost = 0) =>
-  `linear-gradient(to top, rgba(${PLUM_WARM}, ${a(0.70, boost)}) 0%, rgba(${PLUM_WARM}, ${a(0.66, boost)}) 40%, rgba(${PLUM_DEEP}, ${a(0.64, boost)}) 70%, rgba(${PLUM_DEEP}, ${a(0.62, boost)}) 88%, rgba(${PLUM_DEEP}, ${a(0.40, boost / 2)}) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%)`;
+  `linear-gradient(to top, rgba(${PLUM_WARM}, ${a(0.66, boost)}) 0%, rgba(${PLUM_WARM}, ${a(0.64, boost)}) 40%, rgba(${PLUM_DEEP}, ${a(0.63, boost)}) 70%, rgba(${PLUM_DEEP}, ${a(0.62, boost)}) 88%, rgba(${PLUM_DEEP}, ${a(0.40, boost / 2)}) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%)`;
 
 /** The unboosted bottom scrim, for anything that wants the string itself. */
 export const HERO_SCRIM_BOTTOM = heroScrimBottom();

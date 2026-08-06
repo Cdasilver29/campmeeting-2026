@@ -95,7 +95,7 @@
  * Usage: node tools/assets/header-photos.mjs <source-dir>
  */
 import { createRequire } from "node:module";
-import { mkdirSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -131,17 +131,25 @@ const QUALITY = 82;
  * `quality` overrides QUALITY for the one file it is written on.
  */
 const HEADERS = [
-  { route: "schedule", file: "schedule.jpg" },
+  { route: "schedule", file: "schedule.png" },
   { route: "speakers", file: "speakers-hero.png" },
-  { route: "livestream", file: "livestream.jpg" },
-  { route: "ministries", file: "ministries.jpg" },
-  { route: "about", file: "about.jpg", band: 620, at: 0.7 },
+  { route: "livestream", file: "livestream.png" },
+  { route: "ministries", file: "ministries.png" },
+  // No `band` any more. The 620px window existed because the old source
+  // was 6000x4000 and the band could never use two thirds of it; the
+  // replacement is 1694x929, already 1.82:1, so there is nothing to throw
+  // away before encoding and the render crop can keep choosing.
+  { route: "about", file: "about.png" },
   { route: "faq", file: "faq.jpg", band: 620, at: 0.5, quality: 78 },
   { route: "downloads", file: "downloads.jpg" },
   { route: "prayer-requests", file: "prayer-requests.jpg" },
   { route: "health", file: "health.jpg" },
   { route: "family-life", file: "family-life.jpg", band: 620, at: 0.52, quality: 78 },
   { route: "christian-education", file: "christian-education.jpg" },
+  // 5220x3480, so 1.5:1, which is the shape the `band` window exists for:
+  // at 1920 the band would use 37% of its height and precache the rest.
+  // Cut at 0.55 of the source height, which is where both figures are.
+  { route: "children", file: "children.jpg", band: 620, at: 0.55 },
 ];
 
 /** The widest the band is ever asked to be, for the upscale column. */
@@ -149,8 +157,19 @@ const WIDEST_VIEWPORT = 1920;
 
 const rows = [];
 
+const skipped = [];
+
 for (const h of HEADERS) {
   const src = join(SRC, h.file);
+  // The committee replaces these a few at a time, so a source directory
+  // holding only the new ones is the normal case rather than a mistake.
+  // Skipping what is not there means a partial drop can be converted
+  // without first assembling every source the site has ever had, and the
+  // existing .webp files are left exactly as they were.
+  if (!existsSync(src)) {
+    skipped.push(h);
+    continue;
+  }
   const srcBytes = statSync(src).size;
   const meta = await sharp(src).metadata();
 
@@ -208,3 +227,10 @@ console.log(
   `\ntotal written: ${(total / 1024).toFixed(1)} KB into public/headers/ (all of it precached)` +
   `\n/contact adds nothing: it reuses public/hero/church.webp, which is already in the precache.`,
 );
+
+if (skipped.length) {
+  console.log(
+    `\nnot in ${SRC}, left as they are on disk:\n  ` +
+      skipped.map((h) => `${h.route} (${h.file})`).join("\n  "),
+  );
+}

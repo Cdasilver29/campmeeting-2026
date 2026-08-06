@@ -122,12 +122,41 @@ export interface PageHeaderImage {
  * are measured values, and a class name assembled from them is a class
  * Tailwind never generates.
  */
+/*
+ * ── HOW FAR THE SCRIM COULD ACTUALLY COME DOWN ───────────────────────
+ *
+ * Asked to lighten these, and this is what the measurement allowed.
+ *
+ * FLOOR does not move, and that is not caution. 0.62 is the DERIVED
+ * minimum in hero.ts for Grapevine plum to hold white type at 4.5:1 over a
+ * pure white pixel, and the two replacement photographs put a pure white
+ * pixel directly behind the type: /about measures its worst composite at
+ * rgb(122,109,140), which is exactly PLUM_DEEP at 0.62 over 255, for
+ * 4.78:1. One step lighter there is an AA failure on the title of a page,
+ * and CLAUDE.md does not trade that for a nicer picture.
+ *
+ * EDGE does move, 0.68 -> 0.64, because the extra 0.06 at the two edges was
+ * never protection. It is there so the join where the band meets the page
+ * surface does not read as a seam, and it sits at the top and bottom of the
+ * band where the plum is heaviest over the photograph and where the reader
+ * is most likely to mean "too much wash". The mid stop follows it down,
+ * 0.65 -> 0.63, so the ramp between edge and floor keeps its shape instead
+ * of acquiring a step.
+ *
+ * What actually made these pictures better this session is not here: it is
+ * that four of the sources went from 555-735px wide to 1600px, so the band
+ * upscales them 1.20x where it used to upscale /livestream 3.46x. A scrim
+ * at 0.62 over a sharp photograph looks like a scrim over a sharp
+ * photograph; at 0.68 over a 3.46x upscale it looked like fog.
+ */
 const FLOOR = SCRIM_ALPHA_FLOOR;
-const EDGE = 0.68;
+const EDGE = 0.64;
+/** Between EDGE and FLOOR, so the two ends do not meet in a step. */
+const MID = 0.63;
 
-export const HEADER_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.65) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
+export const HEADER_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, ${MID}) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
 
-export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, 0.65) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
+export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, ${EDGE}) 0%, rgba(${PLUM_WARM}, ${MID}) 45%, rgba(${PLUM_DEEP}, ${FLOOR}) 100%)`;
 
 /**
  * The scrim for a `fit: "whole"` band, and it is the HERO's technique
@@ -150,14 +179,19 @@ export const HEADER_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, $
  * type, which is a pixel height, while the element it is painted on is a
  * fraction of a viewport.
  *
- * 0.68 at the top edge rather than the 0.62 floor, matching EDGE above:
+ * 0.64 at the top edge rather than the 0.62 floor, matching EDGE above:
  * that is where the band meets the page surface, and the extra is what stops
  * the join reading as a seam. Held to 190px, which is the band's 4rem
  * padding plus the eyebrow, its margin and a 48px title. The ease below is
  * concave for the reason the hero's is — a straight ramp to zero terminates
  * with a derivative change that reads as a band edge across the photograph.
+ *
+ * The 120px stop came down with EDGE, 0.66 -> 0.635, for the reason given
+ * there: it is inside the held section and its job is the ramp's shape, not
+ * protection. Everything from 190px on is unchanged — those stops are the
+ * fade, and the whole of /contact's photograph is below them.
  */
-export const HEADER_SCRIM_WHOLE = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0px, rgba(${PLUM_WARM}, 0.66) 120px, rgba(${PLUM_DEEP}, ${FLOOR}) 190px, rgba(${PLUM_DEEP}, 0.44) 232px, rgba(${PLUM_DEEP}, 0.24) 268px, rgba(${PLUM_DEEP}, 0.10) 296px, rgba(${PLUM_DEEP}, 0) 320px)`;
+export const HEADER_SCRIM_WHOLE = `linear-gradient(to bottom, rgba(${PLUM_WARM}, ${EDGE}) 0px, rgba(${PLUM_WARM}, 0.635) 120px, rgba(${PLUM_DEEP}, ${FLOOR}) 190px, rgba(${PLUM_DEEP}, 0.44) 232px, rgba(${PLUM_DEEP}, 0.24) 268px, rgba(${PLUM_DEEP}, 0.10) 296px, rgba(${PLUM_DEEP}, 0) 320px)`;
 
 /**
  * `sizes` for the band's image.
@@ -253,8 +287,9 @@ export const HEADER_BAND_HEIGHT =
  * keeps a solid header over its own picture.
  *
  * The dynamic routes are absent because they have no photograph:
- * /schedule/[day] and /speakers/[id] both carry flat bands, and
- * /ministries/children has no artwork. All of them keep the solid header.
+ * /schedule/[day] and /speakers/[id] both carry flat bands. Every
+ * ministry page now has artwork, /ministries/children included, so the
+ * four of them are all listed here and all take the transparent header.
  */
 const HEADER_ROUTES = {
   schedule: "/schedule",
@@ -268,6 +303,7 @@ const HEADER_ROUTES = {
   "prayer-requests": "/prayer-requests",
   health: "/ministries/health",
   "family-life": "/ministries/family-life",
+  children: "/ministries/children",
   "christian-education": "/ministries/christian-education",
 } as const satisfies Record<keyof typeof headerImages, string>;
 
@@ -299,15 +335,20 @@ export function hasPhotoHeader(pathname: string): boolean {
  */
 export const headerImages = {
   schedule: {
+    // 1600x854, replacing a 612x328 file. Same picture, and that is the
+    // point: the old source was 612px wide against a full-bleed band that
+    // wants 1920, so it was upscaled 2.61x by the browser. This one is
+    // upscaled 1.20x, which is the same order as the home hero's own.
     src: "/headers/schedule.webp",
-    width: 612,
-    height: 328,
-    // The sun sits at y 0.42 and the fingertips reach up to y 0.28. A
-    // centred crop at 1920 keeps y 0.361-0.639 and takes the tops of the
-    // fingers off; 45% moves the window to 0.347-0.625, which holds the
-    // sun, the light between the hands and the fingers down to the palms.
+    width: 1600,
+    height: 854,
+    // Unchanged at 45%, re-checked against the new frame rather than
+    // carried over. The fingertips reach up to y 0.29 and the sun sits at
+    // 0.43. At 1920 `cover` keeps 47% of the height, so 45% puts the
+    // window at 0.239-0.708: sky, both fingertips, the sun between them
+    // and the palms. Centred it would start at 0.265 and clip the tips.
     position: "50% 45%",
-    keeps: "the cupped hands entire, fingertips to wrists, with the sun between them and sky above; the taller band recovers the fingertips a 286px band cut",
+    keeps: "the cupped hands from fingertips to the heels of the palms, with the sun between them and the cloud bank above; loses the wrists and the grass below them at 1920",
   },
   speakers: {
     src: "/headers/speakers.webp",
@@ -361,44 +402,63 @@ export const headerImages = {
     keeps: "the plum diagonal and Pr. Kennedy Mfune from crown to bow tie; the taller band recovers the collar and tie a 356px band cut",
   },
   livestream: {
+    // 1600x900, replacing a 555x260 file. That 555 was the worst source
+    // on the site — 3.46x upscale at 1920, and it is why this page led
+    // every softness table in VISUAL-PASS.md. It is now 1.20x.
     src: "/headers/livestream.webp",
-    width: 555,
-    height: 260,
-    // The lens is the subject and it is hard right: its rings centre on
-    // x 0.87. At 390 the crop keeps 68% of the width, and centred that
-    // window ends at x 0.84 — just short of the one thing in the frame.
-    // 85% puts the window at 0.272-0.952 and the rings well inside it.
-    position: "85% 50%",
-    keeps: "the lens and its rings whole, and both banks of bokeh across the frame; loses the far-left city lights on a phone",
+    width: 1600,
+    height: 900,
+    // 85% -> 100%, and it is the new frame rather than a new opinion. The
+    // lens barrel now runs off the RIGHT EDGE of the source: its rings
+    // span x 0.60 to 1.0. At 390 the band keeps 72% of the width, so 85%
+    // put the window at 0.237-0.958 and sliced 4% off the barrel, which
+    // reads as a mistake in a way that losing bokeh does not. 100% aligns
+    // the window to the right edge, 0.278-1.0, and the lens is whole.
+    // Inert from 768 up, where the full width is kept either way.
+    position: "100% 50%",
+    keeps: "the lens and its rings whole at every width, with the near bank of bokeh beside it; loses the far-left city lights and their reflections on a phone",
   },
   ministries: {
+    // 1600x895, replacing a 735x245 file: 2.61x upscale at 1920 down to
+    // 1.20x. The new source is 1.79:1 rather than 3:1, so the band DOES
+    // crop it vertically now, which is what the position below is for.
     src: "/headers/ministries.webp",
-    width: 735,
-    height: 245,
-    // 3:1 already, so this is the one source the band does not have to
-    // crop hard: at 1920 it keeps 45% of the height. 45% rather than
-    // centre holds the join between the clasped hands and the open page,
-    // which is what the picture is of.
-    position: "50% 45%",
-    keeps: "the clasped hands and the open Bible under them, both entire: at 1920 this is the one source the band no longer crops vertically at all",
+    width: 1600,
+    height: 895,
+    // 45% -> 42%. Two subjects that have to read as one thing: the
+    // clasped hands, y 0.03-0.58, and the open Bible under them,
+    // y 0.48-0.82. At 1920 `cover` keeps only 45% of the height, so
+    // nothing shows both whole; 42% puts the window at 0.232-0.679,
+    // centred on the join where the hands rest on the pages. At 45% it
+    // starts 0.017 lower and takes the top knuckles off.
+    position: "50% 42%",
+    keeps: "the clasped hands down to the knuckles and the open Bible they rest on, its gutter and the inner columns of both pages; at 1440 it keeps the forearms too",
   },
   about: {
+    // A different photograph, not a re-cut of the old one: an open hand
+    // holding the numerals 2026 against a sunset, replacing the spread of
+    // printed pages.
+    //
+    // NO `band` WINDOW ANY MORE, and that is the source changing rather
+    // than the reasoning. The 620px cut existed because the old file came
+    // off a 6000x4000 original at 1.5:1, and a full-bleed band that is
+    // never taller than 480px was throwing away 447 of its 1067 rows
+    // before painting anything. This source is 1694x929, already 1.82:1,
+    // so there is nothing to discard ahead of time and the render crop
+    // keeps its full range of choice. 32.1 KB at q82, the smallest file in
+    // the directory: three quarters of the frame is smooth sky, which WebP
+    // encodes almost for free.
     src: "/headers/about.webp",
-    // 1600x620, not 1600x1067. The 70% this page's position used to carry
-    // is now baked into the file — see the `band` note in
-    // tools/assets/header-photos.mjs. The band is never taller than 403px
-    // and is full-bleed, so 447 of those 1067 rows were being thrown away
-    // by `cover` before anything painted, and the three files that had
-    // them were 425 KB of a 576 KB precached directory.
     width: 1600,
-    height: 620,
-    // 50% now, and it is doing real work rather than standing in for the
-    // 70% it replaced: at 1920 a 2.58:1 file in a 403px band still has
-    // `cover` keeping only 54% of its height, so this value still chooses
-    // which 54%. Centred is right because the window itself was cut at
-    // 70% of the source, which is where the open pages are.
+    height: 877,
+    // Centred, and it earns it. The numerals sit at y 0.40-0.56 and the
+    // palm runs from 0.38 to the bottom edge; at 1920 `cover` keeps 46%
+    // of the height, so 50% puts the window at 0.272-0.728 with the
+    // numerals in the middle of it and sky above. At 390 the band keeps
+    // 70% of the width, centred on 0.148-0.851, which holds the numerals
+    // and all but the fingertips.
     position: "50% 50%",
-    keeps: "the open pages, their printed text and the gutter between them, top edge to bottom; on a phone it crops in to the gutter and the inner columns",
+    keeps: "the numerals 2026 held in the open hand, the sun behind them and the band of sky above; loses the far treeline and the fingertips on a phone",
   },
   contact: {
     // The church photograph the home hero used to carry. It is still in
@@ -480,6 +540,25 @@ export const headerImages = {
     height: 620,
     position: "50% 50%",
     keeps: "all four stacked hands and the knitted cuffs around them; on a phone it crops in to the two topmost hands",
+  },
+  children: {
+    // The last ministry page without artwork now has some. Everything
+    // this file says about /ministries/children having none is gone with
+    // it, including the exemption in HEADER_ROUTES above.
+    //
+    // 1600x620, cut from a 5220x3480 source at 0.55 of its height. `band`
+    // for the reason the other three carry it: 1.5:1 is the shape whose
+    // rows a 480px full-bleed band cannot use, and at 1920 it would have
+    // painted 37% of the file and precached the rest.
+    src: "/headers/children.webp",
+    width: 1600,
+    height: 620,
+    // Centred. The window was already cut at 0.55 of the source, which is
+    // where both figures stand, so the vertical half has nothing left to
+    // choose; the horizontal half matters at 390, where the band keeps
+    // half the width and centred is what holds both of them.
+    position: "50% 50%",
+    keeps: "both children watching the platform, the keyboard and the room behind them; on a phone it crops to the two of them and the tables either side",
   },
   "christian-education": {
     src: "/headers/christian-education.webp",
