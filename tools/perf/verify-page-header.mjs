@@ -140,7 +140,9 @@ const SOURCES = {
   "/prayer-requests": [588, 306],
   "/ministries/health": [736, 412],
   "/ministries/family-life": [1600, 620],
-  "/ministries/children": [1600, 620],
+  // 1600x840, not the 620 the other band cuts take: this page's band is
+  // 437px tall at 390 and a 2.58:1 file kept only 35% of its width there.
+  "/ministries/children": [1600, 840],
   "/ministries/christian-education": [735, 414],
 };
 

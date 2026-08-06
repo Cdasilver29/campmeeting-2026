@@ -149,7 +149,19 @@ const HEADERS = [
   // 5220x3480, so 1.5:1, which is the shape the `band` window exists for:
   // at 1920 the band would use 37% of its height and precache the rest.
   // Cut at 0.55 of the source height, which is where both figures are.
-  { route: "children", file: "children.jpg", band: 620, at: 0.55 },
+  //
+  // 840 RATHER THAN THE 620 THE OTHER THREE CARRY, and it is this page's
+  // band that decides it. /ministries/children has the longest description
+  // of any header on the site, so its band is 437px tall at 390 where
+  // every other one is at the 304px floor. A taller band in a narrow
+  // viewport crops the WIDTH, and at 620 (2.58:1) it kept only 35% of it:
+  // the left edge cut through the braids and halved the second figure.
+  // 840 makes the file 1.90:1 and the phone crop keeps 47%.
+  //
+  // The 620 argument still applies at the wide end and is what stops this
+  // going further: at 840 the band still uses 66% of the file's height at
+  // 1920, where the uncut 1.5:1 source would have used 37%.
+  { route: "children", file: "children.jpg", band: 840, at: 0.55 },
 ];
 
 /** The widest the band is ever asked to be, for the upscale column. */

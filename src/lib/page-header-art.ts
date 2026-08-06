@@ -546,19 +546,27 @@ export const headerImages = {
     // this file says about /ministries/children having none is gone with
     // it, including the exemption in HEADER_ROUTES above.
     //
-    // 1600x620, cut from a 5220x3480 source at 0.55 of its height. `band`
+    // 1600x840, cut from a 5220x3480 source at 0.55 of its height. `band`
     // for the reason the other three carry it: 1.5:1 is the shape whose
-    // rows a 480px full-bleed band cannot use, and at 1920 it would have
-    // painted 37% of the file and precached the rest.
+    // rows a 480px full-bleed band cannot use, and at 1920 the uncut file
+    // would have painted 37% of itself and precached the rest.
+    //
+    // 840 AND NOT THE 620 THE OTHER THREE TAKE. This page has the longest
+    // description of any header on the site, so its band is 437px tall at
+    // 390 where every other one sits on the 304px floor — and a taller
+    // band in a narrow viewport crops the WIDTH. At 620 it kept 35% of it:
+    // the left edge cut through the braids and the second figure was
+    // halved. Measured after the re-cut, the phone keeps 47%. The cost is
+    // 18 KB of precache and the wide end still uses 66% of the file.
     src: "/headers/children.webp",
     width: 1600,
-    height: 620,
+    height: 840,
     // Centred. The window was already cut at 0.55 of the source, which is
-    // where both figures stand, so the vertical half has nothing left to
-    // choose; the horizontal half matters at 390, where the band keeps
-    // half the width and centred is what holds both of them.
+    // where both figures stand, so the vertical half has little left to
+    // choose; the horizontal half is what matters at 390, and centred is
+    // what holds both of them.
     position: "50% 50%",
-    keeps: "both children watching the platform, the keyboard and the room behind them; on a phone it crops to the two of them and the tables either side",
+    keeps: "both children watching the platform, the keyboard and the lit room behind them; on a phone it crops to the two of them with the tables either side",
   },
   "christian-education": {
     src: "/headers/christian-education.webp",
