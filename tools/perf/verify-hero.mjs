@@ -50,7 +50,26 @@
  * schemes, because which one the type is is now a question with two
  * answers rather than one.
  *
- * Usage: node verify-hero.mjs <screenshot-output-dir> [forcePhase] [scheme]
+ * WHY A LAYER HAS TO BE FORCED, AND WHY WITH A STYLESHEET
+ *
+ * The hero rotates three photographs, each carrying its own pair of
+ * scrims, and the whole point of per-image scrims is that one image can be
+ * given more alpha than the others. That makes "the hero's contrast" three
+ * separate questions, so `--layer N` measures one of them: layer N is
+ * pinned to opacity 1 and the rest to 0.
+ *
+ * Pinned with an injected stylesheet carrying `!important`, not by writing
+ * `el.style.opacity`. The opacity is React state on a six-second interval,
+ * so an inline write is undone on the next render — which on a slow shot
+ * means measuring a crossfade in progress, and a crossfade in progress is
+ * two photographs at partial alpha and a number that describes neither.
+ *
+ * The scrim and image queries are scoped to the forced layer for the same
+ * reason. `hero.querySelectorAll("div[aria-hidden]")` now matches the three
+ * layer WRAPPERS as well as the six scrims, so unscoped it reported the
+ * frame's own height as a scrim height.
+ *
+ * Usage: node verify-hero.mjs <screenshot-output-dir> [forcePhase] [scheme] [--layer N]
  *
  * forcePhase is "before" | "during" | "after". Everything phase-dependent
  * in the hero reads one data-hero-phase attribute through group-data
@@ -63,14 +82,36 @@ import { launch } from "puppeteer-core";
 
 const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const BASE = "http://localhost:3100";
-const VIEWPORTS = [
+const ALL_VIEWPORTS = [
   { w: 390, h: 844 }, { w: 768, h: 1024 }, { w: 1024, h: 768 },
   { w: 1440, h: 900 }, { w: 1920, h: 1080 }, { w: 2560, h: 1440 },
 ];
+/* `--widths 390,768,1440` narrows the sweep. Three photographs x six
+   viewports x two schemes is 36 page loads to answer a question that three
+   widths answer, and re-measuring a width nothing changed at is not
+   evidence. Heights are kept from the table above so a narrowed run is
+   still measuring the same frames. */
+const widthArg = process.argv.indexOf("--widths");
+const VIEWPORTS =
+  widthArg === -1
+    ? ALL_VIEWPORTS
+    : process.argv[widthArg + 1]
+        .split(",")
+        .map(Number)
+        .map((w) => ALL_VIEWPORTS.find((v) => v.w === w) ?? { w, h: 900 });
 
-/* The file on disk, for the true upscale factor. img.naturalWidth reports
-   the srcset variant Chrome chose, which is a different question. */
-const SOURCE = { w: 735, h: 616 };
+/* The files on disk, for the true upscale factor. img.naturalWidth reports
+   the srcset variant Chrome chose, which is a different question. Indexed
+   by layer, mirroring HERO_IMAGES in src/lib/hero.ts. */
+const SOURCES = [
+  { name: "hands-bible", w: 735, h: 616 },
+  { name: "migori-choir", w: 1600, h: 885 },
+  { name: "taji-choir", w: 1491, h: 1055 },
+];
+
+const layerArg = process.argv.indexOf("--layer");
+const LAYER = layerArg === -1 ? 0 : Number(process.argv[layerArg + 1]);
+const SOURCE = SOURCES[LAYER] ?? SOURCES[0];
 
 const lin = (v) => { const x = v / 255; return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); };
 const lum = (r, g, b) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
@@ -108,6 +149,25 @@ for (const v of VIEWPORTS) {
   await page.evaluate(() => document.fonts.ready);
   await new Promise((r) => setTimeout(r, 600));
 
+  /* Pin the layer under measurement before anything is read, with a
+     stylesheet rather than an inline write: the opacity is React state on
+     an interval and an inline write is undone on the next render. Also
+     kill the transition, so nothing is caught mid-crossfade. */
+  await page.addStyleTag({
+    content:
+      `[data-hero-layer]{transition:none !important}` +
+      `[data-hero-layer="${LAYER}"]{opacity:1 !important}` +
+      `[data-hero-layer]:not([data-hero-layer="${LAYER}"]){opacity:0 !important}`,
+  });
+  /* Layers past the first mount in an effect and are lazy, so they exist
+     but may not have decoded yet. Waiting on the forced layer's own image
+     rather than on the page: `load` fired long before this layer existed. */
+  await page.evaluate(async (layer) => {
+    const img = document.querySelector(`[data-hero-layer="${layer}"] img`);
+    if (img && !img.complete) await img.decode().catch(() => {});
+  }, LAYER);
+  await new Promise((r) => setTimeout(r, 300));
+
   const forcePhase = process.argv[3];
   if (forcePhase) {
     await page.evaluate((p) => {
@@ -116,8 +176,9 @@ for (const v of VIEWPORTS) {
     await new Promise((r) => setTimeout(r, 200));
   }
 
-  const geo = await page.evaluate(() => {
+  const geo = await page.evaluate((layer) => {
     const hero = document.getElementById("home-hero");
+    const frame = hero.querySelector(`[data-hero-layer="${layer}"]`);
     const h1 = hero.querySelector("h1");
     /* The whole text block, not h1 + its two next siblings. The hero
        gained the poster's theme, key verse and theme song, so "the h1 and
@@ -126,12 +187,15 @@ for (const v of VIEWPORTS) {
        RevealGroup, which is the block itself. */
     const block = document.getElementById("home-hero-text");
     const header = document.querySelector("header");
-    const img = hero.querySelector("img");
+    const img = frame ? frame.querySelector("img") : hero.querySelector("img");
     const box = (el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; };
-    /* Any depth, not `:scope >`. The scrims moved inside the frame element
-       when the frame stopped being the section itself, and a `:scope >`
-       query silently returned [] rather than failing. */
-    const scrims = [...hero.querySelectorAll("div[aria-hidden]")]
+    /* Scoped to the forced layer's own children. It used to be any
+       `div[aria-hidden]` at any depth inside the hero, which was right
+       while there was one frame with two scrims in it. There are now three
+       layer WRAPPERS, each aria-hidden and each the full height of the
+       frame, so the unscoped query reported the frame height as a scrim
+       height three times over before this was scoped. */
+    const scrims = [...(frame ?? hero).querySelectorAll(":scope > div[aria-hidden]")]
       .filter((e) => getComputedStyle(e).display !== "none")
       .map((e) => Math.round(e.getBoundingClientRect().height));
     /* The colour the title is actually set in at this width, so the ratio
@@ -160,7 +224,7 @@ for (const v of VIEWPORTS) {
       renderW: Math.round(img.getBoundingClientRect().width),
       renderH: Math.round(img.getBoundingClientRect().height),
     };
-  });
+  }, LAYER);
 
   /* Kill transitions and animations FIRST. Without this, anything with
      `transition-all` ignores the hide for its full duration. */
@@ -172,7 +236,7 @@ for (const v of VIEWPORTS) {
     const hero = document.getElementById("home-hero");
     // Every descendant, not a tag list: the icon inside a button is not
     // an <a>, a <button> or a <span>.
-    hero.querySelectorAll("h1,p,a").forEach((e) => {
+    hero.querySelectorAll("h1,p,a,button").forEach((e) => {
       e.style.setProperty("visibility", "hidden", "important");
       e.querySelectorAll("*").forEach((c) => c.style.setProperty("visibility", "hidden", "important"));
     });

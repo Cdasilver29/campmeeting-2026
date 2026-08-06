@@ -1,16 +1,15 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo } from "@/data";
 import { eventDateRange } from "@/lib/event-dates";
+import { HERO_IMAGES, HERO_SCRIM_BOTTOM_HEIGHT } from "@/lib/hero";
 import {
-  HERO_IMAGE,
-  HERO_SCRIM_BOTTOM,
-  HERO_SCRIM_BOTTOM_HEIGHT,
-  HERO_SCRIM_TOP,
-} from "@/lib/hero";
+  HeroBackdrop,
+  HeroCaption,
+  HeroRotation,
+} from "./hero-rotation";
 import {
   buildTimeHeroPhase,
   HERO_PHASE_ATTRIBUTE,
@@ -67,22 +66,39 @@ import {
  * page they rest on — is untouched. Alphas are measured, not chosen; the
  * method and the numbers are in src/lib/hero.ts.
  *
- * The top scrim is now almost entirely art direction. This photograph's
- * top three deciles have a maximum luminance of 0.027, so the header's
- * white type is at 19:1 there before anything is painted. What the
- * gradient buys is the plum reaching up over the header, which is what
- * the poster does.
+ * The scrims are now PER IMAGE and live in ./hero-rotation.tsx with the
+ * photographs they belong to. The inks, the alphas and their derivation
+ * have not changed; what changed is that each layer carries its own pair,
+ * so a picture that needs more alpha can have it without darkening the two
+ * that measured fine, and so a crossfade never has one image sitting under
+ * another image's protection.
+ *
+ * Whether the top scrim is protection or art direction now depends on which
+ * photograph is showing, which is the argument for deriving its alpha
+ * against a white pixel rather than against a particular file: hands-bible's
+ * top three deciles have a maximum luminance of 0.027, and migori's top
+ * three have a MEAN of 0.72 and 1.000 highlights, because the top third of
+ * that frame is a white hall ceiling with downlights in it.
  *
  * SOFTNESS
- * The source is 735x616, so at full bleed it is upscaled 2.61x at a 1920
+ * hands-bible is 735x616, so at full bleed it is upscaled 2.61x at a 1920
  * viewport and 3.48x at 2560, before device pixel ratio. That is worse
  * than the church photograph this replaced, which was 1634x962. The file
  * is not upscaled to hide it. The original behind the poster is the thing
- * to ask the committee for; see src/lib/hero.ts.
+ * to ask the committee for; see src/lib/hero.ts. The two choir photographs
+ * are 1600px and 1491px wide, which makes that request more urgent rather
+ * than less: rotation puts a sharp picture next to a soft one in one frame.
  *
  * MOTION
- * The photograph does not animate: no parallax, no ken burns, no fade. The
- * text block does, once, on load — theme, then the verse and song, then
+ * The photographs crossfade, three of them, 800ms of fade and six seconds
+ * of dwell, with a caption that fades with its picture and a visible pause
+ * control. No parallax, no ken burns, no typing effect. Under
+ * prefers-reduced-motion the rotation does not happen at all: first image
+ * only, no interval, no control. See ./hero-rotation.tsx.
+ *
+ * The TEXT block's motion is unchanged and is all the motion it has. It
+ * does not rotate and it gained nothing from the rotation, because it is
+ * the LCP element. Once, on load — theme, then the verse and song, then
  * the meta line, then the call to action, 100ms apart, 620ms end to end.
  * See the note on the RevealGroup below.
  *
@@ -142,8 +158,9 @@ const HERO_TEXT_ID = "home-hero-text";
 // 640 leaves 288px; 60svh would leave 256px.
 const COMPACT_HERO_HEIGHT =
   "data-[hero-phase=during]:h-[55svh] data-[hero-phase=after]:h-[55svh] md:data-[hero-phase=during]:h-[60svh] md:data-[hero-phase=after]:h-[60svh]";
-const COMPACT_SCRIM_HEIGHT =
-  "group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact)] group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact)]";
+// COMPACT_SCRIM_HEIGHT moved to ./hero-rotation.tsx with the scrims it
+// styles. The two CSS variables it reads are still declared on the section
+// below, because that is the element the phase attribute is on.
 // No longer md-scoped. The text block is inside the frame at every width
 // now, so its bottom padding is the phase's business at every width too.
 const COMPACT_BOTTOM_PADDING =
@@ -193,101 +210,53 @@ export function Hero() {
           } as CSSProperties
         }
       >
-        {HERO_IMAGE ? (
-          /*
-           * THE FRAME, AND WHY IT NO LONGER CHANGES SHAPE.
-           *
-           * It used to take a 4:3 ratio below md with the text set under
-           * it on the page surface. That was the right answer to the
-           * PREVIOUS photograph and is the wrong answer to this one, and
-           * the reason is the source's aspect ratio, not taste.
-           *
-           * The church photograph was 1634x962, a 1.70:1 landscape. A
-           * 390x844 portrait viewport is 0.46:1, so `cover` kept 27% of
-           * its width: the middle third, roof and tarmac, with the
-           * building's own edges outside the frame. No object-position
-           * survives that, so the frame was given a shape of its own.
-           *
-           * This photograph is 735x616, 1.193:1, and its subject is a
-           * pair of clasped hands that occupy the middle of it. A
-           * near-full-height portrait frame keeps 44% of the width at 390
-           * and 54% at 360, and the hands span x 28% to 72%. So the crop
-           * that a portrait frame forces is the crop this photograph
-           * wants: it goes from a wide shot of a subject to a close one
-           * of the same subject. Nothing is lost that the picture is
-           * about.
-           *
-           * A boxed image with the title underneath also reads as dated,
-           * which is what prompted the change. But it would still have
-           * been the right trade for the church photograph.
-           */
-          // -z-10 is load-bearing: this is an absolutely positioned box,
-          // and a positioned box paints above the static in-flow content
-          // that follows it, which is the text block. The section's
-          // `isolate` keeps the negative index contained.
-          <div className="absolute inset-0 -z-10 overflow-hidden bg-emperor">
-            <Image
-              src={HERO_IMAGE.src}
-              alt=""
-              aria-hidden
-              fill
-              priority
-              // The frame is now portrait on a phone and landscape on a
-              // desktop, and `cover` is driven by whichever axis is
-              // short. 100vw describes the width, which is the correct
-              // description only above md. Below it the box is roughly
-              // 0.64:1 and needs about 1.9x its own width of source, so
-              // the phone branch asks for that directly. It is a cap
-              // rather than a promise: the file is 735px wide, so what
-              // Next can serve is bounded by the source either way, and
-              // the honest fix remains a larger original (src/lib/hero.ts).
-              sizes="(max-width: 767px) 190vw, 100vw"
-              quality={90}
-              // Rendered sharp: no blur filter, no transform.
-              //
-              // Centred, at every width, and now for a measured reason
-              // rather than as a default. tools/perf/subject-map.mjs
-              // profiles the source column by column: the lit subject
-              // spans x 5.2% to 92.7% with its brightness centroid at
-              // 55.2%, but the centroid is pulled right by the bright
-              // right-hand page of the Bible and the lit forearm. The
-              // clasped hands themselves span x 28% to 72% and their
-              // knuckle mass sits at x 50%. A portrait frame at 390 keeps
-              // x 28% to 72%, which is the hands almost exactly.
-              //
-              // The vertical half is inert: the frame is taller in aspect
-              // than the 1.193:1 source at every phone width, so `cover`
-              // crops the width and keeps the full height. It is written
-              // only because object-position needs both. The 38% the
-              // phone branch used to carry was chosen for the church
-              // photograph's roofline and has no meaning here.
-              className="-z-20 object-cover [object-position:50%_50%]"
-            />
+        {/*
+          The provider renders no DOM of its own: it exists so the backdrop
+          and the caption, which sit in two places that are not each other's
+          ancestors, read one index. Everything between them stays
+          server-rendered markup passing through as `children`.
 
-            {/* Behind the header. One height now: the frame is no longer
-                a third as tall on a phone, so there is no reason for the
-                phone to carry a shorter one, and the header it has to
-                cover is the same 80px at every width. */}
-            <div
-              aria-hidden
-              className="absolute inset-x-0 top-0 -z-10 h-44"
-              style={{ backgroundImage: HERO_SCRIM_TOP }}
-            />
+          `?? []` rather than a second branch of this whole subtree. With no
+          images the list is empty, `rotating` is false, and both consumers
+          below are gated on HERO_IMAGES anyway — so the kill switch removes
+          the photographs, their scrims, the caption and the control, and
+          leaves the Emperor band and the type.
+        */}
+        <HeroRotation images={HERO_IMAGES ?? []}>
+        {/*
+          THE FRAME, AND WHY IT NO LONGER CHANGES SHAPE.
 
-            {/* Behind the text block, at every width now that the text is
-                on the photograph at every width. Height is phase-dependent
-                because the type is: the compact phases set a smaller
-                theme, verse and meta line, so their footprint is smaller
-                and the scrim that covers it can be shorter. See
-                HERO_SCRIM_BOTTOM_HEIGHT for the measured footprints both
-                values are derived from. */}
-            <div
-              aria-hidden
-              className={`absolute inset-x-0 bottom-0 -z-10 h-[var(--scrim-h)] ${COMPACT_SCRIM_HEIGHT}`}
-              style={{ backgroundImage: HERO_SCRIM_BOTTOM }}
-            />
-          </div>
-        ) : null}
+          It used to take a 4:3 ratio below md with the text set under it
+          on the page surface. That was the right answer to the church
+          photograph and the wrong answer to these, and the reason is
+          aspect ratio, not taste.
+
+          The church photograph was 1634x962, a 1.70:1 landscape. A
+          390x844 portrait viewport is 0.46:1, so `cover` kept 27% of its
+          width: the middle third, roof and tarmac, with the building's
+          own edges outside the frame. No object-position survives that,
+          so the frame was given a shape of its own.
+
+          hands-bible is 735x616, 1.193:1, and its subject is a pair of
+          clasped hands in the middle of it. A near-full-height portrait
+          frame keeps 44% of the width at 390 and the hands span x 28% to
+          72%, so the crop the portrait frame forces is the crop that
+          photograph wants: a wide shot of a subject becomes a close one
+          of the same subject.
+
+          The two choir photographs are wider — 1.807:1 and 1.413:1 — so
+          the phone keeps 29% and 37% of their width. That is a harder
+          crop and it survives for a reason particular to these two
+          pictures: a choir is a dense rank of people, and the middle of
+          the rank still reads as a choir. It would not survive on a
+          photograph with one subject off to one side. See
+          tools/assets/hero-photos.mjs.
+
+          The frame, the three layers and their scrims are in
+          ./hero-rotation.tsx. HERO_IMAGES going undefined removes all of
+          it and leaves the Emperor band, which is the point of the switch.
+        */}
+        {HERO_IMAGES ? <HeroBackdrop /> : null}
 
         {/*
           ONE TEXT BLOCK, ONE PLACE, ONE COLOUR.
@@ -316,6 +285,16 @@ export function Hero() {
           derived from are in src/lib/hero.ts.
         */}
         <div className={`shell pb-10 md:pb-16 ${COMPACT_BOTTOM_PADDING}`}>
+          {/*
+            The measure moved out here from the RevealGroup, and the id with
+            it, because the block the bottom scrim has to protect is now the
+            entrance PLUS the caption row under it. tools/perf/verify-hero.mjs
+            measures the footprint from #home-hero-text, so leaving the id on
+            the RevealGroup would have excluded the caption from every
+            reading — the same class of quiet exclusion that made the harness
+            stop seeing the call to action two sessions ago.
+          */}
+          <div id={HERO_TEXT_ID} className="flex max-w-2xl flex-col">
           {/*
             THE ENTRANCE.
 
@@ -351,13 +330,7 @@ export function Hero() {
           <RevealGroup
             immediate
             stagger={0.1}
-            // The hook tools/perf/verify-hero.mjs uses to find the block.
-            // It used to scan the h1 plus its next two siblings, which
-            // stopped describing this block the moment it grew a fourth
-            // line and quietly excluded the call to action from every
-            // reading.
-            id={HERO_TEXT_ID}
-            className={`flex max-w-2xl flex-col gap-4 ${COMPACT_STACK_GAP}`}
+            className={`flex flex-col gap-4 ${COMPACT_STACK_GAP}`}
           >
             {/*
               THE THEME IS THE SUBJECT, AND THE EDITION IS ITS KICKER.
@@ -466,7 +439,16 @@ export function Hero() {
               </Link>
             </RevealItem>
           </RevealGroup>
+
+          {/* Outside the RevealGroup on purpose. It is not part of the
+              hero's opening statement and must not join the stagger: the
+              entrance is four items that read as one sentence, and a photo
+              credit is not the fifth. It also has to be free to fade on its
+              own clock, which is the image's clock. */}
+          {HERO_IMAGES ? <HeroCaption /> : null}
+          </div>
         </div>
+        </HeroRotation>
       </section>
 
       {/* Runs during parse, immediately after the section it corrects, so

@@ -24,6 +24,7 @@ Transcribed from `Draft_Program_v2_CAMPMEETING_2026_JULY.pdf`. The data is 1:1 w
    - The Ambassadors speaker's poster caption reads "**Janet Oyende Kariuki**" — a different surname spelling and a third name. The data carries **Janet Oyiende** under the id `janet-oyiende`. Confirm the full name and the spelling before this goes to print anywhere.
 9. **Honorifics for the four new speakers come from the poster cards**, not from the programme: "Pr." for John Clement, "Eld." for Isaac Oenga and Barrack Bosire, none shown for Janet Oyiende. Confirm.
 10. **Eld. Ken Ochuka has no photograph.** He is the one speaker still rendering as an initials monogram.
+11. **Two guest choirs are in the photography and in neither the programme nor `event.ts`.** The home hero now rotates through two supplied photographs captioned "Camp Meeting 2026 Guest Choir · Migori Central" and "Camp Meeting 2026 Guest Choir · Taji". Neither **Taji** nor **Migori Central** appears anywhere in `program.ts`: the only choir credits in `Draft_Program_v2` are to "Choristers" and to "both choirs", unnamed. This is the same staleness open item 7 comes from — the artwork is ahead of the PDF. The captions are the artwork's words and nothing was invented to reconcile them. The committee owes: the choirs' names as they should be printed, and which items each of them is actually singing.
 
 ## About the supplied speaker artwork
 

@@ -1,15 +1,38 @@
 /**
  * The home hero's photographic treatment, behind one switch.
  *
- * Set HERO_IMAGE to undefined and the whole photograph goes away: the
- * image, the scrims, the preload. The hero falls back to a solid Emperor
- * band that is a deliberate treatment in its own right, not a broken-
- * looking gap. That is the point of the constant. The church has not
- * signed off on the hero photograph in writing, and if they decide
- * against it the change has to be one line here rather than an unpicking
- * of the hero component.
+ * Set HERO_IMAGES to undefined and the whole photograph goes away: the
+ * images, the scrims, the caption, the pause control. The hero falls back
+ * to a solid Emperor band that is a deliberate treatment in its own right,
+ * not a broken-looking gap. That is the point of the constant. The church
+ * has not signed off on the hero photography in writing, and if they
+ * decide against it the change has to be one line here rather than an
+ * unpicking of the hero component.
  *
- * WHAT THE PHOTOGRAPH ACTUALLY IS, because the scrims below only make
+ * ── THREE IMAGES NOW, AND WHAT ROTATION DOES NOT TOUCH ───────────────
+ *
+ * The list rotates: background and caption only, crossfaded, six seconds
+ * each. The theme, the key verse, the theme song, the dates, the venue and
+ * the call to action are the hero's fixed content and do not move — that
+ * block is the LCP element and rotation must not go near it.
+ *
+ * The FIRST entry is load-bearing in three separate ways and is therefore
+ * the least interesting picture on purpose:
+ *
+ *   1. It is the only one with `priority`, so it is the only one preloaded
+ *      and the only one that can delay the LCP.
+ *   2. It is the only one rendered on the server, so it is what a reader
+ *      with JavaScript off, or before hydration, sees.
+ *   3. It is the ONLY one rendered under prefers-reduced-motion. The
+ *      rotation stops dead there rather than slowing down: a slowed
+ *      carousel is still a carousel.
+ *
+ * `caption` is present only on the two choir photographs, because a
+ * caption is for a picture whose subject a reader could not otherwise
+ * name. hands-bible has no caption and the caption line renders empty for
+ * it, keeping its own height reserved so the rotation cannot shift layout.
+ *
+ * WHAT THE FIRST PHOTOGRAPH ACTUALLY IS, because the scrims below only make
  * sense against it. This is the same praying-hands-on-a-Bible photograph
  * the official 2026 poster is built on. Sampled per decile of image
  * height, on the source file:
@@ -38,10 +61,70 @@ export type HeroImage = {
   /** Intrinsic size of the file, for next/image. */
   width: number;
   height: number;
+  /**
+   * One line naming what the photograph is of, shown only while that
+   * photograph is on screen. Omitted where the picture needs no caption.
+   */
+  caption?: string;
+  /**
+   * Extra alpha added to BOTH of this image's scrims, where the measured
+   * worst pixel needs it. Zero for every image that passes at the derived
+   * floor, and it is meant to stay zero: the whole reason each image
+   * carries its own pair of scrims is that a picture which fails can be
+   * fixed without deepening the two that do not.
+   *
+   * Deepening a scrim is the only lever here. Knocking the type back from
+   * pure white is not: white/80 over these pixels costs about a quarter of
+   * the contrast and fails.
+   */
+  scrimBoost?: number;
 };
 
-export const HERO_IMAGE: HeroImage | undefined = {
-  src: "/hero/hands-bible.webp",
+/**
+ * ROTATION TIMING, in one place because the caption's fade and the
+ * image's fade have to agree exactly or the caption is briefly the wrong
+ * caption for the picture behind it.
+ *
+ * 800ms of crossfade, 6000ms of dwell, so an image holds still for six
+ * seconds and the transition takes another 0.8. The interval is the sum:
+ * anything shorter overlaps the next fade with the current one.
+ */
+export const HERO_ROTATION = { fadeMs: 800, dwellMs: 6000 } as const;
+
+/**
+ * `sizes` for one hero image, derived from that image's own aspect ratio.
+ *
+ * Above md, 100vw is correct for all three: the frame is between 1.33:1 and
+ * 1.78:1 and every source is wider in aspect than the frame is at every one
+ * of those widths, so `cover` scales by WIDTH and the slot's width is what
+ * the browser needs to know.
+ *
+ * Below md it is not, and this is where the three images stop agreeing. The
+ * frame is 88svh tall and the viewport is narrow, so it is roughly 0.53:1
+ * and `cover` scales by HEIGHT — the rendered image is far wider than the
+ * slot, and by a factor that is the source's aspect ratio. On a 390x844
+ * phone the frame is 743px tall, which is 190vw, so the rendered width is
+ * 190 x aspect:
+ *
+ *   hands-bible  1.193:1  ->  227vw
+ *   migori       1.807:1  ->  344vw
+ *   taji         1.413:1  ->  269vw
+ *
+ * A single 190vw was there before, from when there was one image, and it
+ * described the frame's HEIGHT rather than the rendered width — so it
+ * under-requested even for hands-bible, by 1.19x. Deriving it per image
+ * fixes that and is the only honest way to serve three different shapes
+ * from one component.
+ *
+ * It is a cap, not a promise: hands-bible is 735px wide, so what Next can
+ * serve for it is bounded by the file whatever this says.
+ */
+export const heroImageSizes = (image: HeroImage) =>
+  `(max-width: 767px) ${Math.ceil((190 * image.width) / image.height)}vw, 100vw`;
+
+export const HERO_IMAGES: HeroImage[] | undefined = [
+  {
+    src: "/hero/hands-bible.webp",
   // 735x616, converted from the supplied JPEG at WebP q92 effort 6
   // (34,203 -> 36,778 bytes). Not upscaled.
   //
@@ -59,14 +142,45 @@ export const HERO_IMAGE: HeroImage | undefined = {
   //   1920x1080  1920x1080   2.61x
   //   2560x1440  2560x1440   3.48x
   //
-  // The file is deliberately NOT upscaled here to disguise that; an
-  // upscaled file is the same softness at four times the bytes. What is
-  // wanted is the original from the poster designer, which will be at
-  // least 1080x1080 (the poster is) and is very likely a licensed stock
-  // frame at 3000px or more. Ask for the source, not the poster.
-  width: 735,
-  height: 616,
-};
+    // The file is deliberately NOT upscaled here to disguise that; an
+    // upscaled file is the same softness at four times the bytes. What is
+    // wanted is the original from the poster designer, which will be at
+    // least 1080x1080 (the poster is) and is very likely a licensed stock
+    // frame at 3000px or more. Ask for the source, not the poster.
+    //
+    // It is also, now, the softest of the three and the one every visitor
+    // sees. The two photographs under it are 1600px and 1491px wide. That
+    // makes the request above more urgent rather than less: rotation put a
+    // sharp picture next to a soft one in the same frame.
+    width: 735,
+    height: 616,
+    // No caption. It is the poster's own photograph and there is no
+    // subject a reader would want named; "clasped hands on a Bible" is a
+    // description of what is plainly visible, which is the kind of caption
+    // that teaches people not to read captions.
+  },
+  {
+    src: "/hero/migori-choir.webp",
+    // 1600x885 from a 1686x933 PNG, q82 effort 6. See
+    // tools/assets/hero-photos.mjs.
+    width: 1600,
+    height: 885,
+    caption: "Camp Meeting 2026 Guest Choir · Migori Central",
+  },
+  {
+    src: "/hero/taji-choir.webp",
+    // 1491x1055, not resized: the cap is 1600 and nothing is upscaled to
+    // reach it.
+    width: 1491,
+    height: 1055,
+    // ── NOT IN THE PROGRAMME ─────────────────────────────────────────
+    // "Taji" appears nowhere in src/data/program.ts. Neither does Migori
+    // Central. Draft_Program_v2 has no guest choir items at all, which is
+    // the same staleness the four speakers with no sessions come from. The
+    // caption is the artwork's word, not the programme's. DATA-NOTES.md.
+    caption: "Camp Meeting 2026 Guest Choir · Taji",
+  },
+];
 
 /**
  * THE TINT.
@@ -169,7 +283,30 @@ export const SCRIM_ALPHA_FLOOR = 0.66;
  * pixels underneath are at luminance 0.027, and a plum at 0.66 over
  * near-black looks like a plum at 0.55 over near-black.
  */
-export const HERO_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_DEEP}, 0.66) 0px, rgba(${PLUM_DEEP}, 0.64) 80px, rgba(${PLUM_WARM}, 0.46) 104px, rgba(${PLUM_WARM}, 0.26) 128px, rgba(${PLUM_WARM}, 0.10) 150px, rgba(${PLUM_WARM}, 0) 176px)`;
+/*
+ * A function of the per-image boost rather than a constant, since the hero
+ * took three photographs. Each image carries its own pair of scrims, so an
+ * image whose brightest pixel needs more alpha can have it without
+ * deepening the two that measured fine — which is the whole reason the
+ * scrims are per-layer rather than one pair over the stack.
+ *
+ * The boost is added only to the stops that are doing protection, never to
+ * the ones easing out: adding alpha to a stop that is meant to be
+ * invisible is how a fade acquires a visible edge. The last two stops are
+ * left exactly where they are, and the ones between are lifted by half the
+ * boost so the ramp does not get a kink in it.
+ *
+ * Clamped at 1 because `rgba(r,g,b,1.4)` is not a colour and browsers
+ * discard the whole declaration, which would silently remove the scrim
+ * that was being made stronger.
+ */
+const a = (base: number, boost: number) => Math.min(1, base + boost).toFixed(3);
+
+export const heroScrimTop = (boost = 0) =>
+  `linear-gradient(to bottom, rgba(${PLUM_DEEP}, ${a(0.66, boost)}) 0px, rgba(${PLUM_DEEP}, ${a(0.64, boost)}) 80px, rgba(${PLUM_WARM}, ${a(0.46, boost / 2)}) 104px, rgba(${PLUM_WARM}, ${a(0.26, boost / 2)}) 128px, rgba(${PLUM_WARM}, 0.10) 150px, rgba(${PLUM_WARM}, 0) 176px)`;
+
+/** The unboosted top scrim, for anything that wants the string itself. */
+export const HERO_SCRIM_TOP = heroScrimTop();
 
 /**
  * Bottom scrim: covers the text block and its own padding, and stops.
@@ -191,7 +328,11 @@ export const HERO_SCRIM_TOP = `linear-gradient(to bottom, rgba(${PLUM_DEEP}, 0.6
  * Warm at the bottom edge, cool by the time it reaches the top of the
  * type. Both ends are above the floor, so the shift costs nothing.
  */
-export const HERO_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, 0.74) 0%, rgba(${PLUM_WARM}, 0.70) 40%, rgba(${PLUM_DEEP}, 0.68) 70%, rgba(${PLUM_DEEP}, 0.66) 88%, rgba(${PLUM_DEEP}, 0.44) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%)`;
+export const heroScrimBottom = (boost = 0) =>
+  `linear-gradient(to top, rgba(${PLUM_WARM}, ${a(0.74, boost)}) 0%, rgba(${PLUM_WARM}, ${a(0.7, boost)}) 40%, rgba(${PLUM_DEEP}, ${a(0.68, boost)}) 70%, rgba(${PLUM_DEEP}, ${a(0.66, boost)}) 88%, rgba(${PLUM_DEEP}, ${a(0.44, boost / 2)}) 92%, rgba(${PLUM_DEEP}, 0.24) 95%, rgba(${PLUM_DEEP}, 0.10) 97.5%, rgba(${PLUM_DEEP}, 0) 100%)`;
+
+/** The unboosted bottom scrim, for anything that wants the string itself. */
+export const HERO_SCRIM_BOTTOM = heroScrimBottom();
 
 /**
  * How tall the bottom scrim is, per phase.
@@ -219,19 +360,37 @@ export const HERO_SCRIM_BOTTOM = `linear-gradient(to top, rgba(${PLUM_WARM}, 0.7
  * about 70px. The remaining +14px at 768, where the title never wrapped,
  * is the true cost of the new content.
  *
- * So 26rem (416px) still covers the worst case: 336px reaches 81% of the
- * scrim and the curve holds 0.66 to 88%. Unchanged, and measured rather
- * than assumed.
+ * ── THE CAPTION ROW MOVED BOTH OF THESE, AND FAILED TWO IMAGES FIRST ──
  *
- * The compact phase did NOT survive unchanged. Its footprint went 154px
- * to 214px — the compact title was already one line, so it paid for the
- * kicker and the verse without the wrap saving to offset them. Against
- * the old 15rem (240px) that is 89% of the scrim, just past where the
- * curve leaves 0.66, and it measured 4.72:1 at 1024 and 4.86:1 at 768:
- * passing, but on the wrong side of the design. 16rem (256px) puts the
- * footprint back at 84%.
+ * The rotation added one line at the foot of the block — the caption and
+ * the pause control — and its height is reserved whether or not the
+ * photograph on screen has a caption, so that the rotation cannot shift
+ * layout. That grew the footprint, and the footprint is what these two
+ * numbers are:
+ *
+ *   phase=before    390    768    1440
+ *   was (26rem)     323    310    336px
+ *   now             341    358    380px
+ *
+ * 380px against a 416px scrim is 91% of it, and the curve only holds 0.66
+ * to 88%. That is not a rounding matter: measured on the built page at
+ * 1440, the taji photograph came out at **3.78:1, a real AA failure**, and
+ * migori at 4.57:1, because the top of the caption row was sitting in the
+ * part of the gradient that is designed to be fading out. hands-bible
+ * passed at 6.50:1 only because its bottom two deciles are the dark
+ * unlit ground.
+ *
+ * 28rem (448px) puts 380px back at 85%, which is inside the held section
+ * with the same margin the block had before it grew. 27rem would have put
+ * it at 88.0% — exactly on the boundary — and a floor that lands on its own
+ * boundary is a floor that fails the next time a string wraps.
+ *
+ * The compact phase moves for the same reason: its footprint went 214px to
+ * about 258px, which is past the whole of a 16rem (256px) scrim. 19rem
+ * (304px) puts it at 85%, matching the full-bleed phase rather than being
+ * chosen separately.
  */
 export const HERO_SCRIM_BOTTOM_HEIGHT = {
-  before: "26rem",
-  compact: "16rem",
+  before: "28rem",
+  compact: "19rem",
 } as const;
