@@ -15,6 +15,8 @@ const chipClasses =
  *
  * The count slot keeps its width whether or not there is a number in it,
  * so the chip does not resize when the saved count arrives after mount.
+ * 1.5rem holds "(9)" in tabular figures; past that the chip grows, which
+ * is the same tolerance the bare digit already had at two digits.
  */
 export function ViewSwitch({ filters }: { filters: ScheduleFilters }) {
   const { count, ready, persistent } = useBookmarks();
@@ -47,9 +49,27 @@ export function ViewSwitch({ filters }: { filters: ScheduleFilters }) {
           )}
         >
           My schedule
-          <span className="tabular-figures ml-1.5 inline-block min-w-4 text-center">
-            {ready && count > 0 ? count : ""}
+          {/*
+            The count is the cheapest explanation the feature has: it says
+            the thing exists, it says how big it is, and after a save it is
+            the confirmation that the save landed. Parenthesised, because
+            "My schedule 6" reads as a label with a stray number in it.
+
+            aria-hidden with a written equivalent beside it, so a screen
+            reader hears "My schedule, 6 saved sessions" rather than the
+            bare digit, which carries no unit.
+          */}
+          <span
+            aria-hidden
+            className="tabular-figures ml-1.5 inline-block min-w-6 text-center"
+          >
+            {ready && count > 0 ? `(${count})` : ""}
           </span>
+          {ready && count > 0 ? (
+            <span className="sr-only">
+              , {count} saved {count === 1 ? "session" : "sessions"}
+            </span>
+          ) : null}
         </Link>
       </div>
 
