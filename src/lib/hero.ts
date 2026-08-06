@@ -67,6 +67,19 @@ export type HeroImage = {
    */
   caption?: string;
   /**
+   * CSS `object-position`. Per image, because these three are three
+   * different compositions and one value cannot be right for all of them.
+   *
+   * The vertical half is what does the work, and the phase is why. In the
+   * full-bleed phase the frame is close to the sources' own aspect and
+   * `cover` throws away only a few percent of the height. In the COMPACT
+   * phase the frame is 55-60svh — 2.67:1 at 1440 — so it keeps about half
+   * the height, and centred that half is the middle of the picture. On a
+   * photograph whose subject is a rank of singers standing at the top of
+   * the frame, the middle of the picture is their waists.
+   */
+  position?: string;
+  /**
    * Extra alpha added to BOTH of this image's scrims, where the measured
    * worst pixel needs it. Zero for every image that passes at the derived
    * floor, and it is meant to stay zero: the whole reason each image
@@ -165,6 +178,13 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
     // tools/assets/hero-photos.mjs.
     width: 1600,
     height: 885,
+    // Centred, and checked rather than left as the default. This frame is
+    // 1.807:1, so the compact phase keeps 68% of its height and a centred
+    // window is y 0.162-0.838 — the choir's heads are at y 0.245-0.41 and
+    // sit well inside it. Centring also drops the brightest part of the
+    // picture: the top four twentieths of this file are the white hall
+    // ceiling and its downlights, mean luminance 0.67 to 0.84.
+    position: "50% 50%",
     caption: "Camp Meeting 2026 Guest Choir · Migori Central",
   },
   {
@@ -173,6 +193,24 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
     // reach it.
     width: 1491,
     height: 1055,
+    // 25%, not centred, and this is the one crop on the hero with a
+    // measured window behind it. The five singers stand at the TOP of this
+    // frame: heads and microphones span y 0.15 to 0.42, and the bottom
+    // third is the foreground rank of graduation caps.
+    //
+    // `object-position: 50% P` puts the visible window at
+    // [P(1-k), P(1-k)+k] where k is the fraction of the height `cover`
+    // keeps. In the COMPACT phase at 1440 the frame is 2.67:1 against a
+    // 1.413:1 source, so k = 0.53 — and centred that window is
+    // y 0.235-0.765, which starts BELOW the singers' chins. Rendered and
+    // looked at, not inferred: at 50% every face is cut off across the
+    // forehead.
+    //
+    // 25% puts the window at y 0.118-0.648: every face complete, with
+    // headroom above and the flags behind them. In the full-bleed phase
+    // k = 0.88 so the same value costs nothing — the window is
+    // y 0.029-0.912 and only the very edges go.
+    position: "50% 25%",
     // ── NOT IN THE PROGRAMME ─────────────────────────────────────────
     // "Taji" appears nowhere in src/data/program.ts. Neither does Migori
     // Central. Draft_Program_v2 has no guest choir items at all, which is

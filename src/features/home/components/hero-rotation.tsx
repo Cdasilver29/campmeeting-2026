@@ -224,10 +224,20 @@ export function HeroBackdrop() {
             priority={i === 0}
             sizes={heroImageSizes(image)}
             quality={90}
-            // Rendered sharp: no blur filter, no transform. Centred at
-            // every width — see the note on the crop in
-            // tools/assets/hero-photos.mjs for what that keeps on a phone.
-            className="object-cover [object-position:50%_50%]"
+            // Rendered sharp: no blur filter, no transform. The crop is
+            // per image and lives on the image — one value could not be
+            // right for three different compositions, and the compact
+            // phase is where that bites: it keeps about half the height,
+            // and a photograph of people standing at the top of the frame
+            // loses every face to a centred window. Each value is derived
+            // and rendered rather than guessed; see HeroImage.position in
+            // src/lib/hero.ts.
+            //
+            // As a style, not a Tailwind arbitrary value: the class would
+            // have to be assembled from the data at runtime, and Tailwind
+            // finds class names by scanning source text.
+            style={{ objectPosition: image.position ?? "50% 50%" }}
+            className="object-cover"
           />
 
           {/* Behind the header. */}
