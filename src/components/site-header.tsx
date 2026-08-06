@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { eventInfo } from "@/data";
+import { hasPhotoHeader } from "@/lib/page-header-art";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -28,12 +29,26 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-/**
- * The one route with a photographic hero behind the header. Everything
- * else keeps its own surface from the first pixel, because there is
- * nothing behind it to show through.
+/*
+ * The routes with a photograph behind the header. Everything else keeps
+ * its own surface from the first pixel, because there is nothing behind it
+ * to show through.
+ *
+ * This used to be the home page alone. It is now the home page plus every
+ * interior route whose page-header band carries a picture, which is what
+ * made those bands read as stuck rather than immersive: the photograph
+ * began at a hard edge 80px down, under a solid white bar, so it was a
+ * panel inserted into the page rather than the page opening with a
+ * picture. The home hero never had that problem, and the reason was only
+ * ever this header.
+ *
+ * `hasPhotoHeader` is an exact pathname match derived from `headerImages`
+ * itself — see src/lib/page-header-art.ts, including why the check lives
+ * there rather than in page-identity.ts. /ministries has a photograph and
+ * /ministries/children does not, so there is no prefix rule to be had.
  */
-const OVERLAY_ROUTE = "/";
+const isPhotoRoute = (pathname: string) =>
+  pathname === "/" || hasPhotoHeader(pathname);
 
 /** How far down the page the header earns its own surface. */
 const SCROLL_THRESHOLD_CLASS = "h-24";
@@ -91,7 +106,7 @@ function NavLink({
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const isOverlayRoute = pathname === OVERLAY_ROUTE;
+  const isOverlayRoute = isPhotoRoute(pathname);
 
   const [pastThreshold, setPastThreshold] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -122,10 +137,14 @@ export function SiteHeader() {
     return () => observer.disconnect();
   }, [isOverlayRoute]);
 
-  // Transparent only at the top of the one route that has a hero. The
-  // server renders this too, since usePathname resolves during SSR, so
+  // Transparent only at the top of a route with a photograph behind it.
+  // The server renders this too, since usePathname resolves during SSR, so
   // the first paint is already correct and there is no flash of a solid
   // bar over the photograph.
+  //
+  // The 96px threshold works unchanged on the interior bands: the shortest
+  // of them is 304px, so the header has earned its own surface long before
+  // the picture runs out and the type below it arrives on white.
   const state = isOverlayRoute && !pastThreshold ? "transparent" : "solid";
 
   return (

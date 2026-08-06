@@ -6,34 +6,46 @@ import { PLUM_DEEP, PLUM_WARM, SCRIM_ALPHA_FLOOR } from "@/lib/hero";
  *
  * ── THE SHAPE OF THE PROBLEM, WHICH IS NOT THE HERO'S ────────────────
  *
- * The band is short and full-bleed. Measured on the built page, the same
- * five widths everything else here is measured at:
+ * The band is full-bleed, runs under the header, and now carries a
+ * RESERVED height rather than being as tall as its own type. Measured on
+ * the built page:
  *
- *   route                 390      768      1024     1440     1920
- *   /schedule           390x269  768x286  1024x286 1440x286 1920x286
- *   /faq                390x345  768x403  1024x403 1440x403 1920x403
- *   /ministries/health  390x357  768x350  1024x350 1440x350 1920x350
+ *   route                 390      768      1440
+ *   /schedule           390x349  768x416  1440x480
+ *   /faq                390x425  768x483  1440x483
+ *   /ministries/health  390x437  768x430  1440x480
  *
- * So the crop runs from about 1.09:1 on a phone to 6.71:1 at 1920. At the
- * wide end `object-fit: cover` keeps only 25% to 33% of a source's HEIGHT;
- * at 390 it keeps the full height and crops the WIDTH to about 78%. Those
- * are two different questions and `position` below has to answer both.
+ * See HEADER_BAND_HEIGHT below for those numbers and why they are what
+ * they are. What matters HERE is what they did to the crop: it runs from
+ * about 1.1:1 on a phone to 4.0:1 at 1920, where it used to reach 6.7:1.
+ * At the wide end `object-fit: cover` keeps 43% to 75% of a source's
+ * HEIGHT, against 25% to 33% before; at 390 it keeps the full height and
+ * crops the WIDTH to between 36% and 72%, which is tighter than the 78%
+ * the short band cropped to. Those are two different questions and
+ * `position` below has to answer both — and several of the values below
+ * were re-derived against the taller band and are marked where they were.
  *
- * The band height is not negotiable and is not touched by any of this:
- * the image and both scrims are absolutely positioned, so they contribute
- * nothing to layout, and the band goes on being as tall as its own
- * padding and its own type make it.
+ * The height is still not something the picture can move: the image and
+ * both scrims are absolutely positioned, so they contribute nothing to
+ * layout, and the band is exactly as tall as the reserved floor or as its
+ * own type, whichever is greater.
  *
  * ── WHY THE SCRIM COVERS THE WHOLE BAND ──────────────────────────────
  *
  * The hero's two scrims are sized to the boxes they protect and leave the
  * middle of the frame untouched, because in a 88svh frame there IS a
- * middle with no type in it. There is no such middle here. The band's own
- * padding is 3rem, rising to 4rem at md, so on a 286px band the type
- * block reaches to within 64px of both edges — the type IS the middle.
- * Sizing a scrim "to the box it protects" therefore means the whole band,
- * and saying otherwise would be quoting the hero's shape rather than
- * applying its method.
+ * middle with no type in it. There is no such middle here. The type is
+ * centred in the band and the band is 304-483px, so the type is the
+ * middle of it — and above the type is now the site header, which goes
+ * transparent over these bands and whose white lockup and nav need the
+ * same protection the type does. Sizing a scrim "to the box it protects"
+ * therefore still means the whole band.
+ *
+ * The scrim itself is UNCHANGED by the taller band: same two inks, same
+ * derived alpha, same stops. It was re-measured rather than re-derived,
+ * and every string still clears 4.5:1 with the worst at 5.57:1, so
+ * nothing was deepened. Deepening a scrim that passes is how a photograph
+ * gets covered up for a number that was already fine.
  *
  * What is kept from the hero is the part that matters: the same two inks,
  * the same derived alpha floor, and the same warm-at-the-outer-edge,
@@ -169,6 +181,108 @@ export const HEADER_SCRIM_WHOLE = `linear-gradient(to bottom, rgba(${PLUM_WARM},
  */
 export const HEADER_IMAGE_SIZES = "(max-width: 767px) 240vw, 100vw";
 
+/**
+ * The reserved height of a band that carries a photograph.
+ *
+ * ── WHY THESE BANDS GOT A HEIGHT AT ALL ──────────────────────────────
+ *
+ * Until now every one of them was exactly as tall as its own type plus the
+ * band's padding — 176px to 403px depending on how many lines a page
+ * happened to carry. That is the right rule for a band of flat colour and
+ * the wrong one for a band of photograph, and it showed in two ways. The
+ * picture was cropped to whatever the type left over: at 1440 /about kept
+ * 32% of its source's height and /schedule 27%, which is a strip rather
+ * than a picture. And two pages with the same photograph treatment were
+ * different heights because one had a meta line, so the treatment did not
+ * read as a treatment.
+ *
+ * ── THE NUMBERS, AND WHY THEY ARE NOT A FRACTION OF THE VIEWPORT ─────
+ *
+ *   below md   19rem   304px
+ *   md         min(26rem, 50svh)
+ *   lg         min(30rem, 55svh)
+ *
+ * The base value is a flat rem because a phone viewport is tall and a
+ * fraction of it is the wrong unit: 50svh on a 390x844 phone is 422px,
+ * which is half the screen given to a decorative band on the page that is
+ * hardest to read on. **304px is a deliberate cut against the desktop
+ * number**, per the brief — on a small screen reaching the content matters
+ * more than the photograph. It still leaves 540px of content above the
+ * fold at 390x844.
+ *
+ * The `min()` on the two upper steps is what keeps a short laptop honest.
+ * 30rem is 480px, which is fine on a 1440x900 and is 62% of a 1024x768,
+ * and a band taking nearly two thirds of the screen is the full-viewport
+ * hero the brief rules out for a content page. The svh half caps it at
+ * 422px there. svh rather than vh or dvh for the reason the hero uses it:
+ * vh ignores mobile browser chrome, dvh changes as that chrome retracts
+ * and would resize the band mid-scroll.
+ *
+ * Resolved: 304 / 416 / 422 / 480 / 480px at 390 / 768 / 1024 / 1440 /
+ * 1920, against 176-403px before.
+ *
+ * ── min-height, NOT height, AND THAT IS LOAD-BEARING ─────────────────
+ *
+ * A fixed `height` clips. /faq at 390 carries an eyebrow, a two-line
+ * title, a rule, a meta line and a paragraph of children, which is 249px
+ * of type inside 96px of padding — more than 19rem holds. A band of
+ * photograph that eats the last line of its own subtitle is a worse fault
+ * than a band that is 40px taller than its neighbour.
+ *
+ * So this is a floor. Every band is at least this tall, the picture is
+ * reserved at that height before anything loads, and the two pages that
+ * need more take more. Nothing shifts either way: the type is
+ * server-rendered, so its contribution is in the first paint too.
+ */
+export const HEADER_BAND_HEIGHT =
+  "min-h-[19rem] md:min-h-[min(26rem,50svh)] lg:min-h-[min(30rem,55svh)]";
+
+/**
+ * Which route each of these photographs belongs to.
+ *
+ * It exists so `src/components/site-header.tsx` can answer one question
+ * during SSR — "is there a photograph behind me on this route?" — without
+ * importing `page-identity.ts`, which pulls the whole programme into the
+ * client bundle for a header that needs a boolean.
+ *
+ * `satisfies Record<keyof typeof headerImages, string>` is the part that
+ * stops this drifting: adding a photograph to `headerImages` without
+ * saying which route it is on is a type error, not a page that quietly
+ * keeps a solid header over its own picture.
+ *
+ * The dynamic routes are absent because they have no photograph:
+ * /schedule/[day] and /speakers/[id] both carry flat bands, and
+ * /ministries/children has no artwork. All of them keep the solid header.
+ */
+const HEADER_ROUTES = {
+  schedule: "/schedule",
+  speakers: "/speakers",
+  livestream: "/livestream",
+  ministries: "/ministries",
+  about: "/about",
+  contact: "/contact",
+  faq: "/faq",
+  downloads: "/downloads",
+  "prayer-requests": "/prayer-requests",
+  health: "/ministries/health",
+  "family-life": "/ministries/family-life",
+  "christian-education": "/ministries/christian-education",
+} as const satisfies Record<keyof typeof headerImages, string>;
+
+const PHOTO_HEADER_ROUTES: ReadonlySet<string> = new Set(
+  Object.values(HEADER_ROUTES),
+);
+
+/**
+ * True where the page-header band carries a photograph, and therefore
+ * where the site header goes transparent at scroll 0. Exact match on the
+ * pathname: there is no prefix rule here, because /ministries has a
+ * photograph and /ministries/children does not.
+ */
+export function hasPhotoHeader(pathname: string): boolean {
+  return PHOTO_HEADER_ROUTES.has(pathname);
+}
+
 /*
  * ── THE FILES ────────────────────────────────────────────────────────
  *
@@ -191,7 +305,7 @@ export const headerImages = {
     // fingers off; 45% moves the window to 0.347-0.625, which holds the
     // sun, the light between the hands and the fingers down to the palms.
     position: "50% 45%",
-    keeps: "the sun between the hands and the fingers down to the palms; loses the fingertips and the grass",
+    keeps: "the cupped hands entire, fingertips to wrists, with the sun between them and sky above; the taller band recovers the fingertips a 286px band cut",
   },
   speakers: {
     src: "/headers/speakers.webp",
@@ -222,8 +336,27 @@ export const headerImages = {
     // at 390 the band keeps almost the full width, and above md it keeps all
     // of it, so there is nothing for the horizontal half to choose. Pushed
     // right it would only start cutting the plum wedge the type reads on.
-    position: "50% 16%",
-    keeps: "the plum diagonal and Pr. Kennedy Mfune's head and shoulders; loses the lower half of the suit",
+    //
+    // ── 16% -> 12%, re-derived for the taller band ──────────────────
+    //
+    // The band went from 356px to a reserved 480px at lg, so `cover` keeps
+    // 57% of the source's height at 1440 where it kept 43%. A bigger window
+    // starting at the same P reaches FURTHER DOWN, and at 16% the top of
+    // that window moved from 0.092 to 0.069 while the bottom went from
+    // 0.518 to 0.639 — so the extra height all landed on his suit and the
+    // crown sat on the frame edge with no air above it.
+    //
+    //   width   k      window at P=0.12    rendered and looked at
+    //   768     0.98   0.002 - 0.982       everything
+    //   1440    0.57   0.052 - 0.622       crown clear of the edge, bow tie in
+    //   1920    0.43   0.068 - 0.498       crown to chin, chin on the edge
+    //
+    // 8% was better at 1440 and cut the chin at 1920; 12% is the value that
+    // holds a complete head at both. **1920 is still the tight one** — the
+    // band is 4.0:1 there against a 1.725:1 source, and no position fits a
+    // head into 43% of that height with room to spare.
+    position: "50% 12%",
+    keeps: "the plum diagonal and Pr. Kennedy Mfune from crown to bow tie; the taller band recovers the collar and tie a 356px band cut",
   },
   livestream: {
     src: "/headers/livestream.webp",
@@ -234,7 +367,7 @@ export const headerImages = {
     // window ends at x 0.84 — just short of the one thing in the frame.
     // 85% puts the window at 0.272-0.952 and the rings well inside it.
     position: "85% 50%",
-    keeps: "the lens and its rings, and the nearest bank of bokeh; loses the far-left city lights on a phone",
+    keeps: "the lens and its rings whole, and both banks of bokeh across the frame; loses the far-left city lights on a phone",
   },
   ministries: {
     src: "/headers/ministries.webp",
@@ -245,7 +378,7 @@ export const headerImages = {
     // centre holds the join between the clasped hands and the open page,
     // which is what the picture is of.
     position: "50% 45%",
-    keeps: "the lower half of the clasped hands and the open Bible under them",
+    keeps: "the clasped hands and the open Bible under them, both entire: at 1920 this is the one source the band no longer crops vertically at all",
   },
   about: {
     src: "/headers/about.webp",
@@ -263,7 +396,7 @@ export const headerImages = {
     // which 54%. Centred is right because the window itself was cut at
     // 70% of the source, which is where the open pages are.
     position: "50% 50%",
-    keeps: "the open pages, their printed text and the gutter between them; on a phone it crops in to the gutter and the inner columns",
+    keeps: "the open pages, their printed text and the gutter between them, top edge to bottom; on a phone it crops in to the gutter and the inner columns",
   },
   contact: {
     // The church photograph the home hero used to carry. It is still in
@@ -299,7 +432,7 @@ export const headerImages = {
     width: 1600,
     height: 620,
     position: "50% 50%",
-    keeps: "the Psalm 23 heading and the lines under it, which is the legible band of the frame",
+    keeps: "the Psalm 23 heading and the columns either side of it, from the page edges inward; the taller band shows the spread rather than one legible strip of it",
   },
   downloads: {
     src: "/headers/downloads.webp",
@@ -309,23 +442,33 @@ export const headerImages = {
     // desk. 58% drops it onto the open book and the pencil, which is
     // what a downloads page is about.
     position: "50% 58%",
-    keeps: "the open book, its tabs and the pencil; loses the lamp and the top of the shelf",
+    keeps: "the open book, its tabs, the pencil and the mug beside them; loses the lamp and the top of the shelf",
   },
   "prayer-requests": {
     src: "/headers/prayer-requests.webp",
     width: 588,
     height: 306,
     // The hands are right of centre, x 0.48-0.85, against black. 62%
-    // keeps their right edge on a phone, where the crop is tightest.
-    position: "62% 50%",
-    keeps: "the palms and fingers of the joined hands, and the black ground to their left",
+    // keeps their right edge on a phone, where the crop is tightest, and
+    // that half is unchanged: at 390 the band still keeps only 53% of the
+    // width.
+    //
+    // 50% -> 30% on the vertical, and it only exists because the band got
+    // taller. At 1440 `cover` now keeps 64% of the height rather than 27%,
+    // and a centred window of 64% is y 0.18-0.82 — which cut the tops of
+    // the fingers off, the one part of this frame that is the subject.
+    // 30% puts the window at 0.108-0.748 and the fingertips are complete.
+    // Inert at 390 and effectively so at 768, where the band keeps 100% of
+    // the height either way.
+    position: "62% 30%",
+    keeps: "the joined hands whole, fingertips to wrists, and the black ground to their left",
   },
   health: {
     src: "/headers/health.webp",
     width: 736,
     height: 412,
     position: "50% 50%",
-    keeps: "the body of the produce, from the greens on the left to the peppers on the right",
+    keeps: "the produce entire, greens to peppers and the pineapple's crown above them, on the table it is heaped on",
   },
   "family-life": {
     // 1600x620, cut at 52% of the source, which is the position this page
@@ -334,13 +477,19 @@ export const headerImages = {
     width: 1600,
     height: 620,
     position: "50% 50%",
-    keeps: "the stacked hands and the cuffs around them; on a phone it crops in to the two topmost hands",
+    keeps: "all four stacked hands and the knitted cuffs around them; on a phone it crops in to the two topmost hands",
   },
   "christian-education": {
     src: "/headers/christian-education.webp",
     width: 735,
     height: 414,
-    position: "50% 50%",
-    keeps: "the middle of the book stack and the clock face beside it",
+    // 50% -> 60%, for the taller band. At 1440 `cover` keeps 59% of the
+    // height rather than 30%, and centred that window is y 0.205-0.795 —
+    // enough to show the whole clock except the feet it stands on, which
+    // leaves it floating on the bottom edge. 60% drops the window to
+    // 0.246-0.836 and the clock stands on its book. Inert at 390 and at
+    // 768, where the full height is kept.
+    position: "50% 60%",
+    keeps: "the book stack, and the alarm clock whole, standing on the open book below it",
   },
 } as const satisfies Record<string, PageHeaderImage>;

@@ -2010,3 +2010,206 @@ quiet one in front of readers.
 The paste-one-line workflow is written up in **DEPLOY.md**, including the
 four things it does not ask anyone to do by hand — order, the day's printed
 name, the programme link and clearing the empty state.
+
+## Immersive interior headers
+
+Three changes, and the first is the one that mattered. Interior bands put
+the photograph behind the type correctly, and still read as inserted
+panels, because the picture began at a hard edge 80px down under a solid
+white bar. The home hero never had that problem and the only reason was
+the header.
+
+### 1. The transparent header is no longer the home page's
+
+`site-header.tsx` went from one hardcoded `OVERLAY_ROUTE = "/"` to
+`hasPhotoHeader(pathname)`. Twelve routes now paint no surface, no rule and
+no blur at scroll 0, and take the glass past 96px exactly as the home page
+does. `/ministries/children`, `/announcements`, `/schedule/[day]`,
+`/speakers/[id]`, `/offline` and `/styleguide` keep the solid header,
+because there is nothing behind it to show through.
+
+The predicate lives in `page-header-art.ts` and is derived from
+`headerImages` with `satisfies Record<keyof typeof headerImages, string>`,
+so **adding a photograph without saying which route it is on is a type
+error**, not a page that quietly keeps a solid bar over its own picture. It
+is there rather than in `page-identity.ts` because the header is a client
+component and `page-identity` pulls the whole programme in with it.
+
+The 96px threshold is unchanged and did not need to move: the shortest
+band is 304px, so the header has its own surface long before the picture
+runs out.
+
+### 2. Full bleed, and a reserved height
+
+`-mt-header` on the band, which is the line the hero has carried since
+session 1, and `mt-header` on the content so the type is centred in the
+part of the band a reader can see all of rather than on a point the header
+covers. **A margin, not `pt-header`**: `band` sets `padding-block` and a
+`padding-top` utility is the same specificity, so which won would be
+settled by stylesheet order, the tie that once put every session time
+where its title belonged.
+
+    below md   19rem                304px
+    md         min(26rem, 50svh)
+    lg         min(30rem, 55svh)
+
+Measured on the built page, and the `svh` cap is doing real work:
+
+| viewport | 390x844 | 768x1024 | **1024x768** | 1440x900 | 1920x1080 |
+| --- | --- | --- | --- | --- | --- |
+| band | 304px | 416px | **422px** | 480px | 480px |
+| content below the fold | 540px | 608px | **346px** | 420px | 600px |
+
+**Why not a fraction of the viewport throughout.** 50svh on a 390x844
+phone is 422px, half the screen given to a decorative band on the page
+hardest to read on, so the base step is a flat rem and **304px is a
+deliberate cut against the desktop number** - the brief's instruction, and
+on a small screen reaching the content matters more than the photograph.
+Why the cap on the two upper steps: 30rem is 62% of a 1024x768, which is
+the full-viewport hero the brief rules out for a content page, and 55svh
+takes it to 422px there.
+
+**`min-height`, not `height`, and that is load-bearing.** /faq at 390
+carries an eyebrow, a two-line title, a rule, a meta line and a paragraph
+of children: 249px of type inside 96px of padding, more than 19rem holds.
+A fixed height would eat the last line of its own subtitle. So the two
+pages that need more take more. /faq is 425px at 390 and 483px above it,
+and the ministry pages with a description run 413-437px.
+
+### 3. Contrast, every changed surface, three widths, both schemes
+
+**Site header, which is the surface that is new.** Transparent state
+scored as white against the brightest composited pixel in the header's own
+box, glass state as `--color-ink` against the darkest, with every
+descendant hidden so the lockup is not scoring the nav.
+
+| route | 390 trans / glass | 768 | 1440 |
+| --- | --- | --- | --- |
+| /schedule | 7.07 / 13.68 | 7.18 / 11.17 | 6.28 / 11.09 |
+| /speakers | 7.60 / 12.10 | 8.08 / 10.98 | 8.79 / 11.09 |
+| **/livestream** | **5.88** / 13.68 | 6.05 / 10.98 | **5.97** / 10.80 |
+| /ministries | 7.76 / 13.68 | 7.76 / 11.23 | 8.55 / 10.98 |
+| /about | 6.43 / 13.68 | 6.62 / 11.09 | 6.49 / 10.98 |
+| /contact | 6.12 / 13.68 | 6.03 / 10.57 | 6.03 / 10.47 |
+| /faq | 7.58 / 11.42 | 7.58 / 11.21 | 7.27 / 11.09 |
+| /downloads | 6.18 / 13.68 | 6.08 / 11.20 | 6.20 / 10.98 |
+| /prayer-requests | **5.92** / 13.68 | **5.89** / 11.18 | 6.03 / 10.98 |
+| /ministries/health | 6.30 / 11.22 | 6.28 / 11.22 | 6.32 / 10.98 |
+| /ministries/family-life | 7.34 / 11.54 | 7.16 / 11.54 | 6.50 / 10.98 |
+| /ministries/christian-education | 10.55 / 11.56 | 9.69 / 11.45 | 6.43 / 10.94 |
+
+Dark mode: transparent readings are identical (white type on a fixed scrim
+is scheme-independent), glass is a flat 10.81:1 everywhere.
+`/ministries/children` and `/announcements` correctly report **solid in
+both columns**. They never go transparent.
+
+**Worst on the site: 5.88:1**, /livestream transparent at 390. The floor
+is 4.5. No scrim was deepened and no text moved.
+
+**Band type, worst per route, across both schemes and 390/768/1440:**
+
+| route | worst | string | at |
+| --- | --- | --- | --- |
+| **/livestream** | **5.57:1** | eyebrow | 390 |
+| /ministries/health | 5.59:1 | title | 768 |
+| /ministries/christian-education | 5.62:1 | meta | 390 |
+| /schedule | 5.67:1 | eyebrow | 1440 |
+| /ministries | 5.84:1 | meta | 390 |
+| /downloads | 5.85:1 | title | 768 |
+| /about | 6.23:1 | title | 390 |
+| /prayer-requests | 6.39:1 | eyebrow | 390 |
+| /ministries/family-life | 6.71:1 | meta | 390 |
+| /faq | 6.91:1 | title | 1440 |
+| /speakers | 10.19:1 | role | 390 |
+| /contact | no readings | | the band carries no painted type |
+
+All clear 4.5:1. The taller band moved these by hundredths, which is the
+expected result: the scrim's alpha does not depend on the band's height.
+
+### 4. What became visible, and three crops that had to move
+
+At 1440 the crop keeps 57% to 100% of a source's height where it kept 25%
+to 33%, and at 1920 43% to 75%. Rendered and looked at, per page, not
+inferred:
+
+| route | what the taller band recovered |
+| --- | --- |
+| /schedule | the fingertips. A 286px band cut them; the cupped hands are now whole, with the sun between them and sky above |
+| /livestream | the lens whole, and the second bank of bokeh on the left of the frame |
+| /ministries | **everything.** A 3:1 source in a 3:1 band at 1440, the one picture on the site the band no longer crops vertically at all |
+| /ministries/health | the pineapple's crown above the heap and the table it stands on |
+| /faq | the Psalm 23 spread from page edge to page edge, rather than one legible strip across the middle |
+| /about, /ministries/family-life | 65% of the frame at 1920 against 32%; all four stacked hands and their cuffs |
+| /downloads | the mug and the pencil tray beside the open book |
+| /speakers | the collar and the bow tie, once the position was re-derived |
+
+**Three positions were wrong at the new height and were changed.** In each
+case the fault is the same shape: a taller window anchored at the same P
+reaches further DOWN, so what the extra height bought landed below the
+subject and the top of the subject sat on the frame edge.
+
+| route | was | now | why |
+| --- | --- | --- | --- |
+| /speakers | 50% 16% | **50% 12%** | at 16% the 1440 window went from 0.092-0.518 to 0.069-0.639, so all the new height went onto his suit and the crown had no air above it. 8% was better at 1440 and cut the chin at 1920; 12% holds a complete head at both |
+| /prayer-requests | 62% 50% | **62% 30%** | a centred 64% window is y 0.18-0.82 and cut the fingertips off, which are the subject of that frame. 30% puts it at 0.108-0.748 and the joined hands are whole |
+| /ministries/christian-education | 50% 50% | **50% 60%** | 0.205-0.795 showed the whole alarm clock except the feet it stands on, so it floated on the bottom edge. 60% drops the window to 0.246-0.836 and it stands on its book |
+
+All three are inert at 390 and effectively inert at 768, where the band
+keeps 100% of the source's height. The nine `keeps` sentences were
+rewritten against the new windows.
+
+### 5. Upscale: the desktop numbers did not move at all
+
+This is the finding worth keeping. **`cover` on these bands is
+width-driven from 1024 up, in both the old shape and the new**, so the
+scale is `viewport / file width` and the band's height does not enter it:
+
+| route | file | 1024 | 1440 | 1920 | vs session 5 at 1920 |
+| --- | --- | --- | --- | --- | --- |
+| **/livestream** | 555x260 | 1.85x | 2.59x | **3.46x** | unchanged |
+| **/prayer-requests** | 588x306 | 1.74x | 2.45x | **3.27x** | unchanged |
+| **/schedule** | 612x328 | 1.67x | 2.35x | **3.14x** | unchanged |
+| /ministries | 735x245 | 1.96x | 1.96x | 2.61x | unchanged |
+| /downloads, /health, /christian-education | ~736x410 | 1.39x | 1.96x | 2.61x | unchanged |
+| /speakers | 1492x865 | 0.69x | 0.97x | 1.29x | unchanged |
+| /about, /faq, /family-life | 1600x620 | 0.77x | 0.90x | 1.20x | unchanged |
+| /contact | 1634x962 | 0.63x | 0.88x | 1.18x | unchanged |
+
+Where it did move is **390 and 768**, where the taller band becomes taller
+in aspect than the source and `cover` starts scaling by height instead:
+
+| route | 390 was | 390 now | 768 was | 768 now |
+| --- | --- | --- | --- | --- |
+| /ministries | 0.98x | **1.31x** | 1.17x | **1.70x** |
+| /livestream | 0.70x | **1.17x** | 1.38x | **1.60x** |
+| /prayer-requests | 1.00x | 1.26x | 1.31x | 1.36x |
+| /schedule | 0.82x | 1.06x | 1.25x | 1.27x |
+| /about | 0.34x | 0.49x | 0.48x | 0.67x |
+| /faq | 0.56x | 0.69x | 0.65x | 0.78x |
+| /ministries/family-life | 0.54x | 0.67x | 0.56x | 0.69x |
+| /speakers | 0.27x | 0.36x | 0.51x | 0.51x |
+
+**Nothing new crosses 2x below 1024, and the worst number on the site is
+still 3.46x and still at 1920.** The taller band did not make the soft
+files worse where they were already worst; it made three of them cross
+1.0x on a phone, from a long way under it.
+
+**The three that need larger sources are the same three, for the fourth
+session running: /livestream at 3.46x, /prayer-requests at 3.27x,
+/schedule at 3.14x.** 555, 588 and 612 pixels wide against a band that is
+1920 CSS px and 3840 device px on a retina laptop. That is the list; it has
+not changed and it is not going to be fixed by a converter setting.
+
+### 6. No layout shift
+
+**CLS 0.0000, median AND max**, five runs at 1440x900, on /about,
+/contact, /faq, /livestream, /schedule, /speakers, /prayer-requests and
+/ministries/health. The reserved height is a CSS `min-height`, so it is in
+the first paint; the picture is still absolutely positioned and `fill` and
+still contributes nothing; and `svh` is fixed at load, unlike `dvh`, so a
+retracting browser chrome cannot resize a band mid-scroll.
+
+`align.mjs`: **85 of 85 pass**, 0 off the grid, 0 header blocks not
+centred.
+
+Build, `npx tsc --noEmit` and `pnpm lint` all pass.

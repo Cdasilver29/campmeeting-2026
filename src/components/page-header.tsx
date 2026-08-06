@@ -3,6 +3,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { PageIdentity } from "@/lib/page-identity";
 import {
+  HEADER_BAND_HEIGHT,
   HEADER_IMAGE_SIZES,
   HEADER_SCRIM_BOTTOM,
   HEADER_SCRIM_TOP,
@@ -217,6 +218,27 @@ export function PageHeader({
         // content share one cell and the row is as tall as the taller of
         // them. The other twelve bands stay ordinary block boxes.
         whole && "grid",
+        /*
+         * ── FULL BLEED UNDER THE HEADER ──────────────────────────────
+         *
+         * -mt-header pulls the band up by exactly the header's own height,
+         * so the photograph runs behind it rather than starting at a hard
+         * edge 80px down. This is the whole of what made the home hero
+         * read as immersive and these bands read as inserted panels: the
+         * hero has carried this line since session 1, and the site header
+         * now goes transparent at scroll 0 on these routes too.
+         *
+         * Both sides read --spacing-header; see globals.css. Only on a
+         * band with a photograph — a flat muted band pulled under a
+         * transparent header would be a white bar over a white bar.
+         */
+        onPhoto && "-mt-header",
+        // A photograph gets a reserved height and its type centred in what
+        // is left below the header. A flat band goes on being exactly as
+        // tall as its own type, which is right for a band of colour.
+        // HEADER_BAND_HEIGHT is a min-height, not a height, and the reason
+        // is load-bearing — see page-header-art.ts.
+        onPhoto && !whole && `flex items-center ${HEADER_BAND_HEIGHT}`,
       )}
       data-page-header
       data-header-art={onPhoto ? "photo" : "flat"}
@@ -304,7 +326,30 @@ export function PageHeader({
         />
       ) : null}
 
-      <div className={cn("shell", whole && "col-start-1 row-start-1")}>
+      {/*
+        `mt-header` on the CONTENT, not padding on the band, and it is what
+        keeps the type optically centred rather than centred on a point the
+        header covers.
+
+        The band is `flex items-center`, so what gets centred is the
+        child's MARGIN box. A top margin of one header height puts the
+        content's own centre at (H/2 + 40px) — precisely the middle of the
+        region between the bottom of the header and the bottom of the band,
+        which is the only part of the band the reader can see all of.
+
+        Written as a margin rather than as `pt-header` deliberately. `band`
+        sets `padding-block`, and `padding-top` from a utility is the same
+        specificity, so which one won would be settled by Tailwind's
+        stylesheet order — the same tie that once put every session time
+        where its title belonged. A margin does not compete with a padding.
+      */}
+      <div
+        className={cn(
+          "shell",
+          whole && "col-start-1 row-start-1",
+          onPhoto && !whole && "mt-header",
+        )}
+      >
         <header
           className={cn(
             "flex flex-col",

@@ -51,6 +51,27 @@
  * asked to fill, because seven of these sources are under 740px wide and
  * that is the honest limit on this band.
  *
+ * ── AND THE SITE HEADER, IN BOTH ITS STATES ──────────────────────────
+ *
+ * Added when the transparent-at-scroll-0 header was extended from the home
+ * page to every route with a photographic band. verify-hero.mjs measures
+ * that header on `/` and cannot be pointed anywhere else without gutting
+ * its hero geometry, so the check lives here, where all eleven routes are
+ * already being loaded at every width in every scheme.
+ *
+ * Two readings per page, and each against the colour the header's type
+ * actually is at that moment — which is the trap verify-hero.mjs's own
+ * header block exists to document:
+ *
+ *   transparent, at scroll 0     white type, so the BRIGHTEST pixel
+ *   glass, scrolled past 96px    --color-ink, so the DARKEST pixel
+ *
+ * Measuring white against both would score a colour that is never there.
+ * The box scanned is the header's own rect and the sample is taken with
+ * every descendant of it hidden, so the lockup, the nav links and the
+ * theme toggle are all scored against what is composited behind them
+ * rather than against each other.
+ *
  * Usage: node verify-page-header.mjs [scheme] [--routes a,b] [--widths 390,768]
  *   scheme is "light" | "dark" | "both" (default "both").
  *   --routes and --widths narrow the sweep to the bands a session changed.
@@ -203,8 +224,20 @@ for (const scheme of SCHEMES) {
         const h1 = head.querySelector("h1");
         const metaEl = head.querySelector("hr + p");
         const img = band.querySelector("img");
+        /* The site header, read BEFORE anything is hidden. Its own rect
+           is the region the lockup, the nav and the theme toggle live in,
+           and its link colour is the colour all three are set in — white
+           in the transparent state, --color-ink in the glass one. */
+        const siteHeader = document.querySelector("body > div header, header");
         return {
           bandH: Math.round(band.getBoundingClientRect().height),
+          siteHeader: siteHeader
+            ? {
+                box: box(siteHeader),
+                state: siteHeader.getAttribute("data-header-state"),
+                color: getComputedStyle(siteHeader.querySelector("a")).color,
+              }
+            : null,
           art: band.getAttribute("data-header-art"),
           align: band.getAttribute("data-header-align"),
           parts: (
@@ -247,30 +280,39 @@ for (const scheme of SCHEMES) {
           "*,*::before,*::after{transition:none !important;animation:none !important}",
       });
       // Every descendant, not a tag list: /faq's Provisional badge is a
-      // span inside the paragraph and its border is a light hairline.
+      // span inside the paragraph and its border is a light hairline. The
+      // site header is hidden in the same pass, or its own white lockup
+      // becomes the brightest "backdrop" pixel of the band behind it — the
+      // exact trap verify-hero.mjs's header block documents.
       await page.evaluate(() => {
-        const head = document.querySelector("[data-page-header] header");
-        head.querySelectorAll("p,h1,span,a,svg").forEach((e) => {
-          e.style.setProperty("visibility", "hidden", "important");
-          e.querySelectorAll("*").forEach((c) =>
-            c.style.setProperty("visibility", "hidden", "important"),
-          );
-        });
+        const heads = [
+          document.querySelector("[data-page-header] header"),
+          document.querySelector("body header[data-header-state]"),
+        ].filter(Boolean);
+        for (const head of heads) {
+          head.querySelectorAll("p,h1,span,a,svg,button,img").forEach((e) => {
+            e.style.setProperty("visibility", "hidden", "important");
+            e.querySelectorAll("*").forEach((c) =>
+              c.style.setProperty("visibility", "hidden", "important"),
+            );
+          });
+        }
       });
       await page.evaluate(
         () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
       );
 
-      const shot = await page.screenshot({ type: "png", encoding: "base64" });
-      const px = await page.evaluate(
-        async (b64, regs) => {
+      const sample = async (regs) => {
+        const shot = await page.screenshot({ type: "png", encoding: "base64" });
+        return page.evaluate(
+        async (b64, rs) => {
           const bmp = await createImageBitmap(
             await (await fetch(`data:image/png;base64,${b64}`)).blob(),
           );
           const c = new OffscreenCanvas(bmp.width, bmp.height);
           const ctx = c.getContext("2d");
           ctx.drawImage(bmp, 0, 0);
-          return regs.map((r) => {
+          return rs.map((r) => {
             const x = Math.max(0, Math.floor(r.x));
             const y = Math.max(0, Math.floor(r.y));
             const wd = Math.min(c.width - x, Math.ceil(r.width));
@@ -280,8 +322,11 @@ for (const scheme of SCHEMES) {
           });
         },
         shot,
-        geo.parts.map((p) => p.box),
-      );
+        regs,
+        );
+      };
+
+      const px = await sample(geo.parts.map((p) => p.box));
 
       const extremes = (arr) => {
         if (!arr) return null;
@@ -294,9 +339,58 @@ for (const scheme of SCHEMES) {
         return { hi, hiRgb, lo, loRgb };
       };
 
+      /* ── The site header, both states ─────────────────────────────
+         Transparent first, because the page is already at scroll 0 and
+         the type is already hidden. Then scroll past the 96px sentinel,
+         wait two frames, and re-read the link colour before scoring the
+         second one: the glass state resets the header's type from white
+         to --color-ink, and scoring white against a dark glass backdrop
+         is how the first version of this measurement in verify-hero.mjs
+         reported 1.00:1 for a header that passes. */
+      let headerStates = null;
+      if (geo.siteHeader) {
+        const t = extremes((await sample([geo.siteHeader.box]))[0]);
+        const tLight = isLight(geo.siteHeader.color);
+
+        await page.evaluate(() => window.scrollTo(0, 400));
+        await page.evaluate(
+          () =>
+            new Promise((r) =>
+              requestAnimationFrame(() => requestAnimationFrame(r)),
+            ),
+        );
+        await new Promise((r) => setTimeout(r, 250));
+        const glass = await page.evaluate(() => {
+          const h = document.querySelector("body header[data-header-state]");
+          return {
+            state: h.getAttribute("data-header-state"),
+            color: getComputedStyle(h.querySelector("a")).color,
+            box: (({ x, y, width, height }) => ({ x, y, width, height }))(
+              h.getBoundingClientRect(),
+            ),
+          };
+        });
+        const g = extremes((await sample([glass.box]))[0]);
+        const gLight = isLight(glass.color);
+
+        headerStates = {
+          transparent: {
+            state: geo.siteHeader.state,
+            rgb: tLight ? t?.hiRgb : t?.loRgb,
+            ratio: t ? against(geo.siteHeader.color, tLight ? t.hi : t.lo) : null,
+          },
+          glass: {
+            state: glass.state,
+            rgb: gLight ? g?.hiRgb : g?.loRgb,
+            ratio: g ? against(glass.color, gLight ? g.hi : g.lo) : null,
+          },
+        };
+      }
+
       rows.push({
         scheme, route, w,
         bandH: geo.bandH, art: geo.art, img: geo.img,
+        headerStates,
         parts: geo.parts.map((p, i) => {
           const ex = extremes(px[i]);
           const light = isLight(p.color);
@@ -339,6 +433,46 @@ for (const scheme of SCHEMES) {
       .map((p) => `${r.route} @${r.w} ${p.name} ${p.ratio.toFixed(2)}:1 on rgb(${p.rgb})`),
   );
   console.log(bad.length ? `\nFAIL (${bad.length}):\n  ` + bad.join("\n  ") : "\nAll strings clear 4.5:1.");
+
+  /* The site header, each state against the colour its type actually is.
+     One row per route: lockup, nav links and theme toggle all share the
+     header's box and its computed link colour. */
+  const withHeader = group.filter((r) => r.headerStates);
+  if (withHeader.length) {
+    console.log(
+      `\n=== ${scheme.toUpperCase()} — site header, transparent (white) / glass (ink) ===`,
+    );
+    console.log(pad("route", 34) + WIDTHS.map((w) => pad(w, 22)).join(""));
+    console.log("-".repeat(34 + WIDTHS.length * 22));
+    for (const route of [...new Set(withHeader.map((r) => r.route))]) {
+      const cells = WIDTHS.map((w) => {
+        const r = withHeader.find((x) => x.route === route && x.w === w);
+        if (!r) return pad("-", 22);
+        const f = (s) =>
+          s.ratio === null
+            ? "  -  "
+            : `${s.ratio.toFixed(2)}${s.ratio >= 4.5 ? "" : "!"}`;
+        return pad(
+          `${f(r.headerStates.transparent)} ${r.headerStates.transparent.state.slice(0, 5)} / ${f(r.headerStates.glass)} ${r.headerStates.glass.state.slice(0, 5)}`,
+          22,
+        );
+      });
+      console.log(pad(route, 34) + cells.join(""));
+    }
+    const hbad = withHeader.flatMap((r) =>
+      ["transparent", "glass"]
+        .filter((k) => r.headerStates[k].ratio !== null && r.headerStates[k].ratio < 4.5)
+        .map(
+          (k) =>
+            `${r.route} @${r.w} header ${k} ${r.headerStates[k].ratio.toFixed(2)}:1 on rgb(${r.headerStates[k].rgb})`,
+        ),
+    );
+    console.log(
+      hbad.length
+        ? `\nHEADER FAIL (${hbad.length}):\n  ` + hbad.join("\n  ")
+        : "\nHeader clears 4.5:1 in both states at every width.",
+    );
+  }
 }
 
 console.log("\n=== worst composited pixel per route, across both schemes and all widths ===");
