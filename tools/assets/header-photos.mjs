@@ -59,11 +59,38 @@
  *
  * ── QUALITY ──────────────────────────────────────────────────────────
  *
- * q82, effort 6. Higher was measured and not kept: q88 costs 213 KB more
- * across the ten and puts no visible difference behind a scrim that
- * holds 0.66 alpha over every pixel of them. Every one of these files is
- * precached (see src/app/serwist/[path]), so those bytes are paid for on
- * campground signal by every phone, whether or not it opens the page.
+ * q82, effort 6, and two exceptions. Higher was measured and not kept:
+ * q88 costs 213 KB more across the ten and puts no visible difference
+ * behind a scrim that holds 0.66 alpha over every pixel of them. Every one
+ * of these files is precached (see src/app/serwist/[path]), so those bytes
+ * are paid for on campground signal by every phone, whether or not it
+ * opens the page.
+ *
+ * faq and family-life carry `quality: 78`, and the reason is the SUBJECT,
+ * not a setting that drifted. All three of the 1600x620 band files were
+ * written at q82 by this script in one run — about came out at 82.2 KiB
+ * and those two at 96.6 and 131.5 KiB from the same encoder at the same
+ * dimensions. What differs is detail: about is a shallow-depth-of-field
+ * frame whose outer thirds are bokeh, which WebP encodes almost for free,
+ * while faq is printed text edge to edge and family-life is skin, cuffs
+ * and fabric weave with no soft region anywhere. There is no lower-quality
+ * setting to discover in them; there is only detail, and detail costs
+ * bytes at any quality.
+ *
+ * So the two are dropped to q78 on the same argument q82 rests on: every
+ * pixel of these two is behind a 0.66-alpha scrim, and q78 -> q82 on a
+ * scrimmed band is not a difference anyone can see. 78 rather than 79 or
+ * 80 because it is the bottom of the range that still looks identical
+ * under the scrim, and it recovers roughly twice what 80 does — 36.3 KB
+ * across the pair against 19.7 KB. Measured, both files, all of:
+ *
+ *   quality   76      78      79      80      82
+ *   faq       70.4    77.9    81.5    85.5    96.6  KiB
+ *   family    104.8   113.9   117.5   122.9   131.5 KiB
+ *
+ * 76 was measured and NOT taken: it is outside the range this was asked
+ * within, and on faq's printed text the ringing around the letterforms is
+ * the first thing that starts to show when the scrim is at its thinnest.
  *
  * Usage: node tools/assets/header-photos.mjs <source-dir>
  */
@@ -87,6 +114,7 @@ const OUT = join(ROOT, "public", "headers");
 mkdirSync(OUT, { recursive: true });
 
 const MAX_W = 1600;
+/** The default. Two entries override it — see the QUALITY note above. */
 const QUALITY = 82;
 
 /**
@@ -99,6 +127,8 @@ const QUALITY = 82;
  * half of that page's `position` in page-header-art.ts, so the window
  * keeps the subject that page had already chosen. Once the file is the
  * band, its `position` becomes 50%.
+ *
+ * `quality` overrides QUALITY for the one file it is written on.
  */
 const HEADERS = [
   { route: "schedule", file: "schedule.jpg" },
@@ -106,11 +136,11 @@ const HEADERS = [
   { route: "livestream", file: "livestream.jpg" },
   { route: "ministries", file: "ministries.jpg" },
   { route: "about", file: "about.jpg", band: 620, at: 0.7 },
-  { route: "faq", file: "faq.jpg", band: 620, at: 0.5 },
+  { route: "faq", file: "faq.jpg", band: 620, at: 0.5, quality: 78 },
   { route: "downloads", file: "downloads.jpg" },
   { route: "prayer-requests", file: "prayer-requests.jpg" },
   { route: "health", file: "health.jpg" },
-  { route: "family-life", file: "family-life.jpg", band: 620, at: 0.52 },
+  { route: "family-life", file: "family-life.jpg", band: 620, at: 0.52, quality: 78 },
   { route: "christian-education", file: "christian-education.jpg" },
 ];
 
@@ -149,23 +179,25 @@ for (const h of HEADERS) {
   }
 
   const out = join(OUT, `${h.route}.webp`);
-  await img.webp({ quality: QUALITY, effort: 6, smartSubsample: true }).toFile(out);
+  const quality = h.quality ?? QUALITY;
+  await img.webp({ quality, effort: 6, smartSubsample: true }).toFile(out);
 
-  rows.push({ ...h, meta, srcBytes, outW, outH, outBytes: statSync(out).size });
+  rows.push({ ...h, quality, meta, srcBytes, outW, outH, outBytes: statSync(out).size });
 }
 
 const pad = (v, n) => String(v).padEnd(n);
 console.log(
   pad("route", 22) + pad("source", 24) + pad("source px", 12) + pad("source KB", 11) +
-  pad("output px", 12) + pad("output KB", 11) + `upscale at ${WIDEST_VIEWPORT}`,
+  pad("output px", 12) + pad("q", 4) + pad("output KB", 11) + `upscale at ${WIDEST_VIEWPORT}`,
 );
-console.log("-".repeat(104));
+console.log("-".repeat(108));
 for (const r of rows) {
   console.log(
     pad(r.route, 22) + pad(r.file, 24) +
     pad(`${r.meta.width}x${r.meta.height}`, 12) +
     pad((r.srcBytes / 1024).toFixed(1), 11) +
     pad(`${r.outW}x${r.outH}`, 12) +
+    pad(r.quality, 4) +
     pad((r.outBytes / 1024).toFixed(1), 11) +
     `${(WIDEST_VIEWPORT / r.outW).toFixed(2)}x`,
   );

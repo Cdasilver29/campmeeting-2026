@@ -1765,3 +1765,75 @@ Everything sessions 1-4 listed, plus:
 - **The two name spellings above.**
 - **Whether 96 KB over the header budget is acceptable**, or whether
   family-life and faq should lose quality to close it.
+
+---
+
+# Session 6 (2026-08-06) — two re-encodes, /contact's heading, recordings, immersive bands
+
+Measured narrowly, the way session 5 was: only surfaces this session changed
+were measured, and the bands it did not touch were not re-swept.
+
+## The two heavy headers are heavy because of their SUBJECT
+
+faq and family-life were re-encoded at **q78**. Both are now smaller, and
+the reason they were the two largest files is worth writing down because the
+brief's hypothesis was reasonable and wrong.
+
+**They were not written at a higher quality setting.** about, faq and
+family-life are all 1600x620, all written by `tools/assets/header-photos.mjs`
+in one run, all at q82 and effort 6 — and they came out at 82.2, 96.6 and
+131.5 KiB. What differs is detail. about is a shallow-depth-of-field frame
+whose outer thirds are bokeh, which WebP encodes almost for free. faq is
+printed text edge to edge; family-life is skin, knitted cuffs and fabric
+weave with no soft region anywhere in the frame. There was no setting to
+correct, only detail, and detail costs bytes at any quality.
+
+So the drop is made on the argument q82 already rested on rather than as a
+bug fix: every pixel of these two is behind a scrim holding 0.66 alpha, and
+q78 -> q82 on a scrimmed band is not a difference anyone can see.
+
+| quality | 76 | **78** | 79 | 80 | 82 |
+| --- | --- | --- | --- | --- | --- |
+| faq.webp | 70.4 | **77.9** | 81.5 | 85.5 | 96.6 KiB |
+| family-life.webp | 104.8 | **113.9** | 117.5 | 122.9 | 131.5 KiB |
+
+78 rather than 80: it is the bottom of the range asked for, it still looks
+identical under the scrim, and it recovers **36.3 KB against 80's 19.7 KB**.
+76 was measured and not taken — outside the range, and faq's letterforms are
+where ringing would first show.
+
+| file | before | after |
+| --- | --- | --- |
+| faq.webp | 98,964 B / 96.6 KiB | **79,762 B / 77.9 KiB** |
+| family-life.webp | 134,662 B / 131.5 KiB | **116,674 B / 113.9 KiB** |
+| `public/headers/` (11 files) | 496.3 KiB | **460.0 KiB** |
+| against the ~400 KB line | 96 KB over | **60 KB over** |
+
+The other nine files were re-run through the converter in the same pass and
+came out **byte-identical**, which is the check that the change is the two
+entries and not the script.
+
+### Confirmed by eye, and the number behind it
+
+Both files were rendered at the window `cover` shows at 1920 (1600x403 out
+of the 620), composited under the band's real two-part scrim, and looked at
+side by side at q82 and q78. **No visible difference on either**, and none
+in the raw crops at 100% either.
+
+| | mean abs channel delta | max | channels off by more than 2 |
+| --- | --- | --- | --- |
+| faq, unscrimmed | 2.076 | 28 | 29.6% |
+| faq, **under the scrim** | **0.489** | 10 | **2.4%** |
+| family-life, unscrimmed | 2.388 | 28 | 33.5% |
+| family-life, **under the scrim** | **0.564** | 10 | **4.3%** |
+
+That is the scrim's whole argument in one table: q78 moves about a third of
+the channels in the bare file, and the 0.66 alpha absorbs four fifths of it
+before anything reaches the screen. Half a level out of 255 is below what a
+display resolves.
+
+**Still 60 KB over the line, and that is now width and detail rather than
+slack.** Closing it needs either a band shorter than 620px, which starts
+making `object-position` a no-op at 1920, or a quality the site does not use
+anywhere. The committee's call, unchanged from session 5 except that the
+number is smaller.
