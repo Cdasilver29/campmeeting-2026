@@ -164,6 +164,33 @@ export interface TodayState {
   dayHasContent: boolean;
 }
 
+/**
+ * The next timed session this device has saved, anywhere ahead in the
+ * programme.
+ *
+ * Same "after now" rule and the same list as `next` below, so the two
+ * cannot disagree about what "upcoming" means, and it crosses midnight
+ * for the same reason: on Tuesday evening the useful answer is
+ * Wednesday's 08:00, not nothing.
+ *
+ * Returns undefined when nothing is saved and when everything saved has
+ * already run. Both are the same answer to the caller, which renders
+ * nothing rather than a prompt: a card that says "you have saved no
+ * sessions" is an advert, and the home page is not where the bookmark
+ * can be pressed anyway.
+ */
+export function nextSavedSession(
+  now: WallClock,
+  isSaved: (sessionId: string) => boolean,
+): TimedSession | undefined {
+  return timedSessions.find(
+    (session) =>
+      (session.date > now.date ||
+        (session.date === now.date && session.start > now.time)) &&
+      isSaved(session.id),
+  );
+}
+
 export function getTodayState(instant: Date): TodayState {
   const now = wallClock(instant);
   const day = getDayByDate(now.date);

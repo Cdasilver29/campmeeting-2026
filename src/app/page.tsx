@@ -3,6 +3,7 @@ import { Band } from "@/components/band";
 import { JsonLd } from "@/components/json-ld";
 import { Reveal } from "@/components/reveal";
 import { Hero } from "@/features/home/components/hero";
+import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { TodayView } from "@/features/schedule/components/today-view";
 import { campMeetingEvent } from "@/lib/structured-data";
 
@@ -61,7 +62,15 @@ export default function Home() {
           <p className="text-sm text-ink-muted">
             All times are East Africa Time.
           </p>
-          <TodayView />
+          {/* The saved sessions, so the Today view can say that something
+              the reader chose is about to start. Mid camp meeting that is
+              the most useful sentence this site has. The provider reads
+              localStorage after mount and renders nothing of its own, so
+              the page stays statically generated and the card is simply
+              absent when nothing saved is still ahead. */}
+          <BookmarksProvider>
+            <TodayView />
+          </BookmarksProvider>
         </Reveal>
       </Band>
     </>
