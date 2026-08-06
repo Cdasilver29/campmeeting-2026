@@ -649,6 +649,24 @@
   }
 }
 
+/* The saved-schedule discovery hint, hidden before it can ever be painted.
+
+   The line is server-rendered visible, because a statically generated page
+   cannot know whether this device has already seen it. Deciding that on
+   mount would delete a line of text after first paint, which is a layout
+   shift on the one page whose CLS is measured. So an inline script in the
+   document reads localStorage during parse and sets the attribute below on
+   <html> — the same pre-paint correction the theme and the event phase
+   already use. See src/features/schedule/lib/saved.ts for the script and
+   src/features/schedule/components/saved-hint.tsx for the line.
+
+   The attribute is on the document element rather than on the hint itself
+   so that React never renders the node the script writes to, which is what
+   keeps hydration from disagreeing with it. */
+html[data-saved-hint="seen"] [data-saved-hint-line] {
+  display: none;
+}
+
 /* Tabular figures. The schedule renders ~237 timestamps in aligned
    columns (day timeline, full program, search results) — proportional
    digits make those columns ragged. Every timestamp in the schedule UI

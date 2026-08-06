@@ -12,6 +12,7 @@ import {
 import { DayRail } from "./day-rail";
 import { MyScheduleEmpty } from "./my-schedule-empty";
 import { ProgramView } from "./program-view";
+import { SavedHint } from "./saved-hint";
 import { ScheduleFiltersBar } from "./schedule-filters";
 import { ViewSwitch } from "./view-switch";
 
@@ -63,6 +64,12 @@ export function ScheduleShell({
           filters={filters}
         />
       </div>
+
+      {/* Only over the whole programme, which is the view that has the
+          bookmark icons in it. On My schedule the empty state already says
+          all of this at length, and two explanations of one feature stacked
+          on top of each other is worse than either. */}
+      {filters.mine ? null : <SavedHint />}
 
       {count > 0 ? (
         <ProgramView groups={groups} showGaps={showGaps} />

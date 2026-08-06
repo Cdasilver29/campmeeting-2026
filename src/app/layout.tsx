@@ -7,6 +7,7 @@ import { siteUrl } from "@/lib/site-url";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { PageTransition } from "@/components/page-transition";
+import { savedHintScript } from "@/features/schedule/lib/saved";
 import { eventInfo } from "@/data";
 import "./globals.css";
 
@@ -102,6 +103,21 @@ export default function RootLayout({
         <noscript>
           <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
         </noscript>
+
+        {/*
+          Decides, before anything is painted, whether this device is still
+          owed the "tap the bookmark" hint on /schedule. It reads the saved
+          schedule out of localStorage and sets an attribute on <html> that
+          globals.css hides the line by.
+
+          In the root layout rather than on the schedule route, and that is
+          load-bearing. The attribute has to be right on soft navigations
+          too: a reader who lands on "/" and then clicks Programme never
+          re-runs a script placed on that route, so the hint would appear
+          and then be removed after mount, which is the layout shift this
+          whole arrangement exists to avoid. Roughly 300 bytes, parsed once.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: savedHintScript() }} />
       </head>
       <body className="antialiased">
         {/*
