@@ -17,17 +17,18 @@ import { useBookmarks } from "../bookmarks";
  * into the same localStorage value as the saved ids, which is what keeps
  * the site's one-key rule intact.
  *
- * `data-saved-hint-line` is what that rule selects. It has to stay on the
- * outermost element here.
+ * `saved-hint` is what that rule selects, and it has to stay on the
+ * outermost element here. A hand-written class rather than a data
+ * attribute, because a rule whose key selector is a bare attribute is
+ * tested against every element in the document and this page has 4,864
+ * of them: measured, that cost 265ms of style, layout and paint. See the
+ * rule in globals.css.
  */
 export function SavedHint() {
   const { dismissHint } = useBookmarks();
 
   return (
-    <div
-      data-saved-hint-line
-      className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card border border-line bg-surface-muted px-3 py-1.5 text-sm text-ink-muted"
-    >
+    <div className="saved-hint flex flex-wrap items-center gap-x-3 gap-y-1 rounded-card border border-line bg-surface-muted px-3 py-1.5 text-sm text-ink-muted">
       <Bookmark aria-hidden className="size-4 shrink-0 text-bookmark" />
       <p className="min-w-0 flex-1">
         Tap the bookmark on any session to build your own schedule. It is kept
