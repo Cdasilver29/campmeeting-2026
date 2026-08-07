@@ -67,8 +67,8 @@ export function TimeRange({
  * titles start from one edge.
  *
  * A variant on the parent rather than a wrapper element around the
- * content. `/schedule` server-renders 237 entries, so one wrapper div per
- * card is 237 more elements to lay out; this costs no markup at all.
+ * content. `/schedule` server-renders 238 entries, so one wrapper div per
+ * card is 238 more elements to lay out; this costs no markup at all.
  * Nothing sets an explicit row: auto-placement fills column two from row
  * one, which is what puts the first line of content level with the time
  * whether that line is the title or the block eyebrow.
@@ -145,8 +145,8 @@ export function PresenterChips({ session }: { session: FlatSession }) {
 
   return (
     // data-entry is what ENTRY_GRID places this by at lg. An attribute
-    // rather than a wrapper element: /schedule renders 237 entries and a
-    // wrapper each would be 237 more boxes to lay out.
+    // rather than a wrapper element: /schedule renders 238 entries and a
+    // wrapper each would be 238 more boxes to lay out.
     <ul data-entry="presenters" className="flex flex-wrap gap-1.5">
       {names.map((name) => (
         <li key={name}>

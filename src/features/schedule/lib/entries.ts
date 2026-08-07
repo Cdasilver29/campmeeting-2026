@@ -143,7 +143,7 @@ export const allDayGroups: DayGroup[] = groupEntries(allEntries);
  * What a programme route is looking at before any filter runs: the whole
  * week on /schedule, one day on /schedule/{day}. Both forms are built
  * once at module load, so an unfiltered page renders a prepared grouping
- * instead of walking 239 entries to arrive back at it, and the "of N" in
+ * instead of walking 240 entries to arrive back at it, and the "of N" in
  * the count is the size of the page's own scope rather than of the week.
  */
 export interface ScheduleScope {

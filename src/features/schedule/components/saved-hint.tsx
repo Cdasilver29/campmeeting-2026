@@ -7,7 +7,7 @@ import { useBookmarks } from "../bookmarks";
  * The one line that makes the bookmark discoverable.
  *
  * Bookmarks worked before this and nobody found them: a 16px outline icon
- * in a 237-row timeline explains nothing about what pressing it does. So
+ * in a 238-row timeline explains nothing about what pressing it does. So
  * the page says it once, in words, next to the control it is about.
  *
  * Rendered visible in the static HTML and hidden before first paint by

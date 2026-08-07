@@ -30,7 +30,7 @@ export function BookmarkToggle({
       aria-pressed={saved}
       className={cn(
         "group/bookmark relative inline-flex size-6 shrink-0 items-center justify-center rounded-control transition-colors duration-fast hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500",
-        // 24px painted, 44px hit. A 44px control on every one of 237 rows
+        // 24px painted, 44px hit. A 44px control on every one of 238 rows
         // would set the row height; a pseudo-element costs no layout and
         // no DOM.
         "before:absolute before:-inset-2.5 before:content-['']",

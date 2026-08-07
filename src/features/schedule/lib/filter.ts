@@ -10,8 +10,8 @@ import type { ScheduleFilters } from "./url";
  *
  * Terms are ANDed: "mfune sermon" finds the sermons he preaches, not
  * everything bearing either word. Each entry carries a prebuilt lowercase
- * haystack of its title, presenters and ministry, so a keystroke is 239
- * substring tests rather than 239 rebuilds.
+ * haystack of its title, subtitle, presenters and ministry, so a
+ * keystroke is 240 substring tests rather than 240 rebuilds.
  *
  * Untimed all-block activities are filtered alongside sessions, so a
  * Medical ministry filter finds Sunday's Medical Camp. They drop out of

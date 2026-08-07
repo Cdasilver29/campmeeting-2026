@@ -47,7 +47,7 @@ function BlockSection({
       {/*
         The rail connecting a block's sessions is a border on this list,
         drawn once per block. Not an element per row: `/schedule` renders
-        237 entries and a rail segment each would be 237 more.
+        238 entries and a rail segment each would be 238 more.
       */}
       <ol className="flex flex-col gap-3 border-l-2 border-line pl-4 sm:pl-6">
         {group.entries.map((entry) => {

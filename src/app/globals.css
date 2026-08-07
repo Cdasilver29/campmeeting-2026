@@ -677,7 +677,7 @@ html[data-saved-hint="seen"] .saved-hint {
   display: none;
 }
 
-/* Tabular figures. The schedule renders ~237 timestamps in aligned
+/* Tabular figures. The schedule renders ~238 timestamps in aligned
    columns (day timeline, full program, search results) — proportional
    digits make those columns ragged. Every timestamp in the schedule UI
    must use `tabular-figures`; it is intentionally not applied globally

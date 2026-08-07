@@ -39,7 +39,7 @@ function dayOfMonth(date: string): number {
  * "Wednesday" does not fit in that at 14px semibold. So the weekday is
  * abbreviated between md and lg and written out again from lg, where the
  * column is 944px and there is room. Two spans per tile, eighteen elements
- * in total — this is navigation, not the 237-entry programme, and the
+ * in total — this is navigation, not the 238-entry programme, and the
  * per-row rules do not apply to it.
  */
 export function DayRail({ filters }: { filters: ScheduleFilters }) {

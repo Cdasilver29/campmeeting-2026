@@ -49,7 +49,7 @@ export const RAIL_SCROLLER_ID = "day-rail-scroller";
  *    IntersectionObserver over the eight day sections fixes that.
  *
  *    One observer with eight targets, not one per entry and not a scroll
- *    handler. The 237 session rows are never observed — the day section is
+ *    handler. The 238 session rows are never observed — the day section is
  *    the unit, which is also the unit the rail navigates by.
  *
  *    The cue on the tile is a border, a background and a weight change
