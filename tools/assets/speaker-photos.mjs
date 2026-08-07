@@ -87,8 +87,11 @@ const QUALITY = 90;
 const SPEAKERS = [
   { id: "kennedy-mfune",    file: "kennedymfune.jpg",   bottom: 0.68, cx: 0.51,  posY: 0 },
   { id: "allan-okoth",      file: "allanokoth.jpg",     bottom: 0.69, cx: 0.515, posY: 19 },
-  { id: "priskillah-munda", file: "preskillamunda.jpg", bottom: 0.76, cx: 0.51,  posY: 69 },
-  { id: "janet-oyiende",    file: "janetoyiende.jpg",   bottom: 0.74, cx: 0.53,  posY: 4 },
+  // `id` is the output filename and the speaker's id; `file` is the
+  // supplied artwork's name and does not change when an id does. These
+  // two were renamed after v3 and the biographies settled the spellings.
+  { id: "preskilla-munda",  file: "preskillamunda.jpg", bottom: 0.76, cx: 0.51,  posY: 69 },
+  { id: "janet-oyende-kariuki", file: "janetoyiende.jpg", bottom: 0.74, cx: 0.53, posY: 4 },
   { id: "john-clement",     file: "johnclement.jpg",    bottom: 0.72, cx: 0.535, posY: 24 },
   { id: "isaac-oenga",      file: "isaacoenga.jpg",     bottom: 0.71, cx: 0.48,  posY: 60 },
   { id: "barrack-bosire",   file: "Barrackbosire.jpg",  bottom: 0.70, cx: 0.525, posY: 0 },

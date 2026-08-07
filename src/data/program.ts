@@ -203,7 +203,7 @@ export const program: ProgramDay[] = [
           // First of the four-part Health series. The arc printed after
           // each title goes in `note`, so the subtitle is the session's
           // name and the note is where it sits in the sequence.
-          { id: "monday-17-health", title: "Health", subtitle: "What Broke? Broken Identity", start: "14:10", end: "15:00", presenterIds: ["priskillah-munda"], ministry: "health", featured: true, note: "Creation → Fall" },
+          { id: "monday-17-health", title: "Health", subtitle: "What Broke? Broken Identity", start: "14:10", end: "15:00", presenterIds: ["preskilla-munda"], ministry: "health", featured: true, note: "Creation → Fall" },
           { id: "monday-17-family-life", title: "Family Life Sessions", start: "15:00", end: "16:20", presentedBy: ["Various Divisions and Speakers"], ministry: "family-life", featured: true },
         ],
       },
@@ -275,7 +275,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "tuesday-18-pm-music", title: "Music", start: "14:00", end: "14:10", presentedBy: ["Choristers"], ministry: "music" },
           // "Brokennes" in the source. Single typo, corrected.
-          { id: "tuesday-18-health", title: "Health", subtitle: "How did Brokenness Spread? Generational Brokenness", start: "14:10", end: "15:00", presenterIds: ["priskillah-munda"], ministry: "health", featured: true, note: "Individuals → Families" },
+          { id: "tuesday-18-health", title: "Health", subtitle: "How did Brokenness Spread? Generational Brokenness", start: "14:10", end: "15:00", presenterIds: ["preskilla-munda"], ministry: "health", featured: true, note: "Individuals → Families" },
           { id: "tuesday-18-family-life", title: "Family Life Sessions", start: "15:00", end: "16:20", presentedBy: ["Various Divisions and Speakers"], ministry: "family-life", featured: true },
         ],
       },
@@ -341,7 +341,7 @@ export const program: ProgramDay[] = [
         label: "Afternoon Program",
         sessions: [
           { id: "wednesday-19-pm-music", title: "Music", start: "14:00", end: "14:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "wednesday-19-health", title: "Health", subtitle: "How does Christ Restore? Restored Relationships", start: "14:10", end: "15:00", presenterIds: ["priskillah-munda"], ministry: "health", featured: true, note: "Healing Individuals → Healing Homes" },
+          { id: "wednesday-19-health", title: "Health", subtitle: "How does Christ Restore? Restored Relationships", start: "14:10", end: "15:00", presenterIds: ["preskilla-munda"], ministry: "health", featured: true, note: "Healing Individuals → Healing Homes" },
           { id: "wednesday-19-family-life", title: "Family Life Sessions", start: "15:00", end: "16:20", presentedBy: ["Various Divisions and Speakers"], ministry: "family-life", featured: true },
         ],
       },
@@ -413,7 +413,7 @@ export const program: ProgramDay[] = [
           // Last of the four. The only one whose arc is printed without
           // brackets, and with an arrow typed as "-→"; separated and set
           // like the other three.
-          { id: "thursday-20-health", title: "Health", subtitle: "Why Restoration? Restored Church & Mission", start: "14:10", end: "15:00", presenterIds: ["priskillah-munda"], ministry: "health", featured: true, note: "Healthy Families → Mission" },
+          { id: "thursday-20-health", title: "Health", subtitle: "Why Restoration? Restored Church & Mission", start: "14:10", end: "15:00", presenterIds: ["preskilla-munda"], ministry: "health", featured: true, note: "Healthy Families → Mission" },
           { id: "thursday-20-family-life", title: "Family Life Sessions", start: "15:00", end: "16:20", presentedBy: ["Various Divisions and Speakers"], ministry: "family-life", featured: true },
         ],
       },

@@ -72,15 +72,18 @@ export const eventInfo: EventInfo = {
  *
  * `imagePosition` is per photo and is not decoration. See types.ts.
  *
- * ── ABOUT THE FOUR SPEAKERS WITH NO SESSIONS ─────────────────────────
+ * ── ABOUT THE THREE SPEAKERS WITH NO SESSIONS ────────────────────────
  *
- * janet-oyiende, john-clement, isaac-oenga and barrack-bosire appear in
- * no session in program.ts, because program.ts is transcribed from
- * Draft_Program_v2 and these four were appointed after it was drawn. That
- * is a gap in the programme, not in this file: the sessions are owed by
- * the committee. Nothing here invents one, and no ministry tag was
- * attached to make the pages look fuller than the data is. See
- * DATA-NOTES.md.
+ * janet-oyende-kariuki, john-clement and barrack-bosire appear in no
+ * session in program.ts. Draft Program v3 credits a presenter on nearly
+ * every slot and still names none of them, so this is now a programme
+ * that has been revised twice without placing them rather than one that
+ * simply predates their appointment. isaac-oenga was the fourth and v3
+ * gives him the morning devotion on all six days that have one.
+ *
+ * The sessions are owed by the committee. Nothing here invents one, and
+ * no ministry tag was attached to make the pages look fuller than the
+ * data is. See DATA-NOTES.md.
  *
  * Their pages render, and read as "sessions to be confirmed" rather than
  * as an error. `programSpeakers` (features/schedule/lib/presenters.ts)
@@ -111,28 +114,27 @@ export const speakers: Speaker[] = [
     imagePosition: "50% 19%",
   },
   {
-    id: "priskillah-munda",
-    name: "Priskillah Munda",
+    id: "preskilla-munda",
+    name: "Preskilla Munda",
     title: "Dr.",
     role: "Health Presenter",
-    // ── SPELLING NOT CONFIRMED. DO NOT CHANGE IT TO MATCH THE ART. ──
+    // ── SPELLING SETTLED, AND THE ID MIGRATED WITH IT ────────────────
     //
-    // Three spellings are in play and the committee has confirmed none:
+    // This record said "Priskillah Munda" under the id `priskillah-munda`
+    // through Phase 4, on the tie-break that the programme PDF was the
+    // signed source. Draft Program v3 removes the tie: it prints
+    // "Dr. Preskilla Munda" on all four Health sessions, agreeing with
+    // the poster card's own caption and with the supplied file name
+    // `preskillamunda.jpg`. Three sources to none.
     //
-    //   "Priskillah Munda"   the programme PDF, and what this record says
-    //   "Preskilla Munda"    the supplied poster card's own burnt-in caption
-    //   preskillamunda.jpg   the supplied file name, agreeing with the card
+    // So the artwork was right and v2 had the typo, which is the case
+    // the old note said would require migrating the id rather than
+    // editing the name. The id, the portrait file and the crop script's
+    // entry all moved together.
     //
-    // The PDF wins because it is the signed source and because the id
-    // `priskillah-munda` is stable and already in URLs, the share card and
-    // the sitemap. That is a tie-break, not a decision: it is entirely
-    // possible the artwork is right and the PDF has the typo, in which case
-    // the id has to be migrated with a redirect rather than edited.
-    //
-    // **Needs written confirmation from the committee before launch.**
-    // Whoever gets it: change `name` here and nothing else until you have
-    // decided what happens to the id. DATA-NOTES.md item 8.
-    image: "/speakers/priskillah-munda.webp",
+    // The programme prints the short form; her own biography gives the
+    // full "Preskilla Ochieng-Munda", which is where the bio uses it.
+    image: "/speakers/preskilla-munda.webp",
     imagePosition: "50% 69%",
   },
   /*
@@ -141,28 +143,21 @@ export const speakers: Speaker[] = [
    * "Eld." below come from.
    */
   {
-    id: "janet-oyiende",
-    name: "Janet Oyiende",
+    id: "janet-oyende-kariuki",
+    name: "Janet Oyende-Kariuki",
     role: "Ambassadors",
-    // ── SPELLING NOT CONFIRMED. DO NOT CHANGE IT TO MATCH THE ART. ──
+    // ── SPELLING SETTLED BY HER OWN BIOGRAPHY ────────────────────────
     //
-    // This one disagrees in two ways at once, not one:
+    // Two questions were open here, not one: whether the surname is
+    // Oyiende or Oyende, and whether Kariuki is printed at all. She is
+    // credited in no session, so the programme could not answer either.
     //
-    //   "Janet Oyiende"        what this record says
-    //   "Janet Oyende Kariuki" the supplied poster card's burnt-in caption
-    //
-    // A different spelling of the surname — Oyiende against Oyende — AND a
-    // third name the record does not carry at all. Those are two separate
-    // questions: which spelling is hers, and whether Kariuki should be
-    // printed. She appears in no session in `program.ts` (item 7), so the
-    // PDF offers no second opinion on either; this record's spelling comes
-    // from the appointment note and the id `janet-oyiende` follows it.
-    //
-    // **Needs written confirmation from the committee before launch**, and
-    // it is the more urgent of the two: a name printed wrong on a card
-    // introducing someone is worse than a soft photograph. DATA-NOTES.md
-    // item 8.
-    image: "/speakers/janet-oyiende.webp",
+    // Her supplied biography answers both in its first line, which reads
+    // "FULL NAME: Janet Oyende-Kariuki" — hyphenated, and with the third
+    // name. That is her own account of her name, which outranks both the
+    // appointment note this record used to follow and the poster card's
+    // unhyphenated caption. The id and the portrait file moved with it.
+    image: "/speakers/janet-oyende-kariuki.webp",
     imagePosition: "50% 4%",
   },
   {

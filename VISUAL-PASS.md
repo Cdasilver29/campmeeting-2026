@@ -983,6 +983,10 @@ which 75%. It is derived rather than chosen: it puts the face's centre at
 | allan-okoth | 1264x1264 | 324,0 654x872 | 540x720 | 46.9 | 50% 19% |
 | priskillah-munda | 1264x1264 | 284,0 721x961 | 540x720 | 55.0 | 50% 69% |
 | janet-oyiende | 1264x1264 | 319,0 701x935 | 540x720 | 49.7 | 50% 4% |
+<!-- The last two ids were later migrated to preskilla-munda and
+     janet-oyende-kariuki; the crops are unchanged. See "Two names,
+     marked and not changed" below. -->
+
 | john-clement | 1024x1024 | 271,0 553x737 | 540x720 | 43.0 | 50% 24% |
 | isaac-oenga | 1264x1264 | 270,0 673x897 | 540x720 | 50.5 | 50% 60% |
 | barrack-bosire | 1264x1264 | 332,0 664x885 | 540x720 | 65.0 | 50% 0% |
@@ -1658,6 +1662,13 @@ band and not the instrument. It is two orders of magnitude below the 0.1
 "good" threshold and below the 0.0061 max session 3 recorded as CLS 0.0000.
 
 ## Two names, marked and not changed
+
+> **Superseded.** Draft Program v3 and the speakers' own supplied
+> biographies later settled both. The ids are now `preskilla-munda` and
+> `janet-oyende-kariuki`, and the portrait files moved with them. What
+> follows is the record of the pass that decided to leave them alone,
+> which was the right call at the time and is why the evidence was still
+> written down where the next person would find it. See DATA-NOTES.md.
 
 No spelling changed. Both records carry the disagreement in full, at the
 point where the next person would be tempted to fix it.

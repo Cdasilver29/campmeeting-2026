@@ -73,13 +73,12 @@ export default async function SpeakerPage({
       <Band>
       {total === 0 ? (
         /*
-         * FOUR SPEAKERS ARE IN THIS STATE TODAY and it is not an error.
-         * janet-oyiende, john-clement, isaac-oenga and barrack-bosire were
-         * appointed after Draft_Program_v2 was transcribed, so the
-         * programme has no session crediting them yet. The wording has to
-         * say that the sessions are coming, not that the page is broken
-         * or that the person has nothing to do: "No sessions are listed"
-         * reads as the latter.
+         * THREE SPEAKERS ARE IN THIS STATE TODAY and it is not an error.
+         * janet-oyende-kariuki, john-clement and barrack-bosire are
+         * credited in no session, in v2 and again in v3. The wording has
+         * to say that the sessions are coming, not that the page is
+         * broken or that the person has nothing to do: "No sessions are
+         * listed" reads as the latter.
          *
          * EmptyState rather than a bare paragraph, because that is the
          * component this site uses whenever a view has nothing in it, and

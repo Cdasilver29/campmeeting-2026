@@ -44,4 +44,4 @@ Phase 6 — PWA + SEO + polish. Offline PWA (precache shell + program data; the 
 - Exact brand hexes from the live site.
 - Event theme text for the hero. The main site shows "The Good News in the Great Controversy" in a pastor's letter, but that letter references February dates and a different pastor, so it may be stale. Confirm the August 2026 theme before it goes in the hero.
 - Friday evening/vespers service existence, Sunday morning Medical Camp times, closing Sabbath 15:00–16:00 gap.
-- Speaker photos and bios (Pr. Kennedy Mfune, Eld. Ken Ochuka, Allan Okoth, Dr. Priskillah Munda).
+- Speaker photos for Eld. Ken Ochuka, Pr. Elkanah Mose and Pr. Kenneth Ayuo. Names are no longer open: Draft Program v3 and the supplied biographies settled "Dr. Preskilla Munda" and "Janet Oyende-Kariuki". See DATA-NOTES.md for the current list of what is owed.
