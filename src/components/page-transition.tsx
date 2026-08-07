@@ -45,8 +45,13 @@ import { usePathname } from "next/navigation";
  *      version needed `useReducedMotion` because that block has no
  *      effect on JS-driven transforms — a whole branch of this component
  *      existed only to work around not being CSS.
- *   3. LazyMotion and the DOM animation feature set leave the shared
- *      bundle. That was 14 KB on every route for one fade.
+ *   3. One fewer client component doing JS animation work on every
+ *      navigation, on the route where the main thread is scarcest.
+ *
+ * It does NOT take framer-motion out of the bundle, and an earlier
+ * version of this note claimed it did. Reveal and BandDrift both still
+ * import `m` under the same LazyMotion feature set, so the library ships
+ * either way. The reason to do this is the bug, not the bytes.
  *
  * ── THE FIRST PAINT IS NOT ANIMATED, DELIBERATELY ────────────────────
  *
