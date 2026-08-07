@@ -135,6 +135,18 @@
   --color-tag-community: #b9aaa3;     /* Earth */
   --color-tag-community-tint: #281912;
 
+  /* The wave's four colours, lightened for the dark surface exactly as
+     the tags above are. Raw Emperor over --color-surface (#1f0d35) is
+     the same hue at a similar darkness: at the alphas the wave uses it
+     composites to a shape you cannot see, so the divider would simply
+     be absent in dark mode rather than subtle. These are the same
+     lightened steps the tag family takes, plus --color-accent-300 for
+     the gradient's near stop. */
+  --color-wave-back: #b89ae0;  /* Emperor lightened, = --color-accent-300 */
+  --color-wave-edge: #c59cad;  /* Grapevine lightened, = --color-accent-600 */
+  --color-wave-mid: #9caec2;   /* Denim lightened */
+  --color-wave-near: #88b3bb;  /* Ming lightened */
+
   /* shadcn base, pointed at the brand dark values above so dark mode
      is Emperor throughout instead of shadcn's own neutral grey scale. */
   --background: var(--color-surface);
@@ -313,6 +325,26 @@
   --color-tag-care-tint: #f6f9fa;
   --color-tag-community: #6a483a;     /* [derived] Earth, 7.49:1 on its tint */
   --color-tag-community-tint: #f8f6f5;
+
+  /* ── The section wave ──────────────────────────────────────────────
+     The four colours the layered divider below every hero and header
+     band is drawn from. They are the brand values above, named again
+     here rather than referenced, because what a wave layer is for is
+     not what a tag is for and a decoration must never quietly inherit a
+     token that carries meaning. Grapevine in particular is `featured`
+     and the header eyebrow; the wave borrows the colour, not the job.
+
+     NO CONTRAST RATIO IS QUOTED, and that is the point: nothing is ever
+     set on these. They are fills in an aria-hidden SVG that sits below
+     the band, never behind type. See src/components/section-wave.tsx.
+
+     back and edge are the two stops of the poster's own Emperor ->
+     Grapevine gradient, which is the same step --color-accent-500 ->
+     --color-accent-600 takes for hover. */
+  --color-wave-back: #4b207f;  /* [brand] Emperor */
+  --color-wave-edge: #7f264a;  /* [brand] Grapevine */
+  --color-wave-mid: #2f557f;   /* [brand] Denim */
+  --color-wave-near: #3e8391;  /* [brand] Ming */
 
   /* ── Type ──────────────────────────────────────────────────────────
      Display: Fraunces — a reverent, editorial serif with enough

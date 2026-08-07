@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { SectionWave } from "@/components/section-wave";
 import { cn } from "@/lib/utils";
 import type { PageIdentity } from "@/lib/page-identity";
 import {
@@ -202,15 +203,30 @@ export function PageHeader({
   const whole = image?.fit === "whole";
 
   return (
-    // data-page-header is a hook for tools/perf/align.mjs, which has to
-    // tell this band apart from an ordinary one. Sniffing for `main
-    // header` is not good enough: /offline and /styleguide both hand-roll
-    // a <header> inside a plain Band, and the harness scored both as
-    // uncentred page headers before this attribute existed.
-    //
-    // data-header-art is the hook for tools/perf/verify-page-header.mjs,
-    // which needs to know whether to measure this band's type against the
-    // brightest composited pixel or not measure it at all.
+    /*
+      A fragment: the band, then the wave as its sibling.
+
+      The wave is emitted HERE rather than by each of the thirteen pages
+      that carry a band, so it is a system rather than thirteen chances
+      to forget one — and it arrives on /contact's image-only band and
+      /speakers' lockup band without either of them knowing about it.
+
+      A SIBLING, not a child, and section-wave.tsx says why at length:
+      inside the band it could land inside the eyebrow, title or meta box
+      and change the scrim contrast those boxes were measured against,
+      and it would have grown a band whose height every photograph's crop
+      is computed from.
+    */
+    <>
+    {/* data-page-header is a hook for tools/perf/align.mjs, which has to
+        tell this band apart from an ordinary one. Sniffing for `main
+        header` is not good enough: /offline and /styleguide both hand-roll
+        a <header> inside a plain Band, and the harness scored both as
+        uncentred page headers before this attribute existed.
+
+        data-header-art is the hook for tools/perf/verify-page-header.mjs,
+        which needs to know whether to measure this band's type against the
+        brightest composited pixel or not measure it at all. */}
     <div
       className={cn(
         "band relative isolate overflow-hidden bg-surface-muted",
@@ -488,5 +504,8 @@ export function PageHeader({
         </header>
       </div>
     </div>
+
+    <SectionWave />
+    </>
   );
 }

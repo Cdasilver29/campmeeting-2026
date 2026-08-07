@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Band } from "@/components/band";
 import { JsonLd } from "@/components/json-ld";
 import { Reveal } from "@/components/reveal";
+import { SectionWave } from "@/components/section-wave";
 import { Hero } from "@/features/home/components/hero";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { TodayView } from "@/features/schedule/components/today-view";
@@ -39,6 +40,19 @@ export default function Home() {
 
       {/* Full-bleed, so it sits outside the content column. */}
       <Hero />
+
+      {/* The same divider the thirteen header bands carry, which is the
+          whole point of it — the home page's hero and an interior page's
+          band close the same way, so it reads as one system rather than
+          as an effect on one screen.
+
+          Written out here rather than emitted by Hero, because the hero
+          is not a PageHeader and the two share no component. Outside the
+          hero element for the same reason it is outside the bands: the
+          hero's own scrim alpha was derived by measuring the brightest
+          pixel behind its type (tools/perf/verify-hero.mjs), and nothing
+          painted below it can reach that measurement. */}
+      <SectionWave />
 
       {/* One reveal for the whole clock-dependent block, not one per
           session inside it. */}
