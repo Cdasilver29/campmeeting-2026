@@ -1,62 +1,85 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import {
-  AnimatePresence,
-  domAnimation,
-  LazyMotion,
-  m,
-  useReducedMotion,
-} from "framer-motion";
 
 /**
- * `m` under LazyMotion rather than `motion`.
+ * The page transition: the incoming page fades up, and nothing fades out.
  *
- * `motion` pulls Framer's whole feature set into the shared bundle on
- * every route — 58 KB of it, about 70% of which Lighthouse measured as
- * unused, for one opacity-and-offset transition. `m` with the DOM
- * animation set is the same transition without the gesture, drag and
- * layout-projection machinery.
+ * ── WHAT THIS REPLACED, AND THE BUG THAT MADE IT ─────────────────────
  *
- * The features are imported statically, not behind a dynamic import.
- * Loading them lazily is the obvious next step and it measured worse:
- * LazyMotion re-renders its subtree when the features land, and on
- * /schedule that subtree is the whole programme, ~4,700 elements, which
- * roughly tripled total blocking time. The bytes were not worth the
- * re-render.
+ * This was Framer's `AnimatePresence mode="wait"` around an `m.div` keyed
+ * on the pathname, with `initial`, `animate` and `exit`. It put a visible
+ * white gap on every navigation and a long one on /schedule.
  *
- * What this buys is 14 KB off the shared bundle on every route. It does
- * not move the Lighthouse performance score: four runs of /schedule
- * either way landed inside each other's spread. Bytes on the wire are
- * the reason to keep it, not the score.
+ * `mode="wait"` runs the outgoing animation to completion before the
+ * incoming one starts, so the shortest possible blank is the exit plus
+ * the enter — 500ms of a 250ms transition. Worse, the App Router updates
+ * `usePathname()` and the `children` prop in the same render, so the node
+ * that plays the EXIT animation is already holding the INCOMING page's
+ * markup: the new page painted, faded itself out to opacity 0, waited,
+ * and faded back in.
+ *
+ * On /schedule that is 27,000px and ~4,700 elements mounting while the
+ * animation sits at opacity 0 and is starved of frames. Measured on a
+ * built server at a 4x CPU throttle, clicking the nav link from "/":
+ *
+ *     near-blank for 1431ms      / -> /schedule
+ *     near-blank for  252ms      / -> /speakers
+ *     near-blank for  310ms      /schedule -> /
+ *
+ * The page every reader opens first and returns to most was blank for
+ * about a second and a half on a mid-range phone.
+ *
+ * ── WHY CSS RATHER THAN FRAMER ───────────────────────────────────────
+ *
+ * There is no exit animation to coordinate any more, so there is nothing
+ * left for a JS animation library to do that a keyframe cannot. Going to
+ * CSS buys three things beyond the fix:
+ *
+ *   1. It cannot starve. A compositor-driven keyframe on opacity and
+ *      transform runs off the main thread, so mounting 4,700 elements no
+ *      longer holds the animation at zero.
+ *   2. `prefers-reduced-motion` is honoured by the global block in
+ *      globals.css, which zeroes every animation duration. The Framer
+ *      version needed `useReducedMotion` because that block has no
+ *      effect on JS-driven transforms — a whole branch of this component
+ *      existed only to work around not being CSS.
+ *   3. LazyMotion and the DOM animation feature set leave the shared
+ *      bundle. That was 14 KB on every route for one fade.
+ *
+ * ── THE FIRST PAINT IS NOT ANIMATED, DELIBERATELY ────────────────────
+ *
+ * `hasNavigated` stays false until after the first commit, so the class
+ * is absent on the server-rendered HTML and on hydration. Two reasons,
+ * and the second is the one that matters:
+ *
+ *   - An `opacity: 0` start on first paint delays the largest contentful
+ *     paint by the length of the animation, on every route, for a fade
+ *     nobody asked for. The old component avoided this too, with
+ *     `AnimatePresence initial={false}`.
+ *   - If the stylesheet were ever slow or blocked, an element that
+ *     starts at `opacity: 0` in the markup is an invisible page. Nothing
+ *     here is invisible until JavaScript has run at least once, so the
+ *     server-rendered document is readable on its own — which is the
+ *     property /schedule is built around.
+ *
+ * The `key` is what makes it fire: a changed key remounts the div, and a
+ * fresh element runs its animation from the start. Without it the class
+ * would already be applied and the browser would have nothing to do.
  */
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const shouldReduceMotion = useReducedMotion();
+  const hasNavigated = useRef(false);
 
-  // The CSS reduced-motion block in globals.css only zeroes out
-  // CSS-driven animation/transition durations — it has no effect on
-  // Framer's JS-driven transforms. useReducedMotion is the JS-level
-  // check, so this is a genuine no-op (no wrapper, no animation) rather
-  // than an animation that merely completes instantly.
-  if (shouldReduceMotion) {
-    return <>{children}</>;
-  }
+  useEffect(() => {
+    // After the first commit every subsequent render is a navigation.
+    hasNavigated.current = true;
+  }, []);
 
   return (
-    <LazyMotion features={domAnimation} strict>
-      <AnimatePresence mode="wait" initial={false}>
-        <m.div
-          key={pathname}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {children}
-        </m.div>
-      </AnimatePresence>
-    </LazyMotion>
+    <div key={pathname} className={hasNavigated.current ? "page-enter" : undefined}>
+      {children}
+    </div>
   );
 }

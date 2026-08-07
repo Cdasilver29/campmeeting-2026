@@ -762,6 +762,40 @@ html[data-saved-hint="seen"] .saved-hint {
   animation: live-pulse 2.4s var(--ease-out-soft) infinite;
 }
 
+/* ── The page transition ──────────────────────────────────────────────
+   The incoming page fades up. There is deliberately no matching exit:
+   see the long note in src/components/page-transition.tsx for the bug
+   that removed it, which was a 1.4-second white gap on /schedule.
+
+   Applied only after the first navigation, so the server-rendered
+   document never starts at opacity 0 and the largest contentful paint is
+   not held back by a fade on first load.
+
+   opacity and transform only, so this composites and cannot be starved
+   by the main thread mounting a 27,000px programme underneath it.
+
+   `both` matters: it holds the `from` state during the animation's own
+   frame-zero, which is what stops a one-frame flash of the final
+   position before the animation takes over.
+
+   The reduced-motion block below zeroes the duration, which lands the
+   element on its `to` state immediately — visible, in place, no motion.
+   That is why this component no longer needs a JS-level check. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.page-enter {
+  animation: page-enter var(--duration-base) var(--ease-out-soft) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
