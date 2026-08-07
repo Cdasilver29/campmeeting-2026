@@ -287,9 +287,15 @@ export const speakers: Speaker[] = [
     id: "kenneth-ayuo",
     name: "Kenneth Ayuo",
     title: "Pr.",
-    // Four different slots across four mornings rather than one series
-    // with one name, so the role names the thread rather than a tag.
-    role: "Spirit of Prophecy, Prophecy, Possibility Ministry, Discipleship",
+    // He has the 09:00 slot on four mornings and it is a different
+    // subject each time: Spirit of Prophecy on Monday, Prophecy on
+    // Tuesday, Possibility Ministry on Wednesday, Discipleship on
+    // Friday. `role` named all four, which is 60 characters in a field
+    // whose other values are "Main Speaker" and "Teens" — it set the
+    // page's eyebrow to a comma list and made his card the tallest in
+    // the grid. The four subjects are in the programme, where they
+    // belong, and this names the thread instead.
+    role: "Morning Sessions",
     // Corrected: one missing space, "trust God.Come". Kept exactly as
     // written: "OBEY AND LIVE, Disobey and Perish. The Choice is
     // Yours.", which is his own framing of the theme and not this

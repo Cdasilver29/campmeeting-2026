@@ -1,5 +1,11 @@
 import Link from "next/link";
 import type { Host } from "@/data";
+import {
+  PERSON_CARD,
+  PERSON_CARD_INTERACTIVE,
+  PERSON_CARD_NAME,
+  PERSON_CARD_ROLE,
+} from "./person-card";
 import { SpeakerAvatar } from "./speaker-avatar";
 
 /**
@@ -40,17 +46,17 @@ function HostBody({ host }: { host: Host }) {
     <>
       <SpeakerAvatar speaker={host} size="lg" />
       <div className="flex flex-col gap-1">
-        <p className="font-display text-lg leading-tight text-ink">{label}</p>
+        <p className={PERSON_CARD_NAME}>{label}</p>
         {/* Not optional the way a speaker's role is. The office IS what
             puts someone on this list, so a host without one would be a
             data error rather than a card with a line missing, and the
             type makes it required. */}
-        <p className="text-sm text-ink-muted">{host.role}</p>
+        <p className={PERSON_CARD_ROLE}>{host.role}</p>
       </div>
       {host.bio && host.bio.length > 0 ? (
         <div className="flex flex-col gap-2">
           {host.bio.map((paragraph) => (
-            <p key={paragraph} className="text-sm leading-6 text-ink-muted">
+            <p key={paragraph} className="text-xs leading-5 text-ink-muted sm:text-sm sm:leading-6">
               {paragraph}
             </p>
           ))}
@@ -59,9 +65,6 @@ function HostBody({ host }: { host: Host }) {
     </>
   );
 }
-
-/** Shared by both branches so the two cannot drift apart visually. */
-const CARD = "flex h-full flex-col items-start gap-4 rounded-card bg-surface p-5 ring-1 ring-line";
 
 export function HostCard({ host }: { host: Host }) {
   /* Only Eld. Ken Ochuka has a speaker page today. Linking the card that
@@ -73,7 +76,7 @@ export function HostCard({ host }: { host: Host }) {
     return (
       <Link
         href={`/speakers/${host.speakerId}`}
-        className={`${CARD} transition-[background-color,box-shadow,translate] duration-fast ease-out-soft hover:-translate-y-px hover:bg-surface-muted hover:ring-ink-muted/30 active:translate-y-0 active:ring-2 active:ring-primary/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500`}
+        className={`${PERSON_CARD} ${PERSON_CARD_INTERACTIVE}`}
       >
         <HostBody host={host} />
       </Link>
@@ -81,7 +84,7 @@ export function HostCard({ host }: { host: Host }) {
   }
 
   return (
-    <article className={CARD}>
+    <article className={PERSON_CARD}>
       <HostBody host={host} />
     </article>
   );

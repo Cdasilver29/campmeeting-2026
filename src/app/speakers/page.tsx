@@ -52,13 +52,20 @@ export default function SpeakersPage() {
           the grid it names, on the same shell edge the lockup starts from. */}
       <h1 className={`${DOC_HEADING} mb-(--space-item)`}>{speakersPage.title}</h1>
 
-      {/* Four cards read as one set, so they stagger. This is the size of
+      {/* The cards read as one set, so they stagger. This is the size of
           group the stagger is for; a long list is not.
 
-          One column on a phone rather than two: at 390 a two-up grid gave
-          each card about 160px, which is not enough for a name, a role and
-          a count without every one of them wrapping. */}
-      <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          TWO COLUMNS ON A PHONE. This was one, on the finding that a
+          two-up grid gave each card about 160px at 390 and that was not
+          enough for a name, a role and a count without all three
+          wrapping. That finding was about the card, not about the
+          column count, and the card has since been sized for it — see
+          person-card.ts, where every value is derived from the 102px of
+          content two cards leave at 320. What changed the balance is
+          that there are ten speakers now rather than four, plus five
+          hosts, and fifteen single-file cards is a scroll nobody reads
+          to the end of. */}
+      <RevealGroup className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         {speakers.map((speaker) => (
           <RevealItem key={speaker.id} className="h-full">
             <SpeakerCard
@@ -102,7 +109,7 @@ export default function SpeakersPage() {
               than ten, so the last one sits alone on the second row at
               lg — which is what a set of five does and is better than
               inventing a five-column track for one section. */}
-          <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <RevealGroup className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
             {hosts.map((host) => (
               <RevealItem key={host.id} className="h-full">
                 <HostCard host={host} />

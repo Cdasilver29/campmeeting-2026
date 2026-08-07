@@ -76,8 +76,21 @@ export function SpeakerAvatar({
   size?: "default" | "lg";
   className?: string;
 }) {
+  // The requested variant, not the painted size. CSS drives layout in
+  // both branches, so asking for 80 and painting 56 below `sm` costs one
+  // downscale and no second file — and no layout shift either way,
+  // because the box is sized by the class rather than by the attribute.
   const px = size === "lg" ? 80 : 48;
-  const dimension = size === "lg" ? "size-20 text-2xl" : "size-12 text-base";
+  /*
+   * `lg` steps down below `sm`. The cards go two across a 320px phone,
+   * which leaves each one 102px of content, and an 80px avatar in a
+   * 102px column is the card's whole first line. 56px reads as a
+   * portrait beside a name instead of as the subject of the card, and it
+   * is back to 80 at `sm` where there is room for it. See person-card.ts
+   * for where 102px comes from.
+   */
+  const dimension =
+    size === "lg" ? "size-14 text-xl sm:size-20 sm:text-2xl" : "size-12 text-base";
 
   if (speaker.image) {
     return (
