@@ -1,10 +1,30 @@
 import type { ProgramDay } from "./types";
 
 /**
- * Source: Draft Program v2, Camp Meeting 2026 (15th–22nd August).
+ * Source: Draft Program v3, Camp Meeting 2026 (15th–22nd August).
  * Transcribed 1:1 from the PDF, times normalized to 24h.
  * Known source-document issues are listed in DATA-NOTES.md — do not
  * silently "fix" the schedule here without the program committee's sign-off.
+ *
+ * ── TWO CONVENTIONS THIS FILE FOLLOWS ────────────────────────────────
+ *
+ * 1. "Participant" is never transcribed. It is the draft's yellow
+ *    to-be-confirmed marker, not a person, and rendering it would put a
+ *    placeholder on a public programme. Where the committee has since
+ *    supplied the name, it is here; where it has not, the session simply
+ *    carries no presenter. Some cells hold the marker AND a real credit
+ *    (Monday's evening offering, for one) — there the marker is dropped
+ *    and the real credit kept.
+ *
+ * 2. A presenter cell is split into separate credits only when both
+ *    halves name someone: "Alice Bonareri and Choristers" becomes two
+ *    chips, "Choristers and Choirs" and "Online Panel and Various
+ *    Classes" stay one, because "Choirs" and "Various Classes" are not
+ *    names and a chip saying so would claim more than the source does.
+ *
+ * Session ids are unchanged from v2 wherever v3 kept the item, even
+ * where v3 renamed it — ids are in localStorage bookmarks and in URLs.
+ * A slug that no longer matches its title is deliberate. See DATA-NOTES.
  */
 
 export const program: ProgramDay[] = [
@@ -19,49 +39,54 @@ export const program: ProgramDay[] = [
         id: "morning-service",
         label: "Morning Service",
         sessions: [
-          { id: "sabbath-15-song-service", title: "Song Service", start: "08:00", end: "08:15", ministry: "music" },
-          { id: "sabbath-15-opening-song", title: "Opening Song", start: "08:15", end: "08:18", ministry: "music" },
-          { id: "sabbath-15-opening-prayer", title: "Opening Prayer", start: "08:18", end: "08:21", ministry: "prayer" },
-          { id: "sabbath-15-welcome", title: "Welcome & Intro", start: "08:21", end: "08:23" },
-          { id: "sabbath-15-special-thought", title: "Special Thought", start: "08:23", end: "08:27" },
-          { id: "sabbath-15-special-item", title: "Special Item", start: "08:27", end: "08:30", ministry: "music" },
-          { id: "sabbath-15-mission-reading", title: "Mission Reading", start: "08:30", end: "08:35" },
-          { id: "sabbath-15-closing-song", title: "Closing Song", start: "08:35", end: "08:38", ministry: "music" },
-          { id: "sabbath-15-closing-prayer", title: "Closing Prayer", start: "08:38", end: "08:40", ministry: "prayer" },
-          { id: "sabbath-15-lesson-discussion", title: "Lesson Discussion", start: "08:40", end: "09:40", ministry: "bible-study" },
-          { id: "sabbath-15-announcements", title: "Announcements and Highlights", start: "09:40", end: "09:50" },
-          { id: "sabbath-15-heart-of-worship", title: "Heart of Worship: Music and Praise", start: "09:50", end: "10:30", ministry: "music" },
+          { id: "sabbath-15-song-service", title: "Song Service", start: "08:00", end: "08:15", presentedBy: ["Choristers"], ministry: "music" },
+          { id: "sabbath-15-opening-song", title: "Opening Song", start: "08:15", end: "08:18", presentedBy: ["Eunice Onyango", "Choristers"], ministry: "music" },
+          { id: "sabbath-15-opening-prayer", title: "Opening Prayer", start: "08:18", end: "08:21", presentedBy: ["Eunice Onyango"], ministry: "prayer" },
+          { id: "sabbath-15-welcome", title: "Welcome & Intro", start: "08:21", end: "08:23", presentedBy: ["Timothy Anyona"] },
+          { id: "sabbath-15-special-thought", title: "Special Thought", start: "08:23", end: "08:27", presentedBy: ["Jerry Lumumba"] },
+          { id: "sabbath-15-special-item", title: "Special Item", start: "08:27", end: "08:30", presentedBy: ["Choristers"], ministry: "music" },
+          { id: "sabbath-15-mission-reading", title: "Mission Reading", start: "08:30", end: "08:35", presentedBy: ["Israel Jathniel"] },
+          { id: "sabbath-15-closing-song", title: "Closing Song", start: "08:35", end: "08:38", presentedBy: ["Alice Bonareri", "Choristers"], ministry: "music" },
+          { id: "sabbath-15-closing-prayer", title: "Closing Prayer", start: "08:38", end: "08:40", presentedBy: ["Alice Bonareri"], ministry: "prayer" },
+          { id: "sabbath-15-lesson-discussion", title: "Lesson Discussion", start: "08:40", end: "09:40", presentedBy: ["Online Panel and Various Classes"], ministry: "bible-study" },
+          { id: "sabbath-15-announcements", title: "Announcements and Highlights", start: "09:40", end: "09:50", presentedBy: ["Eld. Robert Nyarango"] },
+          { id: "sabbath-15-heart-of-worship", title: "Heart of Worship: Music and Praise", start: "09:50", end: "10:30", presentedBy: ["Choristers and Choirs"], ministry: "music" },
         ],
       },
       {
         id: "divine-service",
         label: "Divine Service",
         sessions: [
+          // Retimed and reordered wholesale in v3: the Pastoral Prayer now
+          // precedes the offering, and the Scripture Reading has moved from
+          // fifth in the block to eleventh, four minutes before the sermon.
+          // Ids are v2's so bookmarks survive the change.
           { id: "sabbath-15-doxology", title: "Doxology", start: "10:30", end: "10:32", presentedBy: ["Choristers"], ministry: "worship" },
           { id: "sabbath-15-invocation", title: "Invocation", start: "10:32", end: "10:35", presenterIds: ["kennedy-mfune"], ministry: "worship" },
           { id: "sabbath-15-welcome-intro", title: "Welcome & Introduction", start: "10:35", end: "10:39", presenterIds: ["ken-ochuka"] },
           { id: "sabbath-15-welcome-song", title: "Welcome Song — What a Fellowship", start: "10:39", end: "10:45", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-scripture", title: "Scripture Reading", start: "10:45", end: "10:47" },
-          { id: "sabbath-15-hymn-of-praise", title: "Hymn of Praise", start: "10:47", end: "10:50", ministry: "music" },
-          { id: "sabbath-15-pastoral-prayer", title: "Pastoral Prayer", start: "10:50", end: "10:55", ministry: "prayer" },
-          { id: "sabbath-15-offertory", title: "Offertory / Stewardship", start: "10:55", end: "11:00", ministry: "stewardship" },
-          { id: "sabbath-15-offertory-songs", title: "Offertory Songs", start: "11:00", end: "11:10", ministry: "music" },
-          { id: "sabbath-15-offertory-response", title: "Offertory Response", start: "11:10", end: "11:12" },
-          { id: "sabbath-15-childrens-corner", title: "Children's Corner", start: "11:12", end: "11:20", ministry: "children" },
-          { id: "sabbath-15-special-song", title: "Special Song", start: "11:20", end: "11:25", presentedBy: ["Migori Central Church Choir", "Newlife Church Choir"], ministry: "music" },
-          { id: "sabbath-15-sermon", title: "Sermon", start: "11:25", end: "12:10", presenterIds: ["kennedy-mfune"], featured: true },
-          { id: "sabbath-15-closing-hymn", title: "Closing Hymn", start: "12:10", end: "12:15", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-benediction", title: "Benediction", start: "12:15", end: "12:20", ministry: "prayer" },
-          { id: "sabbath-15-recessional", title: "Recessional Hymn", start: "12:20", end: "12:30", ministry: "music" },
+          { id: "sabbath-15-pastoral-prayer", title: "Pastoral Prayer", start: "10:45", end: "10:50", presentedBy: ["Eld. George Oyoo"], ministry: "prayer" },
+          { id: "sabbath-15-offertory", title: "Stewardship (Tithe and Offerings)", start: "10:50", end: "10:53", ministry: "stewardship" },
+          { id: "sabbath-15-offertory-songs", title: "Special Song / Offertory Songs", start: "10:53", end: "11:03", ministry: "music" },
+          { id: "sabbath-15-offertory-response", title: "Offertory Response", start: "11:03", end: "11:05", presentedBy: ["Choristers"], ministry: "music" },
+          { id: "sabbath-15-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", ministry: "children" },
+          { id: "sabbath-15-special-song", title: "Special Song", start: "11:12", end: "11:27", presentedBy: ["Newlife Church Choir"], ministry: "music" },
+          // 11:29 to 11:30 is unscheduled in v3. As printed. DATA-NOTES.
+          { id: "sabbath-15-scripture", title: "Scripture Reading", start: "11:27", end: "11:29" },
+          { id: "sabbath-15-hymn-of-praise", title: "Hymn of Praise", start: "11:30", end: "11:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
+          { id: "sabbath-15-sermon", title: "Sermon", start: "11:35", end: "12:20", presenterIds: ["kennedy-mfune"], featured: true },
+          { id: "sabbath-15-closing-hymn", title: "Closing Hymn", start: "12:20", end: "12:25", presentedBy: ["Choristers"], ministry: "music" },
+          { id: "sabbath-15-benediction", title: "Benediction", start: "12:25", end: "12:30", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
+          { id: "sabbath-15-recessional", title: "Recessional Hymn", start: "12:30", end: "12:35", presentedBy: ["Choristers"], ministry: "music" },
         ],
       },
       {
         id: "afternoon-program",
         label: "Afternoon Program",
         sessions: [
-          { id: "sabbath-15-pm-music-1", title: "Music", start: "14:00", end: "15:00", ministry: "music" },
+          { id: "sabbath-15-pm-music-1", title: "Music", start: "14:00", end: "15:00", presentedBy: ["Choristers and Choirs"], ministry: "music" },
           { id: "sabbath-15-christian-education", title: "Christian Education", start: "15:00", end: "15:30", ministry: "christian-education", featured: true },
-          { id: "sabbath-15-pm-music-2", title: "Music", start: "15:30", end: "16:00", ministry: "music" },
+          { id: "sabbath-15-pm-music-2", title: "Music", start: "15:30", end: "16:00", presentedBy: ["Choristers and Choirs"], ministry: "music" },
         ],
       },
       {
@@ -69,16 +94,19 @@ export const program: ProgramDay[] = [
         label: "Evening Service",
         sessions: [
           { id: "sabbath-15-ev-doxology", title: "Doxology; Invocation", start: "16:00", end: "16:05", presentedBy: ["Choristers"], presenterIds: ["kennedy-mfune"], ministry: "worship" },
-          { id: "sabbath-15-ev-welcome", title: "Welcome and Introduction", start: "16:05", end: "16:10" },
+          { id: "sabbath-15-ev-welcome", title: "Welcome and Introduction", start: "16:05", end: "16:10", presentedBy: ["Eld. Dennis Munda"] },
+          // No reader named for either of the opening Sabbath's two
+          // Scripture Readings, and no placeholder either — the cell is
+          // simply empty in v3. DATA-NOTES.
           { id: "sabbath-15-ev-scripture", title: "Scripture Reading", start: "16:10", end: "16:15" },
-          { id: "sabbath-15-ev-theme-song", title: "Theme Song", start: "16:15", end: "16:20", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-ev-prayer", title: "Prayer", start: "16:20", end: "16:25", ministry: "prayer" },
+          { id: "sabbath-15-ev-theme-song", title: "Theme Song", start: "16:15", end: "16:20", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
+          { id: "sabbath-15-ev-prayer", title: "Prayer", start: "16:20", end: "16:25", presentedBy: ["Eld. Chris Mbegera"], ministry: "prayer" },
           { id: "sabbath-15-ev-giving", title: "Worship in Giving", start: "16:25", end: "16:30", ministry: "stewardship" },
           { id: "sabbath-15-ev-children", title: "Children's Corner", start: "16:30", end: "16:37", ministry: "children" },
           { id: "sabbath-15-ev-special-item", title: "Special Item", start: "16:37", end: "16:45", ministry: "music" },
           { id: "sabbath-15-ev-sermon", title: "Sermon", start: "16:45", end: "17:30", presenterIds: ["kennedy-mfune"], featured: true },
-          { id: "sabbath-15-ev-theme-song-2", title: "Theme Song", start: "17:30", end: "17:35", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-ev-benediction", title: "Benediction", start: "17:35", end: "17:40", ministry: "prayer" },
+          { id: "sabbath-15-ev-theme-song-2", title: "Theme Song", start: "17:30", end: "17:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
+          { id: "sabbath-15-ev-benediction", title: "Benediction", start: "17:35", end: "17:40", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
         ],
       },
     ],
