@@ -189,6 +189,34 @@ export const speakers: Speaker[] = [
     image: "/speakers/barrack-bosire.webp",
     imagePosition: "50% 0%",
   },
+  /*
+   * Named for the first time in Draft Program v3, which credits a
+   * presenter on nearly every slot where v2 left the column blank. Both
+   * carry a weekday morning series, so unlike the four above they are in
+   * the programme from the day they are added and appear in the
+   * presenter filter straight away.
+   *
+   * No photograph supplied for either; both fall back to the initials
+   * monogram. Owed by the committee alongside Eld. Ken Ochuka's.
+   */
+  {
+    id: "elkanah-mose",
+    name: "Elkanah Mose",
+    title: "Pr.",
+    role: "Stewardship",
+    // v3 prints "Elkana" on Monday and Thursday and "Elkanah" on the
+    // other four days he appears. "Elkanah" is used here because it is
+    // both the majority spelling in the programme and the spelling in
+    // his own supplied biography. DATA-NOTES.
+  },
+  {
+    id: "kenneth-ayuo",
+    name: "Kenneth Ayuo",
+    title: "Pr.",
+    // Four different slots across four mornings rather than one series
+    // with one name, so the role names the thread rather than a tag.
+    role: "Spirit of Prophecy, Prophecy, Possibility Ministry, Discipleship",
+  },
 ];
 
 export const speakerById = Object.fromEntries(

@@ -59,6 +59,10 @@ export const allEntries: ScheduleEntry[] = program.flatMap((day) =>
         ministry: session.ministry,
         search: haystack([
           session.title,
+          // Searchable, because "Broken Identity" is what someone who
+          // heard about the Health series will actually type — "Health"
+          // alone would return all four and distinguish none of them.
+          session.subtitle,
           ...presenterNames(session),
           session.ministry,
           session.ministry && ministryLabels[session.ministry],

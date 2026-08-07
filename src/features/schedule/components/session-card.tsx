@@ -279,6 +279,16 @@ export function SessionCard({
         </span>
       </Heading>
 
+      {/*
+        Inside the heading's own column rather than under the time rail,
+        so the title and its subtitle read as one unit. Regular weight and
+        full ink: it is the sentence a reader chooses the session by, so
+        it must not be quieter than the note underneath it.
+      */}
+      {session.subtitle ? (
+        <p className="text-sm leading-6 text-ink">{session.subtitle}</p>
+      ) : null}
+
       <SessionNotices sessionId={session.id} />
 
       <PresenterChips session={session} />

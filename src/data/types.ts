@@ -34,6 +34,17 @@ export interface Session {
   /** Stable, unique across the whole event. Format: {dayId}-{slug} */
   id: string;
   title: string;
+  /**
+   * The session's own title, where the programme gives one under the
+   * slot's name. Draft Program v3 introduced this: the four Health
+   * sessions are each "Health" in the timetable and carry a distinct
+   * title beneath it ("What Broke? Broken Identity"), which is the part
+   * a reader is actually choosing between.
+   *
+   * Not a second line of `title`: `title` is the slot as the programme
+   * names it, and the schedule groups, searches and links by that.
+   */
+  subtitle?: string;
   /** "HH:MM" 24h. Omitted for untimed blocks (e.g. Medical Camp, Sabbath Preparation). */
   start?: string;
   end?: string;
