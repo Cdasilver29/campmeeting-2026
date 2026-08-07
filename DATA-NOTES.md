@@ -89,6 +89,59 @@ in the data beyond obvious typo normalization.
   and Pr. Elkanah Mose, and both are in the programme from the day they
   were created.
 
+## The biographies, and every character that changed
+
+Eight were supplied. They are the speakers' own words. The brief was to
+correct clear typos and normalise obvious spacing and to change nothing
+else — not to rewrite anyone's voice, not to convert first person to
+third, not to shorten. **This is the complete list of edits**, so the
+committee can check each one against what they sent.
+
+| Speaker | Changed | From → To |
+| --- | --- | --- |
+| Preskilla Munda | 1 spelling | adolscents → adolescents |
+| Elkanah Mose | 2 headings dropped | "Biographical Sketch", "Camp Meeting Theme & Focus" |
+| Isaac Oenga | 1 spelling, 2 spacing | Isaack → Isaac; andmarried → and married; doubled space after "sons" |
+| Kenneth Ayuo | 1 spacing | God.Come → God. Come |
+| John Clement | 1 signature dropped, 1 label merged | "Pr J.M Clement" removed; "Message:" joined to the line it introduces |
+| Janet Oyende-Kariuki | 3 form labels dropped | "FULL NAME:", "CHURCH OF SERVICE:", "Bio :" |
+| Kennedy Mfune | 2 spellings, 5 spacing | decardes → decades; were → where; mfune → Mfune; four doubled/missing spaces; "Rwanda ,am" → "Rwanda, am" |
+| Barrack Bosire | nothing but trailing spaces | — |
+
+**Flagged rather than fixed.** Each is a phrasing question, not a
+misspelling, so none was touched:
+
+- **Kennedy Mfune's is the one that needs you back.** About 110 words with
+  almost no sentence punctuation, and it changes from third person to
+  first halfway through ("...as the Spiritual Director in 2010 moved to
+  Kenya while in Kenya I served..."). Punctuating it into sentences would
+  be writing it rather than transcribing it. Also unresolved in it:
+  "jukat karen Campus" (JKUAT Karen?), "Naps", and "Nu vision". His last
+  clause — "Four Hebrew boys and one Shunammite girl" — is deliberate and
+  must not be tidied.
+- **Kenneth Ayuo's has an orphan sentence.** "To help us make Achoice."
+  sits outside the quotation marks that close his biography, so it reads
+  as a note rather than as his last line. It is not in the data. Say where
+  it belongs and it goes in.
+- **Isaac Oenga**: "Mr. Oenga is married to Agnes together God has blessed
+  them with..." is a run-on; and "Bsc"/"Msc" are set that way rather than
+  BSc/MSc.
+- **John Clement**: "we're spoilt of choices" and "develop strong,
+  Christ-centered walk with God" (no article).
+- **Three long dashes** — one in Preskilla Munda's ("stronger—emotionally
+  grounded"), two in Janet Oyende-Kariuki's — are the writers' own
+  punctuation and are kept. Note this is the one place on the site where
+  CLAUDE.md's "no em dashes in copy" does not hold: that rule governs
+  copy this project writes, and a quoted biography is not that. Say the
+  word and they become commas.
+- **"OBEY AND LIVE, Disobey and Perish. The Choice is Yours."** is kept
+  exactly as Pr. Ayuo wrote it and is deliberately not normalised against
+  `eventInfo.theme`, which is "Obey and Live".
+- **Janet Oyende-Kariuki's church of service**, Nairobi Central SDA
+  Church, was on the supplied form but `Speaker` has no field for it. It
+  is recorded in a comment in `event.ts` rather than written into a
+  sentence she did not write. Add a field if it should show.
+
 ## Issues to confirm with the committee
 
 1. **"Taji Kenya, Gifted Ministry" — one choir or two?** Carried as one

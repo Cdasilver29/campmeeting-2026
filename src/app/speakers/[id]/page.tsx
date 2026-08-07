@@ -57,20 +57,52 @@ export default async function SpeakerPage({
       {/* The portrait sits in the header's media slot, above the eyebrow,
           and the header band centres it. The role is in the eyebrow, where
           the share card already put it, so the name needs no subtitle. */}
+      {/* No `children`. The biography used to sit in the header's slot,
+          which was right while it was one sentence and is wrong now that
+          the supplied ones run to five paragraphs: that slot is centred
+          inside a 55ch measure on a band whose height is its own type, so
+          a long biography would centre 300 words and make the band taller
+          than the screen. It has moved below, ranged left at prose
+          measure, where a biography is read. */}
       <PageHeader
         {...speakerPageDefinition(speaker)}
         media={<SpeakerPortrait speaker={speaker} />}
-      >
-        {/* Only when there is one. "Biography to follow." was a line of
-            type saying nothing on all four pages that carried it, and it
-            is on eight now. A page with a portrait, a role and a
-            programme does not need a sentence apologising for what it
-            has not got; see the no-sessions note below for the one
-            absence that does have to be stated. */}
-        {speaker.bio ? <p>{speaker.bio}</p> : null}
-      </PageHeader>
+      />
 
-      <Band>
+      {/* innerClassName, not className: the gap belongs to the shell the
+          content sits on, not to the full-bleed band around it. */}
+      <Band innerClassName="flex flex-col gap-(--space-section)">
+      {/* Only when there is one. "Biography to follow." was a line of
+          type saying nothing on all four pages that carried it. A page
+          with a portrait, a role and a programme does not need a
+          sentence apologising for what it has not got; see the
+          no-sessions note below for the one absence that does have to be
+          stated. Eight of the ten profiles have a biography today; Eld.
+          Ken Ochuka and Allan Okoth do not. */}
+      {speaker.bio ? (
+        <Reveal>
+          <section
+            aria-labelledby="biography-heading"
+            className="flex max-w-(--width-prose) flex-col gap-4"
+          >
+            {/* A heading rather than an unlabelled block of type, so the
+                page's heading list reads "biography, then the days" and a
+                reader arriving by heading navigation can skip it. */}
+            <h2
+              id="biography-heading"
+              className="font-display text-xl text-ink"
+            >
+              About {speakerLabel(speaker)}
+            </h2>
+            {speaker.bio.map((paragraph) => (
+              <p key={paragraph} className="text-ink-muted">
+                {paragraph}
+              </p>
+            ))}
+          </section>
+        </Reveal>
+      ) : null}
+
       {total === 0 ? (
         /*
          * THREE SPEAKERS ARE IN THIS STATE TODAY and it is not an error.

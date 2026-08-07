@@ -112,10 +112,15 @@ export function SpeakerAvatar({
  *
  * The header's media slot was carrying the same size-20 circle the cards
  * use. That was right while every speaker was a monogram — an 80px
- * monogram repeated at 160px is just a bigger absence. It is wrong now:
- * these pages have a photograph and no biography, and are going to have
- * no biography for a while, so the photograph is the only thing on the
- * page that is about the person rather than about the schedule.
+ * monogram repeated at 160px is just a bigger absence. It stopped being
+ * right once the photographs arrived and these pages had a picture and
+ * nothing else on them about the person.
+ *
+ * Eight of the ten now carry a biography below the band as well, so the
+ * portrait is no longer the only thing on the page that is about its
+ * subject. It stays this size anyway: at 160px it sets the top of the
+ * page, and shrinking it back to a circle would make the two pages that
+ * still have no biography look like the other eight, minus something.
  */
 export function SpeakerPortrait({
   speaker,

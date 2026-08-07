@@ -100,7 +100,21 @@ export interface Speaker {
    * purpose would need.
    */
   imagePosition?: string;
-  bio?: string;
+  /**
+   * The speaker's biography, one string per paragraph.
+   *
+   * An array rather than one string with blank lines in it, because the
+   * supplied biographies are three to five paragraphs long and something
+   * has to decide where they break. A single string pushes that decision
+   * into the renderer, where it becomes a split on a whitespace
+   * convention nobody wrote down; the shape of the text belongs with the
+   * text.
+   *
+   * These are the speakers' own words, transcribed with typos corrected
+   * and nothing else touched. Two are written in the first person and
+   * stay that way. DATA-NOTES.md lists every character that changed.
+   */
+  bio?: string[];
 }
 
 export type AnnouncementPriority = "normal" | "urgent";
