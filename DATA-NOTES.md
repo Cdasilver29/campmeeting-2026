@@ -188,8 +188,24 @@ misspelling, so none was touched:
     finds them in the programme cannot click through. Pr. Onyango does
     appear in the hosts section as an Associate Pastor.
 12. **Three speakers have no photograph**: Eld. Ken Ochuka, Pr. Elkanah
-    Mose and Pr. Kenneth Ayuo. All three render as initials.
-13. **`featured` flags are v2's.** They record which rows were red or bold
+    Mose and Pr. Kenneth Ayuo. All three render as initials. Eld. Ken
+    Ochuka and Allan Okoth have no biography either — Allan Okoth's is
+    the emptiest page relative to how much of the programme he carries,
+    the Children's Corner on all seven days that have one.
+13. **Five host photographs and five host biographies are owed.** The
+    hosts and elders section on `/speakers` — Pr. Gerald Mochoge, Pr.
+    Elvis Onyango, Pr. Polycarp Nyangau, Eld. Ken Ochuka, Eld. George
+    Oyoo — renders every card as an initials monogram with no biography
+    under it. Both slots are declared on `Host` and drawn by `HostCard`
+    the moment they hold anything, so supplying them is an edit to the
+    `hosts` array in `event.ts` and to no component. Eld. Ken Ochuka's
+    are owed once rather than twice: he is also a profiled speaker, and
+    his host card links through to that page.
+14. **"Mochoge" or "Mochige".** The programme PDF prints **Gerald
+    Mochoge** twice — the closing Sabbath's welcome and its farewell —
+    and the list supplied with the hosts spells it "Mochige". The PDF
+    spelling is used. One line of confirmation settles it.
+15. **`featured` flags are v2's.** They record which rows were red or bold
     in the printed programme, and that formatting cannot be read out of
     the v3 text reliably. If v3 re-marked anything, the flags need a pass
     against the printed page.

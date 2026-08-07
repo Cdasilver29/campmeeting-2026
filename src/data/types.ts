@@ -117,6 +117,41 @@ export interface Speaker {
   bio?: string[];
 }
 
+/**
+ * Someone who hosts the camp meeting rather than presents at it: the
+ * pastoral team, the chair, the head elder.
+ *
+ * A separate type from `Speaker`, and a separate array, because the two
+ * answer different questions. A speaker is someone you might come to
+ * hear, is on the programme, has a page of their own and a session
+ * count; a host is who is running the week. Some people are both — Eld.
+ * Ken Ochuka chairs and also opens the first Sabbath — and `speakerId`
+ * is how the same person is joined up rather than duplicated.
+ *
+ * The photo and biography slots are here and empty on purpose. None of
+ * the five has sent either, and the point of declaring the fields now is
+ * that arriving photographs and paragraphs are a data edit in event.ts
+ * and nothing else: the card already draws both when they are present,
+ * and falls back to the initials monogram and to no biography at all
+ * when they are not.
+ */
+export interface Host {
+  /** Stable key. Matches `speakerId` where the person has a profile. */
+  id: string;
+  name: string;
+  /** Honorific as printed: Pr. | Eld. */
+  title?: string;
+  /** The office held, e.g. "Senior Pastor". Not a ministry tag. */
+  role: string;
+  /** Same contract as Speaker.image. Empty today for all five. */
+  image?: string;
+  imagePosition?: string;
+  /** Same contract as Speaker.bio. Empty today for all five. */
+  bio?: string[];
+  /** Set when this person also has a speaker profile to link through to. */
+  speakerId?: string;
+}
+
 export type AnnouncementPriority = "normal" | "urgent";
 
 /**

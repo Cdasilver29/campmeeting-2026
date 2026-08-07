@@ -1,4 +1,4 @@
-import type { EventInfo, Speaker } from "./types";
+import type { EventInfo, Host, Speaker } from "./types";
 
 export const eventInfo: EventInfo = {
   name: "Camp Meeting",
@@ -312,3 +312,72 @@ export const speakers: Speaker[] = [
 export const speakerById = Object.fromEntries(
   speakers.map((s) => [s.id, s]),
 ) as Record<string, Speaker>;
+
+/**
+ * ── THE HOSTS ────────────────────────────────────────────────────────
+ *
+ * Who is running the week, as distinct from who is presenting at it.
+ * Order is by office rather than alphabetical: the two pastors who open
+ * and close the camp meeting, then the associates, then the chair and
+ * the head elder.
+ *
+ * ── EVERY PHOTO AND EVERY BIOGRAPHY IS OWED ──────────────────────────
+ *
+ * All five render as an initials monogram with no biography under them.
+ * That is the shipped state, not a stub: `image`, `imagePosition` and
+ * `bio` are declared on `Host` and drawn by HostCard whenever they are
+ * present, so adding a photograph and a paragraph is an edit to this
+ * array and to nothing else. Do not reach for a stand-in portrait.
+ *
+ * Names come from the programme PDF wherever it prints them, which is
+ * why the senior pastor is "Gerald Mochoge" here. The list supplied with
+ * these five spells it "Mochige"; v3 prints "Mochoge" twice, on the
+ * closing Sabbath's welcome and again on its farewell, and the printed
+ * programme wins over a typed list. Worth one line of confirmation, and
+ * it is in DATA-NOTES.
+ *
+ * Two of the five are in the programme as well as on this list, and are
+ * carried there as free text: Pr. Elvis Onyango has Thursday's
+ * Evangelism, and Pr. Polycarp Nyangau the closing Sabbath's pastoral
+ * prayer. Neither has a speaker profile, so neither card links anywhere.
+ * Eld. Ken Ochuka does have one, and `speakerId` joins them up so his
+ * host card and his presenter card go to the same page rather than
+ * reading as two different people.
+ */
+export const hosts: Host[] = [
+  {
+    id: "gerald-mochoge",
+    name: "Gerald Mochoge",
+    title: "Pr.",
+    role: "Senior Pastor",
+  },
+  {
+    id: "elvis-onyango",
+    name: "Elvis Onyango",
+    title: "Pr.",
+    role: "Associate Pastor",
+  },
+  {
+    id: "polycarp-nyangau",
+    name: "Polycarp Nyangau",
+    title: "Pr.",
+    role: "Associate Pastor",
+  },
+  {
+    id: "ken-ochuka",
+    name: "Ken Ochuka",
+    title: "Eld.",
+    role: "Camp Meeting Chair",
+    // The one host who is also a profiled speaker. His photograph and
+    // biography are owed once, not twice: fill them in on the speaker
+    // record above and this card should be pointed at them rather than
+    // given its own copy.
+    speakerId: "ken-ochuka",
+  },
+  {
+    id: "george-oyoo",
+    name: "George Oyoo",
+    title: "Eld.",
+    role: "Head Elder",
+  },
+];

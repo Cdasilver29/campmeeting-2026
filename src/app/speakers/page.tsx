@@ -1,13 +1,14 @@
 import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { RevealGroup, RevealItem } from "@/components/reveal";
-import { speakers } from "@/data";
+import { eventInfo, hosts, speakers } from "@/data";
+import { HostCard } from "@/features/speakers/components/host-card";
 import { SpeakerCard } from "@/features/speakers/components/speaker-card";
 import { SpeakersLockup } from "@/features/speakers/components/speakers-lockup";
 import { speakerDayGroups } from "@/features/speakers/lib";
 import { pageMetadata } from "@/lib/metadata";
 import { speakersPage } from "@/lib/page-identity";
-import { DOC_HEADING } from "@/lib/typography";
+import { DOC_HEADING, DOC_SECTION, MEASURE } from "@/lib/typography";
 
 export const metadata = pageMetadata(speakersPage);
 
@@ -70,6 +71,45 @@ export default function SpeakersPage() {
           </RevealItem>
         ))}
       </RevealGroup>
+      </Band>
+
+      {/* ── HOSTS, ON THEIR OWN BAND ──────────────────────────────────
+          A muted band rather than a second heading on the same surface.
+          The brief was that this reads as clearly separate from the
+          presenters, and a band boundary is the device this site already
+          uses for exactly that: the background runs edge to edge and the
+          type does not move sideways, so the grids stay on one grid while
+          the two sets stop being one list. See band.tsx.
+
+          It is also the page's second content band, which is inside the
+          two-or-three ceiling that file sets. */}
+      <Band tone="muted">
+        <section aria-labelledby="hosts-heading" className={DOC_SECTION}>
+          <h2 id="hosts-heading" className={DOC_HEADING}>
+            Hosts and elders
+          </h2>
+          {/* One line, because the difference between this grid and the
+              one above it is not self-evident from five names and five
+              offices. MEASURE keeps it to a line of type rather than
+              letting it run the full 80rem shell. */}
+          <p className={MEASURE}>
+            The pastoral team and the elders hosting {eventInfo.edition} at{" "}
+            {eventInfo.church.name}.
+          </p>
+
+          {/* Same grid as the presenters above, so the two sets read as
+              the same kind of card at the same rhythm. Five cards rather
+              than ten, so the last one sits alone on the second row at
+              lg — which is what a set of five does and is better than
+              inventing a five-column track for one section. */}
+          <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {hosts.map((host) => (
+              <RevealItem key={host.id} className="h-full">
+                <HostCard host={host} />
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </section>
       </Band>
     </>
   );

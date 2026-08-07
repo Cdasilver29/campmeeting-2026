@@ -1,5 +1,5 @@
 export * from "./types";
-export { eventInfo, speakers, speakerById } from "./event";
+export { eventInfo, speakers, speakerById, hosts } from "./event";
 export { program } from "./program";
 export {
   announcements,
