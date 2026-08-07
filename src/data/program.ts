@@ -448,14 +448,19 @@ export const program: ProgramDay[] = [
         id: "morning-service",
         label: "Morning Service",
         sessions: [
-          { id: "friday-21-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presentedBy: ["Prayer Ministry"], ministry: "prayer", featured: true },
-          { id: "friday-21-song-service-1", title: "Song Service", start: "08:00", end: "08:10", ministry: "music" },
-          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", ministry: "bible-study", featured: true },
-          { id: "friday-21-song-service-2", title: "Song Service", start: "08:50", end: "09:00", ministry: "music" },
-          { id: "friday-21-discipleship", title: "Discipleship", start: "09:00", end: "09:40", ministry: "discipleship", featured: true },
-          { id: "friday-21-song-service-3", title: "Song Service", start: "09:40", end: "09:50", ministry: "music" },
-          { id: "friday-21-publishing", title: "Publishing", start: "09:50", end: "10:30", ministry: "publishing", featured: true },
-          { id: "friday-21-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "10:50", presentedBy: ["Choirs"], ministry: "music" },
+          { id: "friday-21-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
+          { id: "friday-21-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
+          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Pr. Musonera Jason"], ministry: "bible-study", featured: true },
+          { id: "friday-21-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
+          { id: "friday-21-discipleship", title: "Discipleship", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "discipleship", featured: true },
+          { id: "friday-21-song-service-3", title: "Song Service", start: "09:40", end: "09:50", presentedBy: ["Choristers"], ministry: "music" },
+          // The 09:50 slot was Publishing in v2 and is Stewardship in v3,
+          // which puts Friday in step with the other four weekdays. A
+          // change of subject rather than a rename, but the same slot, so
+          // the id stays — it is what any bookmark already made points at.
+          // The slug is now wrong about its own contents. See DATA-NOTES.
+          { id: "friday-21-publishing", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
+          { id: "friday-21-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "10:50", presentedBy: ["Adventist Men's Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya (Gifted Ministry)"], ministry: "music" },
         ],
       },
       {
@@ -463,15 +468,15 @@ export const program: ProgramDay[] = [
         label: "Mid Morning Service",
         sessions: [
           { id: "friday-21-mm-doxology", title: "Doxology; Invocation", start: "10:50", end: "10:55", presenterIds: ["kennedy-mfune"], ministry: "worship" },
-          { id: "friday-21-mm-welcome", title: "Welcome and Introduction", start: "10:55", end: "11:00" },
-          { id: "friday-21-mm-scripture", title: "Scripture Reading", start: "11:00", end: "11:05" },
-          { id: "friday-21-mm-theme-song", title: "Theme Song", start: "11:05", end: "11:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "friday-21-mm-prayer", title: "Prayer", start: "11:10", end: "11:15", ministry: "prayer" },
-          { id: "friday-21-mm-giving", title: "Worship in Giving", start: "11:15", end: "11:20", ministry: "stewardship" },
+          { id: "friday-21-mm-welcome", title: "Welcome and Introduction", start: "10:55", end: "11:00", presentedBy: ["Eld. Micah Oyaro"] },
+          { id: "friday-21-mm-scripture", title: "Scripture Reading", start: "11:00", end: "11:05", presentedBy: ["Loice Moraa"] },
+          { id: "friday-21-mm-theme-song", title: "Theme Song", start: "11:05", end: "11:10", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
+          { id: "friday-21-mm-prayer", title: "Prayer", start: "11:10", end: "11:15", presentedBy: ["Eld. Duncan Amayo"], ministry: "prayer" },
+          { id: "friday-21-mm-giving", title: "Worship in Giving", start: "11:15", end: "11:20", presentedBy: ["Adventist Men's Ministries Choir"], ministry: "stewardship" },
           { id: "friday-21-mm-children", title: "Children's Corner", start: "11:20", end: "11:35", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "friday-21-mm-special-item", title: "Special Item", start: "11:35", end: "11:40", presentedBy: ["Migori Central Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "friday-21-mm-special-item", title: "Special Item", start: "11:35", end: "11:40", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "friday-21-mm-sermon", title: "Sermon", start: "11:40", end: "12:25", presenterIds: ["kennedy-mfune"], featured: true },
-          { id: "friday-21-mm-theme-song-2", title: "Theme Song", start: "12:25", end: "12:30", presentedBy: ["Choristers"], ministry: "music" },
+          { id: "friday-21-mm-theme-song-2", title: "Theme Song", start: "12:25", end: "12:30", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
         ],
       },
       {
