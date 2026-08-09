@@ -601,12 +601,15 @@
   }
 }
 
-/* THE HERO'S DESKTOP CROP POSITION.
+/* THE DESKTOP CROP POSITION, FOR ANY ART-DIRECTED PICTURE.
 
-   The home hero serves two different CROPS of each photograph through a
-   real <picture>: a vertical composition below md and a wide one from md
-   up. <source media> swaps the FILE, and that is all it can do — there is
-   no way to attach an object-position to a source, and the two crops need
+   Two places use this: the home hero's rotating backdrop, and the
+   /speakers page-header band. Both serve two different CROPS of one
+   photograph through a real <picture> — a vertical composition below md
+   and a wide one from md up.
+
+   <source media> swaps the FILE, and that is all it can do. There is no
+   way to attach an object-position to a source, and the two crops need
    different ones, because a value derived to hold a choir in a 1.78:1
    landscape says nothing about where that choir sits in a 0.56:1 portrait.
 
@@ -624,7 +627,7 @@
 
    The 768 here and the 768 in the <source media> have to agree exactly or
    there is a band of widths showing one crop positioned by the other
-   one's number. Both come from HERO_ART_DIRECTION.breakpoint in
+   one's number. Both come from ART_DIRECTION.breakpoint in
    src/lib/hero.ts; this is the copy of it that CSS needs, and 48rem is
    768px.
 
@@ -632,13 +635,13 @@
    written here; see HeroSource.position in src/lib/hero.ts for how each
    one was derived. The fallbacks make the rule safe if a source ever
    omits a position, which the type allows. */
-.hero-frame {
-  object-position: var(--hero-position, 50% 50%);
+.art-crop {
+  object-position: var(--art-position, 50% 50%);
 }
 
 @media (width >= 48rem) {
-  .hero-frame {
-    object-position: var(--hero-position-md, var(--hero-position, 50% 50%));
+  .art-crop {
+    object-position: var(--art-position-md, var(--art-position, 50% 50%));
   }
 }
 

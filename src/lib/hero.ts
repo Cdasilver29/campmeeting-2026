@@ -60,7 +60,7 @@
  * 55svh to 60svh. Cutting the photographs anywhere else would mean the
  * frame changed shape at one width and the picture chosen for it changed
  * at another, so between the two there would be a crop composed for a
- * frame that is not on screen. See HERO_ART_DIRECTION.
+ * frame that is not on screen. See ART_DIRECTION.
  *
  * WHAT THE FIRST PHOTOGRAPH ACTUALLY IS, because the scrims below only make
  * sense against it. This is the same praying-hands-on-a-Bible photograph
@@ -97,7 +97,7 @@
  * which is the smaller download and the safer crop; the reverse would
  * hand a 1672px landscape to whatever could not ask for something better.
  */
-export const HERO_ART_DIRECTION = {
+export const ART_DIRECTION = {
   breakpoint: 768,
   media: "(min-width: 768px)",
 } as const;

@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import { SectionWave } from "@/components/section-wave";
 import { cn } from "@/lib/utils";
+import { ART_DIRECTION } from "@/lib/hero";
 import type { PageIdentity } from "@/lib/page-identity";
 import {
   HEADER_BAND_HEIGHT,
@@ -276,6 +277,60 @@ export function PageHeader({
     >
       {image ? (
         <>
+          {image.mobile ? (
+            /*
+              THE ART-DIRECTED BAND. One route reaches this, /speakers.
+
+              Two different CROPS of one portrait, chosen by a `media`
+              query, because that band's type is ranged left and the empty
+              half of the picture has to stay under it as the band goes
+              from about 1:1 on a phone to 4:1 at 1440. next/image cannot
+              express that — it emits one <img> with a srcset, and every
+              candidate is the same picture at a different width. See
+              `mobile` on PageHeaderImage.
+
+              The other eleven bands take the next/image branch below and
+              are completely unaffected by this.
+
+              Both object-positions are handed to CSS as custom properties
+              rather than set inline: an inline object-position would beat
+              the media query at every width and the wide crop would be
+              positioned by the phone's number. `.art-crop` in globals.css
+              owns both declarations. The class is shared with the hero,
+              which has the identical problem.
+            */
+            <picture>
+              <source
+                media={ART_DIRECTION.media}
+                srcSet={image.src}
+                width={image.width}
+                height={image.height}
+              />
+              <img
+                src={image.mobile.src}
+                alt=""
+                aria-hidden
+                width={image.mobile.width}
+                height={image.mobile.height}
+                // Lazy and low priority, exactly like the next/image
+                // branch below is not-`priority`: this is a decorative
+                // band under the header, not the LCP.
+                loading="lazy"
+                decoding="async"
+                style={
+                  {
+                    "--art-position": image.mobile.position,
+                    "--art-position-md": image.position,
+                  } as CSSProperties
+                }
+                // absolute inset-0 size-full is next/image's `fill`,
+                // written out. It has to stay out of flow for the same
+                // reason: the band's height is its type's, and an in-flow
+                // picture would reserve space and change it.
+                className="art-crop absolute inset-0 -z-20 size-full object-cover"
+              />
+            </picture>
+          ) : (
           <Image
             src={image.src}
             alt=""
@@ -297,6 +352,7 @@ export function PageHeader({
             style={{ objectPosition: image.position }}
             className="-z-20 object-cover"
           />
+          )}
           {whole ? (
             /* One scrim, anchored to the top, sized to the type. The
                half-and-half pair below is right on a 286px band because

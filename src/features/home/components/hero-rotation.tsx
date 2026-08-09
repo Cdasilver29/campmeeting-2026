@@ -11,7 +11,7 @@ import {
 import { Pause, Play } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 import {
-  HERO_ART_DIRECTION,
+  ART_DIRECTION,
   HERO_ROTATION,
   heroScrimBottom,
   heroScrimTop,
@@ -250,7 +250,7 @@ export function HeroBackdrop() {
           */}
           <picture>
             <source
-              media={HERO_ART_DIRECTION.media}
+              media={ART_DIRECTION.media}
               srcSet={image.desktop.src}
               width={image.desktop.width}
               height={image.desktop.height}
@@ -275,7 +275,7 @@ export function HeroBackdrop() {
               // per SOURCE now, not per image, so there are two positions
               // to carry and the element carries both as VALUES only —
               // the object-position declarations themselves are the
-              // `.hero-frame` rules in globals.css.
+              // `.art-crop` rules in globals.css.
               //
               // That split is load-bearing. <source media> swaps the file
               // and cannot swap a style, so the desktop position has to
@@ -291,13 +291,13 @@ export function HeroBackdrop() {
               // Tailwind finds class names by scanning source text.
               style={
                 {
-                  "--hero-position": image.mobile.position ?? "50% 50%",
-                  "--hero-position-md": image.desktop.position ?? "50% 50%",
+                  "--art-position": image.mobile.position ?? "50% 50%",
+                  "--art-position-md": image.desktop.position ?? "50% 50%",
                 } as CSSProperties
               }
               // absolute inset-0 size-full replaces next/image's `fill`,
               // which is the same three declarations under a prop name.
-              className="hero-frame absolute inset-0 size-full object-cover"
+              className="art-crop absolute inset-0 size-full object-cover"
             />
           </picture>
 

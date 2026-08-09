@@ -5,7 +5,7 @@ import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo } from "@/data";
 import { eventDateRange } from "@/lib/event-dates";
 import {
-  HERO_ART_DIRECTION,
+  ART_DIRECTION,
   HERO_IMAGES,
   HERO_SCRIM_BOTTOM_HEIGHT,
 } from "@/lib/hero";
@@ -221,14 +221,14 @@ export function Hero() {
             rel="preload"
             as="image"
             href={first.mobile.src}
-            media={`(max-width: ${HERO_ART_DIRECTION.breakpoint - 1}px)`}
+            media={`(max-width: ${ART_DIRECTION.breakpoint - 1}px)`}
             fetchPriority="high"
           />
           <link
             rel="preload"
             as="image"
             href={first.desktop.src}
-            media={HERO_ART_DIRECTION.media}
+            media={ART_DIRECTION.media}
             fetchPriority="high"
           />
         </>
@@ -296,7 +296,7 @@ export function Hero() {
           up get the wide one. That is art direction, and it is a
           different problem from responsive sizing — `sizes` describes how
           big the box is and cannot say what should be inside it. See
-          HERO_ART_DIRECTION in src/lib/hero.ts for the breakpoint and why
+          ART_DIRECTION in src/lib/hero.ts for the breakpoint and why
           it is the same 768 this band's own height changes at, and
           ./hero-rotation.tsx for why the optimiser is not in the path.
 

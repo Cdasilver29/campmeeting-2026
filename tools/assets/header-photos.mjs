@@ -132,7 +132,35 @@ const QUALITY = 82;
  */
 const HEADERS = [
   { route: "schedule", file: "schedule.png" },
-  { route: "speakers", file: "speakers-hero.png" },
+  // ── THE ONE BAND WITH TWO CROPS ───────────────────────────────────
+  // /speakers is art-directed the way the home hero is: a wide crop and a
+  // phone crop of the same portrait, chosen by a `media` query on a real
+  // <picture>. See ART_DIRECTION in src/lib/hero.ts for the breakpoint.
+  //
+  // It is the one band that earns it, because it is the one band whose
+  // TYPE is ranged left. Every other header centres its block, so a
+  // centred subject works at any width; this one carries the poster's
+  // lockup on the left and needs the empty half of the frame to stay on
+  // the left as the band goes from about 1:1 on a phone to 4:1 at 1440.
+  // A single landscape file cropped to a phone put Pr. Mfune under the
+  // text.
+  //
+  // No `band` window on either. 1.777:1 and 0.839:1 are already the shapes
+  // their own breakpoints paint, which is the whole point of being given
+  // two files, and cutting them here would overrule the framing with
+  // arithmetic.
+  //
+  // The wide file is 1672 and takes the ordinary MAX_W haircut to 1600,
+  // unlike the hero's, which kept its 1672. The hero is full-bleed and IS
+  // the LCP, so 72px of source there is worth an exemption; this is a
+  // decorative band on an interior route and the upscale at 1920 is 1.20x
+  // either way. The phone file is 940 wide and nothing touches it.
+  //
+  // `viewport` because the upscale column would otherwise score a phone
+  // crop against a 1920 desktop and report a 2.04x stretch that cannot
+  // happen: this file is only ever served below 768.
+  { route: "speakers", file: "Speaker-desktop.PNG" },
+  { route: "speakers-mobile", file: "Speaker-mobile.PNG", viewport: 430 },
   { route: "livestream", file: "livestream.png" },
   { route: "ministries", file: "ministries.png" },
   // No `band` any more. The 620px window existed because the old source
@@ -171,34 +199,37 @@ const HEADERS = [
   // different picture does not crop the same way. family-life's 0.45 is
   // where the hands sit; the other two are centred subjects.
   //
-  // QUALITY: all three take the default 82, and family-life's `quality:
-  // 78` is GONE rather than carried over. That override belonged to the
-  // photograph it was written for, not to the route.
-  //
-  // Two of the three are expensive and it is worth saying why the answer
-  // is not to turn the quality down. health is an overhead market stall
-  // and christian-education is printed scripture edge to edge — both are
-  // wall-to-wall high-frequency detail with no soft region anywhere, which
-  // is the most expensive thing a DCT codec can be handed. Swept at the
-  // shipped crop, effort 6:
+  // QUALITY: health and christian-education take q78, the same override
+  // faq carries and for the same reason. Both are wall-to-wall
+  // high-frequency detail with no soft region anywhere — an overhead
+  // market stall and printed scripture edge to edge — which is the most
+  // expensive thing a DCT codec can be handed. Swept at the shipped crop,
+  // effort 6:
   //
   //   quality              q70    q74    q76    q78    q80    q82
   //   health             173.8  183.5  192.6  207.0  223.6  240.4 KiB
   //   christian-educ.    148.0  156.9  163.2  178.2  192.9  208.6
   //
-  // Flat curves with no knee. Going all the way down to q70 recovers 67 KB
-  // on health, which is 28% of the file for a real drop in quality, and
-  // there is no setting between here and there that is free. The size is
-  // the subject, so it is reported rather than encoded away — see the
-  // total this script prints.
+  // Flat curves with no knee, so there is no cheap setting hiding in
+  // either: q78 recovers 63 KB across the pair and going further to q70
+  // would take another 92 for a visible drop. What makes 78 safe is the
+  // scrim — every pixel of these bands is under 0.62 alpha, which is the
+  // argument this file has made for faq and it holds here unchanged.
   //
-  // The faq precedent for q78 on printed text is still on the table and
-  // would save 63 KB across these two; it is a committee call rather than
-  // a silent one, since every pixel of all three genuinely is behind a
-  // 0.62-alpha scrim.
-  { route: "health", file: "Health-ministry.jpg", band: 620, at: 0.5 },
+  // family-life takes the default 82. Its old `quality: 78` is GONE rather
+  // than carried over, because that override belonged to the photograph it
+  // was written for: the replacement is shallow depth of field and bokeh
+  // is nearly free, so it encodes to 47.9 KB at 82 against the 116.7 the
+  // old frame cost at 78. There is nothing to recover by lowering it.
+  { route: "health", file: "Health-ministry.jpg", band: 620, at: 0.5, quality: 78 },
   { route: "family-life", file: "Family-ministry.jpg", band: 840, at: 0.45 },
-  { route: "christian-education", file: "Christian-ministry.jpg", band: 840, at: 0.5 },
+  {
+    route: "christian-education",
+    file: "Christian-ministry.jpg",
+    band: 840,
+    at: 0.5,
+    quality: 78,
+  },
   // 5220x3480, so 1.5:1, which is the shape the `band` window exists for:
   // at 1920 the band would use 37% of its height and precache the rest.
   // Cut at 0.55 of the source height, which is where both figures are.
@@ -283,7 +314,9 @@ for (const r of rows) {
     pad(`${r.outW}x${r.outH}`, 12) +
     pad(r.quality, 4) +
     pad((r.outBytes / 1024).toFixed(1), 11) +
-    `${(WIDEST_VIEWPORT / r.outW).toFixed(2)}x`,
+    // Per entry where one is declared. A phone-only crop scored against a
+    // 1920 desktop reports a stretch that cannot happen.
+    `${((r.viewport ?? WIDEST_VIEWPORT) / r.outW).toFixed(2)}x at ${r.viewport ?? WIDEST_VIEWPORT}`,
   );
 }
 

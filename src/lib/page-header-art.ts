@@ -113,6 +113,43 @@ export interface PageHeaderImage {
    * no crop to position.
    */
   fit?: "whole";
+  /**
+   * A SEPARATE PHONE CROP, served below md through a real `<picture>`.
+   *
+   * Optional, and eleven of the twelve bands leave it out. Those eleven go
+   * on being one file through next/image with a `sizes` and a srcset,
+   * which is the right mechanism for them: one photograph at several
+   * resolutions, the browser picking a width.
+   *
+   * /speakers is the exception, and it is the exception because it is the
+   * one band whose type is RANGED LEFT. Every other header centres its
+   * block, so a subject centred in the frame reads at any width. This one
+   * carries the poster's lockup on the left and needs the empty half of
+   * the picture to stay on the left while the band goes from about 1:1 on
+   * a phone to 4:1 at 1440 — and a single landscape file cropped down to a
+   * phone puts Pr. Mfune underneath the words.
+   *
+   * That is art direction, and no `sizes` value can express it: `sizes`
+   * describes how big the box is and says nothing about what should be
+   * inside it.
+   *
+   * When this is present the band renders a `<picture>` instead, with the
+   * WIDE crop behind a `min-width` media query and this one on the `<img>`
+   * itself — so the smaller, safer file is what a browser that cannot
+   * evaluate the query falls back to. The breakpoint is ART_DIRECTION in
+   * src/lib/hero.ts, shared with the home hero so the two cannot drift.
+   *
+   * `position` here is this crop's own, applied through `--art-position`;
+   * the outer `position` becomes the DESKTOP crop's. See the `.art-crop`
+   * rules in globals.css for why both have to be custom properties rather
+   * than an inline style.
+   */
+  mobile?: {
+    src: string;
+    width: number;
+    height: number;
+    position: string;
+  };
 }
 
 /*
@@ -351,11 +388,24 @@ export const headerImages = {
     keeps: "the cupped hands from fingertips to the heels of the palms, with the sun between them and the cloud bank above; loses the wrists and the grass below them at 1920",
   },
   speakers: {
+    // ── THE ONE BAND WITH TWO CROPS ─────────────────────────────────
+    // A wide file and a phone file of the same portrait, chosen by a
+    // `media` query on a real `<picture>`. See `mobile` on PageHeaderImage
+    // for why this band and no other, and ART_DIRECTION in src/lib/hero.ts
+    // for the breakpoint it shares with the home hero.
+    //
+    // The outer `src`, `width`, `height` and `position` are the DESKTOP
+    // crop, served from md up and also the fallback the `<img>` would use
+    // if `mobile` were removed.
     src: "/headers/speakers.webp",
-    // 1492x865, q82, not resized: the 1600 cap is above it and nothing is
-    // upscaled to reach a cap.
-    width: 1492,
-    height: 865,
+    // 1600x900 from a 1672x941 supply, replacing the 1492x865 that was
+    // here. Not cropped — 1.78:1 is already the shape the wide band paints
+    // — only taken down to the 1600 ceiling every band file sits under.
+    // The hero's copy of this same portrait keeps its 1672 because it is
+    // full-bleed and is the LCP; here the upscale at 1920 is 1.20x either
+    // way, so the exemption would buy nothing.
+    width: 1600,
+    height: 900,
     // 16%, and it is derived. Pr. Kennedy Mfune's head spans y 0.10 to 0.49
     // of this frame — 40% of its height — and the poster's plum diagonal
     // fills the left, which is where the page's left-aligned lockup sits.
@@ -396,10 +446,37 @@ export const headerImages = {
     //
     // 8% was better at 1440 and cut the chin at 1920; 12% is the value that
     // holds a complete head at both. **1920 is still the tight one** — the
-    // band is 4.0:1 there against a 1.725:1 source, and no position fits a
-    // head into 43% of that height with room to spare.
+    // band is 4.0:1 there against a 1.777:1 source, and no position fits a
+    // head into 44% of that height with room to spare.
+    //
+    // The value SURVIVES the new file rather than being carried over
+    // untested: 1.777:1 against the old 1.725:1 is a 3% change in aspect,
+    // and his head sits at y 0.10-0.40 here against 0.10-0.49 before, so
+    // the window that held a crown at 12% still holds it with more air.
+    // Re-rendered at all three widths, not inferred.
     position: "50% 12%",
-    keeps: "the plum diagonal and Pr. Kennedy Mfune from crown to bow tie; the taller band recovers the collar and tie a 356px band cut",
+    keeps: "the plum diagonal with the ghosted praying hands, and Pr. Kennedy Mfune from crown to bow tie, standing in the right third where the left-ranged lockup is not",
+    mobile: {
+      src: "/headers/speakers-mobile.webp",
+      // 940x1120, 0.839:1, which is close to the shape the band actually
+      // is on a phone — about 0.81:1 at 390 against the reserved 480px
+      // height. So `cover` keeps 97% of the width and all of the height,
+      // and almost nothing is thrown away.
+      //
+      // That is the whole gain. The wide file at 390 is a 1.777:1 frame in
+      // a 0.81:1 box: it keeps 46% of the height and 100% of the width
+      // scaled up, which put his head above the top edge and his suit
+      // behind the entire lockup. This file re-composes him lower and
+      // right, standing clear of the four lines of type.
+      width: 940,
+      height: 1120,
+      // Centred, and both halves are near-inert by construction — the file
+      // was cut to the band's own phone shape, so there is only 3% of
+      // width for the horizontal half to choose between and no vertical
+      // crop at all at 390. It is written out rather than left implicit so
+      // that a future change to HEADER_BAND_HEIGHT has a value to move.
+      position: "50% 50%",
+    },
   },
   livestream: {
     // 1600x900, replacing a 555x260 file. That 555 was the worst source
