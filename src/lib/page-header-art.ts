@@ -526,20 +526,50 @@ export const headerImages = {
     keeps: "the joined hands whole, fingertips to wrists, and the black ground to their left",
   },
   health: {
+    // A new photograph, and a `band` window where there was none. The old
+    // file was 736x412 and small enough that cutting it would have been
+    // pointless; this source is 4032x3024, so at 1920 the band would have
+    // painted 33% of it and precached the other two thirds.
+    //
+    // 620, the efficient window, and this is the one picture on the site
+    // that can take it without argument: an overhead market stall is an
+    // all-over pattern with no subject to cut through, so the 35% of the
+    // width a phone keeps at 2.58:1 still reads as a market. The two
+    // pages below take 840 precisely because they do have a subject.
     src: "/headers/health.webp",
-    width: 736,
-    height: 412,
-    position: "50% 50%",
-    keeps: "the produce entire, greens to peppers and the pineapple's crown above them, on the table it is heaped on",
-  },
-  "family-life": {
-    // 1600x620, cut at 52% of the source, which is the position this page
-    // used to carry.
-    src: "/headers/family-life.webp",
     width: 1600,
     height: 620,
+    // Centred, and re-derived rather than inherited. The window was
+    // already cut at 0.5 of the source, and there is nothing left for the
+    // vertical half to choose between — produce fills the frame corner to
+    // corner, so every window of every height shows the same kind of
+    // thing. The horizontal half is what matters at 390 and centred is
+    // right for a pattern with no focus.
     position: "50% 50%",
-    keeps: "all four stacked hands and the knitted cuffs around them; on a phone it crops in to the two topmost hands",
+    keeps: "greens, beans and cucumbers across the middle of the stall with the squash and papaya above them; on a phone it crops to the beans and gourds at the centre",
+  },
+  "family-life": {
+    // A new photograph. 1600x840 from a 5472x3648 source cut at 0.45 of
+    // its height, where the hands are.
+    //
+    // 840 AND NOT THE 620 THE PAGE USED TO CARRY, and the subject decides
+    // it. This frame is one baby's hand held inside two adult hands, and
+    // the baby's hand — which is the whole picture — spans only x
+    // 0.30-0.62. At 620 the file is 2.58:1 and a 390px band keeps 35% of
+    // the width, a window of x 0.325-0.675 that clipped it on the left.
+    // 840 makes the file 1.90:1 and the phone keeps 47%, x 0.265-0.735,
+    // which holds the small hand whole with an adult thumb either side.
+    //
+    // The wide end still justifies the cut: at 1920 the band uses 48% of
+    // this file where the uncut 1.5:1 source would have used 37%.
+    src: "/headers/family-life.webp",
+    width: 1600,
+    height: 840,
+    // Centred. The 0.45 cut already put the hands in the middle of the
+    // file, so the vertical half has little left to do, and the
+    // horizontal half is centred because the subject is.
+    position: "50% 50%",
+    keeps: "the baby's hand resting open on the adult palm beneath it, with the second pair of fingers curled round from the right; on a phone it crops to the small hand and the palm it lies in",
   },
   children: {
     // The last ministry page without artwork now has some. Everything
@@ -569,16 +599,29 @@ export const headerImages = {
     keeps: "both children watching the platform, the keyboard and the lit room behind them; on a phone it crops to the two of them with the tables either side",
   },
   "christian-education": {
+    // A new photograph, and everything the old entry said is void with
+    // it. There is no alarm clock and no book stack in this frame: it is
+    // two people sitting side by side with an open Bible on each lap, shot
+    // from above, one of them marked up in highlighter and the other
+    // tabbed down the edge.
+    //
+    // 1600x840 from a 6000x4000 source. `band` for the usual reason — at
+    // 1920 the uncut 1.5:1 file paints 37% of itself — and 840 rather than
+    // 620 for the reason family-life takes it: there is a subject and a
+    // 620 window cuts through it. The two Bibles sit either side of the
+    // frame's midline with a knitted scarf between them, so the 35% of the
+    // width a 2.58:1 file leaves at 390 lands in the gap and shows the
+    // scarf. At 47% the phone keeps a page of each book.
     src: "/headers/christian-education.webp",
-    width: 735,
-    height: 414,
-    // 50% -> 60%, for the taller band. At 1440 `cover` keeps 59% of the
-    // height rather than 30%, and centred that window is y 0.205-0.795 —
-    // enough to show the whole clock except the feet it stands on, which
-    // leaves it floating on the bottom edge. 60% drops the window to
-    // 0.246-0.836 and the clock stands on its book. Inert at 390 and at
-    // 768, where the full height is kept.
-    position: "50% 60%",
-    keeps: "the book stack, and the alarm clock whole, standing on the open book below it",
+    width: 1600,
+    height: 840,
+    // Centred, re-derived from scratch. The old 60% belonged to a
+    // photograph that no longer exists and was solving a problem — a clock
+    // floating on the bottom edge — that this frame does not have. Here
+    // the 0.5 cut already centres the two open books, and both of them run
+    // the full height of the window, so a window of any height at any
+    // vertical offset shows printed page. Nothing to move.
+    position: "50% 50%",
+    keeps: "both open Bibles, the highlighted columns on the left and the tabbed edges on the right, with the hands holding them; on a phone it crops to the inner page of each",
   },
 } as const satisfies Record<string, PageHeaderImage>;

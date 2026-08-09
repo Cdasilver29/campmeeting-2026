@@ -143,9 +143,62 @@ const HEADERS = [
   { route: "faq", file: "faq.jpg", band: 620, at: 0.5, quality: 78 },
   { route: "downloads", file: "downloads.jpg" },
   { route: "prayer-requests", file: "prayer-requests.jpg" },
-  { route: "health", file: "health.jpg" },
-  { route: "family-life", file: "family-life.jpg", band: 620, at: 0.52, quality: 78 },
-  { route: "christian-education", file: "christian-education.jpg" },
+  // ── THE THREE MINISTRY BANDS, REPLACED ────────────────────────────
+  // New photographs for all three, and all three sources are large where
+  // the files they replace were 736, 735 and a 5472 already cut to 620.
+  // So all three take a `band` window now, for the reason stated at the
+  // top of this file: at 1920 the band is 4.0:1, and an uncut 1.33:1 or
+  // 1.5:1 file paints 33-37% of itself and precaches the other two thirds.
+  //
+  // The window HEIGHT is the trade-off, and it is decided per picture by
+  // what the phone does to it rather than by the wide end. A shorter
+  // window is more efficient at 1920 and crops the WIDTH harder at 390:
+  // 620 (2.58:1) keeps 35% of the width there, 840 (1.90:1) keeps 47%.
+  //
+  //   health              620   an overhead market stall, which is an
+  //                             all-over pattern with no subject to cut
+  //                             through. 35% of it still reads as a
+  //                             market, so it takes the efficient window.
+  //   family-life         840   the subject is one baby's hand inside two
+  //                             adult hands, at x 0.30-0.62. At 620 the
+  //                             phone window is x 0.325-0.675 and clips
+  //                             it; 840 opens that to x 0.265-0.735.
+  //   christian-education 840   two open Bibles side by side. At 620 the
+  //                             phone lands in the gap between them and
+  //                             shows the scarf; 840 keeps a page of each.
+  //
+  // `at` is re-derived per photograph rather than inherited, because a
+  // different picture does not crop the same way. family-life's 0.45 is
+  // where the hands sit; the other two are centred subjects.
+  //
+  // QUALITY: all three take the default 82, and family-life's `quality:
+  // 78` is GONE rather than carried over. That override belonged to the
+  // photograph it was written for, not to the route.
+  //
+  // Two of the three are expensive and it is worth saying why the answer
+  // is not to turn the quality down. health is an overhead market stall
+  // and christian-education is printed scripture edge to edge — both are
+  // wall-to-wall high-frequency detail with no soft region anywhere, which
+  // is the most expensive thing a DCT codec can be handed. Swept at the
+  // shipped crop, effort 6:
+  //
+  //   quality              q70    q74    q76    q78    q80    q82
+  //   health             173.8  183.5  192.6  207.0  223.6  240.4 KiB
+  //   christian-educ.    148.0  156.9  163.2  178.2  192.9  208.6
+  //
+  // Flat curves with no knee. Going all the way down to q70 recovers 67 KB
+  // on health, which is 28% of the file for a real drop in quality, and
+  // there is no setting between here and there that is free. The size is
+  // the subject, so it is reported rather than encoded away — see the
+  // total this script prints.
+  //
+  // The faq precedent for q78 on printed text is still on the table and
+  // would save 63 KB across these two; it is a committee call rather than
+  // a silent one, since every pixel of all three genuinely is behind a
+  // 0.62-alpha scrim.
+  { route: "health", file: "Health-ministry.jpg", band: 620, at: 0.5 },
+  { route: "family-life", file: "Family-ministry.jpg", band: 840, at: 0.45 },
+  { route: "christian-education", file: "Christian-ministry.jpg", band: 840, at: 0.5 },
   // 5220x3480, so 1.5:1, which is the shape the `band` window exists for:
   // at 1920 the band would use 37% of its height and precache the rest.
   // Cut at 0.55 of the source height, which is where both figures are.
