@@ -187,20 +187,28 @@ misspelling, so none was touched:
     neither a photograph nor a biography was supplied for them. Anyone who
     finds them in the programme cannot click through. Pr. Onyango does
     appear in the hosts section as an Associate Pastor.
-12. **Three speakers have no photograph**: Eld. Ken Ochuka, Pr. Elkanah
-    Mose and Pr. Kenneth Ayuo. All three render as initials. Eld. Ken
-    Ochuka and Allan Okoth have no biography either — Allan Okoth's is
-    the emptiest page relative to how much of the programme he carries,
-    the Children's Corner on all seven days that have one.
-13. **Five host photographs and five host biographies are owed.** The
-    hosts and elders section on `/speakers` — Pr. Gerald Mochoge, Pr.
-    Elvis Onyango, Pr. Polycarp Nyangau, Eld. Ken Ochuka, Eld. George
-    Oyoo — renders every card as an initials monogram with no biography
-    under it. Both slots are declared on `Host` and drawn by `HostCard`
-    the moment they hold anything, so supplying them is an edit to the
-    `hosts` array in `event.ts` and to no component. Eld. Ken Ochuka's
-    are owed once rather than twice: he is also a profiled speaker, and
-    his host card links through to that page.
+12. **Two speakers have no photograph**: Pr. Elkanah Mose and Pr.
+    Kenneth Ayuo. Both render as initials. Eld. Ken Ochuka's photograph
+    arrived with the hosts drop and his profile now carries it; he and
+    Allan Okoth still have no biography, and Allan Okoth's is the
+    emptiest page relative to how much of the programme he carries, the
+    Children's Corner on all seven days that have one.
+13. **Five host biographies are owed. The photographs are not, any
+    more.** All five cards in the hosts and elders section on
+    `/speakers` — Pr. Gerald Mochoge, Pr. Elvis Onyango, Pr. Polycarp
+    Nyangau, Eld. Ken Ochuka, Eld. George Oyoo — now carry a portrait,
+    cut from the supplied studio artwork by
+    `tools/assets/host-photos.mjs`. None carries a biography, and
+    `HostCard` renders nothing at all where one would go rather than a
+    placeholder, so supplying them is an edit to the `hosts` array in
+    `event.ts` and to no component.
+
+    Eld. Ken Ochuka's are held once rather than twice: he is also a
+    profiled speaker, so his portrait sits on the SPEAKER record and his
+    host card reads through `speakerId` to reach it. A biography for him
+    goes to the same place. Pr. Elvis Onyango's photograph is on his host
+    record and is also the one the programme means on Thursday, where he
+    is credited as free text.
 14. **"Mochoge" or "Mochige".** The programme PDF prints **Gerald
     Mochoge** twice — the closing Sabbath's welcome and its farewell —
     and the list supplied with the hosts spells it "Mochige". The PDF

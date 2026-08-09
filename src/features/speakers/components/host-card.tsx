@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Host } from "@/data";
+import { speakerById, type Host } from "@/data";
 import {
   PERSON_CARD,
   PERSON_CARD_INTERACTIVE,
@@ -29,22 +29,39 @@ import { SpeakerAvatar } from "./speaker-avatar";
  * And the biography sits inside the card here, where on a presenter it
  * has a page of its own to live on.
  *
- * ── NOTHING HERE HAS TO CHANGE WHEN THE PHOTOS ARRIVE ────────────────
+ * ── THE PHOTOGRAPHS ARRIVED AND NOTHING HERE HAD TO CHANGE ───────────
  *
- * All five hosts render as initials monograms today and none has a
- * biography. Both are drawn from data the moment it exists: the avatar
- * is the same SpeakerAvatar the presenter cards use and already prefers
- * `image` over the monogram, and the biography block below renders when
- * `bio` is a non-empty array and renders NOTHING otherwise. No
- * placeholder, no "biography to follow" — a line of type apologising for
- * itself is worse than a card that simply stops after the role.
+ * As predicted, almost. All five hosts now carry a portrait and the
+ * avatar needed no edit at all: it is the same SpeakerAvatar the
+ * presenter cards use and it already preferred `image` over the monogram.
+ * The biography block still renders when `bio` is a non-empty array and
+ * renders NOTHING otherwise, which is the state all five are in — no
+ * placeholder, no "biography to follow", because a line of type
+ * apologising for itself is worse than a card that stops after the role.
+ *
+ * The one thing that did change is the line below, and it is a data
+ * question rather than a layout one. See it.
  */
 function HostBody({ host }: { host: Host }) {
   const label = host.title ? `${host.title} ${host.name}` : host.name;
 
+  /* Eld. Ken Ochuka is on both lists, so his portrait is on his SPEAKER
+     record and not on his host record — one photograph for one person,
+     rather than the same file named in two arrays that then drift apart
+     the first time one of them is re-cropped. This is the read side of
+     that: where a host has a `speakerId`, the profile is what sits for
+     the avatar. `?? host` covers a speakerId pointing at a profile that
+     does not exist, which falls back to the monogram rather than
+     throwing. The four hosts with no profile are unaffected.
+
+     Only the PORTRAIT is resolved this way. The name and the role below
+     stay the host's own, because those are the office he holds on this
+     list and the speaker record does not carry it. */
+  const sitter = (host.speakerId ? speakerById[host.speakerId] : undefined) ?? host;
+
   return (
     <>
-      <SpeakerAvatar speaker={host} size="lg" />
+      <SpeakerAvatar speaker={sitter} size="lg" />
       <div className="flex flex-col gap-1">
         <p className={PERSON_CARD_NAME}>{label}</p>
         {/* Not optional the way a speaker's role is. The office IS what

@@ -15,10 +15,14 @@ type Sitter = Pick<Speaker, "name" | "image" | "imagePosition">;
 /**
  * The monogram, and why it is still here.
  *
- * Seven of the eight speakers now have a photograph. Eld. Ken Ochuka does
- * not, and the committee may yet add a ninth name before they send a
- * ninth picture, so the fallback is not dead code waiting to be deleted —
- * it is the state this list is in whenever it grows.
+ * Nobody renders as one today. All eight speakers have a photograph now
+ * that Eld. Ken Ochuka's has arrived, and so do all five hosts.
+ *
+ * It is not dead code waiting to be deleted. It is the state this list is
+ * in whenever it GROWS: the committee has added a name before sending the
+ * picture every time so far, and a card with a monogram is what stands
+ * there in the weeks between. Deleting the fallback would mean the next
+ * addition ships a broken image instead.
  *
  * It is meant to look chosen rather than missing, which is three small
  * things. Letter-spacing, because a two-letter monogram set solid reads as

@@ -119,10 +119,15 @@ export const speakers: Speaker[] = [
     id: "ken-ochuka",
     name: "Ken Ochuka",
     title: "Eld.",
-    // No photograph supplied. Falls back to the initials monogram, which
-    // is why that fallback stays. Still owed by the committee, along
-    // with a biography: he is the Camp Meeting Chair and one of the two
-    // people who open the opening Sabbath.
+    // Supplied with the hosts drop, and it lives HERE rather than on his
+    // host record because he is the one person who is on both lists. The
+    // host card reads through `speakerId` to find it; see host-card.tsx.
+    //
+    // A biography is still owed. He is the Camp Meeting Chair and one of
+    // the two people who open the opening Sabbath, so this is now a page
+    // with a portrait and nothing written about its subject.
+    image: "/speakers/ken-ochuka.webp",
+    imagePosition: "50% 0%",
   },
   {
     id: "allan-okoth",
@@ -327,13 +332,23 @@ export const speakerById = Object.fromEntries(
  * and close the camp meeting, then the associates, then the chair and
  * the head elder.
  *
- * ── EVERY PHOTO AND EVERY BIOGRAPHY IS OWED ──────────────────────────
+ * ── THE PHOTOGRAPHS ARRIVED. THE BIOGRAPHIES DID NOT ─────────────────
  *
- * All five render as an initials monogram with no biography under them.
- * That is the shipped state, not a stub: `image`, `imagePosition` and
- * `bio` are declared on `Host` and drawn by HostCard whenever they are
- * present, so adding a photograph and a paragraph is an edit to this
- * array and to nothing else. Do not reach for a stand-in portrait.
+ * All five now carry a portrait, cut to 3:4 from the supplied studio
+ * cut-outs by tools/assets/host-photos.mjs, which is also where each
+ * `imagePosition` below is derived and rendered rather than guessed.
+ *
+ * Not one of them has a biography, and HostCard draws NOTHING where one
+ * would go — no placeholder, no line saying a biography is to follow. So
+ * a host card is a portrait, a name and an office, and it is complete at
+ * that rather than visibly missing its third part. Adding a paragraph
+ * later is an edit to this array and to nothing else.
+ *
+ * Eld. Ken Ochuka's photograph is NOT on his record here. He is the one
+ * person on both lists, his speaker record above owns the file, and the
+ * card reads through `speakerId` to reach it — one photograph, referenced
+ * once, rather than the same portrait pasted into two arrays that then
+ * drift.
  *
  * Names come from the programme PDF wherever it prints them, which is
  * why the senior pastor is "Gerald Mochoge" here. The list supplied with
@@ -356,28 +371,42 @@ export const hosts: Host[] = [
     name: "Gerald Mochoge",
     title: "Pr.",
     role: "Senior Pastor",
+    image: "/speakers/gerald-mochoge.webp",
+    imagePosition: "50% 0%",
   },
   {
     id: "elvis-onyango",
     name: "Elvis Onyango",
     title: "Pr.",
     role: "Associate Pastor",
+    // The same file the programme means on Thursday. He presents
+    // Evangelism - One Voice 2027, but he is credited there in
+    // `presentedBy` as free text rather than by id, and a presenter chip
+    // is a Badge with a name in it and no portrait — so there is exactly
+    // one place on the site this photograph can appear, and this is it.
+    // If he is ever given a speaker profile, move the file reference onto
+    // it and point this record at it by `speakerId`, the way Eld. Ochuka's
+    // does. Do not add a second copy.
+    image: "/speakers/elvis-onyango.webp",
+    imagePosition: "50% 0%",
   },
   {
     id: "polycarp-nyangau",
     name: "Polycarp Nyangau",
     title: "Pr.",
     role: "Associate Pastor",
+    image: "/speakers/polycarp-nyangau.webp",
+    imagePosition: "50% 0%",
   },
   {
     id: "ken-ochuka",
     name: "Ken Ochuka",
     title: "Eld.",
     role: "Camp Meeting Chair",
-    // The one host who is also a profiled speaker. His photograph and
-    // biography are owed once, not twice: fill them in on the speaker
-    // record above and this card should be pointed at them rather than
-    // given its own copy.
+    // The one host who is also a profiled speaker, and deliberately
+    // WITHOUT `image` for that reason. His photograph is owed once, not
+    // twice: it is on the speaker record above and HostCard follows this
+    // id to it. A biography, when it comes, goes to the same place.
     speakerId: "ken-ochuka",
   },
   {
@@ -385,5 +414,7 @@ export const hosts: Host[] = [
     name: "George Oyoo",
     title: "Eld.",
     role: "Head Elder",
+    image: "/speakers/george-oyoo.webp",
+    imagePosition: "50% 0%",
   },
 ];
