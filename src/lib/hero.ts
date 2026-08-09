@@ -32,53 +32,122 @@
  * name. hands-bible has no caption and the caption line renders empty for
  * it, keeping its own height reserved so the rotation cannot shift layout.
  *
+ * ── EACH PHOTOGRAPH IS TWO FILES, CUT FOR TWO SHAPES ─────────────────
+ *
+ * Every entry carries a `mobile` crop and a `desktop` crop, and
+ * HeroBackdrop serves them through a real `<picture>` with a `media`
+ * query on the source. That is ART DIRECTION and it is a different
+ * problem from responsive sizing, which is why it needs a different
+ * mechanism.
+ *
+ * Responsive sizing is one photograph at several resolutions: `sizes` and
+ * a srcset are the answer, the browser picks a file, and every candidate
+ * is the same picture. No `sizes` value can express what is wanted here,
+ * because `sizes` describes how big the box is and says nothing about
+ * what should be inside it.
+ *
+ * What is wanted here is a different CROP, because the frame is not a
+ * different size at the two ends — it is a different SHAPE. 0.53:1 at
+ * 390x844, full-bleed landscape from md up. The previous single-file
+ * version admitted the cost in tools/assets/hero-photos.mjs: at 390 it
+ * kept 29% of migori's width and 37% of taji's, so on a phone both
+ * stopped being group shots and became close shots of the three or four
+ * singers in the middle of the rank.
+ *
+ * THE SWITCH IS AT 768px, min-width, and it is not a number chosen for
+ * this. It is `md`, which is the width the hero itself changes at: the
+ * band goes from `h-[88svh]` to `md:h-svh`, and the compact phase from
+ * 55svh to 60svh. Cutting the photographs anywhere else would mean the
+ * frame changed shape at one width and the picture chosen for it changed
+ * at another, so between the two there would be a crop composed for a
+ * frame that is not on screen. See HERO_ART_DIRECTION.
+ *
  * WHAT THE FIRST PHOTOGRAPH ACTUALLY IS, because the scrims below only make
  * sense against it. This is the same praying-hands-on-a-Bible photograph
- * the official 2026 poster is built on. Sampled per decile of image
- * height, on the source file:
+ * the official 2026 poster is built on, and it is now the full-resolution
+ * frame this file spent several sessions asking the committee for: 1672x941
+ * against the 735x616 that used to be here. Sampled per decile of image
+ * height:
  *
- *   0-30%    the unlit ground behind the hands. Mean luminance 0.018 and
- *            a MAXIMUM of 0.027 — there is no bright pixel here at all
- *   30-70%   the hands and forearms. Mean 0.05-0.18, but the specular
- *            highlights on the knuckles reach 0.99
- *   70-100%  the open Bible. Mean 0.30-0.44, and between 15% and 30% of
- *            every row is above 0.75. Maximum 1.000 — the page gutter is
- *            clipped white
+ *   0-30%    the unlit ground behind the hands, and a soft warm glow in
+ *            the top left corner. Dark, but NOT the 0.027 maximum the old
+ *            file had — the glow reaches about 0.45
+ *   30-70%   the hands and forearms. Specular highlights on the knuckles
+ *            reach 0.99
+ *   70-100%  the open Bible, the brightest region in the frame, with
+ *            clipped white in the page gutter
  *
- * The shape of that is the inverse of the church photograph this
- * replaced, and it changes what each scrim is for. The bottom scrim has
- * more to do than before, not less — a third of the pixels under the text
- * block are above 0.75 and some of them are 1.0.
- *
- * The deciles above are of the SOURCE FILE, and that distinction cost a
- * failing measurement once: they describe what sits at the top of the
- * frame only while the frame is taller in aspect than the 1.193:1 source.
- * At 60svh it is not, and the hands land under the header. See
- * HERO_SCRIM_TOP.
+ * The bottom scrim has more to do than the top one: a third of the pixels
+ * under the text block are above 0.75 and some are 1.0. That has not
+ * changed with the new file, and neither has the reason the top scrim is
+ * derived against a white pixel rather than against this photograph's own
+ * top deciles — see HERO_SCRIM_TOP, where the frame crops to the middle of
+ * the picture in the compact phase and the hands land under the header.
  */
-export type HeroImage = {
+
+/**
+ * The one breakpoint the `<picture>` switches at, in one place because
+ * three things have to agree on it: the `media` attribute on the source,
+ * the `media` on the preload link in hero.tsx, and the `md` that the
+ * band's own height changes at.
+ *
+ * `min-width`, so the DESKTOP crop is the one behind the query and the
+ * phone crop is the unconditional `<img>`. That direction is deliberate.
+ * A browser too old to understand `<source media>` gets the phone file,
+ * which is the smaller download and the safer crop; the reverse would
+ * hand a 1672px landscape to whatever could not ask for something better.
+ */
+export const HERO_ART_DIRECTION = {
+  breakpoint: 768,
+  media: "(min-width: 768px)",
+} as const;
+/**
+ * One crop of one photograph: a file, its intrinsic size, and where the
+ * frame should sit on it.
+ */
+export type HeroSource = {
   src: string;
-  /** Intrinsic size of the file, for next/image. */
+  /** Intrinsic size of the file, for the aspect the box reserves. */
   width: number;
   height: number;
   /**
-   * One line naming what the photograph is of, shown only while that
-   * photograph is on screen. Omitted where the picture needs no caption.
-   */
-  caption?: string;
-  /**
-   * CSS `object-position`. Per image, because these three are three
-   * different compositions and one value cannot be right for all of them.
+   * CSS `object-position`, per CROP rather than per photograph, because
+   * the two crops of one picture are two different compositions and the
+   * value that holds a subject in a 1.78:1 landscape says nothing about
+   * where it sits in a 0.56:1 portrait.
    *
    * The vertical half is what does the work, and the phase is why. In the
-   * full-bleed phase the frame is close to the sources' own aspect and
-   * `cover` throws away only a few percent of the height. In the COMPACT
-   * phase the frame is 55-60svh — 2.67:1 at 1440 — so it keeps about half
-   * the height, and centred that half is the middle of the picture. On a
+   * full-bleed phase the frame is close to the crop's own aspect and
+   * `cover` throws away only a few percent. In the COMPACT phase the frame
+   * is 55-60svh — 2.67:1 at 1440 — so it keeps about two thirds of the
+   * height, and centred that is the middle of the picture. On a
    * photograph whose subject is a rank of singers standing at the top of
    * the frame, the middle of the picture is their waists.
    */
   position?: string;
+};
+
+export type HeroImage = {
+  /**
+   * The wide crop, served from md up. Also the intrinsic size the
+   * `<picture>`'s `<source>` declares.
+   */
+  desktop: HeroSource;
+  /**
+   * The phone crop, served below md, and the one on the `<img>` itself —
+   * so it is what any browser that does not understand `<source media>`
+   * falls back to, and what the markup means before CSS is consulted.
+   */
+  mobile: HeroSource;
+  /**
+   * One line naming what the photograph is of, shown only while that
+   * photograph is on screen. Omitted where the picture needs no caption.
+   *
+   * On the image and not on either crop: the two crops are the same
+   * photograph of the same people, so a caption that differed between
+   * them would be describing the framing rather than the subject.
+   */
+  caption?: string;
   /**
    * Extra alpha added to BOTH of this image's scrims, where the measured
    * worst pixel needs it. Zero for every image that passes at the derived
@@ -104,113 +173,171 @@ export type HeroImage = {
  */
 export const HERO_ROTATION = { fadeMs: 800, dwellMs: 6000 } as const;
 
-/**
- * `sizes` for one hero image, derived from that image's own aspect ratio.
+/*
+ * `heroImageSizes` used to live here and is gone with the single-file
+ * hero. It derived a `sizes` string per image from that image's aspect
+ * ratio, to tell the browser how wide a landscape photograph renders once
+ * `cover` has scaled it by HEIGHT into a portrait phone frame.
  *
- * Above md, 100vw is correct for all three: the frame is between 1.33:1 and
- * 1.78:1 and every source is wider in aspect than the frame is at every one
- * of those widths, so `cover` scales by WIDTH and the slot's width is what
- * the browser needs to know.
- *
- * Below md it is not, and this is where the three images stop agreeing. The
- * frame is 88svh tall and the viewport is narrow, so it is roughly 0.53:1
- * and `cover` scales by HEIGHT — the rendered image is far wider than the
- * slot, and by a factor that is the source's aspect ratio. On a 390x844
- * phone the frame is 743px tall, which is 190vw, so the rendered width is
- * 190 x aspect:
- *
- *   hands-bible  1.193:1  ->  227vw
- *   migori       1.807:1  ->  344vw
- *   taji         1.413:1  ->  269vw
- *
- * A single 190vw was there before, from when there was one image, and it
- * described the frame's HEIGHT rather than the rendered width — so it
- * under-requested even for hands-bible, by 1.19x. Deriving it per image
- * fixes that and is the only honest way to serve three different shapes
- * from one component.
- *
- * It is a cap, not a promise: hands-bible is 735px wide, so what Next can
- * serve for it is bounded by the file whatever this says.
+ * There is nothing left for it to describe. Each crop is now served at its
+ * own dimensions to the breakpoint it was composed for — the phone files
+ * are portrait, so `cover` no longer blows a landscape up to three times
+ * the viewport width to fill a tall box, and there is one candidate file
+ * per breakpoint rather than a set for the browser to choose within. A
+ * `sizes` attribute with no srcset to select from is inert markup.
  */
-export const heroImageSizes = (image: HeroImage) =>
-  `(max-width: 767px) ${Math.ceil((190 * image.width) / image.height)}vw, 100vw`;
 
 export const HERO_IMAGES: HeroImage[] | undefined = [
   {
-    src: "/hero/hands-bible.webp",
-  // 735x616, converted from the supplied JPEG at WebP q92 effort 6
-  // (34,203 -> 36,778 bytes). Not upscaled.
-  //
-  // ── COMMITTEE OWES THIS ──────────────────────────────────────────
-  // This source is SMALL, and smaller than the one it replaces. The
-  // church photograph was 1634x962; this is 735x616, which is 29% of the
-  // pixels. On a phone that does not matter — see the phone frame in
-  // hero.tsx, where even a 414x380 box at device pixel ratio 3 is asking
-  // for 1242px of width and getting 735. On a desktop it is the single
-  // thing that visibly limits the hero:
-  //
-  //   viewport   frame       upscale from 735x616
-  //   1024x768   1024x768    1.39x wide, 1.25x tall
-  //   1440x900   1440x900    1.96x
-  //   1920x1080  1920x1080   2.61x
-  //   2560x1440  2560x1440   3.48x
-  //
-    // The file is deliberately NOT upscaled here to disguise that; an
-    // upscaled file is the same softness at four times the bytes. What is
-    // wanted is the original from the poster designer, which will be at
-    // least 1080x1080 (the poster is) and is very likely a licensed stock
-    // frame at 3000px or more. Ask for the source, not the poster.
+    // ── THE COMMITTEE ANSWERED THIS ──────────────────────────────────
+    // Both halves of the request that used to sit here are met. This file
+    // asked for "the original from the poster designer, at least 1080x1080
+    // and very likely a licensed stock frame at 3000px or more", because
+    // the first image in the rotation was 735x616 — the softest picture on
+    // the site and the one every visitor saw, upscaled 2.61x at 1920.
     //
-    // It is also, now, the softest of the three and the one every visitor
-    // sees. The two photographs under it are 1600px and 1491px wide. That
-    // makes the request above more urgent rather than less: rotation put a
-    // sharp picture next to a soft one in the same frame.
-    width: 735,
-    height: 616,
+    // What arrived is 1672x941 of the same clasped hands on the same open
+    // Bible, 2.3x the width, plus a vertical re-composition of it for
+    // phones. At 1920 the upscale is 1.15x, which is no longer the thing
+    // that limits this hero. Nothing here is upscaled to reach any cap;
+    // see tools/assets/hero-photos.mjs.
+    desktop: {
+      src: "/hero/hands-bible.webp",
+      width: 1672,
+      height: 941,
+      // 55% across, not centred. At 1440 `cover` keeps 90% of the width
+      // and this costs nothing, but at 768 in the full-bleed phase the
+      // frame is 0.85:1 against a 1.78:1 file, so it keeps only 48% of the
+      // width — and centred, that window is x 0.26-0.74 while the hands
+      // span x 0.28-0.85. The right side of the clasp was cut off. 55%
+      // puts the window at x 0.31-0.79 and centres it on the hands
+      // themselves rather than on the frame.
+      //
+      // 40% down. The compact phase at 1440 is 2.67:1, so it keeps 67% of
+      // the height; centred that is y 0.165-0.835 and the hands start at
+      // 0.16, clipping the top of the knuckles. 40% drops the window to
+      // y 0.132-0.802, which holds the whole clasp and loses the lower
+      // edge of the Bible, where there is nothing but page.
+      position: "55% 40%",
+    },
+    mobile: {
+      src: "/hero/hands-bible-mobile.webp",
+      width: 853,
+      height: 1844,
+      // 0.463:1 against a 0.53:1 phone frame, so the full-bleed phase
+      // scales by width and keeps 88% of the height — a few percent off
+      // each end and the vertical value barely matters. It matters in the
+      // COMPACT phase, which is 0.84:1 and keeps 55% of the height.
+      // Centred, that window is y 0.225-0.775; the hands are at y
+      // 0.33-0.62 and survive it, but they sit low and land under the text
+      // block. 45% lifts the window to y 0.203-0.753 and puts the clasp
+      // above the type rather than behind it.
+      position: "50% 45%",
+    },
     // No caption. It is the poster's own photograph and there is no
     // subject a reader would want named; "clasped hands on a Bible" is a
     // description of what is plainly visible, which is the kind of caption
     // that teaches people not to read captions.
   },
   {
-    src: "/hero/migori-choir.webp",
-    // 1600x885 from a 1686x933 PNG, q82 effort 6. See
-    // tools/assets/hero-photos.mjs.
-    width: 1600,
-    height: 885,
-    // Centred, and checked rather than left as the default. This frame is
-    // 1.807:1, so the compact phase keeps 68% of its height and a centred
-    // window is y 0.162-0.838 — the choir's heads are at y 0.245-0.41 and
-    // sit well inside it. Centring also drops the brightest part of the
-    // picture: the top four twentieths of this file are the white hall
-    // ceiling and its downlights, mean luminance 0.67 to 0.84.
-    position: "50% 50%",
+    desktop: {
+      src: "/hero/migori-choir.webp",
+      // 1672x941, the wide re-cut. Replaces the 1600x885 that was here.
+      width: 1672,
+      height: 941,
+      // 30% down, and it is the compact phase that requires it. That frame
+      // is 2.67:1 at 1440 against a 1.78:1 file, so `cover` keeps 67% of
+      // the height, and `object-position: 50% P` puts the window at
+      // [P(1-k), P(1-k)+k]. Centred that is y 0.165-0.835 — and the
+      // choir's heads start at y 0.12, so a centred window cuts the back
+      // row off above the eyes. 30% puts it at y 0.099-0.769: every face
+      // complete with headroom, and the floor at the bottom is what goes
+      // instead.
+      //
+      // Inert in the full-bleed phase at every width, and that is worth
+      // saying rather than leaving to be rediscovered: the file is wider
+      // in aspect than the frame at 768 and at 1440, so `cover` scales by
+      // HEIGHT there and keeps all of it. Only the horizontal half is
+      // read, and centred is right for a rank of people that fills the
+      // frame edge to edge.
+      position: "50% 30%",
+    },
+    mobile: {
+      src: "/hero/migori-choir-mobile.webp",
+      // 941x1672. The whole point of the phone crop: the old single file
+      // was a 1.81:1 landscape and a 390px frame kept 29% of its width, so
+      // the choir became four people. This is the same choir re-framed
+      // vertically, and the rank survives.
+      width: 941,
+      height: 1672,
+      // 85% down, and it is free. The two phases read different halves of
+      // this value, which is what makes it free:
+      //
+      //   full-bleed, 0.53:1 frame against a 0.563:1 file. The file is
+      //   wider per unit height, so `cover` scales by HEIGHT, keeps all of
+      //   it and 93% of the width. The vertical half is INERT here — any
+      //   value renders the same frame.
+      //
+      //   compact, 0.84:1 frame. Now the file is narrower, so `cover`
+      //   scales by width and keeps k = 0.67 of the height.
+      //
+      // So the vertical value costs nothing at full bleed and decides
+      // everything in the compact phase, where the photographer put the
+      // choir low in the frame: they stand at y 0.47-0.79 with empty plum
+      // above them. Centred, the window is y 0.165-0.835 and the rank maps
+      // to 0.46-0.93 of the band — which is exactly where the text block
+      // and its scrim are, so all that showed beside the type was the two
+      // singers on the right. Rendered and looked at, not inferred.
+      //
+      // 85% puts the window at y 0.28-0.95 and the rank at 0.28-0.76,
+      // clear of the type with the empty plum cropped off instead.
+      position: "50% 85%",
+    },
     caption: "Camp Meeting 2026 Guest Choir · Migori Central",
   },
   {
-    src: "/hero/taji-choir.webp",
-    // 1491x1055, not resized: the cap is 1600 and nothing is upscaled to
-    // reach it.
-    width: 1491,
-    height: 1055,
-    // 25%, not centred, and this is the one crop on the hero with a
-    // measured window behind it. The five singers stand at the TOP of this
-    // frame: heads and microphones span y 0.15 to 0.42, and the bottom
-    // third is the foreground rank of graduation caps.
-    //
-    // `object-position: 50% P` puts the visible window at
-    // [P(1-k), P(1-k)+k] where k is the fraction of the height `cover`
-    // keeps. In the COMPACT phase at 1440 the frame is 2.67:1 against a
-    // 1.413:1 source, so k = 0.53 — and centred that window is
-    // y 0.235-0.765, which starts BELOW the singers' chins. Rendered and
-    // looked at, not inferred: at 50% every face is cut off across the
-    // forehead.
-    //
-    // 25% puts the window at y 0.118-0.648: every face complete, with
-    // headroom above and the flags behind them. In the full-bleed phase
-    // k = 0.88 so the same value costs nothing — the window is
-    // y 0.029-0.912 and only the very edges go.
-    position: "50% 25%",
+    // ── THE ONE PICTURE WITH NO NEW WIDE CROP, AND IT IS INTENDED ────
+    // Only migori was re-cut for desktop. taji keeps the 1491x1055 from
+    // the earlier drop, unchanged on disk and unchanged here, and gains a
+    // phone crop only. This is not a gap: it is the third image in the
+    // rotation, nobody sees it for thirteen seconds, and its existing wide
+    // crop was already measured and passing. tools/assets/hero-photos.mjs
+    // does not write it.
+    desktop: {
+      src: "/hero/taji-choir.webp",
+      width: 1491,
+      height: 1055,
+      // Unchanged, and the derivation still holds because neither the file
+      // nor the frame moved. The five singers stand at the TOP of this
+      // frame: heads and microphones span y 0.15 to 0.42, and the bottom
+      // third is the foreground rank of graduation caps. In the compact
+      // phase at 1440 the frame is 2.67:1 against a 1.413:1 source, so
+      // k = 0.53, and centred the window is y 0.235-0.765 — which starts
+      // BELOW the singers' chins. Rendered and looked at, not inferred: at
+      // 50% every face is cut off across the forehead.
+      //
+      // 25% puts the window at y 0.118-0.648: every face complete, with
+      // headroom above and the flags behind them. In the full-bleed phase
+      // k = 0.88 so the same value costs nothing.
+      position: "50% 25%",
+    },
+    mobile: {
+      src: "/hero/taji-choir-mobile.webp",
+      // 941x1672, and the largest file on the site at 216 KB. That is the
+      // subject rather than a setting: a lit stage, a rank of printed
+      // flags and a foreground of graduation caps is high-frequency detail
+      // everywhere with no soft region to encode cheaply. See the note in
+      // tools/assets/hero-photos.mjs.
+      width: 941,
+      height: 1672,
+      // Same geometry as migori's phone crop and the same answer, for the
+      // same reason: inert at full bleed, decisive in the compact phase.
+      // The five singers are at y 0.44-0.68 with the rank of graduation
+      // caps below them, so a centred compact window put them at 0.41-0.77
+      // of the band and behind the type. 85% lifts them to 0.24-0.60 and
+      // drops the caps, which are foreground and not the subject.
+      position: "50% 85%",
+    },
     // ── NOT IN THE PROGRAMME ─────────────────────────────────────────
     // "Taji" appears nowhere in src/data/program.ts. Neither does Migori
     // Central. Draft_Program_v2 has no guest choir items at all, which is

@@ -5,14 +5,14 @@ import {
   useContext,
   useEffect,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from "react";
-import Image from "next/image";
 import { Pause, Play } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 import {
+  HERO_ART_DIRECTION,
   HERO_ROTATION,
-  heroImageSizes,
   heroScrimBottom,
   heroScrimTop,
   type HeroImage,
@@ -46,10 +46,16 @@ import {
  * ── THE FIRST IMAGE IS THE ONLY ONE THE SERVER RENDERS ───────────────
  *
  * `mounted` is false during server rendering and on the first client
- * render, so the first paint is one image with `priority` and nothing
- * else: no second request competing with the LCP, no third. The other two
- * mount in an effect, which by definition runs after that paint, and they
- * are not `priority`, so they are fetched lazily afterwards.
+ * render, so the first paint is one image, eager and at high fetch
+ * priority, and nothing else: no second request competing with the LCP,
+ * no third. The other two mount in an effect, which by definition runs
+ * after that paint, and they carry `loading="lazy"`, so they are fetched
+ * afterwards.
+ *
+ * Only the first image is preloaded, and it is preloaded ONCE — the pair
+ * of `<link rel="preload">` tags in hero.tsx carry the same media queries
+ * the `<picture>` resolves, so the crop that is fetched early is the crop
+ * that is painted.
  *
  * That also means a reader with no JavaScript, or one reading before
  * hydration, gets exactly the hero that shipped before this existed.
@@ -196,7 +202,7 @@ export function HeroBackdrop() {
     <div className="absolute inset-0 -z-10 overflow-hidden bg-emperor">
       {layers.map((image, i) => (
         <div
-          key={image.src}
+          key={image.desktop.src}
           aria-hidden
           // The hook tools/perf/verify-hero.mjs uses to force one layer
           // visible and measure that photograph's own scrims.
@@ -213,32 +219,87 @@ export function HeroBackdrop() {
             transition: `opacity ${HERO_ROTATION.fadeMs}ms var(--ease-out-soft)`,
           }}
         >
-          <Image
-            src={image.src}
-            alt=""
-            aria-hidden
-            fill
-            // Only the first. Preloading three photographs would take
-            // bandwidth from the LCP to fetch two pictures that cannot be
-            // seen for another six seconds.
-            priority={i === 0}
-            sizes={heroImageSizes(image)}
-            quality={90}
-            // Rendered sharp: no blur filter, no transform. The crop is
-            // per image and lives on the image — one value could not be
-            // right for three different compositions, and the compact
-            // phase is where that bites: it keeps about half the height,
-            // and a photograph of people standing at the top of the frame
-            // loses every face to a centred window. Each value is derived
-            // and rendered rather than guessed; see HeroImage.position in
-            // src/lib/hero.ts.
-            //
-            // As a style, not a Tailwind arbitrary value: the class would
-            // have to be assembled from the data at runtime, and Tailwind
-            // finds class names by scanning source text.
-            style={{ objectPosition: image.position ?? "50% 50%" }}
-            className="object-cover"
-          />
+          {/*
+            A REAL <picture>, AND WHY next/image IS NOT USED HERE.
+
+            These two files are different CROPS, not two sizes of one
+            photograph, and that is the line between art direction and
+            responsive sizing. next/image solves the second: it emits one
+            <img> with a srcset and a `sizes`, the browser picks a width,
+            and every candidate is the same picture. There is no value of
+            `sizes` that means "below md show the vertical composition" —
+            `sizes` describes the box, not the contents. `<source media>`
+            is the element that exists for this and it is the only thing
+            that expresses it.
+
+            The optimiser is not being given up for nothing, either.
+            Each file is already written at exactly the dimensions its own
+            breakpoint paints it at (tools/assets/hero-photos.mjs), and
+            every one of them is UNDER what the device asks for rather than
+            over: the phone crops are 941px wide against the 1170 a 390px
+            viewport wants at DPR 3, and the wide crops are 1672 against
+            1920. There is no smaller variant worth generating, so a
+            srcset would be one candidate long and /_next/image would be a
+            re-encode of an already-tuned WebP.
+
+            Two consequences to keep in mind if this is ever revisited:
+            `quality` is now the converter's business rather than a prop,
+            and `priority` is gone — see `fetchPriority` below and the
+            preload link in hero.tsx, which together are what that prop
+            was doing.
+          */}
+          <picture>
+            <source
+              media={HERO_ART_DIRECTION.media}
+              srcSet={image.desktop.src}
+              width={image.desktop.width}
+              height={image.desktop.height}
+            />
+            <img
+              src={image.mobile.src}
+              alt=""
+              aria-hidden
+              width={image.mobile.width}
+              height={image.mobile.height}
+              // Only the first, and only ever the first. Eagerly fetching
+              // three photographs would take bandwidth from the LCP to get
+              // two pictures that cannot be seen for another six seconds.
+              // `high` rather than `priority`: this is a plain img, so it
+              // says the same thing to the browser directly, and the
+              // preload that `priority` also emitted is in hero.tsx where
+              // it can carry the same media query the source above does.
+              loading={i === 0 ? "eager" : "lazy"}
+              fetchPriority={i === 0 ? "high" : "auto"}
+              decoding="async"
+              // Rendered sharp: no blur filter, no transform. The crop is
+              // per SOURCE now, not per image, so there are two positions
+              // to carry and the element carries both as VALUES only —
+              // the object-position declarations themselves are the
+              // `.hero-frame` rules in globals.css.
+              //
+              // That split is load-bearing. <source media> swaps the file
+              // and cannot swap a style, so the desktop position has to
+              // come from a media query; and an inline object-position
+              // would beat that media query at every width, leaving the
+              // wide crop positioned by the phone's number. Handing CSS
+              // two custom properties and letting it own both declarations
+              // is what makes the override work by ordinary cascade order
+              // rather than by !important.
+              //
+              // As a style, not a Tailwind arbitrary value: the class
+              // would have to be assembled from the data at runtime, and
+              // Tailwind finds class names by scanning source text.
+              style={
+                {
+                  "--hero-position": image.mobile.position ?? "50% 50%",
+                  "--hero-position-md": image.desktop.position ?? "50% 50%",
+                } as CSSProperties
+              }
+              // absolute inset-0 size-full replaces next/image's `fill`,
+              // which is the same three declarations under a prop name.
+              className="hero-frame absolute inset-0 size-full object-cover"
+            />
+          </picture>
 
           {/* Behind the header. */}
           <div
@@ -349,7 +410,7 @@ export function HeroCaption() {
       <div className="relative min-h-5 flex-1">
         {layers.map((image, i) => (
           <p
-            key={image.src}
+            key={image.desktop.src}
             aria-hidden={i !== index}
             // Pure white, like every other string in this block. The
             // measured ratios are the figures for white; white/80 over

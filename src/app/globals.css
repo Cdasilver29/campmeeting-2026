@@ -601,6 +601,47 @@
   }
 }
 
+/* THE HERO'S DESKTOP CROP POSITION.
+
+   The home hero serves two different CROPS of each photograph through a
+   real <picture>: a vertical composition below md and a wide one from md
+   up. <source media> swaps the FILE, and that is all it can do — there is
+   no way to attach an object-position to a source, and the two crops need
+   different ones, because a value derived to hold a choir in a 1.78:1
+   landscape says nothing about where that choir sits in a 0.56:1 portrait.
+
+   So the element carries both, as two custom properties, and the
+   object-position DECLARATION lives here rather than on the element.
+
+   That split is the whole trick and it is not stylistic. An inline style
+   beats any stylesheet rule that is not !important, so writing
+   object-position inline for the phone and trying to override it in a
+   media query does not work — the media query loses at every width and
+   the desktop crop is positioned by the phone's number. Custom properties
+   invert it: the inline style only supplies VALUES, both declarations are
+   in this file, and the one below wins above md by ordinary cascade
+   order. No !important anywhere.
+
+   The 768 here and the 768 in the <source media> have to agree exactly or
+   there is a band of widths showing one crop positioned by the other
+   one's number. Both come from HERO_ART_DIRECTION.breakpoint in
+   src/lib/hero.ts; this is the copy of it that CSS needs, and 48rem is
+   768px.
+
+   Values are per photograph and come from the data, so they cannot be
+   written here; see HeroSource.position in src/lib/hero.ts for how each
+   one was derived. The fallbacks make the rule safe if a source ever
+   omits a position, which the type allows. */
+.hero-frame {
+  object-position: var(--hero-position, 50% 50%);
+}
+
+@media (width >= 48rem) {
+  .hero-frame {
+    object-position: var(--hero-position-md, var(--hero-position, 50% 50%));
+  }
+}
+
 /* A full-bleed band. Spans the viewport; its contents sit on the shell.
    Background comes from a utility at the call site rather than from here,
    because half the bands are meant to be the page surface and painting

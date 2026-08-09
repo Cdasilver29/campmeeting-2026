@@ -4,7 +4,11 @@ import { ArrowRight } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo } from "@/data";
 import { eventDateRange } from "@/lib/event-dates";
-import { HERO_IMAGES, HERO_SCRIM_BOTTOM_HEIGHT } from "@/lib/hero";
+import {
+  HERO_ART_DIRECTION,
+  HERO_IMAGES,
+  HERO_SCRIM_BOTTOM_HEIGHT,
+} from "@/lib/hero";
 import {
   HeroBackdrop,
   HeroCaption,
@@ -73,21 +77,24 @@ import {
  * that measured fine, and so a crossfade never has one image sitting under
  * another image's protection.
  *
- * Whether the top scrim is protection or art direction now depends on which
- * photograph is showing, which is the argument for deriving its alpha
- * against a white pixel rather than against a particular file: hands-bible's
- * top three deciles have a maximum luminance of 0.027, and migori's top
- * three have a MEAN of 0.72 and 1.000 highlights, because the top third of
- * that frame is a white hall ceiling with downlights in it.
+ * Whether the top scrim is protection or art direction depends on which
+ * photograph is showing, and now also on which CROP of it — which is the
+ * argument for deriving its alpha against a white pixel rather than
+ * against any particular file. Six files, two per picture, and a value
+ * tuned to one of them is a value guessed at for the other five.
  *
- * SOFTNESS
- * hands-bible is 735x616, so at full bleed it is upscaled 2.61x at a 1920
- * viewport and 3.48x at 2560, before device pixel ratio. That is worse
- * than the church photograph this replaced, which was 1634x962. The file
- * is not upscaled to hide it. The original behind the poster is the thing
- * to ask the committee for; see src/lib/hero.ts. The two choir photographs
- * are 1600px and 1491px wide, which makes that request more urgent rather
- * than less: rotation puts a sharp picture next to a soft one in one frame.
+ * SOFTNESS, AND THE END OF A LONG-STANDING REQUEST
+ * This used to say hands-bible was 735x616 and upscaled 2.61x at 1920 —
+ * the softest picture on the site in the slot every visitor sees — and
+ * that the thing to ask the committee for was the original behind the
+ * poster. It arrived. The wide crop is 1672x941 and upscales 1.15x at
+ * 1920; the phone crop is 853x1844, which a 390px viewport at device
+ * pixel ratio 3 does not quite fill either, but by 1.37x rather than by
+ * three and a half.
+ *
+ * Nothing is upscaled to reach a cap, and the cap itself is gone: see
+ * tools/assets/hero-photos.mjs. Sharpness is no longer what limits this
+ * hero at any width.
  *
  * MOTION
  * The photographs crossfade, three of them, 800ms of fade and six seconds
@@ -178,9 +185,55 @@ const COMPACT_CTA_OFFSET =
 
 export function Hero() {
   const phase = buildTimeHeroPhase();
+  const first = HERO_IMAGES?.[0];
 
   return (
     <>
+      {/*
+        THE LCP PRELOAD, WHICH USED TO BE next/image's `priority`.
+
+        The backdrop is a plain <picture> now (see the note in
+        ./hero-rotation.tsx for why art direction cannot go through
+        next/image), so the two things `priority` did have to be said
+        directly. `fetchPriority="high"` is on the img itself; this is the
+        other half.
+
+        TWO LINKS, EACH WITH THE MEDIA QUERY THAT SELECTS IT, and that is
+        the part a single preload would get wrong. Exactly one of these
+        matches at any width, so exactly one file is fetched — a preload
+        without `media` would pull the wide crop onto every phone, which
+        is 102 KB the phone will never paint, competing with the 40 KB it
+        actually needs. The queries are the same pair the <picture> itself
+        resolves, from the same constant, so the preload cannot select a
+        different file from the one the element ends up using.
+
+        Only the first image. The other two are `loading="lazy"` and are
+        six and thirteen seconds away; preloading them would spend the
+        LCP's bandwidth on pictures nobody is looking at yet.
+
+        React 19 hoists these into <head>. They are rendered before the
+        section so they are in the markup ahead of the img they describe,
+        which is what lets the preload scanner act on them first.
+      */}
+      {first ? (
+        <>
+          <link
+            rel="preload"
+            as="image"
+            href={first.mobile.src}
+            media={`(max-width: ${HERO_ART_DIRECTION.breakpoint - 1}px)`}
+            fetchPriority="high"
+          />
+          <link
+            rel="preload"
+            as="image"
+            href={first.desktop.src}
+            media={HERO_ART_DIRECTION.media}
+            fetchPriority="high"
+          />
+        </>
+      ) : null}
+
       <section
         id={HERO_ID}
         {...{ [HERO_PHASE_ATTRIBUTE]: phase }}
@@ -224,33 +277,31 @@ export function Hero() {
         */}
         <HeroRotation images={HERO_IMAGES ?? []}>
         {/*
-          THE FRAME, AND WHY IT NO LONGER CHANGES SHAPE.
+          THE FRAME CHANGES SHAPE. THE PHOTOGRAPH NOW CHANGES WITH IT.
 
-          It used to take a 4:3 ratio below md with the text set under it
-          on the page surface. That was the right answer to the church
-          photograph and the wrong answer to these, and the reason is
-          aspect ratio, not taste.
+          The band is 0.53:1 at 390x844 and full-bleed landscape from md
+          up. It used to be handed one landscape file for both, and
+          `object-fit: cover` was left to find a phone crop inside a
+          picture composed for a wide one. What that cost was written down
+          rather than hidden: at 390 it kept 29% of migori's width and 37%
+          of taji's, so both stopped being group shots and became close
+          shots of the three or four singers in the middle of the rank.
+          The defence was that a choir is a dense rank of people and the
+          middle of it still reads as a choir — true, and it was always an
+          argument for tolerating the crop rather than for wanting it.
 
-          The church photograph was 1634x962, a 1.70:1 landscape. A
-          390x844 portrait viewport is 0.46:1, so `cover` kept 27% of its
-          width: the middle third, roof and tarmac, with the building's
-          own edges outside the frame. No object-position survives that,
-          so the frame was given a shape of its own.
+          Each picture is now TWO FILES, composed separately for the two
+          shapes, chosen by a `media` query on a real `<picture>`. The
+          phone gets a portrait re-frame that holds the whole rank; md and
+          up get the wide one. That is art direction, and it is a
+          different problem from responsive sizing — `sizes` describes how
+          big the box is and cannot say what should be inside it. See
+          HERO_ART_DIRECTION in src/lib/hero.ts for the breakpoint and why
+          it is the same 768 this band's own height changes at, and
+          ./hero-rotation.tsx for why the optimiser is not in the path.
 
-          hands-bible is 735x616, 1.193:1, and its subject is a pair of
-          clasped hands in the middle of it. A near-full-height portrait
-          frame keeps 44% of the width at 390 and the hands span x 28% to
-          72%, so the crop the portrait frame forces is the crop that
-          photograph wants: a wide shot of a subject becomes a close one
-          of the same subject.
-
-          The two choir photographs are wider — 1.807:1 and 1.413:1 — so
-          the phone keeps 29% and 37% of their width. That is a harder
-          crop and it survives for a reason particular to these two
-          pictures: a choir is a dense rank of people, and the middle of
-          the rank still reads as a choir. It would not survive on a
-          photograph with one subject off to one side. See
-          tools/assets/hero-photos.mjs.
+          One picture has no wide re-cut and that is intended: taji keeps
+          its existing desktop file and gains only a phone crop.
 
           The frame, the three layers and their scrims are in
           ./hero-rotation.tsx. HERO_IMAGES going undefined removes all of
