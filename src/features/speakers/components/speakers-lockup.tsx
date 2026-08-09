@@ -61,20 +61,49 @@ export function SpeakersLockup() {
   if (!speaker) return null;
 
   return (
-    // gap-2 rather than the band's usual mt-3 / mt-6 rhythm, because these
-    // four lines are one lockup and not a title with things under it. The
-    // rule is absent for the same reason: there is nothing here to separate.
+    /*
+     * gap-2 rather than the band's usual mt-3 / mt-6 rhythm, because these
+     * four lines are one lockup and not a title with things under it. The
+     * rule is absent for the same reason: there is nothing here to separate.
+     *
+     * ── SET ONE STEP LARGER THAN IT WAS, AND A SECOND AT lg ───────────
+     *
+     * Every line moved up one size and gained an `lg` step it did not have
+     * before. What it was competing with is why: the band is 480px tall at
+     * lg and full-bleed, so a 30px name and a 36px theme sat in the middle
+     * of a very large photograph and read as a caption on it rather than as
+     * the poster's own statement.
+     *
+     * The RATIO between the four is unchanged — label, name, theme one step
+     * above the name, verse — so the lockup still reads in the same order.
+     * Only the whole thing is bigger.
+     *
+     * The phone steps are deliberately the conservative end. At 390 the
+     * shell leaves about 350px, and "Pr. Kennedy Mfune" set at text-4xl
+     * measures close to 306px before it starts breaking at its spaces; the
+     * name is held at text-3xl there and takes its two larger steps at sm
+     * and lg, where there is room. `text-balance` on the theme is what
+     * handles the break if a longer theme ever arrives.
+     *
+     * The band's own height is a MIN-height, so it grows if this type ever
+     * outgrows it rather than clipping. Re-rendered and re-measured after
+     * the change: the crop still holds a complete head at all three widths
+     * and contrast is unmoved.
+     */
     <div className="flex flex-col gap-2 text-white">
       {/* The same treatment the site's eyebrow has everywhere else, so this
           line reads as the label it is rather than as small type. */}
       <p
         data-header-line="role"
-        className="text-sm font-semibold tracking-[0.18em] uppercase"
+        className="text-sm font-semibold tracking-[0.18em] uppercase sm:text-base"
       >
         {speaker.role ?? "Main Speaker"}
       </p>
 
-      <p data-header-line="name" className="font-display text-2xl sm:text-3xl">
+      <p
+        data-header-line="name"
+        className="font-display text-3xl sm:text-4xl lg:text-5xl"
+      >
         {speakerLabel(speaker)}
       </p>
 
@@ -83,12 +112,12 @@ export function SpeakersLockup() {
           home hero sets. */}
       <p
         data-header-line="theme"
-        className="font-display text-3xl text-balance sm:text-4xl"
+        className="font-display text-4xl text-balance sm:text-5xl lg:text-6xl"
       >
         {eventInfo.theme}
       </p>
 
-      <p data-header-line="verse" className="text-base sm:text-lg">
+      <p data-header-line="verse" className="text-lg sm:text-xl">
         Key text: {eventInfo.keyVerse}
       </p>
     </div>
