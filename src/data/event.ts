@@ -266,14 +266,24 @@ export const speakers: Speaker[] = [
    * the programme from the day they are added and appear in the
    * presenter filter straight away.
    *
-   * No photograph supplied for either; both fall back to the initials
-   * monogram. Owed by the committee alongside Eld. Ken Ochuka's.
+   * BOTH NOW HAVE A PHOTOGRAPH. They were the last two profiles rendering
+   * as initials monograms. The artwork is a clean cut-out on the poster's
+   * plum ground with no caption burnt in, so it is cropped by
+   * tools/assets/portrait-photos.mjs rather than by speaker-photos.mjs,
+   * whose first job is removing a caption these do not have.
    */
   {
     id: "elkanah-mose",
     name: "Elkanah Mose",
     title: "Pr.",
     role: "Stewardship",
+    // 79.6 KB where the other two in this batch are about 27, and it is
+    // the SUBJECT rather than a setting: he is photographed in a fine
+    // windowpane check, and a regular high-frequency pattern is the most
+    // expensive thing a DCT codec can be handed. The same thing the old
+    // Oyoo crop's gingham did — see host-photos.mjs.
+    image: "/speakers/elkanah-mose.webp",
+    imagePosition: "50% 0%",
     // v3 prints "Elkana" on Monday and Thursday and "Elkanah" on the
     // other four days he appears. "Elkanah" is used here because it is
     // both the majority spelling in the programme and the spelling in
@@ -301,6 +311,12 @@ export const speakers: Speaker[] = [
     // the grid. The four subjects are in the programme, where they
     // belong, and this names the thread instead.
     role: "Morning Sessions",
+    // The one crop in this batch that is a zoom rather than a shape. He
+    // is shot at three-quarter length where the other two are chest-up,
+    // so an equal head position still read smaller. See the note in
+    // portrait-photos.mjs.
+    image: "/speakers/kenneth-ayuo.webp",
+    imagePosition: "50% 0%",
     // Corrected: one missing space, "trust God.Come". Kept exactly as
     // written: "OBEY AND LIVE, Disobey and Perish. The Choice is
     // Yours.", which is his own framing of the theme and not this
@@ -450,6 +466,13 @@ export const hosts: Host[] = [
     name: "Omondi Oyoo",
     title: "Eld.",
     role: "Head Elder",
+    // The FILE behind this path was replaced, and the path was not. The
+    // first was cut by host-photos.mjs from the only landscape source in
+    // that batch, arms crossed, and it was the largest of the five hosts
+    // at 82.3 KB because of the fine gingham check he was wearing. The
+    // committee has since sent a plain studio portrait; it is cropped by
+    // tools/assets/portrait-photos.mjs and comes out at 25.6 KB, so the
+    // byte problem left with the shirt.
     image: "/speakers/omondi-oyoo.webp",
     imagePosition: "50% 0%",
   },

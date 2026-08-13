@@ -574,12 +574,13 @@ misspelling, so none was touched:
     does appear in the hosts section as an Associate Pastor, with a
     photograph. Pr. Polycarp Nyangau is in the same position, with three
     credits.
-11. **Two speakers have no photograph**: Pr. Elkanah Mose and Pr.
-    Kenneth Ayuo. Both render as initials. Eld. Ken Ochuka's photograph
-    arrived with the hosts drop and his profile now carries it; he and
-    Allan Okoth still have no biography, and Allan Okoth's is the
-    emptiest page relative to how much of the programme he carries, the
-    Children's Corner on all seven days that have one.
+11. **Every profile now carries a photograph.** Pr. Elkanah Mose and Pr.
+    Kenneth Ayuo were the last two rendering as initials monograms and
+    both have arrived, along with a replacement for Eld. Omondi Oyoo —
+    see below. What is still owed is BIOGRAPHIES: Eld. Ken Ochuka and
+    Allan Okoth have none, and Allan Okoth's is the emptiest page
+    relative to how much of the programme he carries, the Children's
+    Corner on all seven days that have one.
 12. **The five welcome letters are published; five host BIOGRAPHIES are
     still owed.** All five cards in the hosts and elders section on
     `/speakers` — Dr. Gerald Mochoge, Pr. Elvis Onyango, Pr. Polycarp
@@ -608,6 +609,37 @@ misspelling, so none was touched:
 
 Open items are renumbered when one is resolved. Refer to them by title,
 not number.
+
+## The three later portraits
+
+Three files arrived after the speaker and host batches, and they are a
+third KIND of source rather than more of either — clean cut-outs on the
+poster's plum ground with **no caption burnt into them**. So they are cut
+by `tools/assets/portrait-photos.mjs` rather than by
+`speaker-photos.mjs`, whose whole crop model is one number meaning "where
+this poster's caption begins".
+
+| id | source | crop | output |
+| --- | --- | --- | --- |
+| `kenneth-ayuo` | 1254x1254, 1.6 MB | 725x966 at 352,100 | 540x720, 29.2 KB |
+| `elkanah-mose` | 1122x1402, 2.0 MB | 842x1122 at 140,140 | 540x720, 79.6 KB |
+| `omondi-oyoo` | 1122x1402, 1.6 MB | 842x1122 at 162,28 | 540x720, 25.6 KB |
+
+- **Eld. Omondi Oyoo's REPLACES a file.** The path did not change; what
+  is behind it did. The old crop came from the only landscape source in
+  the hosts batch and was the largest of the five at 82.3 KB because of
+  the fine gingham check he was wearing. The new one is a plain studio
+  portrait at 25.6 KB, so the byte problem left with the shirt.
+- **Pr. Elkanah Mose's is now the expensive one**, 79.6 KB against about
+  27 for the other two, and for exactly the same reason: he is
+  photographed in a fine windowpane check. Reported rather than hidden,
+  as the old note in `host-photos.mjs` reports its predecessor.
+- **Pr. Kenneth Ayuo's crop is a zoom**, and the second attempt. The
+  first kept nearly the whole square and put his head at the same
+  0.12-0.40 of the window as the other two, and he still read smaller —
+  he is shot at three-quarter length where they are chest-up, so an equal
+  head position left a third of his window as empty plum. The reasoning
+  is in the script.
 
 ## About the supplied speaker artwork
 

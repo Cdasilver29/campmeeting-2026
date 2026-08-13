@@ -96,7 +96,13 @@
  *
  * Change MAX_H and re-run if the committee would rather have the bytes.
  *
- * ── ONE FILE IS TWICE THE SIZE OF THE OTHERS, AND IT STAYS ───────────
+ * ── ONE FILE WAS TWICE THE SIZE OF THE OTHERS. IT HAS BEEN REPLACED ──
+ *
+ * SUPERSEDED, and kept because the finding still holds for any future
+ * subject in a patterned shirt. The omondi-oyoo entry below no longer
+ * writes the file the site uses: the committee has since sent a plain
+ * studio portrait of him and tools/assets/portrait-photos.mjs cuts it,
+ * at 25.6 KB. What follows is why the old one cost 82.3.
  *
  * omondi-oyoo is 82.3 KB where the other four are 35 to 48. That is not a
  * setting that drifted and it is not fixed by turning the quality down;
@@ -119,8 +125,11 @@
  *
  * Usage: node tools/assets/host-photos.mjs <source-dir> [--preview <dir>]
  *
- * sharp is not a project dependency; it arrives with next. Resolved from
- * the repo root rather than imported, so this script does not add one.
+ * sharp is a devDependency, pinned. It used to be taken from next's own
+ * tree on a comment saying it arrives with next; it does not hoist under
+ * this pnpm config, so all four of these scripts were failing with
+ * ERR_MODULE_NOT_FOUND. createRequire from the repo root is kept so the
+ * resolution is explicit.
  */
 import { createRequire } from "node:module";
 import { mkdirSync, statSync } from "node:fs";

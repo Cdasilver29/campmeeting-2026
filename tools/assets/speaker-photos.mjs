@@ -54,8 +54,11 @@
  *
  * Usage: node tools/assets/speaker-photos.mjs <source-dir> [--preview <dir>]
  *
- * sharp is not a project dependency; it arrives with next. Resolved from
- * the repo root rather than imported, so this script does not add one.
+ * sharp is a devDependency, pinned. It used to be taken from next's own
+ * tree on a comment saying it arrives with next; it does not hoist under
+ * this pnpm config, so all four of these scripts were failing with
+ * ERR_MODULE_NOT_FOUND. createRequire from the repo root is kept so the
+ * resolution is explicit.
  */
 import { createRequire } from "node:module";
 import { mkdirSync, statSync } from "node:fs";
