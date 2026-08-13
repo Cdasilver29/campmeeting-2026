@@ -23,7 +23,7 @@ const linkClassName =
 const needsSignal = [
   "The livestream, which is a YouTube player",
   "The map on the contact page",
-  "Sending a prayer request or a contact message",
+  "Sending a contact message",
   "Photos in the gallery",
 ];
 

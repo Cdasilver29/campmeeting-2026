@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowLeft, ChevronRight, Menu } from "lucide-react";
 import { BrandLockup } from "@/components/brand-lockup";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,115 @@ const isPhotoRoute = (pathname: string) =>
 
 /** How far down the page the header earns its own surface. */
 const SCROLL_THRESHOLD_CLASS = "h-24";
+
+/**
+ * ── BACK, ON DESKTOP ─────────────────────────────────────────────────
+ *
+ * A phone has a back gesture and a hardware or system control for this;
+ * a desktop browser has a button in a chrome the reader has to leave the
+ * page to reach. The site now goes three levels deep in places — a
+ * speaker's page from the presenter grid, a day from the programme, a
+ * host's letter from the hosts section — and the only way back up was
+ * the nav, which returns you to the top of a list rather than to where
+ * you were in it.
+ *
+ * ── IT IS NOT ALWAYS `router.back()` ─────────────────────────────────
+ *
+ * A back control that leaves the site is worse than no back control. On
+ * a page opened from a shared link the previous entry is WhatsApp, and
+ * `router.back()` there is a control in this site's header that closes
+ * this site. So the history length is checked after mount and the button
+ * only appears when there is somewhere inside to go: `history.length > 1`
+ * is true for any navigation within the app and false for a fresh tab.
+ *
+ * Never on the home page, which is the top and has nothing above it.
+ *
+ * ── WHY IT DOES NOT MOVE THE LOCKUP ──────────────────────────────────
+ *
+ * Rendered as `null` before mount and hidden below `lg`, so the header at
+ * first paint is exactly what it was. It appears beside the brand lockup
+ * rather than in the controls on the right, because it acts on the page
+ * you are on and reads left to right with it.
+ */
+function BackButton() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [canGoBack, setCanGoBack] = useState(false);
+
+  useEffect(() => {
+    // After mount only: history is not available while rendering, and
+    // reading it on the server would make this component non-static.
+    setCanGoBack(window.history.length > 1);
+  }, [pathname]);
+
+  if (pathname === "/" || !canGoBack) return null;
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      onClick={() => router.back()}
+      aria-label="Go back"
+      className="hidden size-11 shrink-0 lg:inline-flex group-data-[header-state=transparent]/header:text-white"
+    >
+      <ArrowLeft aria-hidden className="size-5" />
+    </Button>
+  );
+}
+
+/**
+ * A row in the mobile sheet.
+ *
+ * Its own component rather than a variant of NavLink, because almost
+ * nothing is shared. NavLink is a text link sized to take no horizontal
+ * room, in a bar that has none to spare, and it flips to white over a
+ * photograph. This is a full-width row on an opaque panel that is never
+ * over a photograph, and its whole job is to be a large, obvious target.
+ * Two short components rather than one with four branches in it.
+ */
+function SheetNavLink({
+  href,
+  label,
+  onNavigate,
+}: {
+  href: string;
+  label: string;
+  onNavigate?: () => void;
+}) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
+  return (
+    <Link
+      href={href}
+      onClick={onNavigate}
+      aria-current={isActive ? "page" : undefined}
+      className={cn(
+        // min-h-12: a row in a sheet is the most-tapped control on the
+        // site and takes the 48px floor, not the 44px minimum.
+        "group/row flex min-h-12 items-center justify-between gap-3 rounded-card px-3 text-base font-medium",
+        "transition-[background-color,translate] duration-fast ease-out-soft active:translate-y-px",
+        "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-500",
+        isActive
+          ? // A tinted ground AND a left edge. The edge is the part that
+            // works without colour vision: it changes the shape of the
+            // row, not only its fill.
+            "bg-accent-50 text-ink shadow-[inset_3px_0_0_0_var(--color-accent-500)]"
+          : "text-ink-muted hover:bg-surface-muted hover:text-ink",
+      )}
+    >
+      {label}
+      <ChevronRight
+        aria-hidden
+        className={cn(
+          "size-4 shrink-0 transition-[translate] duration-fast ease-out-soft group-hover/row:translate-x-0.5",
+          isActive ? "text-accent-500" : "text-ink-muted/60",
+        )}
+      />
+    </Link>
+  );
+}
 
 function NavLink({
   href,
@@ -205,7 +314,10 @@ export function SiteHeader() {
             number at every breakpoint rather than two numbers that happen
             to agree. See the width system block in globals.css. */}
         <div className="shell flex h-full items-center justify-between gap-4">
-          <BrandLockup />
+          <div className="flex min-w-0 items-center gap-2">
+            <BackButton />
+            <BrandLockup />
+          </div>
 
           {/*
             lg, not md. Eight links plus the lockup plus the theme toggle
@@ -250,16 +362,39 @@ export function SiteHeader() {
                   <Menu aria-hidden className="size-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right">
-                <SheetHeader>
-                  <SheetTitle>{eventInfo.edition}</SheetTitle>
+              {/* ── THE SHEET ────────────────────────────────────────
+                  It was the desktop nav turned on its side: nine 44px
+                  text links at gap-0.5, ranged left in a column, with
+                  nothing but colour marking the current page. On a phone
+                  that is the whole of the navigation and it read as a
+                  list of words rather than as a place to go.
+
+                  Three changes, and each is doing one thing. Every row is
+                  a full-width surface with a chevron, so the target is
+                  the row and not the four characters in it. The current
+                  page takes a tinted ground and an accent left edge
+                  rather than a shade of ink, which is legible at a glance
+                  and does not depend on comparing two greys. And the
+                  header carries the brand lockup instead of the edition
+                  as plain text, so opening the sheet does not replace the
+                  thing you were just looking at with a paraphrase of it.
+
+                  No new colour: surface-muted for the row, accent-50 and
+                  accent-500 for the current one, all four already in the
+                  palette. */}
+              <SheetContent side="right" className="w-[19rem] sm:w-[21rem]">
+                <SheetHeader className="border-b border-line p-4">
+                  <SheetTitle className="text-left">
+                    <span className="sr-only">{eventInfo.edition}</span>
+                    <BrandLockup aria-hidden />
+                  </SheetTitle>
                 </SheetHeader>
                 <nav
                   aria-label="Primary"
-                  className="flex flex-col gap-0.5 px-4 pb-4"
+                  className="flex flex-col gap-1 overflow-y-auto p-3"
                 >
                   {navLinks.map((link) => (
-                    <NavLink
+                    <SheetNavLink
                       key={link.href}
                       {...link}
                       onNavigate={() => setOpen(false)}

@@ -6,7 +6,6 @@ import { eventInfo } from "@/data";
 // Routes the primary nav deliberately leaves out. The nav stays short;
 // the footer carries the overflow so nothing is unreachable from the shell.
 const moreLinks = [
-  { href: "/prayer-requests", label: "Prayer Requests" },
   { href: "/announcements", label: "Announcements" },
   { href: "/downloads", label: "Downloads" },
   { href: "/faq", label: "FAQ" },

@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import { SectionWave } from "@/components/section-wave";
+import { eventInfo } from "@/data";
 import { cn } from "@/lib/utils";
 import { ART_DIRECTION } from "@/lib/hero";
 import type { PageIdentity } from "@/lib/page-identity";
@@ -155,16 +156,11 @@ export function PageHeader({
    */
   imageOnly?: boolean;
   /**
-   * Draw the title without the eyebrow above it. One route uses it,
-   * /about, whose eyebrow is the edition — "Camp Meeting 2026" — over a
-   * title that reads "About Camp Meeting". The two lines say the same
-   * three words twice, once small and once large, and the edition is
-   * already in the header lockup, the footer and the metadata title.
+   * Force the title to be drawn without the eyebrow above it.
    *
-   * NOT a change to `aboutPage`. `eyebrow` is still required and still
-   * read by pageMetadata and by the share card, exactly as it is under
-   * `lockup` and `imageOnly`. The card's own layout has room for a line
-   * the band does not.
+   * Rarely needed now: an eyebrow that is simply the edition is dropped
+   * automatically, and that covered the one route this prop existed for.
+   * See the note above `showEyebrow` in the body.
    */
   hideEyebrow?: boolean;
   children?: ReactNode;
@@ -173,6 +169,12 @@ export function PageHeader({
   const onPhoto = Boolean(image);
   /** Only meaningful with a photograph: there is nothing else to show. */
   const imageOnly = Boolean(image) && Boolean(imageOnlyProp);
+  /**
+   * The eyebrow is drawn when it says something the page does not already
+   * say. An eyebrow that is only the edition says nothing: see the note
+   * at the element itself.
+   */
+  const showEyebrow = !hideEyebrow && eyebrow !== eventInfo.edition;
   /**
    * `fit: "whole"` — the band takes the photograph's aspect ratio instead
    * of being as tall as its own type. One route, /contact. The reasoning is
@@ -475,7 +477,24 @@ export function PageHeader({
               On a photograph none of that survives: Grapevine over the
               scrim is about 1.3:1. White, for the same measured reason
               the hero's kicker is white. */}
-          {hideEyebrow ? null : (
+          {/* ── AN EYEBROW THAT IS ONLY THE EDITION IS NOT DRAWN ──────
+              "CAMP MEETING 2026" sat above the title of eleven interior
+              pages, and on every one of them it was the fourth place the
+              reader had already been told: the header lockup names the
+              church on every page, the footer names the event, and the
+              browser tab carries it in the metadata title. A line
+              repeated on every page teaches a reader to stop reading that
+              position, on the pages where it says something real — "Day 6
+              of 8", a speaker's role, a host's office.
+
+              A rule rather than eleven edits, and NOT a change to any
+              PageDefinition. `eyebrow` stays on all of them and stays
+              required, because ogCard draws it and a link preview has
+              room for a line this band does not: a card seen in a
+              WhatsApp thread has no header lockup above it to say what
+              site it came from. Same arrangement /speakers and /gallery
+              already use for strings their bands do not draw. */}
+          {showEyebrow ? (
             <p
               className={cn(
                 "text-sm font-semibold tracking-[0.18em] uppercase",
@@ -484,7 +503,7 @@ export function PageHeader({
             >
               {eyebrow}
             </p>
-          )}
+          ) : null}
 
           {/* mt-3 is the gap under the eyebrow. With no eyebrow there is
               nothing above the title but the band's own padding, and 12px
@@ -493,7 +512,7 @@ export function PageHeader({
           <h1
             className={cn(
               "font-display text-4xl text-balance sm:text-5xl",
-              hideEyebrow ? null : "mt-3",
+              showEyebrow ? "mt-3" : null,
               onPhoto ? "text-white" : "text-ink",
             )}
           >

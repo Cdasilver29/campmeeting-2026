@@ -154,12 +154,21 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
            day would have been a WHITE flash over the photograph at
            night. Emperor is a brand token with one value in both themes,
            it is the colour the poster is anchored in, and white controls
-           measure 11.59:1 on it. At 95% the page behind is quiet enough
-           that the picture is the only thing lit. */
-        className="max-h-none max-w-none bg-transparent backdrop:bg-emperor/95 open:fixed open:inset-0 open:flex open:h-full open:w-full open:items-center open:justify-center open:p-3 sm:open:p-6"
+           measure 11.59:1 on it.
+
+           SOLID, not 95%. At 95% the page behind stayed legible through
+           it — the header lockup and the grid's own cards ghosted over
+           the photograph, which is the one thing a viewer is for. A
+           lightbox that lets you read the page underneath is a lightbox
+           that has not opened. */
+        className="max-h-none max-w-none bg-transparent backdrop:bg-emperor open:fixed open:inset-0 open:flex open:h-full open:w-full open:items-center open:justify-center open:p-3 sm:open:p-6"
       >
         {open ? (
-          <div className="flex max-h-full w-full max-w-5xl flex-col gap-3">
+          // h-full, not max-h-full: the column has to BE the height of
+          // the dialog for `flex-1` on the frame below to have a leftover
+          // to take. With max-h-full it sized to its content, and its
+          // content was a picture with no ceiling.
+          <div className="flex h-full w-full max-w-5xl flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
               <p className="tabular-figures text-sm text-white/90">
                 {(openIndex ?? 0) + 1} / {images.length}
@@ -174,13 +183,25 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
               </button>
             </div>
 
-            {/* The frame holds the picture's own shape, so paging from a
-                landscape to a portrait does not jump the controls
-                around. */}
-            <div
-              className="flex min-h-0 w-full items-center justify-center"
-              style={{ aspectRatio: `${open.width} / ${open.height}` }}
-            >
+            {/* ── THE FRAME TAKES THE LEFTOVER HEIGHT. IT DOES NOT SET IT.
+
+                This carried `aspect-ratio: w / h` at first, to stop the
+                controls jumping as you paged from a landscape to a
+                portrait. On a phone that is exactly backwards: a portrait
+                photograph's own ratio is TALLER than what is left after
+                the counter and the arrows, so the frame grew past the
+                viewport, the picture overlapped the controls and the
+                arrows sat on top of the page behind. An aspect-ratio is a
+                height instruction, and inside a fixed-height column the
+                height is not the picture's to choose.
+
+                `flex-1 min-h-0` gives it everything left over and no
+                more, and the controls hold still for a better reason than
+                before: the frame is the same height whatever is in it.
+                `min-h-0` is load-bearing — a flex child's default
+                `min-height: auto` refuses to shrink below its content,
+                which is how a too-tall image escapes a flex column. */}
+            <div className="flex min-h-0 w-full flex-1 items-center justify-center">
               <Image
                 key={open.id}
                 src={open.src}
@@ -188,7 +209,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 width={open.width}
                 height={open.height}
                 sizes="(min-width: 1024px) 64rem, 100vw"
-                className="max-h-full w-auto rounded-card object-contain"
+                className="max-h-full w-auto max-w-full rounded-card object-contain"
                 priority
               />
             </div>

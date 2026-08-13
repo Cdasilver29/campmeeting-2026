@@ -76,3 +76,28 @@ export const UPCOMING_EYEBROW =
  * Straight off the existing type scale — no new size was introduced.
  */
 export const UPCOMING_TITLE = "text-lg leading-6 font-semibold text-ink";
+
+/**
+ * ── NEXT UP, ONE STEP LARGER AGAIN ───────────────────────────────────
+ *
+ * The one card on the home page that is a different SIZE and not only a
+ * different surface.
+ *
+ * Next Up and On Duty were built as siblings, and as a pair they are
+ * right: same ground, same hairline, same eyebrow. But a reader arriving
+ * mid camp meeting is asking one question — what is on next — and a page
+ * where three cards answer three questions at one weight makes them scan
+ * all three to find it. Emphasis has to be spent somewhere, and this is
+ * where.
+ *
+ * More padding and a bigger title, both off the existing scale; no new
+ * colour and no new surface. It stays quieter than the live card, which
+ * keeps the 2px accent ring and the tint, so the order on the page is
+ * still now, then next, then everything else.
+ *
+ * `NEXT_UP_CARD` composes on top of UPCOMING_CARD rather than replacing
+ * it, so a change to the family still reaches this card.
+ */
+export const NEXT_UP_CARD = "p-5 sm:p-6";
+export const NEXT_UP_TITLE =
+  "text-xl leading-7 font-semibold text-ink sm:text-2xl sm:leading-8";

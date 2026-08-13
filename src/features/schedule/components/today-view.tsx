@@ -10,6 +10,8 @@ import { getDutyPanel } from "../lib/duty";
 import { getTodayState, nextSavedSession, type TodayState } from "../lib/today";
 import { useNow } from "../use-now";
 import {
+  NEXT_UP_CARD,
+  NEXT_UP_TITLE,
   SECTION_HEADING,
   UPCOMING_CARD,
   UPCOMING_EYEBROW,
@@ -58,6 +60,7 @@ function UpcomingCard({
   headingId,
   heading,
   saved = false,
+  prominent = false,
 }: {
   session: FlatSession;
   todayDate: string;
@@ -65,6 +68,13 @@ function UpcomingCard({
   heading: string;
   /** Draws the bookmark beside the time, for a session this device saved. */
   saved?: boolean;
+  /**
+   * One size up. True for "Next up" and false for "Next saved session":
+   * the two are the same card, and only one of them is the question a
+   * reader arriving mid camp meeting is actually asking. See
+   * NEXT_UP_CARD in card-styles.ts.
+   */
+  prominent?: boolean;
 }) {
   const day = getDayByDate(session.date);
   const isToday = session.date === todayDate;
@@ -78,7 +88,9 @@ function UpcomingCard({
           them share one time column rather than each inventing a layout.
           The surface comes from card-styles, which On Duty below shares —
           see the note there. */}
-      <article className={`${ENTRY_GRID} ${UPCOMING_CARD}`}>
+      <article
+        className={`${ENTRY_GRID} ${UPCOMING_CARD} ${prominent ? NEXT_UP_CARD : ""}`}
+      >
         <span className="flex min-h-6 items-center gap-2 sm:col-start-1 sm:row-start-1">
           <TimeRange start={session.start} end={session.end} />
           {saved ? (
@@ -94,7 +106,9 @@ function UpcomingCard({
         <span className={UPCOMING_EYEBROW}>
           {isToday ? session.blockLabel : (day?.displayLabel ?? session.date)}
         </span>
-        <h3 className={UPCOMING_TITLE}>{session.title}</h3>
+        <h3 className={prominent ? NEXT_UP_TITLE : UPCOMING_TITLE}>
+          {session.title}
+        </h3>
         <PresenterChips session={session} />
         <MinistryChip session={session} />
       </article>
@@ -146,6 +160,7 @@ function Upcoming({
           headingId="next-heading"
           heading="Next up"
           saved={sameSession}
+          prominent
         />
       ) : null}
       {saved && !sameSession ? (

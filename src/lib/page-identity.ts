@@ -70,7 +70,7 @@ export interface PageIdentity {
    * A meta line that restates the page is worse than no meta line: it
    * teaches a reader that the line under the rule is not worth reading,
    * on the pages where it still is. /schedule, /faq, /ministries,
-   * /downloads, /prayer-requests, /announcements and every day, speaker
+   * /downloads, /announcements and every day, speaker
    * and ministry page keep theirs, and each of those says something the
    * title does not.
    *
@@ -122,7 +122,7 @@ export const siteIdentity: PageIdentity = {
 export const schedulePage: PageDefinition = {
   eyebrow: EDITION,
   title: "Full programme",
-  meta: `${program.length} days · ${eventDateRange()} · ${EAT}`,
+  meta: `${program.length} days · ${EAT}`,
   description: `Every session of ${EDITION} across all ${program.length} days, ${eventInfo.startDate} to ${eventInfo.endDate} at ${eventInfo.church.address}. Times are East Africa Time.`,
   path: "/schedule",
   image: headerImages.schedule,
@@ -247,16 +247,6 @@ export const livestreamPage: PageDefinition = {
   image: headerImages.livestream,
 };
 
-export const prayerRequestsPage: PageDefinition = {
-  eyebrow: EDITION,
-  title: "Prayer Requests",
-  meta: "Read by the pastoral team, in confidence",
-  description:
-    "Share a prayer request with the pastoral team, by name or anonymously.",
-  path: "/prayer-requests",
-  image: headerImages["prayer-requests"],
-};
-
 /*
  * The three routes with a share card of their own. Each builder is the one
  * definition of that page's strings: its page reads it for the header, its
@@ -293,7 +283,7 @@ export function hostPageDefinition(host: Host): PageDefinition {
   return {
     eyebrow: host.role,
     title: label,
-    meta: `A welcome to ${EDITION}`,
+    meta: "A welcome to this year's camp meeting",
     description: `${label}, ${host.role} at ${eventInfo.church.name}, welcomes you to ${EDITION}.`,
     path: `/hosts/${host.id}`,
   };
@@ -319,7 +309,6 @@ export function speakerPageDefinition(speaker: Speaker): PageDefinition {
     // fallback for the profiles whose role the committee has not sent.
     eyebrow: speaker.role ?? "Speaker",
     title: speakerLabel(speaker),
-    meta: `${EDITION} · ${eventInfo.church.name}`,
     description: `${roleText}${EDITION}, ${eventInfo.church.name}. ${sessionText}`,
     path: `/speakers/${speaker.id}`,
   };
@@ -333,7 +322,6 @@ export function ministryPageDefinition(tag: MinistryPageTag): PageDefinition {
   return {
     eyebrow: EDITION,
     title: copy.label,
-    meta: `${eventDateRange()} · ${eventInfo.church.address}`,
     description: `${copy.description} ${count} programme ${count === 1 ? "entry" : "entries"} across ${groups.length} ${groups.length === 1 ? "day" : "days"}.`,
     path: `/ministries/${tag}`,
     /* Three of the four ministry pages have a photograph. `children` does

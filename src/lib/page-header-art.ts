@@ -338,7 +338,6 @@ const HEADER_ROUTES = {
   contact: "/contact",
   faq: "/faq",
   downloads: "/downloads",
-  "prayer-requests": "/prayer-requests",
   health: "/ministries/health",
   "family-life": "/ministries/family-life",
   // Top-level since the children's ministry got a page of its own.
@@ -584,25 +583,6 @@ export const headerImages = {
     // what a downloads page is about.
     position: "50% 58%",
     keeps: "the open book, its tabs, the pencil and the mug beside them; loses the lamp and the top of the shelf",
-  },
-  "prayer-requests": {
-    src: "/headers/prayer-requests.webp",
-    width: 588,
-    height: 306,
-    // The hands are right of centre, x 0.48-0.85, against black. 62%
-    // keeps their right edge on a phone, where the crop is tightest, and
-    // that half is unchanged: at 390 the band still keeps only 53% of the
-    // width.
-    //
-    // 50% -> 30% on the vertical, and it only exists because the band got
-    // taller. At 1440 `cover` now keeps 64% of the height rather than 27%,
-    // and a centred window of 64% is y 0.18-0.82 — which cut the tops of
-    // the fingers off, the one part of this frame that is the subject.
-    // 30% puts the window at 0.108-0.748 and the fingertips are complete.
-    // Inert at 390 and effectively so at 768, where the band keeps 100% of
-    // the height either way.
-    position: "62% 30%",
-    keeps: "the joined hands whole, fingertips to wrists, and the black ground to their left",
   },
   health: {
     // A new photograph, and a `band` window where there was none. The old

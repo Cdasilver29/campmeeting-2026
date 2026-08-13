@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, PlayCircle } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo } from "@/data";
 import { eventDateRange } from "@/lib/event-dates";
@@ -473,24 +473,48 @@ export function Hero() {
             </RevealItem>
 
             <RevealItem className={`mt-2 ${COMPACT_CTA_OFFSET}`}>
-              {/* White fill at every width now. The primary-filled variant
-                  below md existed because the button sat on the white page
-                  surface there, where a white button would have been an
-                  outline of nothing. It is on the photograph everywhere
-                  now, so the white fill is the one that belongs and the
-                  md: variants are gone.
+              {/* TWO ACTIONS, AND ONLY ONE OF THEM IS FILLED.
 
-                  min-h-12, not min-h-11: this is the primary action and it
-                  is on a phone, so it takes the same 48px floor the header
-                  controls now do. It reverts to the site's compact size at
-                  lg, which is the split the rest of the site already uses. */}
-              <Link
-                href="/schedule"
-                className="inline-flex min-h-12 items-center gap-2 rounded-control bg-white px-5 py-2.5 text-sm font-medium text-emperor transition-[background-color,translate] duration-fast ease-out-soft hover:bg-white/90 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-h-11"
-              >
-                See the programme
-                <ArrowRight aria-hidden className="size-4" />
-              </Link>
+                  The programme is what most people open this site for and
+                  keeps the white fill. The livestream is for the people
+                  who cannot be there, which is fewer of them but a need
+                  the programme cannot answer — so it is a real button and
+                  not a text link, set as an outline. Two filled buttons
+                  side by side is two primary actions, which is none.
+
+                  flex-wrap, and the pair stacks below about 360 rather
+                  than shrinking: these are 48px tap targets on a
+                  photograph and a squeezed row of two is worse than a
+                  column of two. gap-3 keeps them clearly separate when
+                  they do sit on one line.
+
+                  min-h-12, not min-h-11: primary actions on a phone take
+                  the same 48px floor the header controls do, reverting to
+                  the site's compact size at lg. */}
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  href="/schedule"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-control bg-white px-5 py-2.5 text-sm font-medium text-emperor transition-[background-color,translate] duration-fast ease-out-soft hover:bg-white/90 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-h-11"
+                >
+                  See the programme
+                  <ArrowRight aria-hidden className="size-4" />
+                </Link>
+
+                {/* A 2px ring rather than a 1px border, because this sits
+                    on a photograph: a hairline disappears over a light
+                    patch, and the hero's whole contrast argument is that
+                    nothing here may depend on which pixels are behind it.
+                    The fill on hover is white/15, which reads on every
+                    frame of the rotation without ever approaching the
+                    filled button beside it. */}
+                <Link
+                  href="/livestream"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-control px-5 py-2.5 text-sm font-medium text-white ring-2 ring-white/80 transition-[background-color,translate] duration-fast ease-out-soft hover:bg-white/15 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-h-11"
+                >
+                  <PlayCircle aria-hidden className="size-4" />
+                  Watch live
+                </Link>
+              </div>
             </RevealItem>
           </RevealGroup>
 

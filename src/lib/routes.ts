@@ -36,7 +36,6 @@ const fixedRoutes = [
   "/contact",
   "/faq",
   "/downloads",
-  "/prayer-requests",
 ] as const;
 
 /** One page per programme day. */

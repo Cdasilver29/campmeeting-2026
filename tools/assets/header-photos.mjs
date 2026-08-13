@@ -170,7 +170,6 @@ const HEADERS = [
   { route: "about", file: "about.png" },
   { route: "faq", file: "faq.jpg", band: 620, at: 0.5, quality: 78 },
   { route: "downloads", file: "downloads.jpg" },
-  { route: "prayer-requests", file: "prayer-requests.jpg" },
   // ── THE THREE MINISTRY BANDS, REPLACED ────────────────────────────
   // New photographs for all three, and all three sources are large where
   // the files they replace were 736, 735 and a 5472 already cut to 620.

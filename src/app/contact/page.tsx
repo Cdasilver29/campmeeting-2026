@@ -88,18 +88,6 @@ export default function ContactPage() {
                   {eventInfo.contact.email}
                 </a>
               </li>
-              {eventInfo.contact.prayerEmail ? (
-                <li className="flex flex-wrap items-center gap-2">
-                  <Mail aria-hidden className="size-4 shrink-0" />
-                  <a
-                    href={`mailto:${eventInfo.contact.prayerEmail}`}
-                    className={linkClassName}
-                  >
-                    {eventInfo.contact.prayerEmail}
-                  </a>
-                  <span className="text-sm">(prayer requests)</span>
-                </li>
-              ) : null}
               <li className="flex items-center gap-2">
                 <ExternalLink aria-hidden className="size-4 shrink-0" />
                 <a
