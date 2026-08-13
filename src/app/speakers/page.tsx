@@ -1,11 +1,11 @@
 import { Band } from "@/components/band";
 import { PageHeader } from "@/components/page-header";
 import { RevealGroup, RevealItem } from "@/components/reveal";
-import { eventInfo, hosts, speakers } from "@/data";
+import { eventInfo, hosts } from "@/data";
 import { HostCard } from "@/features/speakers/components/host-card";
 import { SpeakerCard } from "@/features/speakers/components/speaker-card";
 import { SpeakersLockup } from "@/features/speakers/components/speakers-lockup";
-import { speakerDayGroups } from "@/features/speakers/lib";
+import { presenterSpeakers, speakerDayGroups } from "@/features/speakers/lib";
 import { pageMetadata } from "@/lib/metadata";
 import { speakersPage } from "@/lib/page-identity";
 import { DOC_HEADING, DOC_SECTION, MEASURE } from "@/lib/typography";
@@ -64,9 +64,13 @@ export default function SpeakersPage() {
           content two cards leave at 320. What changed the balance is
           that there are ten speakers now rather than four, plus five
           hosts, and fifteen single-file cards is a scroll nobody reads
-          to the end of. */}
+          to the end of.
+
+          `presenterSpeakers`, not `speakers`: Eld. Ken Ochuka belongs to
+          the hosts and elders section below and was appearing in both
+          grids on the one page. See features/speakers/lib.ts. */}
       <RevealGroup className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
-        {speakers.map((speaker) => (
+        {presenterSpeakers.map((speaker) => (
           <RevealItem key={speaker.id} className="h-full">
             <SpeakerCard
               speaker={speaker}

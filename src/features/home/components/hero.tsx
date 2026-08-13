@@ -453,7 +453,10 @@ export function Hero() {
               <p
                 className={`flex flex-wrap items-baseline gap-x-6 gap-y-1 text-lg text-white ${COMPACT_VERSE}`}
               >
-                <span>{eventInfo.keyVerse}</span>
+                {/* Labelled, matching /speakers. The reference stood bare
+                    here beside a labelled "Theme song", which read as one
+                    labelled item and one loose one. */}
+                <span>Key Text: {eventInfo.keyVerse}</span>
                 <span>Theme song {eventInfo.themeSong}</span>
               </p>
             </RevealItem>

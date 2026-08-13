@@ -170,7 +170,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "monday-17-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "monday-17-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "monday-17-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Pr. Musonera Jason"], ministry: "bible-study", featured: true },
+          { id: "monday-17-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
           { id: "monday-17-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           { id: "monday-17-spirit-of-prophecy", title: "Spirit of Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "spirit-of-prophecy", featured: true },
           { id: "monday-17-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelist"], ministry: "publishing" },
@@ -242,7 +242,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "tuesday-18-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "tuesday-18-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "tuesday-18-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Pr. Musonera Jason"], ministry: "bible-study", featured: true },
+          { id: "tuesday-18-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
           { id: "tuesday-18-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           { id: "tuesday-18-prophecy", title: "Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "prophecy", featured: true },
           { id: "tuesday-18-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
@@ -311,7 +311,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "wednesday-19-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "wednesday-19-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "wednesday-19-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Pr. Musonera Jason"], ministry: "bible-study", featured: true },
+          { id: "wednesday-19-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
           { id: "wednesday-19-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           { id: "wednesday-19-possibility", title: "Possibility Ministry", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "possibility-ministry", featured: true },
           { id: "wednesday-19-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
@@ -378,7 +378,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "thursday-20-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "thursday-20-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "thursday-20-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Pr. Musonera Jason"], ministry: "bible-study", featured: true },
+          { id: "thursday-20-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
           { id: "thursday-20-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           // The only session in the week that names a campaign rather
           // than a subject. Title as printed.
@@ -450,7 +450,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "friday-21-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "friday-21-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Pr. Musonera Jason"], ministry: "bible-study", featured: true },
+          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
           { id: "friday-21-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           { id: "friday-21-discipleship", title: "Discipleship", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "discipleship", featured: true },
           { id: "friday-21-song-service-3", title: "Song Service", start: "09:40", end: "09:50", presentedBy: ["Choristers"], ministry: "music" },
@@ -537,7 +537,7 @@ export const program: ProgramDay[] = [
           { id: "sabbath-22-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "sabbath-22-special-song", title: "Special Songs", start: "11:12", end: "11:27", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           // 11:29 to 11:30 is unscheduled, as on the opening Sabbath.
-          { id: "sabbath-22-scripture", title: "Scripture Reading", start: "11:27", end: "11:29", presentedBy: ["Pr. Musonera Jason"] },
+          { id: "sabbath-22-scripture", title: "Scripture Reading", start: "11:27", end: "11:29", presenterIds: ["kenneth-ayuo"] },
           { id: "sabbath-22-hymn-of-praise", title: "Hymn of Praise", start: "11:30", end: "11:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sabbath-22-sermon", title: "Sermon", start: "11:35", end: "12:20", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "sabbath-22-closing-hymn", title: "Closing Hymn", start: "12:20", end: "12:25", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },

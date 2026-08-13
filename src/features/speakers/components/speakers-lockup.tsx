@@ -7,7 +7,7 @@ import { speakerLabel } from "@/features/schedule/lib/presenters";
  *     Main Speaker
  *     Pr. Kennedy Mfune
  *     Obey and Live
- *     Key text: Isaiah 1:19-20
+ *     Key Text: Isaiah 1:19-20
  *
  * It is the poster's lockup, which is what the supplied artwork behind it
  * is: a portrait cut onto the camp meeting's plum diagonal with room on the
@@ -118,7 +118,7 @@ export function SpeakersLockup() {
       </p>
 
       <p data-header-line="verse" className="text-lg sm:text-xl">
-        Key text: {eventInfo.keyVerse}
+        Key Text: {eventInfo.keyVerse}
       </p>
     </div>
   );
