@@ -76,9 +76,13 @@ export function OnDutyCard({ panel }: { panel: DutyPanel }) {
               {shift === currentShift ? (
                 /* The word, not a dot. LiveDot means "this session is
                    running"; a shift is not a session, and reusing the
-                   indicator would claim something the rota does not
-                   say. */
-                <span className="rounded-control bg-accent-50 px-1.5 py-0.5 text-xs font-medium text-accent-500">
+                   indicator would claim something the rota does not say.
+
+                   The ring is doing the work, not the fill. accent-50 on
+                   surface-muted is a two per cent step in light mode and
+                   would read as no pill at all; the hairline is what
+                   makes it one at both themes. */
+                <span className="rounded-control bg-accent-50 px-1.5 py-0.5 text-xs font-semibold text-accent-600 ring-1 ring-accent-500/25">
                   On now
                 </span>
               ) : null}
@@ -148,7 +152,12 @@ function TeamRow({
             {names.map((name) => (
               <li
                 key={name}
-                className="rounded-control bg-surface-muted px-2 py-0.5 text-sm whitespace-nowrap text-ink ring-1 ring-line"
+                // bg-surface, and that is not arbitrary: the card itself
+                // is surface-muted now, so a muted chip on it would have
+                // been a chip with no edges. The chip is the lighter of
+                // the two, which is also the way round the site reads
+                // everywhere else — content sits on top of its ground.
+                className="rounded-control bg-surface px-2 py-0.5 text-sm whitespace-nowrap text-ink ring-1 ring-line"
               >
                 {name}
               </li>

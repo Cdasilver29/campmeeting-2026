@@ -20,28 +20,59 @@ export const SECTION_HEADING = "font-display text-2xl text-ink";
 /**
  * The card itself.
  *
- * A hairline ring rather than a border: a border participates in the box
- * and would push the padding in by a pixel at each edge, which is what
- * made these cards sit a pixel narrower than the session cards below
- * them. `rounded-card` and `bg-surface` are the same tokens the session
- * card uses, so an upcoming card and a timeline card are the same object
- * at different emphases rather than two designs.
+ * ── WHY IT IS NOT THE SESSION CARD ANY MORE ─────────────────────────
  *
- * NOT the now card's treatment. That one has a 2px accent ring and a
- * tinted ground, and it earns them by being the one card on the page
- * that is true this minute. A card about the next hour must not shout as
- * loudly as the card about this one.
+ * It was `bg-surface ring-1 ring-line` — character for character the
+ * session card's own treatment. So on the home page mid camp meeting,
+ * "Next up" was a heading over a card indistinguishable from the twenty
+ * five rows of "Rest of Tuesday" beneath it, and the page had two levels
+ * of emphasis where it needed three. That is the whole of what "reads as
+ * unstyled" was.
+ *
+ * Three levels now, each one step apart, and no new colour in any of
+ * them:
+ *
+ *   happening now   2px solid primary ring, primary tint at 6%
+ *   next up         1px primary ring at 20%, the neutral muted surface
+ *   the timeline    1px --color-line, the plain surface
+ *
+ * The surface is `surface-muted`, not an accent tint. An accent tint was
+ * tried and is wrong: primary at 6% over white computes to about #f4f1f7
+ * and `accent-50` is #f2eff6, so a tinted upcoming card would have been
+ * the SAME COLOUR as the live card and the top of the hierarchy would
+ * have collapsed into its second step. Neutral for the surface, brand for
+ * the hairline: the two cues stay independent and each says one thing.
+ *
+ * A ring rather than a border, still: a border participates in the box
+ * and would push the padding in a pixel at each edge, leaving these cards
+ * a pixel narrower than the session cards they sit above.
  */
-export const UPCOMING_CARD = "rounded-card bg-surface p-4 ring-1 ring-line";
+export const UPCOMING_CARD =
+  "rounded-card bg-surface-muted p-4 ring-1 ring-accent-500/20";
 
 /**
  * The small label inside a card: the block name on Next Up, the day on On
- * Duty, the shift heading's siblings.
+ * Duty.
  *
- * Uppercase at 12px with tracking, in muted ink. It is the only thing
- * above the card's own heading, so it has to read as a label rather than
- * as a first line of content, and case and tracking do that without
- * needing a colour of its own.
+ * Uppercase at 12px with tracking, in accent-600 — which is the colour
+ * this site's page-header eyebrow already uses, so the label inside a
+ * card and the label above a page are one convention rather than two. It
+ * was `ink-muted`, which made it the same grey as the note underneath the
+ * title and left the card with no top edge to read from.
+ *
+ * accent-600 is Grapevine in light and its lightened step in dark, and
+ * both are text-safe on every surface these cards use. The ratios are in
+ * the commit that introduced this.
  */
 export const UPCOMING_EYEBROW =
-  "text-xs tracking-wide text-ink-muted uppercase";
+  "text-xs font-medium tracking-wide text-accent-600 uppercase";
+
+/**
+ * The card's own heading.
+ *
+ * `text-lg`, the same step the live card takes, rather than the `text-base`
+ * of a timeline row. These cards are answers to a question the reader
+ * asked; a row in a list is not, and the size is the difference.
+ * Straight off the existing type scale — no new size was introduced.
+ */
+export const UPCOMING_TITLE = "text-lg leading-6 font-semibold text-ink";

@@ -46,7 +46,15 @@ export function TimeRange({
       <time dateTime={start}>{start}</time>
       {end ? (
         <>
-          <span aria-hidden className="text-ink-muted/70">
+          {/* Full ink-muted, not /70. The alpha measured 3.08:1 on the
+              live card and 3.13:1 on Next Up in light mode, against the
+              4.5 floor CLAUDE.md sets — and this is the separator inside
+              every one of the programme's timed rows, so it failed 238
+              times rather than twice. It is aria-hidden and has an
+              sr-only "to" beside it, but it is visible text and the
+              exemption for incidental content does not reach it.
+              tools/perf/card-contrast.mjs is what caught it. */}
+          <span aria-hidden className="text-ink-muted">
             {" – "}
           </span>
           <span className="sr-only"> to </span>

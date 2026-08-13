@@ -13,6 +13,7 @@ import {
   SECTION_HEADING,
   UPCOMING_CARD,
   UPCOMING_EYEBROW,
+  UPCOMING_TITLE,
 } from "./card-styles";
 import { Countdown } from "./countdown";
 import { NowCard } from "./now-card";
@@ -93,9 +94,7 @@ function UpcomingCard({
         <span className={UPCOMING_EYEBROW}>
           {isToday ? session.blockLabel : (day?.displayLabel ?? session.date)}
         </span>
-        <h3 className="text-base leading-6 font-semibold text-ink">
-          {session.title}
-        </h3>
+        <h3 className={UPCOMING_TITLE}>{session.title}</h3>
         <PresenterChips session={session} />
         <MinistryChip session={session} />
       </article>

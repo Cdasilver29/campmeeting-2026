@@ -1,6 +1,10 @@
 import { ministryLabels, type CurrentEntry } from "../lib/today";
 import { ministryChipClasses } from "../lib/ministry-tone";
-import { SECTION_HEADING, UPCOMING_EYEBROW } from "./card-styles";
+import {
+  SECTION_HEADING,
+  UPCOMING_EYEBROW,
+  UPCOMING_TITLE,
+} from "./card-styles";
 import { LiveDot } from "./live-dot";
 import { ENTRY_GRID, SessionCard, TimeRange } from "./session-card";
 
@@ -46,9 +50,7 @@ export function NowCard({ current }: { current: CurrentEntry }) {
             <TimeRange />
           </span>
           <span className={UPCOMING_EYEBROW}>{current.block.label}</span>
-          <h3 className="text-lg leading-6 font-semibold text-ink">
-            {current.activity.title}
-          </h3>
+          <h3 className={UPCOMING_TITLE}>{current.activity.title}</h3>
           {current.activity.ministry ? (
             <p data-entry="ministry" className="flex flex-wrap gap-1.5">
               <span

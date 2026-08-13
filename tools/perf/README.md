@@ -41,7 +41,14 @@ throwaway directory and run the scripts from there:
 
     mkdir /tmp/perf && cd /tmp/perf
     pnpm add puppeteer-core@24.12.1
-    node <path-to-repo>/tools/perf/layout-cost.mjs
+    cp <path-to-repo>/tools/perf/layout-cost.mjs .
+    node layout-cost.mjs
+
+**Copy the script in; do not run it in place.** ESM resolves a bare
+import from the SCRIPT's directory, not the working directory, so
+`node <path-to-repo>/tools/perf/foo.mjs` from the throwaway directory
+fails with ERR_MODULE_NOT_FOUND however the shell's cwd is set. This
+paragraph exists because the instruction above used to say otherwise.
 
 Chrome is found at `C:\Program Files\Google\Chrome\Application\chrome.exe`
 (150.0.7871.187 when these were written). Serve the site first with
@@ -66,6 +73,25 @@ offline behaviour.
 | `align.mjs` | the x position of the header lockup against the x position of the **first left-aligned content below the page-header band**, at five widths on seventeen routes, plus the content column's width and gutter. Also checks that the header block is centred inside its own shell. Fails if either disagrees. It used to measure the `h1`; see the note below. |
 | `responsive.mjs` | nine widths x seventeen routes: horizontal overflow with the offending elements named, clipped text, tap targets under 44px, and whether the day rail is scrollable. |
 | `reduced-motion.mjs` | emulates the preference before the document runs, byte-compares eight frames per route, and reports where they differ. Also checks `.live-pulse` directly, since the live dot only renders during the event. |
+| `card-contrast.mjs` | every text pair on the home page's three clock-driven cards — Happening now, Next up, On duty — in both themes, against the floor each pair's own size and weight requires. Stubs the clock to a mid-camp-meeting Tuesday morning, which is the only phase where all three are on the page at once. |
+
+`contrast.mjs` and `card-contrast.mjs` answer different questions and both
+are needed. The first checks the PALETTE: every ratio asserted in a
+comment in `globals.css`, computed from the hexes, no browser involved.
+The second checks what a reader actually sees on those cards, which is
+composited — the live card's ground is `primary` at 6% over the band, the
+"On now" pill is `accent-50` under a 25%-alpha ring — and only the browser
+knows what those resolve to.
+
+**It composites by painting on a 1x1 canvas rather than by parsing
+`getComputedStyle`.** That is the fifth instance of the confident wrong
+number this README opens with: the first version parsed colours with a
+number regex, and Tailwind emits an alpha like `ink-muted/70` as
+`color-mix(in oklab, ...)`, which Chrome resolves to `oklab(...)`. Pulling
+four numbers out of that reported the time range's separator dash at
+1.11:1 in dark mode, for a dash that is plainly visible. Painted properly
+it is 5.72:1 there and was 3.13:1 in LIGHT mode, which was a real failure
+and is fixed.
 
 ## Why `align.mjs` stopped measuring the `h1`
 
