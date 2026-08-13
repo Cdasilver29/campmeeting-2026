@@ -146,6 +146,45 @@ it — Aga Khan's cervical screening is title-cased and Westlands' is not —
 and one of the two had to give. Fees are left in the source's own
 "1,400/-".
 
+## The gallery
+
+31 photographs of previous camp meetings, converted from `camp-gallery/`
+by `tools/assets/gallery-photos.mjs`, which also generates
+`src/data/gallery.ts`.
+
+| | |
+| --- | --- |
+| Source | 31 JPEG, 5.33 MB |
+| Written | 31 WebP, **3.17 MB** (3,323,150 bytes) into `public/gallery/` |
+| Saving | 41% |
+| `public/` before | 2.75 MB |
+| `public/` after | 5.92 MB |
+| Precache before | 109 entries, 4,209 KiB |
+| Precache with the gallery in it | 140 entries, 7,454 KiB |
+| Precache as shipped | **109 entries, 4,209 KiB** — unchanged |
+
+**None of them is precached**, which is the point: they are the only part
+of the site nobody needs while standing in the churchyard, and precaching
+them would more than double what every phone downloads before it opens
+anything. The `/gallery` PAGE is still precached, so it opens offline
+with its text and without its pictures.
+
+Two things worth knowing:
+
+- **The committee supplied no captions.** All 31 render with empty `alt`
+  and the set carries one accessible name. A generated description of a
+  photograph nobody here has described would be a guess read out to a
+  screen reader as fact. Captions are a field on `GalleryImage` and one
+  edit to the page whenever they arrive.
+- **`camp-23` is the one file that grew**, 142 KB to 149 KB. It is a
+  960x720 that was already small enough not to be resized, so WebP is
+  re-encoding a JPEG at its native size with nothing to win. Left as
+  WebP for consistency; it is 7 KB.
+- **The filenames are Facebook ids** in the source
+  (`484110649_962700029397235_…_n.jpg`) and are renamed `camp-01` upward
+  in the sources' own sort order. A filename ends up in a URL, and there
+  is no reason to publish somebody's CDN ids.
+
 ## The children's ministry programme
 
 `src/data/children.ts`, transcribed from `children-program` — "NEWLIFE

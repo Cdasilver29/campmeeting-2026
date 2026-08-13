@@ -1,0 +1,139 @@
+/**
+ * The gallery: `camp-gallery/` to `public/gallery/`, JPEG to WebP.
+ *
+ * Sibling of speaker-photos.mjs and header-photos.mjs, and it does less
+ * than either: no crop, no `object-position` to derive. These are
+ * photographs of previous camp meetings, they are shown whole, and the
+ * only decisions are how large and how lossy.
+ *
+ * ── SIZE ─────────────────────────────────────────────────────────────
+ *
+ * MAX 1600 on the long edge. The sources run to 2048, and the widest a
+ * gallery image is ever painted is one column of a three-column grid
+ * inside the 80rem shell — about 400px, so 800 physical pixels on a 2x
+ * phone. 1600 is double that again, which leaves room for a full-screen
+ * view later without another pass over the originals. Anything above it
+ * is pixels no screen on this site can use.
+ *
+ * ── QUALITY ──────────────────────────────────────────────────────────
+ *
+ * q82, effort 6, and "visually lossless" is doing real work in that
+ * choice rather than meaning q100. These are already lossy JPEGs, most of
+ * them saved by Facebook, so the artefacts are in the source: re-encoding
+ * at q95 spends bytes preserving JPEG ringing. Swept on the three
+ * heaviest files, the knee is at 82 and the curve above it is flat in
+ * appearance and steep in bytes. The header bands take q78 on the
+ * argument that a scrim covers them; that argument does not reach here,
+ * because a gallery photograph is shown unscrimmed and looked at, which
+ * is why this is four points higher.
+ *
+ * ── THE NAMES ────────────────────────────────────────────────────────
+ *
+ * The sources are named `484110649_962700029397235_346005…_n.jpg`, which
+ * is Facebook's id scheme. They are renamed `camp-01.webp` upward, in the
+ * sources' own sort order, because a filename appears in the URL and in
+ * the HTML and there is no reason to publish somebody's CDN ids. The map
+ * from old name to new is printed on every run, so a re-run against the
+ * same folder produces the same names.
+ *
+ * ── THESE ARE NOT PRECACHED ──────────────────────────────────────────
+ *
+ * Everything else in public/ is. See the manifestTransforms filter in
+ * src/app/serwist/[path]/route.ts, and the note there for why the gallery
+ * is the one exception on the site.
+ *
+ * Usage: node tools/assets/gallery-photos.mjs <source-dir>
+ */
+import { createRequire } from "node:module";
+import { mkdirSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { dirname, extname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(HERE, "..", "..");
+const require = createRequire(join(ROOT, "package.json"));
+const sharp = require("sharp");
+
+const SOURCE = process.argv[2];
+if (!SOURCE) {
+  console.error("usage: node tools/assets/gallery-photos.mjs <source-dir>");
+  process.exit(1);
+}
+
+const OUT_DIR = join(ROOT, "public", "gallery");
+const DATA_FILE = join(ROOT, "src", "data", "gallery.ts");
+const MAX_EDGE = 1600;
+const QUALITY = 82;
+
+mkdirSync(OUT_DIR, { recursive: true });
+
+const sources = readdirSync(SOURCE)
+  .filter((name) => [".jpg", ".jpeg", ".png"].includes(extname(name).toLowerCase()))
+  .sort();
+
+const rows = [];
+let sourceBytes = 0;
+let outBytes = 0;
+
+for (const [index, name] of sources.entries()) {
+  const from = join(SOURCE, name);
+  const id = `camp-${String(index + 1).padStart(2, "0")}`;
+  const to = join(OUT_DIR, `${id}.webp`);
+
+  const input = sharp(from);
+  const meta = await input.metadata();
+  const longest = Math.max(meta.width, meta.height);
+  const scale = longest > MAX_EDGE ? MAX_EDGE / longest : 1;
+  const width = Math.round(meta.width * scale);
+  const height = Math.round(meta.height * scale);
+
+  await input
+    .resize(width, height, { withoutEnlargement: true })
+    .webp({ quality: QUALITY, effort: 6 })
+    .toFile(to);
+
+  const inSize = statSync(from).size;
+  const outSize = statSync(to).size;
+  sourceBytes += inSize;
+  outBytes += outSize;
+
+  rows.push({ id, width, height, name, inSize, outSize });
+  console.log(
+    `${id}  ${String(meta.width).padStart(4)}x${String(meta.height).padEnd(4)} -> ` +
+      `${String(width).padStart(4)}x${String(height).padEnd(4)}  ` +
+      `${String(Math.round(inSize / 1024)).padStart(4)} -> ${String(Math.round(outSize / 1024)).padStart(4)} KB   ${name}`,
+  );
+}
+
+const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
+console.log(
+  `\n${rows.length} images   ${kb(sourceBytes)} JPEG -> ${kb(outBytes)} WebP   ` +
+    `(${Math.round((1 - outBytes / sourceBytes) * 100)}% smaller)`,
+);
+
+/*
+ * The data file is GENERATED, and that is why the dimensions in it can be
+ * trusted. Every image needs its intrinsic width and height in the markup
+ * or the grid reflows as each one decodes, and a hand-kept list of 31
+ * pairs of numbers is a list that is wrong by the third edit.
+ */
+const generated = `// GENERATED by tools/assets/gallery-photos.mjs. Do not edit by hand.
+//
+// Re-run it against the source folder to regenerate:
+//   node tools/assets/gallery-photos.mjs <source-dir>
+//
+// The width and height are the file's real dimensions and are what the
+// grid reserves space with, so nothing reflows as the images decode.
+import type { GalleryImage } from "./types";
+
+export const galleryImages: GalleryImage[] = [
+${rows
+  .map(
+    (r) =>
+      `  { id: "${r.id}", src: "/gallery/${r.id}.webp", width: ${r.width}, height: ${r.height} },`,
+  )
+  .join("\n")}
+];
+`;
+writeFileSync(DATA_FILE, generated, "utf8");
+console.log(`wrote ${DATA_FILE}`);

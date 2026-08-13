@@ -1,4 +1,10 @@
-import { childrenProgram, eventInfo, program, type Speaker } from "@/data";
+import {
+  childrenProgram,
+  eventInfo,
+  galleryImages,
+  program,
+  type Speaker,
+} from "@/data";
 import {
   dayNumber,
   fullDayLabel,
@@ -165,6 +171,20 @@ export const childrenPage: PageDefinition = {
   description: `The children's programme at ${EDITION}, ${eventInfo.church.name}: the day from arrival to the evening service, ${childrenClassCount} classes with their teachers and venues, and the ministry's coordinators.`,
   path: "/children",
   image: headerImages.children,
+};
+
+/**
+ * The gallery. Titled "Previous Camp Meetings" rather than "Gallery",
+ * because that is what is in it: this year's photographs are not taken
+ * yet, and a page called Gallery during camp meeting week promises
+ * pictures of the week it is in.
+ */
+export const galleryPage: PageDefinition = {
+  eyebrow: EDITION,
+  title: "Previous Camp Meetings",
+  meta: `${galleryImages.length} photographs from earlier years`,
+  description: `Photographs from previous camp meetings at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
+  path: "/gallery",
 };
 
 export const aboutPage: PageDefinition = {

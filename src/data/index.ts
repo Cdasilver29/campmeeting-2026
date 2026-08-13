@@ -3,6 +3,7 @@ export { eventInfo, speakers, speakerById, hosts } from "./event";
 export { program } from "./program";
 export { duty, dutyByDayId } from "./duty";
 export { childrenProgram } from "./children";
+export { galleryImages } from "./gallery";
 export {
   announcements,
   announcementsByDate,
