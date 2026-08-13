@@ -146,6 +146,81 @@ it — Aga Khan's cervical screening is title-cased and Westlands' is not —
 and one of the two had to give. Fees are left in the source's own
 "1,400/-".
 
+## The duty rota, and where its four sources disagree
+
+`src/data/duty.ts` is built from the near-final PDF's per-day tables,
+`Diaconete.txt`, `choristers-program` and `elders-program.docx`.
+
+**The diaconate resolves completely.** Every name in the programme's
+Deaconry column appears in `Diaconete.txt` labelled Deacon or Deaconess,
+on all seven days that have a table, with no leftovers in either
+direction. The split into Deacons and Deaconesses is therefore exact and
+nothing falls back to a combined "Deaconry" heading.
+
+Everything below is a real disagreement between sources. **None was
+silently resolved; each is listed with the choice made and why.**
+
+### Shift splits — the two that change what is shown
+
+1. **Sunday's two elders.** The programme prints "Erick Ayieko, Salmon
+   Osare" together on the Afternoon row. The elders' rota splits them:
+   Erick Ayieko coordinates the morning, Salmon Osare the afternoon.
+   **The programme is used.** Sunday morning is the Medical Camp and
+   neither the diaconate nor the choristers are rostered for it, so a
+   morning shift would have one name in it and three empty rows.
+2. **Friday's two elders.** Same shape: the programme prints "Eld. Jared
+   Manyara, Eld. Cosmas Makori" together on the Morning row, the elders'
+   rota gives Jared Manyara the morning and Cosmas Makori the afternoon.
+   **The programme is used**, so Friday afternoon shows the elders as not
+   rostered. If the rota is right, Cosmas Makori belongs there.
+
+### Names
+
+3. **Monday's mid-morning prayer.** The programme credits **Eld. Jim
+   Omollo**; the elders' rota calls the same slot's elder **Jim Okello**.
+   The programme's spelling is in `program.ts`. Two different surnames,
+   not a spelling variant, so one of the two is a different person.
+4. **The closing Sabbath's welcome.** The elders' rota says "Pastor
+   Gerald **Nyarega**" where the programme says "Pr. Gerald **Mochoge**".
+   Both are his: his own welcome letter signs "Dr. Mochoge Nyarega". The
+   committee has settled the site's form as **Dr. Gerald Mochoge**.
+5. **Six choristers are spelled two ways**, programme against the
+   choristers' rota. The programme's spelling is used in every case.
+
+   | Programme (used) | Choristers' rota | Where |
+   | --- | --- | --- |
+   | Levin Omuga | Nevile Omuga | Monday morning |
+   | Anne Okemwa | Ann Okemwa | Monday afternoon |
+   | Jessica Isiaho | Jesicah Isiaho | Tuesday afternoon |
+   | Agnes Maureene | Agness Maureene | Wednesday afternoon |
+   | Donnah Achieng | Donna Achieng | Thursday afternoon |
+   | Maxwell / Maxwel Omondi | Maxuel Omondi | Sunday pm, Wednesday am |
+
+   "Levin" against "Nevile" is the one that is not a spelling variant.
+   **Maxwell Omondi** is set that way in both places: the programme
+   itself prints "Maxwell" on Sunday and "Maxwel" on Wednesday for what
+   the voice part (tenor, both days) says is one person.
+6. **Three elders are spelled two ways.** The programme is used:
+   Chrispus Onkoba (rota: Crispus), Daniel Kittur (rota: Kitur), David
+   Sing'ombe (rota: Singombe).
+
+### Shift times
+
+7. **Thursday afternoon starts at 2pm** in `Diaconete.txt` where every
+   other weekday says 1pm. The panel's morning/afternoon boundary is
+   13:00 throughout, taken from the rota's own "7AM-1PM / 1PM-6PM", so on
+   Thursday it calls the 13:00 hour afternoon an hour early. It only
+   affects which shift is marked "On now"; both are always shown.
+
+### Not carried
+
+8. **The choristers' rota gives voice parts** — Soprano, Alto, Tenor,
+   Bass, and an empty Pianist column on every row. They are not in
+   `duty.ts`. The panel's question is who is on duty, and a part beside
+   each name would roughly double the widest column at 320px. Say the
+   word and they go in; the data is transcribed and the source is in the
+   repo's sibling folder.
+
 ## Resolved by the near-final version, or by the committee
 
 - **"Taji Kenya, Gifted Ministry" is two choirs, not one.** Carried as one
@@ -321,7 +396,7 @@ misspelling, so none was touched:
     Allan Okoth still have no biography, and Allan Okoth's is the
     emptiest page relative to how much of the programme he carries, the
     Children's Corner on all seven days that have one.
-12. **Four host biographies are owed, and what arrived instead were
+12. **Five host biographies are owed, and what arrived instead were
     welcome letters.** All five cards in the hosts and elders section on
     `/speakers` — Dr. Gerald Mochoge, Pr. Elvis Onyango, Pr. Polycarp
     Nyangau, Eld. Ken Ochuka, Eld. Omondi Oyoo — carry a portrait, cut
@@ -336,11 +411,11 @@ misspelling, so none was touched:
     it currently goes** — a "Welcome" section on /about would be the
     obvious home. Say the word.
 
-    Dr. Gerald Mochoge's `bio` is the one exception and is the only host
-    biography this project wrote rather than transcribed: one sentence
-    naming his office, because the committee asked for his senior
-    pastoral role to be stated. It is not in his voice and is not
-    presented as being.
+    A one-sentence `bio` naming Dr. Gerald Mochoge's office was written
+    here and then removed: `role` already prints "Senior Pastor" on his
+    card, directly under his name, so the paragraph repeated it. All five
+    records now wait for something in their subject's own words, which is
+    the only thing a `bio` is for.
 
     Eld. Ken Ochuka's are held once rather than twice: he is also a
     profiled speaker, so his portrait sits on the SPEAKER record and his

@@ -1,6 +1,7 @@
 export * from "./types";
 export { eventInfo, speakers, speakerById, hosts } from "./event";
 export { program } from "./program";
+export { duty, dutyByDayId } from "./duty";
 export {
   announcements,
   announcementsByDate,

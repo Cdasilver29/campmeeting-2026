@@ -384,14 +384,11 @@ export const hosts: Host[] = [
     role: "Senior Pastor",
     image: "/speakers/gerald-mochoge.webp",
     imagePosition: "50% 0%",
-    // The one host biography written here rather than transcribed. The
-    // five welcome letters the committee supplied are letters to the
-    // camp, not accounts of who their writers are, and none of them
-    // would read as a biography under a portrait. This states the office
-    // and stops, which is what was asked for and all that is verifiable.
-    bio: [
-      "Dr. Gerald Mochoge is the Senior Pastor of Newlife Seventh-day Adventist Church, 5th Ngong Avenue, and hosts Camp Meeting 2026. He opens the closing Sabbath's Divine Service and closes the week at the farewell ceremony.",
-    ],
+    // No `bio`. A sentence naming the office was written here and taken
+    // out again: `role` above already prints "Senior Pastor" on the card,
+    // directly under his name, so the paragraph said the same thing
+    // twice. Like the other four, this record waits for something in his
+    // own words. See DATA-NOTES.
   },
   {
     id: "elvis-onyango",

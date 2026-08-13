@@ -6,10 +6,17 @@ import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { eventInfo, getDayByDate, type FlatSession } from "@/data";
 import { useBookmarks } from "../bookmarks";
+import { getDutyPanel } from "../lib/duty";
 import { getTodayState, nextSavedSession, type TodayState } from "../lib/today";
 import { useNow } from "../use-now";
+import {
+  SECTION_HEADING,
+  UPCOMING_CARD,
+  UPCOMING_EYEBROW,
+} from "./card-styles";
 import { Countdown } from "./countdown";
 import { NowCard } from "./now-card";
+import { OnDutyCard } from "./on-duty-card";
 import {
   ENTRY_GRID,
   MinistryChip,
@@ -18,8 +25,7 @@ import {
   TimeRange,
 } from "./session-card";
 
-const sectionHeading =
-  "font-display text-2xl text-ink";
+const sectionHeading = SECTION_HEADING;
 
 /** Shown in place of the now card when nothing is running but the day is not over. */
 function BetweenCard({ next }: { next?: FlatSession }) {
@@ -68,8 +74,10 @@ function UpcomingCard({
         {heading}
       </h2>
       {/* Same grid as SessionCard, so these cards and the timeline under
-          them share one time column rather than each inventing a layout. */}
-      <article className={`${ENTRY_GRID} rounded-card bg-surface p-4 ring-1 ring-line`}>
+          them share one time column rather than each inventing a layout.
+          The surface comes from card-styles, which On Duty below shares —
+          see the note there. */}
+      <article className={`${ENTRY_GRID} ${UPCOMING_CARD}`}>
         <span className="flex min-h-6 items-center gap-2 sm:col-start-1 sm:row-start-1">
           <TimeRange start={session.start} end={session.end} />
           {saved ? (
@@ -82,7 +90,7 @@ function UpcomingCard({
             </>
           ) : null}
         </span>
-        <span className="text-xs tracking-wide text-ink-muted uppercase">
+        <span className={UPCOMING_EYEBROW}>
           {isToday ? session.blockLabel : (day?.displayLabel ?? session.date)}
         </span>
         <h3 className="text-base leading-6 font-semibold text-ink">
@@ -173,6 +181,19 @@ function RemainingTimeline({ state }: { state: TodayState }) {
   );
 }
 
+/**
+ * On Duty, directly below Next Up.
+ *
+ * In all three phases, and never blank: before the event it shows the
+ * opening Sabbath's rota, after it the closing Sabbath's, both labelled
+ * so nobody mistakes them for today. See lib/duty.ts, which makes that
+ * choice; this only places the card.
+ */
+function OnDuty({ state }: { state: TodayState }) {
+  const panel = getDutyPanel(state.phase, state.now);
+  return panel ? <OnDutyCard panel={panel} /> : null;
+}
+
 function BeforeEvent({ state, saved }: { state: TodayState; saved?: FlatSession }) {
   return (
     <>
@@ -183,25 +204,32 @@ function BeforeEvent({ state, saved }: { state: TodayState; saved?: FlatSession 
         <Countdown />
       </section>
       <Upcoming next={state.next} saved={saved} todayDate={state.now.date} />
+      <OnDuty state={state} />
     </>
   );
 }
 
-function AfterEvent() {
+function AfterEvent({ state }: { state: TodayState }) {
   return (
-    <EmptyState
-      icon={CalendarCheck}
-      title={`${eventInfo.edition} has ended`}
-      description={`The programme ran from ${eventInfo.startDate} to ${eventInfo.endDate}. Recordings and notices from the week stay available on the announcements and downloads pages.`}
-      action={
-        <Link
-          href="/announcements"
-          className="rounded-control text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
-        >
-          Read the announcements
-        </Link>
-      }
-    />
+    <>
+      <EmptyState
+        icon={CalendarCheck}
+        title={`${eventInfo.edition} has ended`}
+        description={`The programme ran from ${eventInfo.startDate} to ${eventInfo.endDate}. Recordings and notices from the week stay available on the announcements and downloads pages.`}
+        action={
+          <Link
+            href="/announcements"
+            className="rounded-control text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+          >
+            Read the announcements
+          </Link>
+        }
+      />
+      {/* There is no Next Up after the event, so this is the first card
+          rather than the second. It reads as the record of the last day
+          rather than as an instruction. */}
+      <OnDuty state={state} />
+    </>
   );
 }
 
@@ -224,12 +252,18 @@ function DuringEvent({ state, saved }: { state: TodayState; saved?: FlatSession 
         <BetweenCard next={state.next} />
       )}
       <Upcoming next={state.next} saved={saved} todayDate={state.now.date} />
+      <OnDuty state={state} />
       <RemainingTimeline state={state} />
     </>
   );
 }
 
-/** Reserves the space the live sections will take, so mounting shifts nothing. */
+/**
+ * Reserves the space the live sections will take, so mounting shifts
+ * nothing. Three headings and three cards: the live card, Next Up, and On
+ * Duty, which is the tallest of the three because it carries two shifts
+ * of four teams.
+ */
 function TodaySkeleton() {
   return (
     <div className="flex flex-col gap-3">
@@ -237,6 +271,8 @@ function TodaySkeleton() {
       <Skeleton className="h-32 w-full rounded-card" />
       <Skeleton className="h-8 w-32" />
       <Skeleton className="h-28 w-full rounded-card" />
+      <Skeleton className="h-8 w-28" />
+      <Skeleton className="h-72 w-full rounded-card" />
     </div>
   );
 }
@@ -268,7 +304,7 @@ export function TodayView() {
       {state.phase === "during" ? (
         <DuringEvent state={state} saved={saved} />
       ) : null}
-      {state.phase === "after" ? <AfterEvent /> : null}
+      {state.phase === "after" ? <AfterEvent state={state} /> : null}
     </div>
   );
 }

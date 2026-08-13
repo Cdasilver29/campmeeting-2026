@@ -1,9 +1,10 @@
 import { ministryLabels, type CurrentEntry } from "../lib/today";
 import { ministryChipClasses } from "../lib/ministry-tone";
+import { SECTION_HEADING, UPCOMING_EYEBROW } from "./card-styles";
 import { LiveDot } from "./live-dot";
 import { ENTRY_GRID, SessionCard, TimeRange } from "./session-card";
 
-const sectionHeading = "font-display text-2xl text-ink";
+const sectionHeading = SECTION_HEADING;
 
 /*
  * What makes the now card unmistakable, in one place because both
@@ -44,9 +45,7 @@ export function NowCard({ current }: { current: CurrentEntry }) {
           <span className="flex min-h-6 items-center sm:col-start-1 sm:row-start-1">
             <TimeRange />
           </span>
-          <span className="text-xs tracking-wide text-ink-muted uppercase">
-            {current.block.label}
-          </span>
+          <span className={UPCOMING_EYEBROW}>{current.block.label}</span>
           <h3 className="text-lg leading-6 font-semibold text-ink">
             {current.activity.title}
           </h3>

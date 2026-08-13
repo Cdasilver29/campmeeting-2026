@@ -190,6 +190,44 @@ export interface Host {
   speakerId?: string;
 }
 
+/**
+ * The four teams the duty rota rosters, in the order the panel reads
+ * them. Elders first because there are one or two of them and they are
+ * who you ask; choristers last because there are always four.
+ */
+export type DutyTeamId = "elders" | "deacons" | "deaconesses" | "choristers";
+
+/**
+ * One half of a day's rota.
+ *
+ * `shift` is "Morning" or "Afternoon" as the sources split it. Sunday has
+ * only an afternoon, and that is the programme's own table rather than a
+ * gap in this data.
+ *
+ * `allOnDuty` names the teams that are on IN FULL rather than by list,
+ * which is what both Sabbaths say and what Friday afternoon says of the
+ * diaconate. It is not the same fact as an empty array: an empty array
+ * means nobody is rostered, and "everybody" and "nobody" must not render
+ * the same way.
+ */
+export interface DutyShift {
+  shift: "Morning" | "Afternoon";
+  elders: string[];
+  deacons: string[];
+  deaconesses: string[];
+  choristers: string[];
+  allOnDuty?: DutyTeamId[];
+  /** Why the shift looks the way it does, e.g. "Sabbath preparation." */
+  note?: string;
+}
+
+/** A programme day's rota. `dayId` matches `ProgramDay.id`. */
+export interface DayDuty {
+  dayId: string;
+  shifts: DutyShift[];
+  note?: string;
+}
+
 export type AnnouncementPriority = "normal" | "urgent";
 
 /**
