@@ -87,6 +87,14 @@ export const allEntries: ScheduleEntry[] = program.flatMap((day) =>
           block.label,
           activity.ministry,
           activity.ministry && ministryLabels[activity.ministry],
+          // The Medical Camp's providers and services. Someone looking
+          // for a dentist types "dental", not "medical camp", and the
+          // programme now holds the answer — so the search has to reach
+          // it or the content is there and unfindable.
+          ...(activity.providers ?? []).flatMap((provider) => [
+            provider.name,
+            ...provider.serviceGroups.flatMap((group) => group.services),
+          ]),
         ]),
         activity,
       },

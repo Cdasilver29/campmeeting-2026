@@ -58,12 +58,50 @@ export interface Session {
   note?: string;
 }
 
+/**
+ * One clinic at an all-block activity, and what it is offering.
+ *
+ * `serviceGroups` rather than a flat `services[]` because the terms are
+ * the part an attendee is reading for. Every provider at the Medical Camp
+ * offers a list free of charge, two of them offer a second list at a
+ * stated fee, and one of them is only present on two days of the week —
+ * so "which services" and "on what terms" are two facts, and flattening
+ * them into one list would drop the second.
+ */
+export interface ServiceProvider {
+  name: string;
+  serviceGroups: {
+    /** As printed: "Every day, free of charge", "At a discounted fee". */
+    terms: string;
+    services: string[];
+  }[];
+}
+
+/**
+ * Something that occupies a whole block and has no clock times of its
+ * own: Sunday's Medical Camp, Friday's Sabbath Preparation.
+ *
+ * `providers` and `standingNotes` are both optional and both empty for
+ * Sabbath Preparation, which is a title and nothing else. The Medical
+ * Camp is the case they exist for: the near-final programme gives it four
+ * named providers with about twenty services between them, and that is
+ * attendee-facing content rather than a label.
+ */
+export interface AllBlockActivity {
+  title: string;
+  ministry?: MinistryTag;
+  note?: string;
+  providers?: ServiceProvider[];
+  /** True across every provider, e.g. the ambulance kept on site. */
+  standingNotes?: string[];
+}
+
 export interface ProgramBlock {
   id: BlockId;
   label: string;
   sessions: Session[];
   /** e.g. "Medical Camp" occupying a whole block with no timed sessions */
-  allBlockActivity?: { title: string; ministry?: MinistryTag; note?: string };
+  allBlockActivity?: AllBlockActivity;
 }
 
 export interface ProgramDay {

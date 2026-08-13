@@ -350,12 +350,18 @@ export const speakerById = Object.fromEntries(
  * once, rather than the same portrait pasted into two arrays that then
  * drift.
  *
- * Names come from the programme PDF wherever it prints them, which is
- * why the senior pastor is "Gerald Mochoge" here. The list supplied with
- * these five spells it "Mochige"; v3 prints "Mochoge" twice, on the
- * closing Sabbath's welcome and again on its farewell, and the printed
- * programme wins over a typed list. Worth one line of confirmation, and
- * it is in DATA-NOTES.
+ * ── TWO NAMES THE COMMITTEE HAS SINCE CORRECTED ─────────────────────
+ *
+ * The senior pastor is **Dr. Gerald Mochoge**. "Mochoge" over the hosts
+ * list's "Mochige" was already the printed programme's spelling; the
+ * committee has confirmed it and settled the honorific as Dr., against
+ * the programme's own "Pr." on the closing Sabbath.
+ *
+ * The head elder is **Eld. Omondi Oyoo**. Every document that prints his
+ * given name prints it wrong — the programme PDF and the elders' rota
+ * both say George — and his own welcome letter is signed Omondi. Both
+ * corrections are applied here, in program.ts and in the portrait
+ * filenames. They are settled, not open.
  *
  * Two of the five are in the programme as well as on this list, and are
  * carried there as free text: Pr. Elvis Onyango has Thursday's
@@ -369,10 +375,23 @@ export const hosts: Host[] = [
   {
     id: "gerald-mochoge",
     name: "Gerald Mochoge",
-    title: "Pr.",
+    // "Dr.", not "Pr.". The committee has settled the form of his name,
+    // and the programme's own "Pr. Gerald Mochoge" on the closing
+    // Sabbath was corrected with it. His welcome letter signs off
+    // "Dr. Mochoge Nyarega / Snr pastor", which is where the doctorate
+    // and the office both come from.
+    title: "Dr.",
     role: "Senior Pastor",
     image: "/speakers/gerald-mochoge.webp",
     imagePosition: "50% 0%",
+    // The one host biography written here rather than transcribed. The
+    // five welcome letters the committee supplied are letters to the
+    // camp, not accounts of who their writers are, and none of them
+    // would read as a biography under a portrait. This states the office
+    // and stops, which is what was asked for and all that is verifiable.
+    bio: [
+      "Dr. Gerald Mochoge is the Senior Pastor of Newlife Seventh-day Adventist Church, 5th Ngong Avenue, and hosts Camp Meeting 2026. He opens the closing Sabbath's Divine Service and closes the week at the farewell ceremony.",
+    ],
   },
   {
     id: "elvis-onyango",
@@ -410,11 +429,19 @@ export const hosts: Host[] = [
     speakerId: "ken-ochuka",
   },
   {
-    id: "george-oyoo",
-    name: "George Oyoo",
+    // ── HIS NAME IS OMONDI, NOT GEORGE ──────────────────────────────
+    //
+    // Both documents that print it are wrong. The programme PDF says
+    // "George Oyoo" on the opening Sabbath's pastoral prayer and the
+    // elders' duty rota says "George Oyoo" twice more. The committee has
+    // corrected it, and his own welcome letter is signed "Head Elder
+    // Omondi Oyoo", so the correction agrees with the one document he
+    // wrote himself. The id and the portrait file moved with the name.
+    id: "omondi-oyoo",
+    name: "Omondi Oyoo",
     title: "Eld.",
     role: "Head Elder",
-    image: "/speakers/george-oyoo.webp",
+    image: "/speakers/omondi-oyoo.webp",
     imagePosition: "50% 0%",
   },
 ];

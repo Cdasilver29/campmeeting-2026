@@ -98,7 +98,7 @@
  *
  * ── ONE FILE IS TWICE THE SIZE OF THE OTHERS, AND IT STAYS ───────────
  *
- * george-oyoo is 82.3 KB where the other four are 35 to 48. That is not a
+ * omondi-oyoo is 82.3 KB where the other four are 35 to 48. That is not a
  * setting that drifted and it is not fixed by turning the quality down;
  * it is the SUBJECT. He is photographed in a fine blue gingham check that
  * fills the lower two thirds of the frame, and a regular high-frequency
@@ -214,7 +214,11 @@ const HOSTS = [
     posY: 0,
   },
   {
-    id: "george-oyoo",
+    id: "omondi-oyoo",
+    // The SOURCE file keeps the name the committee sent it under. The id
+    // and the written file are omondi-oyoo; this is the key that finds
+    // their artwork on disk, and renaming it here would only stop the
+    // script finding it.
     file: "George.PNG",
     // 1448x1086, the only landscape source. Full height, so the window is
     // 814 of 1448 wide and the horizontal placement is the whole decision.

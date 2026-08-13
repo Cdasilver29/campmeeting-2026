@@ -1,30 +1,46 @@
 import type { ProgramDay } from "./types";
 
 /**
- * Source: Draft Program v3, Camp Meeting 2026 (15th–22nd August).
- * Transcribed 1:1 from the PDF, times normalized to 24h.
- * Known source-document issues are listed in DATA-NOTES.md — do not
- * silently "fix" the schedule here without the program committee's sign-off.
+ * Source: **Camp Meeting 2026 Programme, Near Final Version** (15th–22nd
+ * August), which supersedes Draft Program v3. Transcribed 1:1 from the
+ * PDF, times normalized to 24h. Known source-document issues are listed
+ * in DATA-NOTES.md — do not silently "fix" the schedule here without the
+ * program committee's sign-off.
  *
  * ── TWO CONVENTIONS THIS FILE FOLLOWS ────────────────────────────────
  *
- * 1. "Participant" is never transcribed. It is the draft's yellow
+ * 1. "Participant" is never transcribed. It was v3's yellow
  *    to-be-confirmed marker, not a person, and rendering it would put a
- *    placeholder on a public programme. Where the committee has since
- *    supplied the name, it is here; where it has not, the session simply
- *    carries no presenter. Some cells hold the marker AND a real credit
- *    (Monday's evening offering, for one) — there the marker is dropped
- *    and the real credit kept.
+ *    placeholder on a public programme. The near-final version has
+ *    cleared all of them: every cell that held one now names someone.
+ *    "Designated Speaker", on the five weekday Bible Studies, is the one
+ *    unfilled credit left and IS transcribed — it is what the programme
+ *    prints for a reader to see, not a marker to the typesetter.
  *
  * 2. A presenter cell is split into separate credits only when both
- *    halves name someone: "Alice Bonareri and Choristers" becomes two
+ *    halves name someone: "Israel Jathniel and Choristers" becomes two
  *    chips, "Choristers and Choirs" and "Online Panel and Various
  *    Classes" stay one, because "Choirs" and "Various Classes" are not
  *    names and a chip saying so would claim more than the source does.
+ *    Named individuals now lead most Worship in Giving cells, joined to
+ *    their choir with a hyphen ("Cheryl Majiwa-Taji Kenya, Gifted
+ *    Ministry"); those are a person and their choirs, and split.
  *
- * Session ids are unchanged from v2 wherever v3 kept the item, even
- * where v3 renamed it — ids are in localStorage bookmarks and in URLs.
- * A slug that no longer matches its title is deliberate. See DATA-NOTES.
+ * ── TAJI KENYA AND GIFTED MINISTRY ARE TWO ───────────────────────────
+ *
+ * Carried as one credit, "Taji Kenya (Gifted Ministry)", through v3, on
+ * the reading that the two always printed adjacent and in that order.
+ * The near-final version breaks it: the opening Sabbath's offertory reads
+ * "Gifted Ministry and Taji Kenya" — reversed, and joined by "and", which
+ * is convention 2's test for two parties. They are now two credits
+ * everywhere, which also means someone searching "Gifted Ministry" finds
+ * the six sessions it sings on. Reversible in one place if the committee
+ * says otherwise. DATA-NOTES.
+ *
+ * Session ids are unchanged from v2 wherever a later draft kept the item,
+ * even where it renamed it — ids are in localStorage bookmarks and in
+ * URLs. A slug that no longer matches its title is deliberate. See
+ * DATA-NOTES.
  */
 
 export const program: ProgramDay[] = [
@@ -46,8 +62,8 @@ export const program: ProgramDay[] = [
           { id: "sabbath-15-special-thought", title: "Special Thought", start: "08:23", end: "08:27", presentedBy: ["Jerry Lumumba"] },
           { id: "sabbath-15-special-item", title: "Special Item", start: "08:27", end: "08:30", presentedBy: ["Choristers"], ministry: "music" },
           { id: "sabbath-15-mission-reading", title: "Mission Reading", start: "08:30", end: "08:35", presentedBy: ["Israel Jathniel"] },
-          { id: "sabbath-15-closing-song", title: "Closing Song", start: "08:35", end: "08:38", presentedBy: ["Alice Bonareri", "Choristers"], ministry: "music" },
-          { id: "sabbath-15-closing-prayer", title: "Closing Prayer", start: "08:38", end: "08:40", presentedBy: ["Alice Bonareri"], ministry: "prayer" },
+          { id: "sabbath-15-closing-song", title: "Closing Song", start: "08:35", end: "08:38", presentedBy: ["Israel Jathniel", "Choristers"], ministry: "music" },
+          { id: "sabbath-15-closing-prayer", title: "Closing Prayer", start: "08:38", end: "08:40", presentedBy: ["Timothy Anyona"], ministry: "prayer" },
           { id: "sabbath-15-lesson-discussion", title: "Lesson Discussion", start: "08:40", end: "09:40", presentedBy: ["Online Panel and Various Classes"], ministry: "bible-study" },
           { id: "sabbath-15-announcements", title: "Announcements and Highlights", start: "09:40", end: "09:50", presentedBy: ["Eld. Robert Nyarango"] },
           { id: "sabbath-15-heart-of-worship", title: "Heart of Worship: Music and Praise", start: "09:50", end: "10:30", presentedBy: ["Choristers and Choirs"], ministry: "music" },
@@ -65,14 +81,14 @@ export const program: ProgramDay[] = [
           { id: "sabbath-15-invocation", title: "Invocation", start: "10:32", end: "10:35", presenterIds: ["kennedy-mfune"], ministry: "worship" },
           { id: "sabbath-15-welcome-intro", title: "Welcome & Introduction", start: "10:35", end: "10:39", presenterIds: ["ken-ochuka"] },
           { id: "sabbath-15-welcome-song", title: "Welcome Song — What a Fellowship", start: "10:39", end: "10:45", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-pastoral-prayer", title: "Pastoral Prayer", start: "10:45", end: "10:50", presentedBy: ["Eld. George Oyoo"], ministry: "prayer" },
-          { id: "sabbath-15-offertory", title: "Stewardship (Tithe and Offerings)", start: "10:50", end: "10:53", ministry: "stewardship" },
-          { id: "sabbath-15-offertory-songs", title: "Special Song / Offertory Songs", start: "10:53", end: "11:03", ministry: "music" },
+          { id: "sabbath-15-pastoral-prayer", title: "Pastoral Prayer", start: "10:45", end: "10:50", presentedBy: ["Eld. Omondi Oyoo"], ministry: "prayer" },
+          { id: "sabbath-15-offertory", title: "Stewardship (Tithe and Offerings)", start: "10:50", end: "10:53", presentedBy: ["Pr. Elvis Onyango"], ministry: "stewardship" },
+          { id: "sabbath-15-offertory-songs", title: "Special Song / Offertory Songs", start: "10:53", end: "11:03", presentedBy: ["Gifted Ministry", "Taji Kenya"], ministry: "music" },
           { id: "sabbath-15-offertory-response", title: "Offertory Response", start: "11:03", end: "11:05", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", ministry: "children" },
+          { id: "sabbath-15-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", presentedBy: ["Elvinah Achieng Kodiwo"], ministry: "children" },
           { id: "sabbath-15-special-song", title: "Special Song", start: "11:12", end: "11:27", presentedBy: ["Newlife Church Choir"], ministry: "music" },
           // 11:29 to 11:30 is unscheduled in v3. As printed. DATA-NOTES.
-          { id: "sabbath-15-scripture", title: "Scripture Reading", start: "11:27", end: "11:29" },
+          { id: "sabbath-15-scripture", title: "Scripture Reading", start: "11:27", end: "11:29", presentedBy: ["Pr. Polycarp Nyangau"] },
           { id: "sabbath-15-hymn-of-praise", title: "Hymn of Praise", start: "11:30", end: "11:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sabbath-15-sermon", title: "Sermon", start: "11:35", end: "12:20", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "sabbath-15-closing-hymn", title: "Closing Hymn", start: "12:20", end: "12:25", presentedBy: ["Choristers"], ministry: "music" },
@@ -85,7 +101,7 @@ export const program: ProgramDay[] = [
         label: "Afternoon Program",
         sessions: [
           { id: "sabbath-15-pm-music-1", title: "Music", start: "14:00", end: "15:00", presentedBy: ["Choristers and Choirs"], ministry: "music" },
-          { id: "sabbath-15-christian-education", title: "Christian Education", start: "15:00", end: "15:30", ministry: "christian-education", featured: true },
+          { id: "sabbath-15-christian-education", title: "Christian Education", start: "15:00", end: "15:30", presentedBy: ["Eld. Mark Rotich"], ministry: "christian-education", featured: true },
           { id: "sabbath-15-pm-music-2", title: "Music", start: "15:30", end: "16:00", presentedBy: ["Choristers and Choirs"], ministry: "music" },
         ],
       },
@@ -98,12 +114,12 @@ export const program: ProgramDay[] = [
           // No reader named for either of the opening Sabbath's two
           // Scripture Readings, and no placeholder either — the cell is
           // simply empty in v3. DATA-NOTES.
-          { id: "sabbath-15-ev-scripture", title: "Scripture Reading", start: "16:10", end: "16:15" },
+          { id: "sabbath-15-ev-scripture", title: "Scripture Reading", start: "16:10", end: "16:15", presentedBy: ["Benter Owino"] },
           { id: "sabbath-15-ev-theme-song", title: "Theme Song", start: "16:15", end: "16:20", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sabbath-15-ev-prayer", title: "Prayer", start: "16:20", end: "16:25", presentedBy: ["Eld. Chris Mbegera"], ministry: "prayer" },
-          { id: "sabbath-15-ev-giving", title: "Worship in Giving", start: "16:25", end: "16:30", ministry: "stewardship" },
-          { id: "sabbath-15-ev-children", title: "Children's Corner", start: "16:30", end: "16:37", ministry: "children" },
-          { id: "sabbath-15-ev-special-item", title: "Special Item", start: "16:37", end: "16:45", ministry: "music" },
+          { id: "sabbath-15-ev-giving", title: "Worship in Giving", start: "16:25", end: "16:30", presentedBy: ["Eld. Sylvester Odhiambo"], ministry: "stewardship" },
+          { id: "sabbath-15-ev-children", title: "Children's Corner", start: "16:30", end: "16:37", presentedBy: ["Elvinah Achieng Kodiwo"], ministry: "children" },
+          { id: "sabbath-15-ev-special-item", title: "Special Item", start: "16:37", end: "16:45", presentedBy: ["Newlife Church Choir"], ministry: "music" },
           { id: "sabbath-15-ev-sermon", title: "Sermon", start: "16:45", end: "17:30", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "sabbath-15-ev-theme-song-2", title: "Theme Song", start: "17:30", end: "17:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sabbath-15-ev-benediction", title: "Benediction", start: "17:35", end: "17:40", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -123,10 +139,104 @@ export const program: ProgramDay[] = [
         id: "morning-service",
         label: "Morning Service",
         sessions: [],
+        // ── THE MEDICAL CAMP, IN FULL ─────────────────────────────────
+        //
+        // Printed as a four-column table on the Sunday page and carried
+        // here column by column. It is the one block on the programme
+        // that is a service rather than a service: someone reads it to
+        // decide whether to bring a parent for a blood pressure check,
+        // and "Medical Camp, no set time" answered none of that.
+        //
+        // The terms are transcribed with the provider they belong to,
+        // because they differ per provider and two of the four have a
+        // second list at a fee. Read the days carefully — they are not
+        // the same across the four, and they are why this activity sits
+        // on Sunday's page while describing most of the week.
+        //
+        // Sentence case for the service names, which the source sets
+        // inconsistently (Aga Khan's cervical screening is title-cased,
+        // Westlands' is not). Fees are left in the source's own "1,400/-".
         allBlockActivity: {
           title: "Medical Camp",
           ministry: "medical",
-          note: "No timed sessions published for the morning — the Medical Camp runs through the morning block.",
+          note: "No times are published for the morning. The camp is printed on Sunday's page and most of it runs through the week — read each provider's terms for the days.",
+          providers: [
+            {
+              name: "Westlands Specialists Hospital",
+              serviceGroups: [
+                {
+                  terms: "Every day, free of charge",
+                  services: [
+                    "General medical consultation",
+                    "Dental services",
+                    "Body composition analysis and nutritional consultation",
+                    "Physiotherapy services",
+                    "Breast examination",
+                    "Prostate cancer screening (PSA)",
+                    "Full optical services",
+                    "Laboratory services, including tuberculosis (TB) screening",
+                    "Pharmacy services for prescribed medication",
+                  ],
+                },
+                {
+                  terms: "At a discounted rate",
+                  services: ["Cervical cancer screening (PAP smear) at 1,500/-"],
+                },
+              ],
+            },
+            {
+              name: "Aga Khan University Hospital",
+              serviceGroups: [
+                {
+                  terms: "Free of charge",
+                  services: [
+                    "General medical consultation",
+                    "First aid and emergency services",
+                    "Nutrition consultation, including meal planning",
+                    "Blood donation drive on Thursday",
+                  ],
+                },
+                {
+                  terms: "At a discounted fee",
+                  services: ["Cervical cancer screening (PAP smear) at 1,400/-"],
+                },
+              ],
+            },
+            {
+              name: "Gertrude's Children's Hospital",
+              serviceGroups: [
+                {
+                  terms: "Free of charge",
+                  services: [
+                    "Blood pressure monitoring",
+                    "Random blood sugar monitoring",
+                    "Body Mass Index (BMI) monitoring",
+                    "Pediatric consultation services",
+                  ],
+                },
+              ],
+            },
+            {
+              name: "Mbagathi Eye Unit",
+              serviceGroups: [
+                {
+                  terms: "Free, Wednesday and Thursday only",
+                  services: [
+                    "Screening for various eye conditions",
+                    "Reading glasses",
+                    "Prescription glasses",
+                    "Eye medication",
+                  ],
+                },
+              ],
+            },
+          ],
+          // Printed at the foot of the first column rather than across
+          // the table, but it is plainly about the camp and not about
+          // Westlands: it names no provider and it is the one line
+          // anybody needs at speed. Carried camp-wide. Worth a line of
+          // confirmation — DATA-NOTES.
+          standingNotes: ["An ambulance is on site in case of an emergency."],
         },
       },
       {
@@ -146,7 +256,7 @@ export const program: ProgramDay[] = [
           { id: "sunday-16-ev-scripture", title: "Scripture Reading", start: "16:40", end: "16:45", presentedBy: ["Anne Okemwa"] },
           { id: "sunday-16-ev-theme-song", title: "Theme Song", start: "16:45", end: "16:50", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sunday-16-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. Fred Mege"], ministry: "prayer" },
-          { id: "sunday-16-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", ministry: "stewardship" },
+          { id: "sunday-16-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Irene Omondi", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "sunday-16-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "sunday-16-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "sunday-16-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
@@ -175,7 +285,7 @@ export const program: ProgramDay[] = [
           { id: "monday-17-spirit-of-prophecy", title: "Spirit of Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "spirit-of-prophecy", featured: true },
           { id: "monday-17-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelist"], ministry: "publishing" },
           { id: "monday-17-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "monday-17-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Esiiro Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya (Gifted Ministry)"], ministry: "music" },
+          { id: "monday-17-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Esiiro Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -187,7 +297,7 @@ export const program: ProgramDay[] = [
           { id: "monday-17-mm-scripture", title: "Scripture Reading", start: "11:10", end: "11:15", presentedBy: ["Jerry Lumumba"] },
           { id: "monday-17-mm-theme-song", title: "Theme Song", start: "11:15", end: "11:20", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "monday-17-mm-prayer", title: "Prayer", start: "11:20", end: "11:25", presentedBy: ["Eld. Jim Omollo"], ministry: "prayer" },
-          { id: "monday-17-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", ministry: "stewardship" },
+          { id: "monday-17-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", presentedBy: ["Eld. Alfred Babu", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "monday-17-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "monday-17-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "monday-17-mm-sermon", title: "Sermon", start: "11:50", end: "12:35", presenterIds: ["kennedy-mfune"], featured: true },
@@ -218,7 +328,7 @@ export const program: ProgramDay[] = [
           { id: "monday-17-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. Paul Wangai"], ministry: "prayer" },
           // The cell holds the placeholder and a real credit. The
           // placeholder is dropped, the choir singing the offering kept.
-          { id: "monday-17-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Esiiro Choir"], ministry: "stewardship" },
+          { id: "monday-17-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Irene Omogi", "Esiiro Choir"], ministry: "stewardship" },
           { id: "monday-17-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "monday-17-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "monday-17-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
@@ -247,7 +357,7 @@ export const program: ProgramDay[] = [
           { id: "tuesday-18-prophecy", title: "Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "prophecy", featured: true },
           { id: "tuesday-18-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "tuesday-18-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "tuesday-18-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Adventist Women Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya (Gifted Ministry)"], ministry: "music" },
+          { id: "tuesday-18-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Adventist Women Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -259,7 +369,7 @@ export const program: ProgramDay[] = [
           { id: "tuesday-18-mm-scripture", title: "Scripture Reading", start: "11:10", end: "11:15", presentedBy: ["Faith Pherose"] },
           { id: "tuesday-18-mm-theme-song", title: "Theme Song", start: "11:15", end: "11:20", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "tuesday-18-mm-prayer", title: "Prayer", start: "11:20", end: "11:25", presentedBy: ["Eld. Lewis Sitoki"], ministry: "prayer" },
-          { id: "tuesday-18-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", ministry: "stewardship" },
+          { id: "tuesday-18-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", presentedBy: ["Sandaglory Mochoge", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "tuesday-18-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
           // Placeholder alongside the two choirs here, where the other
           // weekdays credit the choirs alone. Placeholder dropped.
@@ -288,7 +398,7 @@ export const program: ProgramDay[] = [
           { id: "tuesday-18-ev-scripture", title: "Scripture Reading", start: "16:40", end: "16:45", presentedBy: ["Shaquille Obilloh"] },
           { id: "tuesday-18-ev-theme-song", title: "Theme Song", start: "16:45", end: "16:50", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "tuesday-18-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. Daniel Kittur"], ministry: "prayer" },
-          { id: "tuesday-18-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", ministry: "stewardship" },
+          { id: "tuesday-18-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Caroline Ogada", "Adventist Women Ministries Choir"], ministry: "stewardship" },
           { id: "tuesday-18-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "tuesday-18-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "tuesday-18-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
@@ -316,7 +426,7 @@ export const program: ProgramDay[] = [
           { id: "wednesday-19-possibility", title: "Possibility Ministry", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "possibility-ministry", featured: true },
           { id: "wednesday-19-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "wednesday-19-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "wednesday-19-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Young Adults Choir", "Redemption Singers", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya (Gifted Ministry)"], ministry: "music" },
+          { id: "wednesday-19-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Young Adults Choir", "Redemption Singers", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -328,7 +438,7 @@ export const program: ProgramDay[] = [
           { id: "wednesday-19-mm-scripture", title: "Scripture Reading", start: "11:10", end: "11:15", presentedBy: ["Jerry Odhiambo"] },
           { id: "wednesday-19-mm-theme-song", title: "Theme Song", start: "11:15", end: "11:20", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "wednesday-19-mm-prayer", title: "Prayer", start: "11:20", end: "11:25", presentedBy: ["Eld. Maxwell Ngala"], ministry: "prayer" },
-          { id: "wednesday-19-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", ministry: "stewardship" },
+          { id: "wednesday-19-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", presentedBy: ["Pendo Samson", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "wednesday-19-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "wednesday-19-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "wednesday-19-mm-sermon", title: "Sermon", start: "11:50", end: "12:35", presenterIds: ["kennedy-mfune"], featured: true },
@@ -354,7 +464,7 @@ export const program: ProgramDay[] = [
           { id: "wednesday-19-ev-scripture", title: "Scripture Reading", start: "16:40", end: "16:45", presentedBy: ["Govan Lumumba"] },
           { id: "wednesday-19-ev-theme-song", title: "Theme Song", start: "16:45", end: "16:50", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "wednesday-19-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. Zachary Ochako"], ministry: "prayer" },
-          { id: "wednesday-19-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", ministry: "stewardship" },
+          { id: "wednesday-19-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Carol Mboya", "Young Adults Choir", "Redemption Singers"], ministry: "stewardship" },
           { id: "wednesday-19-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "wednesday-19-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "wednesday-19-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
@@ -385,7 +495,7 @@ export const program: ProgramDay[] = [
           { id: "thursday-20-evangelism", title: "Evangelism - One Voice 2027", start: "09:00", end: "09:40", presentedBy: ["Pr. Elvis Onyango"], ministry: "evangelism", featured: true },
           { id: "thursday-20-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "thursday-20-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "thursday-20-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Choristers Choir", "Ambassadors Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya (Gifted Ministry)"], ministry: "music" },
+          { id: "thursday-20-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Choristers Choir", "Ambassadors Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -397,7 +507,7 @@ export const program: ProgramDay[] = [
           { id: "thursday-20-mm-scripture", title: "Scripture Reading", start: "11:10", end: "11:15", presentedBy: ["Flavia Adoyo"] },
           { id: "thursday-20-mm-theme-song", title: "Theme Song", start: "11:15", end: "11:20", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "thursday-20-mm-prayer", title: "Prayer", start: "11:20", end: "11:25", presentedBy: ["Eld. Meshack Dwallow"], ministry: "prayer" },
-          { id: "thursday-20-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", ministry: "stewardship" },
+          { id: "thursday-20-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", presentedBy: ["Cheryl Majiwa", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "thursday-20-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "thursday-20-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "thursday-20-mm-sermon", title: "Sermon", start: "11:50", end: "12:35", presenterIds: ["kennedy-mfune"], featured: true },
@@ -426,7 +536,7 @@ export const program: ProgramDay[] = [
           { id: "thursday-20-ev-scripture", title: "Scripture Reading", start: "16:40", end: "16:45", presentedBy: ["Janet Yala"] },
           { id: "thursday-20-ev-theme-song", title: "Theme Song", start: "16:45", end: "16:50", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "thursday-20-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. William Otieno"], ministry: "prayer" },
-          { id: "thursday-20-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Choristers Choir", "Ambassadors Choir"], ministry: "stewardship" },
+          { id: "thursday-20-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Olga Nyakongo", "Choristers Choir", "Ambassadors Choir"], ministry: "stewardship" },
           { id: "thursday-20-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "thursday-20-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "thursday-20-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
@@ -460,7 +570,7 @@ export const program: ProgramDay[] = [
           // the id stays — it is what any bookmark already made points at.
           // The slug is now wrong about its own contents. See DATA-NOTES.
           { id: "friday-21-publishing", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "friday-21-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "10:50", presentedBy: ["Adventist Men's Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya (Gifted Ministry)"], ministry: "music" },
+          { id: "friday-21-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "10:50", presentedBy: ["Adventist Men's Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -472,7 +582,7 @@ export const program: ProgramDay[] = [
           { id: "friday-21-mm-scripture", title: "Scripture Reading", start: "11:00", end: "11:05", presentedBy: ["Loice Moraa"] },
           { id: "friday-21-mm-theme-song", title: "Theme Song", start: "11:05", end: "11:10", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "friday-21-mm-prayer", title: "Prayer", start: "11:10", end: "11:15", presentedBy: ["Eld. Duncan Amayo"], ministry: "prayer" },
-          { id: "friday-21-mm-giving", title: "Worship in Giving", start: "11:15", end: "11:20", presentedBy: ["Adventist Men's Ministries Choir"], ministry: "stewardship" },
+          { id: "friday-21-mm-giving", title: "Worship in Giving", start: "11:15", end: "11:20", presentedBy: ["Gladys Sing'ombe", "Adventist Men's Ministries Choir"], ministry: "stewardship" },
           { id: "friday-21-mm-children", title: "Children's Corner", start: "11:20", end: "11:35", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "friday-21-mm-special-item", title: "Special Item", start: "11:35", end: "11:40", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "friday-21-mm-sermon", title: "Sermon", start: "11:40", end: "12:25", presenterIds: ["kennedy-mfune"], featured: true },
@@ -528,11 +638,11 @@ export const program: ProgramDay[] = [
           // Retimed and reordered exactly as the opening Sabbath's was.
           { id: "sabbath-22-doxology", title: "Doxology", start: "10:30", end: "10:32", presentedBy: ["Choristers"], ministry: "worship" },
           { id: "sabbath-22-invocation", title: "Invocation", start: "10:32", end: "10:35", presenterIds: ["kennedy-mfune"], ministry: "worship" },
-          { id: "sabbath-22-welcome-intro", title: "Welcome & Introduction", start: "10:35", end: "10:39", presentedBy: ["Pr. Gerald Mochoge"] },
+          { id: "sabbath-22-welcome-intro", title: "Welcome & Introduction", start: "10:35", end: "10:39", presentedBy: ["Dr. Gerald Mochoge"] },
           { id: "sabbath-22-welcome-song", title: "Welcome Song — What a Fellowship", start: "10:39", end: "10:45", presentedBy: ["Choristers"], ministry: "music" },
           { id: "sabbath-22-pastoral-prayer", title: "Pastoral Prayer", start: "10:45", end: "10:50", presentedBy: ["Pr. Polycarp Nyangau"], ministry: "prayer" },
           { id: "sabbath-22-offertory", title: "Stewardship (Tithe and Offerings)", start: "10:50", end: "10:53", presenterIds: ["elkanah-mose"], ministry: "stewardship" },
-          { id: "sabbath-22-offertory-songs", title: "Special Songs", start: "10:53", end: "11:03", presentedBy: ["Taji Kenya (Gifted Ministry)"], ministry: "music" },
+          { id: "sabbath-22-offertory-songs", title: "Special Songs", start: "10:53", end: "11:03", presentedBy: ["Taji Kenya", "Gifted Ministry"], ministry: "music" },
           { id: "sabbath-22-offertory-response", title: "Offertory Response", start: "11:03", end: "11:05", presentedBy: ["Choristers"], ministry: "music" },
           { id: "sabbath-22-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "sabbath-22-special-song", title: "Special Songs", start: "11:12", end: "11:27", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
@@ -555,7 +665,7 @@ export const program: ProgramDay[] = [
           // transcription gap. DATA-NOTES.
           { id: "sabbath-22-hand-of-fellowship", title: "Hand of Fellowship", start: "16:00", end: "16:30", presentedBy: ["Pastoral Team"], ministry: "fellowship", featured: true },
           { id: "sabbath-22-pm-music-2", title: "Music", start: "16:30", end: "17:00", presentedBy: ["Choristers and Choirs"], ministry: "music" },
-          { id: "sabbath-22-farewell", title: "Farewell / Closing Ceremony", start: "17:00", end: "18:00", presentedBy: ["Camp Chair", "Pr. Gerald Mochoge"], ministry: "fellowship", featured: true },
+          { id: "sabbath-22-farewell", title: "Farewell / Closing Ceremony", start: "17:00", end: "18:00", presentedBy: ["Camp Chair", "Dr. Gerald Mochoge"], ministry: "fellowship", featured: true },
         ],
       },
     ],
