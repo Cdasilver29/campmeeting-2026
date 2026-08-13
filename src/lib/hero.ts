@@ -220,19 +220,43 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
       // edge of the Bible, where there is nothing but page.
       position: "55% 40%",
     },
+    // ── THE ONE PHOTOGRAPH WITH NO SEPARATE PHONE CUT ────────────────
+    //
+    // The committee asked for the wide frame on both ends, so `mobile`
+    // points at the same file `desktop` does. There WAS a tall cut,
+    // 853x1844, and it is gone with its file.
+    //
+    // It costs less here than it would on the other two, which is why
+    // this is the one that can take it. The choir photographs are ranks
+    // of people filling the frame edge to edge, so a phone-shaped window
+    // onto the wide file keeps under a third of the width and turns a
+    // group shot into a close shot of whoever is in the middle. This is a
+    // single clasp of hands near the centre of a dark ground: a narrow
+    // window onto it still contains the whole subject.
+    //
+    // 68% 45%, AND THE HORIZONTAL HALF IS THE ONE THAT MATTERS HERE.
+    // That is the opposite of every other value in this file and it is
+    // worth being explicit about, because the first attempt was 50% and
+    // was wrong for exactly that reason.
+    //
+    // A phone frame is 0.46:1 and the file is 1.78:1, so `cover` scales
+    // by HEIGHT: all of the height is kept and about 26% of the width.
+    // The vertical value is inert in the full-bleed phase — there is no
+    // height left over to position — and the whole decision is which
+    // quarter of the width. Centred, that window is x 0.37-0.63, and the
+    // clasp sits right of centre in this frame: it ran off the right edge
+    // with the knuckles cut. 68% puts the window at x 0.50-0.76, which
+    // holds the whole clasp with the Bible's gutter under it.
+    //
+    // 45% is for the COMPACT phase, which is 0.84:1, keeps 47% of the
+    // height and does read it. Same reason the tall cut used 45%: it
+    // lifts the clasp clear of the text block instead of leaving it
+    // behind the type.
     mobile: {
-      src: "/hero/hands-bible-mobile.webp",
-      width: 853,
-      height: 1844,
-      // 0.463:1 against a 0.53:1 phone frame, so the full-bleed phase
-      // scales by width and keeps 88% of the height — a few percent off
-      // each end and the vertical value barely matters. It matters in the
-      // COMPACT phase, which is 0.84:1 and keeps 55% of the height.
-      // Centred, that window is y 0.225-0.775; the hands are at y
-      // 0.33-0.62 and survive it, but they sit low and land under the text
-      // block. 45% lifts the window to y 0.203-0.753 and puts the clasp
-      // above the type rather than behind it.
-      position: "50% 45%",
+      src: "/hero/hands-bible.webp",
+      width: 1672,
+      height: 941,
+      position: "68% 45%",
     },
     // No caption. It is the poster's own photograph and there is no
     // subject a reader would want named; "clasped hands on a Bible" is a

@@ -89,12 +89,33 @@ const SCROLL_THRESHOLD_CLASS = "h-24";
  *
  * Never on the home page, which is the top and has nothing above it.
  *
- * ── WHY IT DOES NOT MOVE THE LOCKUP ──────────────────────────────────
+ * ── WHERE IT SITS, AND WHY IT IS NOT IN THE BAR ──────────────────────
  *
- * Rendered as `null` before mount and hidden below `lg`, so the header at
- * first paint is exactly what it was. It appears beside the brand lockup
- * rather than in the controls on the right, because it acts on the page
- * you are on and reads left to right with it.
+ * Top right, floating just BELOW the header rather than inside it. Three
+ * reasons, and the first is the one that settled it: the bar is full. It
+ * holds a lockup that already wraps to three lines on a long church name,
+ * nine links and the theme toggle, and a tenth control in it pushed the
+ * lockup narrower still.
+ *
+ * The second is that it does not belong with them. Those links go
+ * somewhere; this one comes back from where you are, which is a fact
+ * about the page and not about the site. Below the bar it reads as the
+ * page's own control.
+ *
+ * The third is that top right is where a reader's hand already is on a
+ * wide screen, next to the scrollbar.
+ *
+ * ── IT HAS TO BE LEGIBLE ON A PHOTOGRAPH AND ON A PLAIN BAND ─────────
+ *
+ * It lands over eleven header bands that carry a picture and over a dozen
+ * that do not, and it is outside the header element, so the
+ * `data-header-state` trick the nav links use cannot reach it. A filled
+ * pill solves both at once: the site's own surface with a hairline, which
+ * is opaque enough to sit on any photograph and is already the right
+ * colour on a plain band, in both themes.
+ *
+ * Rendered as `null` before mount and hidden below `lg`, so nothing about
+ * first paint changes and no phone sees a control it does not need.
  */
 function BackButton() {
   const pathname = usePathname();
@@ -110,16 +131,20 @@ function BackButton() {
   if (pathname === "/" || !canGoBack) return null;
 
   return (
-    <Button
+    <button
       type="button"
-      variant="ghost"
-      size="icon"
       onClick={() => router.back()}
       aria-label="Go back"
-      className="hidden size-11 shrink-0 lg:inline-flex group-data-[header-state=transparent]/header:text-white"
+      // z-30, under the header's z-40: it sits below the bar and must
+      // pass under it rather than over it if a page ever scrolls it
+      // there. `top` is the header's own height plus a gap, read from
+      // --spacing-header so the two cannot drift apart.
+      className="fixed right-4 z-30 hidden items-center gap-2 rounded-control bg-surface/90 px-3 py-2 text-sm font-medium text-ink ring-1 ring-line backdrop-blur transition-[background-color,translate] duration-fast ease-out-soft hover:bg-surface active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 lg:inline-flex"
+      style={{ top: "calc(var(--spacing-header) + 0.75rem)" }}
     >
-      <ArrowLeft aria-hidden className="size-5" />
-    </Button>
+      <ArrowLeft aria-hidden className="size-4" />
+      Back
+    </button>
   );
 }
 
@@ -314,10 +339,7 @@ export function SiteHeader() {
             number at every breakpoint rather than two numbers that happen
             to agree. See the width system block in globals.css. */}
         <div className="shell flex h-full items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-2">
-            <BackButton />
-            <BrandLockup />
-          </div>
+          <BrandLockup />
 
           {/*
             lg, not md. Eight links plus the lockup plus the theme toggle
@@ -406,6 +428,11 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
+
+      {/* Outside the <header> landmark on purpose. It is not site
+          navigation — it acts on the page you are on — and putting it in
+          the landmark would announce it as a tenth nav item. */}
+      <BackButton />
     </>
   );
 }

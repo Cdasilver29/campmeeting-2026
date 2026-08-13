@@ -161,7 +161,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
            the photograph, which is the one thing a viewer is for. A
            lightbox that lets you read the page underneath is a lightbox
            that has not opened. */
-        className="max-h-none max-w-none bg-transparent backdrop:bg-emperor open:fixed open:inset-0 open:flex open:h-full open:w-full open:items-center open:justify-center open:p-3 sm:open:p-6"
+        className="max-h-none max-w-none bg-transparent backdrop:bg-emperor open:fixed open:inset-0 open:flex open:h-full open:w-full open:items-center open:justify-center open:px-3 open:pt-20 open:pb-3 sm:open:p-6"
       >
         {open ? (
           // h-full, not max-h-full: the column has to BE the height of
@@ -169,15 +169,34 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
           // to take. With max-h-full it sized to its content, and its
           // content was a picture with no ceiling.
           <div className="flex h-full w-full max-w-5xl flex-col gap-3">
-            <div className="flex items-center justify-between gap-3">
-              <p className="tabular-figures text-sm text-white/90">
+            {/* ── THE CONTROL ROW SITS BELOW THE HEADER'S LINE ────────
+                On a phone this row started at the very top of the
+                viewport, which is exactly where the site header's own
+                menu button is — so the close control landed on top of a
+                control the reader had been tapping a second earlier, and
+                on some phones under the status bar as well. `pt-20` is
+                the header band's own 80px, so the row starts where the
+                page's content does; `env(safe-area-inset-top)`
+                clears a notch on top of that, and is additive rather than
+                a replacement because a phone with no notch reports 0.
+
+                The button is a filled pill rather than a bare glyph. A
+                white X on the scrim was legible in the abstract and hard
+                to FIND: it was the only thing in the corner with no edges
+                on a full-screen field of one colour. A ring and a fill
+                make it read as a control. */}
+            <div
+              className="flex shrink-0 items-center justify-between gap-3"
+              style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+            >
+              <p className="tabular-figures rounded-control bg-white/15 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/30">
                 {(openIndex ?? 0) + 1} / {images.length}
               </p>
               <button
                 type="button"
                 onClick={close}
                 aria-label="Close"
-                className="flex size-11 items-center justify-center rounded-control text-white transition-colors duration-fast hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="flex size-11 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/40 transition-colors duration-fast hover:bg-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <X aria-hidden className="size-5" />
               </button>

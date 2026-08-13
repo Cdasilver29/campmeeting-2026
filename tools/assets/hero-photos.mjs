@@ -150,7 +150,6 @@ const QUALITY = 90;
  * would report an upscale that cannot happen.
  */
 const PHOTOS = [
-  { name: "hands-bible-mobile", file: "Mobile-hero.PNG", viewport: 430 },
   { name: "hands-bible", file: "Desktop-hero.PNG", viewport: 1920 },
   { name: "migori-choir-mobile", file: "Migori-mobile.PNG", viewport: 430 },
   { name: "migori-choir", file: "Migori-desktop.PNG", viewport: 1920 },
