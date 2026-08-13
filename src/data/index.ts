@@ -1,5 +1,6 @@
 export * from "./types";
-export { eventInfo, speakers, speakerById, hosts } from "./event";
+export { eventInfo, speakers, speakerById, hosts, hostById } from "./event";
+export { hostLetters, hostLetter } from "./host-letters";
 export { program } from "./program";
 export { duty, dutyByDayId } from "./duty";
 export { childrenProgram } from "./children";

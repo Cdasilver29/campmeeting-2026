@@ -191,6 +191,62 @@ export interface Host {
 }
 
 /**
+ * ── THE HOST WELCOME LETTERS ─────────────────────────────────────────
+ *
+ * A letter is NOT a biography, and this is a separate field from `bio`
+ * rather than a use of it. A biography is written about someone in the
+ * third person and answers "who is this"; these five are written BY
+ * someone, in the first person, to the congregation, and answer "why
+ * come". Putting a letter in `bio` would have rendered "Dear brothers and
+ * sisters in Christ" under a portrait as though it described the person
+ * in the photograph.
+ *
+ * `Host.bio` therefore stays, empty, for a real biography if one ever
+ * arrives. `Speaker.bio` is untouched: the presenters' biographies are
+ * biographies and are unaffected by any of this.
+ *
+ * ── WHY BLOCKS AND NOT A STRING ARRAY ────────────────────────────────
+ *
+ * `Speaker.bio` is `string[]`, one entry per paragraph, and that is
+ * enough for a biography. It is not enough here. The five letters run
+ * from about 120 words to nearly a thousand, and the longest carries five
+ * internal headings of its own ("A Time to Reconnect with God", "A Time
+ * for Fellowship", …). Those are headings in the letter and have to be
+ * headings on the page — flattening them into paragraphs would lose the
+ * structure their writer put there, and a `string[]` has no way to say
+ * which entry is which. One letter also carries a real bulleted list.
+ *
+ * So the letter is a sequence of typed blocks, and the renderer draws
+ * each kind as itself.
+ */
+export type LetterBlock =
+  | { kind: "heading"; text: string }
+  | { kind: "paragraph"; text: string }
+  | { kind: "list"; items: string[] };
+
+export interface HostLetter {
+  blocks: LetterBlock[];
+  /**
+   * As SIGNED, which is not always the display name.
+   *
+   * Dr. Gerald Mochoge signs "Dr. Mochoge Nyarega / Snr pastor". The site
+   * calls him Dr. Gerald Mochoge everywhere because the committee settled
+   * that form, but a signature is the one part of a letter that is not
+   * the site's to restyle, so it is stored separately and printed as he
+   * wrote it. DATA-NOTES records the difference.
+   */
+  signature: { name: string; role: string };
+  /**
+   * One sentence from the letter, for the card on /speakers.
+   *
+   * ALWAYS the writer's own words, lifted verbatim. Never a summary and
+   * never new copy: a card that puts words in a named person's mouth is
+   * worse than a card with no quote at all.
+   */
+  pullQuote: string;
+}
+
+/**
  * ── THE CHILDREN'S MINISTRY PROGRAMME ────────────────────────────────
  *
  * Its own shape, not `ProgramDay`, and that is a decision rather than a

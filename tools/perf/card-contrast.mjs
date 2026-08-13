@@ -31,11 +31,32 @@ const BASE = process.argv[2] ?? "http://localhost:3100";
 /** Tuesday 18 August 2026, 10:30 EAT. Live card, Next Up and On Duty all on. */
 const WHEN = "2026-08-18T07:30:00Z";
 
-const CARDS = [
-  ['section[aria-labelledby="now-heading"]', "Happening now"],
-  ['section[aria-labelledby="next-heading"]', "Next up"],
-  ['section[aria-labelledby="on-duty-heading"]', "On duty"],
+/**
+ * What is measured, as [path, selector, label].
+ *
+ * The home page's three clock-driven cards, then every page whose type is
+ * new or newly restyled and therefore has pairings the palette check
+ * cannot have seen. A page joins this list when it introduces a
+ * combination; it does not need to stay forever.
+ */
+const TARGETS = [
+  ["/", 'section[aria-labelledby="now-heading"]', "Happening now"],
+  ["/", 'section[aria-labelledby="next-heading"]', "Next up"],
+  ["/", 'section[aria-labelledby="on-duty-heading"]', "On duty"],
+  ["/speakers", 'section[aria-labelledby="hosts-heading"]', "Host cards"],
+  ["/hosts/omondi-oyoo", "main", "Host letter"],
+  ["/children", "main", "Children"],
+  ["/gallery", "main", "Gallery"],
 ];
+
+/** The paths above, in order, each with the selectors measured on it. */
+const PAGES = [...new Set(TARGETS.map(([path]) => path))].map((path) => [
+  path,
+  TARGETS.filter(([p]) => p === path).map(([, selector, label]) => [
+    selector,
+    label,
+  ]),
+]);
 
 const browser = await launch({
   executablePath: CHROME,
@@ -44,8 +65,25 @@ const browser = await launch({
 });
 
 let failures = 0;
+/** Lines whose ground is a photograph. Reported, not scored. */
+const photoLines = new Set();
 
 for (const theme of ["light", "dark"]) {
+  console.log(`\n══ ${theme.toUpperCase()} ${"═".repeat(70)}`);
+  console.log(
+    "card".padEnd(15) +
+      "text".padEnd(36) +
+      "size".padEnd(10) +
+      "fg".padEnd(9) +
+      "bg".padEnd(9) +
+      "ratio".padStart(7) +
+      "  floor  ",
+  );
+  // Dedupe across the whole theme: the same class combination measured
+  // twice tells you nothing, and several of these pages share cards.
+  const seen = new Set();
+
+  for (const [path, cards] of PAGES) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 900 });
   await page.emulateMediaFeatures([
@@ -64,14 +102,14 @@ for (const theme of ["light", "dark"]) {
       }
     };
   }, WHEN);
-  await page.goto(BASE + "/", { waitUntil: "networkidle0", timeout: 60000 });
+  await page.goto(BASE + path, { waitUntil: "networkidle0", timeout: 60000 });
   await page.evaluate(
     (t) => document.documentElement.setAttribute("data-theme", t),
     theme,
   );
   await new Promise((r) => setTimeout(r, 1200));
 
-  const rows = await page.evaluate((cards) => {
+  const result = await page.evaluate((cards) => {
     /*
      * Colours are composited by PAINTING them, not by parsing them.
      *
@@ -141,7 +179,49 @@ for (const theme of ["light", "dark"]) {
       return ground;
     };
 
+    /**
+     * True where a photograph or gradient is painted behind the text.
+     *
+     * This tool composites background-COLOR and nothing else, so a
+     * photograph is invisible to it and it reports the band's fallback
+     * surface instead. On /children that produced four confident
+     * failures at 1.07:1 — white type on #f8f7fa — for a header band
+     * whose actual ground is a picture under a scrim.
+     *
+     * Those bands are not unmeasured; they are measured by
+     * verify-page-header.mjs, which scores each line against the
+     * BRIGHTEST composited pixel inside its own box, which is the only
+     * honest way to score type on a photograph. So they are skipped here
+     * and counted, rather than reported as passes or as failures.
+     */
+    const overArtwork = (el) => {
+      // A gradient or picture painted directly behind the text.
+      for (let n = el; n; n = n.parentElement) {
+        const cs = getComputedStyle(n);
+        if (cs.backgroundImage && cs.backgroundImage !== "none") return true;
+      }
+      /* The page-header band paints its photograph as an absolutely
+         positioned <img> at -z-20, which is nobody's ancestor, so no
+         walk up the tree can find it. `data-page-header` is on the band
+         for exactly this kind of check — see page-header.tsx.
+
+         NEGATIVE z-index is the whole test, and it took two goes to get
+         narrow enough. "Any ancestor with an <img> child" skipped every
+         host card on /speakers, where the card's text sits beside the
+         portrait rather than over it. "Any <img> in the band" then
+         skipped the host letter pages, whose band has no backdrop at all
+         — the picture in it is the portrait in the MEDIA slot, in flow
+         and beside the type. Only the backdrop is at -z-20, and only the
+         backdrop is behind anything. */
+      const band = el.closest("[data-page-header]");
+      if (!band) return false;
+      return [...band.querySelectorAll("img")].some(
+        (img) => Number(getComputedStyle(img).zIndex) < 0,
+      );
+    };
+
     const out = [];
+    const skipped = [];
     for (const [sel, label] of cards) {
       const root = document.querySelector(sel);
       if (!root) continue;
@@ -154,6 +234,11 @@ for (const theme of ["light", "dark"]) {
         if (cs.visibility === "hidden" || cs.display === "none") continue;
         // Screen-reader-only text is not seen and has no contrast.
         if (el.closest(".sr-only")) continue;
+        // Type on a photograph. Not this tool's to score — see overArtwork.
+        if (overArtwork(el)) {
+          skipped.push(`${label}: ${el.textContent.trim().slice(0, 30)}`);
+          continue;
+        }
         const size = parseFloat(cs.fontSize);
         const weight = Number(cs.fontWeight) || 400;
         const large = size >= 24 || (size >= 18.66 && weight >= 700);
@@ -170,22 +255,11 @@ for (const theme of ["light", "dark"]) {
         });
       }
     }
-    return out;
-  }, CARDS);
+    return { rows: out, skipped };
+  }, cards);
 
-  console.log(`\n══ ${theme.toUpperCase()} ${"═".repeat(70)}`);
-  console.log(
-    "card".padEnd(15) +
-      "text".padEnd(36) +
-      "size".padEnd(10) +
-      "fg".padEnd(9) +
-      "bg".padEnd(9) +
-      "ratio".padStart(7) +
-      "  floor  ",
-  );
-  // Dedupe: the same class combination measured twice tells you nothing.
-  const seen = new Set();
-  for (const r of rows) {
+  for (const note of result.skipped) photoLines.add(note);
+  for (const r of result.rows) {
     const key = `${r.card}|${r.fg}|${r.bg}|${r.size}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -203,8 +277,19 @@ for (const theme of ["light", "dark"]) {
     );
   }
   await page.close();
+  }
 }
 
 await browser.close();
-console.log(failures ? `\n${failures} FAILING PAIR(S)` : "\nAll pairs pass.");
+
+if (photoLines.size) {
+  console.log(
+    `\n${photoLines.size} line(s) skipped: their ground is a photograph, which this tool\n` +
+      "cannot composite. verify-page-header.mjs scores those against the\n" +
+      "brightest pixel inside each line's own box.",
+  );
+  for (const line of photoLines) console.log(`  ${line}`);
+}
+
+console.log(failures ? `\n${failures} FAILING PAIR(S)` : "\nAll scored pairs pass.");
 process.exitCode = failures ? 1 : 0;

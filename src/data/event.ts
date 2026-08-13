@@ -371,6 +371,18 @@ export const speakerById = Object.fromEntries(
  * host card and his presenter card go to the same page rather than
  * reading as two different people.
  */
+/**
+ * ── ALL FIVE HAVE WRITTEN, AND NONE OF THEM WROTE A BIOGRAPHY ────────
+ *
+ * `bio` is still empty on every record here and that is now a decision
+ * rather than a gap. What the committee supplied was five LETTERS to the
+ * congregation, in the first person, from 120 words to nearly a thousand.
+ * They are in src/data/host-letters.ts under their own type, they have a
+ * page each at /hosts/{id}, and the card on /speakers carries a sentence
+ * from each in the writer's own words. Putting any of them in `bio` would
+ * have printed "Dear brothers and sisters in Christ" under a portrait as
+ * though it described the person in it.
+ */
 export const hosts: Host[] = [
   {
     id: "gerald-mochoge",
@@ -442,3 +454,7 @@ export const hosts: Host[] = [
     imagePosition: "50% 0%",
   },
 ];
+
+export const hostById = Object.fromEntries(
+  hosts.map((host) => [host.id, host]),
+) as Record<string, Host>;

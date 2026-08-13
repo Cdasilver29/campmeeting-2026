@@ -1,8 +1,8 @@
 import {
   childrenProgram,
   eventInfo,
-  galleryImages,
   program,
+  type Host,
   type Speaker,
 } from "@/data";
 import {
@@ -182,7 +182,13 @@ export const childrenPage: PageDefinition = {
 export const galleryPage: PageDefinition = {
   eyebrow: EDITION,
   title: "Previous Camp Meetings",
-  meta: `${galleryImages.length} photographs from earlier years`,
+  /* No meta line, and it is the fifth page in the list above to drop
+     one. It said "31 photographs from earlier years", which is a count of
+     the pictures directly beneath it — the same restatement /speakers
+     removed when it stopped announcing "8 presenters" above a grid of
+     eight presenters. The page draws no header band at all now, so the
+     eyebrow and title below survive only for pageMetadata and the share
+     card. */
   description: `Photographs from previous camp meetings at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
   path: "/gallery",
 };
@@ -269,6 +275,27 @@ export function dayPageDefinition(day: ProgramDay): PageDefinition {
     meta: `${total} programme entries · ${EAT}`,
     description: `${total} programme entries for ${label}, day ${position} of ${program.length} at ${EDITION}, ${eventInfo.church.name}, ${eventInfo.church.address}. Times are East Africa Time.`,
     path: `/schedule/${day.id}`,
+  };
+}
+
+/**
+ * A host's welcome letter.
+ *
+ * The eyebrow is the office, matching how a speaker page uses the role,
+ * so a shared link previews as the person and what they do rather than as
+ * the site. The meta line says what the page IS — a letter — because the
+ * title is a name and a name alone does not tell anyone whether they are
+ * about to read a biography or a welcome.
+ */
+export function hostPageDefinition(host: Host): PageDefinition {
+  const label = host.title ? `${host.title} ${host.name}` : host.name;
+
+  return {
+    eyebrow: host.role,
+    title: label,
+    meta: `A welcome to ${EDITION}`,
+    description: `${label}, ${host.role} at ${eventInfo.church.name}, welcomes you to ${EDITION}.`,
+    path: `/hosts/${host.id}`,
   };
 }
 

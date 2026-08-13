@@ -73,7 +73,7 @@ offline behaviour.
 | `align.mjs` | the x position of the header lockup against the x position of the **first left-aligned content below the page-header band**, at five widths on seventeen routes, plus the content column's width and gutter. Also checks that the header block is centred inside its own shell. Fails if either disagrees. It used to measure the `h1`; see the note below. |
 | `responsive.mjs` | nine widths x seventeen routes: horizontal overflow with the offending elements named, clipped text, tap targets under 44px, and whether the day rail is scrollable. |
 | `reduced-motion.mjs` | emulates the preference before the document runs, byte-compares eight frames per route, and reports where they differ. Also checks `.live-pulse` directly, since the live dot only renders during the event. |
-| `card-contrast.mjs` | every text pair on the home page's three clock-driven cards — Happening now, Next up, On duty — in both themes, against the floor each pair's own size and weight requires. Stubs the clock to a mid-camp-meeting Tuesday morning, which is the only phase where all three are on the page at once. |
+| `card-contrast.mjs` | every text pair on the home page's three clock-driven cards — Happening now, Next up, On duty — plus the host cards, a host letter, /children and /gallery, in both themes, against the floor each pair's own size and weight requires. Stubs the clock to a mid-camp-meeting Tuesday morning, which is the only phase where all three cards are on the page at once. |
 
 `contrast.mjs` and `card-contrast.mjs` answer different questions and both
 are needed. The first checks the PALETTE: every ratio asserted in a
@@ -92,6 +92,21 @@ four numbers out of that reported the time range's separator dash at
 1.11:1 in dark mode, for a dash that is plainly visible. Painted properly
 it is 5.72:1 there and was 3.13:1 in LIGHT mode, which was a real failure
 and is fixed.
+
+**It SKIPS type over a photograph rather than scoring it**, and reports
+what it skipped. It composites background-colour only, so a page-header
+band's picture is invisible to it and it would score the band's fallback
+surface — which on /children produced four failures at 1.07:1, white type
+on #f8f7fa, for four lines that are actually over a scrimmed photograph.
+`verify-page-header.mjs` is the tool for those; it scores each line
+against the brightest composited pixel inside that line's own box.
+
+The skip test is deliberately narrow, and took two goes. "Any ancestor
+with an `<img>` child" skipped every host card on /speakers, where the
+text sits beside the portrait rather than over it. "Any `<img>` in the
+band" then skipped the host letter pages, whose band has no backdrop —
+its picture is the portrait in the media slot. The test is now a
+negative computed z-index, which is what only the backdrop has.
 
 ## Why `align.mjs` stopped measuring the `h1`
 

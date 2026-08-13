@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { speakerById, type Host } from "@/data";
+import { hostLetter, speakerById, type Host } from "@/data";
 import {
   PERSON_CARD,
   PERSON_CARD_INTERACTIVE,
@@ -29,21 +29,29 @@ import { SpeakerAvatar } from "./speaker-avatar";
  * And the biography sits inside the card here, where on a presenter it
  * has a page of its own to live on.
  *
- * ── THE PHOTOGRAPHS ARRIVED AND NOTHING HERE HAD TO CHANGE ───────────
+ * ── WHAT THE THIRD LINE HOLDS NOW ────────────────────────────────────
  *
- * As predicted, almost. All five hosts now carry a portrait and the
- * avatar needed no edit at all: it is the same SpeakerAvatar the
- * presenter cards use and it already preferred `image` over the monogram.
- * The biography block still renders when `bio` is a non-empty array and
- * renders NOTHING otherwise, which is the state all five are in — no
- * placeholder, no "biography to follow", because a line of type
- * apologising for itself is worse than a card that stops after the role.
+ * A PULL-QUOTE from the host's welcome letter, and the card is a link to
+ * the letter in full at /hosts/{id}.
  *
- * The one thing that did change is the line below, and it is a data
- * question rather than a layout one. See it.
+ * All five wrote, and none of them wrote a biography: what arrived were
+ * letters to the congregation, 120 words to nearly a thousand. The
+ * longest cannot go on a card at all, and the shortest would still be
+ * four times the height of the presenter cards beside it. One sentence
+ * of it can, and one sentence is also what a card is for — enough to
+ * decide whether to open the letter.
+ *
+ * The quote is ALWAYS the writer's own words, lifted verbatim from the
+ * letter. Nothing here summarises anybody: a card that puts words in a
+ * named person's mouth is worse than a card with no quote at all.
+ *
+ * `bio` still renders if one ever arrives, and is still empty on all
+ * five. Where both exist the quote wins the card, because the card's job
+ * is to send the reader to the letter.
  */
 function HostBody({ host }: { host: Host }) {
   const label = host.title ? `${host.title} ${host.name}` : host.name;
+  const letter = hostLetter(host.id);
 
   /* Eld. Ken Ochuka is on both lists, so his portrait is on his SPEAKER
      record and not on his host record — one photograph for one person,
@@ -70,7 +78,20 @@ function HostBody({ host }: { host: Host }) {
             type makes it required. */}
         <p className={PERSON_CARD_ROLE}>{host.role}</p>
       </div>
-      {host.bio && host.bio.length > 0 ? (
+      {letter ? (
+        <div className="flex flex-col gap-1.5">
+          {/* A real <blockquote>, not a styled paragraph. It is a
+              quotation from a named person and the markup should say so.
+              The opening and closing marks are drawn in the content so
+              they cannot be selected or read out as words. */}
+          <blockquote className="text-xs leading-5 text-ink-muted before:content-['“'] after:content-['”'] sm:text-sm sm:leading-6">
+            {letter.pullQuote}
+          </blockquote>
+          <span className="text-xs font-medium text-primary">
+            Read the welcome
+          </span>
+        </div>
+      ) : host.bio && host.bio.length > 0 ? (
         <div className="flex flex-col gap-2">
           {host.bio.map((paragraph) => (
             <p key={paragraph} className="text-xs leading-5 text-ink-muted sm:text-sm sm:leading-6">
@@ -84,17 +105,29 @@ function HostBody({ host }: { host: Host }) {
 }
 
 export function HostCard({ host }: { host: Host }) {
-  /* Only Eld. Ken Ochuka has a speaker page today. Linking the card that
-     has somewhere to go and not the four that do not is the honest
-     arrangement: a card that looks clickable and is not is worse than a
-     row where one card is a link. The link states are copied from
-     SpeakerCard rather than reinvented. */
-  if (host.speakerId) {
+  /* Where the card goes, in priority order.
+​
+     THE LETTER WINS over the speaker page, and for the one host who has
+     both that is a real choice. This is the hosts and elders section: it
+     answers "who is running this week", and the letter is what the
+     person on the card wrote for it. Eld. Ken Ochuka's speaker page is
+     what he PRESENTS, and his letter page links to it.
+
+     A host with neither is an <article> rather than a link — a card that
+     looks clickable and is not is worse than a row where some cards are
+     links. All five have a letter today, so all five are links; the
+     fallback stays because a future year's host list will start empty
+     again. The link states are copied from SpeakerCard rather than
+     reinvented. */
+  const href = hostLetter(host.id)
+    ? `/hosts/${host.id}`
+    : host.speakerId
+      ? `/speakers/${host.speakerId}`
+      : undefined;
+
+  if (href) {
     return (
-      <Link
-        href={`/speakers/${host.speakerId}`}
-        className={`${PERSON_CARD} ${PERSON_CARD_INTERACTIVE}`}
-      >
+      <Link href={href} className={`${PERSON_CARD} ${PERSON_CARD_INTERACTIVE}`}>
         <HostBody host={host} />
       </Link>
     );

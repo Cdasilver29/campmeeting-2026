@@ -146,6 +146,110 @@ it — Aga Khan's cervical screening is title-cased and Westlands' is not —
 and one of the two had to give. Fees are left in the source's own
 "1,400/-".
 
+## The five host welcome letters
+
+`src/data/host-letters.ts`, transcribed from `hosts-bios.txt`. One page
+each at `/hosts/{id}`; the card in the hosts and elders section on
+`/speakers` carries a sentence from each and links through.
+
+**They are letters, not biographies**, and they are in their own field
+rather than in `bio`. A biography is written about someone in the third
+person; these are written by someone, in the first person, to the
+congregation. `Host.bio` is still there and still empty on all five, for
+a real biography if one ever arrives. `Speaker.bio` is untouched.
+
+### Every change made to a signed letter
+
+Nine words across five letters. **Eight are typo corrections. One is a
+date correction and is authorised** — see below.
+
+| Letter | Source | Set as | Why |
+| --- | --- | --- | --- |
+| Dr. Gerald Mochoge | "did u obey" | "did you obey" | typo |
+| | "poweful" | "powerful" | typo |
+| | "ungratefullness" | "ungratefulness" | typo |
+| | "Gods word" | "God's word" | missing apostrophe |
+| | "pastors,elders" | "pastors, elders" | missing space |
+| | "yourself  did" | "yourself did" | doubled space |
+| Pr. Elvis Onyango | **"15th to 23rd August 2026"** | **"15th to 22nd August 2026"** | **authorised date correction** |
+| | "avenue.The Home" | "Avenue. The Home" | missing space; street name as the site sets it |
+| Eld. Omondi Oyoo | "God&#39;s Word" | "God's Word" | HTML entity leaked into the source |
+| Pr. Polycarp Nyangau | — | — | trailing spaces only |
+| Eld. Ken Ochuka | — | — | trailing spaces only |
+
+Eld. Oyoo's letter is also hard-wrapped mid-sentence throughout, an
+artefact of however it was exported. Those breaks are joined back into
+paragraphs; no words changed.
+
+### The date correction, in full
+
+**What the source said:** "I warmly welcome you to our 2026 Camp Meeting,
+taking place from 15th to 23rd August 2026."
+
+**What is rendered:** "…from 15th to 22nd August 2026."
+
+**Authorisation:** the committee's instruction, which states the camp
+runs 15 to 22 August and that Pr. Onyango's letter is wrong on this
+point. Every other document agrees with the 22nd: the programme PDF, the
+duty rotas, `eventInfo.endDate`. His is the only one that says the 23rd.
+
+It is recorded here because **a signed letter must never be silently
+edited**. Anyone comparing the page to what he sent will find the
+difference, and this is where the answer is.
+
+### The longer theme is NOT a correction
+
+The same letter gives the theme as "Grounded in the Bible, Focused on the
+Mission: Obey and Live; Disobey and Perish – The Choice Is Yours." That is
+kept exactly as written. It is his own framing rather than an error, and
+the site leading with the short "Obey and Live" elsewhere does not make
+his sentence wrong. Same decision, and the same reasoning, as the note
+above about Pr. Kenneth Ayuo's "OBEY AND LIVE, Disobey and Perish. The
+Choice is Yours."
+
+### Dr. Mochoge signs a different name from the one the site uses
+
+His letter is signed **"Dr. Mochoge Nyarega / Snr pastor"**. The site
+calls him **Dr. Gerald Mochoge**, which the committee settled and which
+the programme PDF prints twice. Both are his. The signature is stored
+separately from the display name and printed as he wrote it, because a
+signature is the one part of a letter that is not the site's to restyle.
+The page's title, its share card and its eyebrow all use the settled
+form.
+
+### Flagged rather than fixed
+
+Each is a phrasing question rather than a misspelling, so none was
+touched:
+
+- **Dr. Mochoge**: "even so come lord amen" — lowercase "lord" and no
+  sentence punctuation; and "him who is all together lovely", which is
+  probably "altogether lovely" (Song of Solomon 5:16).
+- **Pr. Nyangau**: "in Jesus name", with no possessive apostrophe.
+- **Eld. Oyoo**: the full stop after "Beloved brothers and sisters in
+  Christ" where a comma is conventional; and mixed spelling, "Honor" and
+  "organizers" against "centre" and "programme", within one letter.
+- **Pr. Onyango**: "Savior" (US) in a letter that is otherwise UK-spelled;
+  "sabbath week" in lower case; and "Church- Newlife", whose hyphen has a
+  space on one side only.
+- **The em and en dashes are the writers' own** and are kept, which is
+  the same exception to CLAUDE.md's "no em dashes in copy" that the
+  speakers' biographies already carry: that rule governs copy this
+  project writes, and a quoted letter is not that.
+
+### The three scripture references
+
+**Mark 6:31**, **Romans 12:10** and **Genesis 28:16**, all three in Eld.
+Oyoo's letter and all three already in Book Chapter:Verse form in the
+source, with no spacing variation between them. Nothing had to be
+normalised. They are kept inline in his own sentences rather than pulled
+out into blockquotes: lifting a quotation out of the sentence that
+introduces it changes the shape of his writing, which is not a
+typographic decision.
+
+Quotation marks and apostrophes ARE normalised, to curly throughout. The
+sources mix straight and curly inside a single letter.
+
 ## The gallery
 
 31 photographs of previous camp meetings, converted from `camp-gallery/`
@@ -476,26 +580,20 @@ misspelling, so none was touched:
     Allan Okoth still have no biography, and Allan Okoth's is the
     emptiest page relative to how much of the programme he carries, the
     Children's Corner on all seven days that have one.
-12. **Five host biographies are owed, and what arrived instead were
-    welcome letters.** All five cards in the hosts and elders section on
+12. **The five welcome letters are published; five host BIOGRAPHIES are
+    still owed.** All five cards in the hosts and elders section on
     `/speakers` — Dr. Gerald Mochoge, Pr. Elvis Onyango, Pr. Polycarp
     Nyangau, Eld. Ken Ochuka, Eld. Omondi Oyoo — carry a portrait, cut
-    from the supplied studio artwork by `tools/assets/host-photos.mjs`.
+    from the supplied studio artwork by `tools/assets/host-photos.mjs`,
+    and now a sentence from each host's own letter linking to it in full
+    at `/hosts/{id}`. See the section above.
 
-    `hosts-bios.txt` supplies five pieces of writing, one per host, and
-    **none of them is a biography**: each is a letter of welcome to the
-    camp, three paragraphs to two pages, addressed to the reader rather
-    than about its writer. They would not read as a biography under a
-    portrait, and none is in `hosts[].bio`. **This is unpublished content
-    the committee has actually written, and there is nowhere on the site
-    it currently goes** — a "Welcome" section on /about would be the
-    obvious home. Say the word.
-
-    A one-sentence `bio` naming Dr. Gerald Mochoge's office was written
-    here and then removed: `role` already prints "Senior Pastor" on his
-    card, directly under his name, so the paragraph repeated it. All five
-    records now wait for something in their subject's own words, which is
-    the only thing a `bio` is for.
+    What is still absent is a biography. `hosts[].bio` is empty on all
+    five and the letters are deliberately NOT in it: a letter is written
+    by someone to the congregation, a biography is written about someone,
+    and rendering "Dear brothers and sisters in Christ" under a portrait
+    would present the one as the other. The field is declared and drawn
+    for when they arrive.
 
     Eld. Ken Ochuka's are held once rather than twice: he is also a
     profiled speaker, so his portrait sits on the SPEAKER record and his

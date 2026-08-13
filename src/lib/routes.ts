@@ -1,4 +1,4 @@
-import { program, speakers } from "@/data";
+import { hostLetters, hosts, program, speakers } from "@/data";
 import { ministryPages } from "@/features/ministries/copy";
 import { dayPath } from "@/features/schedule/lib/url";
 
@@ -47,6 +47,18 @@ export const speakerRoutes: string[] = speakers.map(
   (speaker) => `/speakers/${speaker.id}`,
 );
 
+/**
+ * One page per host who has written a welcome letter.
+ *
+ * Derived from `hostLetters` rather than from `hosts`, because the page
+ * IS the letter: a host without one has nothing for the route to render,
+ * and listing them would precache and sitemap a 404. All five have
+ * written today.
+ */
+export const hostRoutes: string[] = hosts
+  .filter((host) => Boolean(hostLetters[host.id]))
+  .map((host) => `/hosts/${host.id}`);
+
 /** One page per ministry with a destination of its own. */
 export const ministryRoutes: string[] = ministryPages.map(
   (tag) => `/ministries/${tag}`,
@@ -63,5 +75,6 @@ export const siteRoutes: string[] = [
   ...fixedRoutes,
   ...dayRoutes,
   ...speakerRoutes,
+  ...hostRoutes,
   ...ministryRoutes,
 ];
