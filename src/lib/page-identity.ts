@@ -1,4 +1,4 @@
-import { eventInfo, program, type Speaker } from "@/data";
+import { childrenProgram, eventInfo, program, type Speaker } from "@/data";
 import {
   dayNumber,
   fullDayLabel,
@@ -100,6 +100,12 @@ export interface PageDefinition extends PageIdentity {
 const EDITION = eventInfo.edition;
 const EAT = "East Africa Time";
 
+/** Counted from the data, so adding a class updates the page's own meta line. */
+const childrenClassCount = childrenProgram.bands.reduce(
+  (total, band) => total + band.classes.length,
+  0,
+);
+
 /** The site's default share card, and the home page's own identity. */
 export const siteIdentity: PageIdentity = {
   eyebrow: eventInfo.church.name,
@@ -142,6 +148,23 @@ export const ministriesPage: PageDefinition = {
   description: `The ministries with their own pages at ${EDITION}, and every other ministry tag searchable on the programme.`,
   path: "/ministries",
   image: headerImages.ministries,
+};
+
+/**
+ * The children's ministry, top level rather than under /ministries.
+ *
+ * The meta line counts what this page actually holds and what the
+ * ministry page it replaced could not: eleven classes with named
+ * teachers and venues, which is not in program.ts and is not reachable
+ * through ?ministry=children.
+ */
+export const childrenPage: PageDefinition = {
+  eyebrow: EDITION,
+  title: "Children's Ministry",
+  meta: `${childrenClassCount} classes, ages 0 to 14 · Monday to Friday`,
+  description: `The children's programme at ${EDITION}, ${eventInfo.church.name}: the day from arrival to the evening service, ${childrenClassCount} classes with their teachers and venues, and the ministry's coordinators.`,
+  path: "/children",
+  image: headerImages.children,
 };
 
 export const aboutPage: PageDefinition = {

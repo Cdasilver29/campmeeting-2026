@@ -15,6 +15,28 @@ const nextConfig: NextConfig = {
     "/speakers/[id]/opengraph-image": ["./src/assets/fonts/*.ttf"],
     "/ministries/[tag]/opengraph-image": ["./src/assets/fonts/*.ttf"],
   },
+
+  /*
+   * The children's ministry moved out from under /ministries and up to
+   * its own top-level route. That address was published, precached by
+   * every service worker installed before the move, and is in the
+   * sitemap Google has already crawled — so it redirects rather than
+   * 404s.
+   *
+   * Here rather than in src/middleware.ts, which exists for the one
+   * redirect that has to drop a query param on the way through. This one
+   * carries nothing, so it belongs in config where it costs no
+   * middleware invocation.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/ministries/children",
+        destination: "/children",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 // Serwist needs to know the build output layout to rewrite the precache

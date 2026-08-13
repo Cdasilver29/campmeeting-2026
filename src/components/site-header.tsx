@@ -18,11 +18,23 @@ import { eventInfo } from "@/data";
 import { hasPhotoHeader } from "@/lib/page-header-art";
 import { cn } from "@/lib/utils";
 
+/**
+ * The desktop bar and the mobile sheet both read this, so a link is added
+ * to the site once.
+ *
+ * `/children` sits next to Ministries because that is where somebody
+ * would look for it, and it is a top-level entry rather than a page
+ * inside /ministries because it is what a parent opens this site to find.
+ * Nine links now; the bar is set in a size that holds them to lg, and
+ * below that they are the sheet's problem, where the list is vertical and
+ * a tenth would cost nothing.
+ */
 const navLinks = [
   { href: "/", label: "Today" },
   { href: "/schedule", label: "Schedule" },
   { href: "/speakers", label: "Speakers" },
   { href: "/ministries", label: "Ministries" },
+  { href: "/children", label: "Children" },
   { href: "/livestream", label: "Livestream" },
   { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
@@ -44,8 +56,10 @@ const navLinks = [
  *
  * `hasPhotoHeader` is an exact pathname match derived from `headerImages`
  * itself — see src/lib/page-header-art.ts, including why the check lives
- * there rather than in page-identity.ts. /ministries has a photograph and
- * /ministries/children does not, so there is no prefix rule to be had.
+ * there rather than in page-identity.ts. Exact rather than by prefix
+ * because the set is arbitrary: it is whichever pages the committee has
+ * supplied artwork for, and /schedule has one while /schedule/[day] does
+ * not.
  */
 const isPhotoRoute = (pathname: string) =>
   pathname === "/" || hasPhotoHeader(pathname);

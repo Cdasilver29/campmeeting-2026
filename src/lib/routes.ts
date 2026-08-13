@@ -24,6 +24,11 @@ const fixedRoutes = [
   "/schedule",
   "/speakers",
   "/ministries",
+  // Top level, not /ministries/children. The old address redirects
+  // (next.config.ts) and is deliberately NOT listed: a redirect in the
+  // precache list would cache a 308, and a redirect in the sitemap is a
+  // URL asking to be de-indexed in favour of this one.
+  "/children",
   "/announcements",
   "/livestream",
   "/gallery",

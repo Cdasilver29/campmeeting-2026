@@ -146,6 +146,47 @@ it — Aga Khan's cervical screening is title-cased and Westlands' is not —
 and one of the two had to give. Fees are left in the source's own
 "1,400/-".
 
+## The children's ministry programme
+
+`src/data/children.ts`, transcribed from `children-program` — "NEWLIFE
+SDA CHURCH, 2026 CHILDREN MINISTRY CAMP MEETING SCHEDULE". All three of
+its tables are in the data: the day, the eleven classes with their
+teachers and venues, and the coordinators. It has its own route,
+`/children`, rather than sitting under `/ministries`.
+
+**The sheet covers Monday to Friday only.** Not either Sabbath and not
+Sunday, and nothing on it says what happens on those three days. The main
+programme does — the Children's Corner on all seven days that have one,
+and a Children Sermon on both Sabbaths — so the page says Monday to
+Friday and links to `?ministry=children` for the rest rather than
+implying this is the whole week.
+
+Open, and each is one line from the committee:
+
+1. **"Tr. Wnnie Zeph"** teaches the 8-year-olds' craft session. Almost
+   certainly Winnie. Transcribed as printed.
+2. **"Tr. Elknah Nyakundi"** teaches the 5-year-olds' craft session.
+   Almost certainly Elkanah. Transcribed as printed.
+3. **"Tr. Violet Mwango /"** — the nursery's afternoon cell ends in a
+   trailing slash with no second name. Every other slash in the table
+   separates two teachers, so a partner is missing rather than absent.
+   **No name was invented**; the slot carries her alone.
+4. **"Tr. Nyakoboke Oirere`"** carries a stray backtick in the source,
+   dropped here as a typing slip rather than punctuation.
+5. **Three teachers carry no honorific** where the teacher they share a
+   cell with does: "Tr. Eunice Bolo / Elizabeth Salim", "Tr. Juddy Munga
+   / Niger Omwanza", "Tr. Nyakoboke Oirere / Esinah Omariba". As printed.
+6. **Venues are named two ways.** Four classes meet in "Tent A/B/C" or
+   the "Devotion Tent" and seven in "N yrs Class". Both are as printed;
+   whether the second is a room name or shorthand is not something the
+   sheet says.
+7. **Stewardship and Application, Q&A are one cell for every class**, and
+   Bible and Craft are one cell for the oldest class and the nursery.
+   Merged cells are carried as one longer slot rather than split into two
+   identical rows: "Stewardship, Application and Q&A, 15:05–16:20". That
+   spans the five-minute break the timetable puts at 15:55, which the
+   sheet's own merge also does.
+
 ## The duty rota, and where its four sources disagree
 
 `src/data/duty.ts` is built from the near-final PDF's per-day tables,

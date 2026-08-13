@@ -191,6 +191,52 @@ export interface Host {
 }
 
 /**
+ * ── THE CHILDREN'S MINISTRY PROGRAMME ────────────────────────────────
+ *
+ * Its own shape, not `ProgramDay`, and that is a decision rather than a
+ * shortcut. `ProgramDay` is one dated day with blocks in it; the
+ * children's sheet is ONE day repeated Monday to Friday, with no blocks
+ * and no dates, plus two tables the main programme has no equivalent of.
+ * Forcing it into `ProgramDay` would have meant five identical days with
+ * invented ids, which would then appear in `allSessions`, in the search
+ * index and in every day count on the site.
+ *
+ * The timetable's entries ARE `Session`, though, so the schedule's own
+ * card renders them without a translation layer. See /children.
+ */
+
+/** One class: an age band, where it meets, and who teaches it when. */
+export interface ChildrenClass {
+  id: string;
+  /** "13-14 Years Old", as the sheet prints it. */
+  ages: string;
+  venue: string;
+  /**
+   * The teaching slots this class runs, in the order the day runs them.
+   *
+   * Three for most classes and two for the oldest and the nursery, whose
+   * sheet cells are merged across the morning. Not a fixed four with
+   * duplicates: a merged cell means one set of teachers holds one longer
+   * slot, and splitting it into two identical rows would print the same
+   * names twice and say something the sheet does not.
+   */
+  slots: { session: string; time: string; teachers: string[] }[];
+}
+
+/** "Primary Class", and the classes inside it. */
+export interface ChildrenClassBand {
+  label: string;
+  classes: ChildrenClass[];
+}
+
+export interface ChildrenProgram {
+  /** The day, Monday to Friday. Rendered with the schedule's session card. */
+  timetable: Session[];
+  bands: ChildrenClassBand[];
+  coordinators: { role: string; people: string }[];
+}
+
+/**
  * The four teams the duty rota rosters, in the order the panel reads
  * them. Elders first because there are one or two of them and they are
  * who you ask; choristers last because there are always four.

@@ -324,9 +324,10 @@ export const HEADER_BAND_HEIGHT =
  * keeps a solid header over its own picture.
  *
  * The dynamic routes are absent because they have no photograph:
- * /schedule/[day] and /speakers/[id] both carry flat bands. Every
- * ministry page now has artwork, /ministries/children included, so the
- * four of them are all listed here and all take the transparent header.
+ * /schedule/[day] and /speakers/[id] both carry flat bands. The three
+ * ministry pages all have artwork, and so does /children, which used to
+ * be the fourth of them and is now a top-level route -- the picture moved
+ * with the page, and this map is the only place that had to be told.
  */
 const HEADER_ROUTES = {
   schedule: "/schedule",
@@ -340,7 +341,8 @@ const HEADER_ROUTES = {
   "prayer-requests": "/prayer-requests",
   health: "/ministries/health",
   "family-life": "/ministries/family-life",
-  children: "/ministries/children",
+  // Top-level since the children's ministry got a page of its own.
+  children: "/children",
   "christian-education": "/ministries/christian-education",
 } as const satisfies Record<keyof typeof headerImages, string>;
 
@@ -351,8 +353,8 @@ const PHOTO_HEADER_ROUTES: ReadonlySet<string> = new Set(
 /**
  * True where the page-header band carries a photograph, and therefore
  * where the site header goes transparent at scroll 0. Exact match on the
- * pathname: there is no prefix rule here, because /ministries has a
- * photograph and /ministries/children does not.
+ * pathname rather than a prefix rule, because the set is arbitrary: it is
+ * whichever pages the committee has supplied artwork for.
  */
 export function hasPhotoHeader(pathname: string): boolean {
   return PHOTO_HEADER_ROUTES.has(pathname);
