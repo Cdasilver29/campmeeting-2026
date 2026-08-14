@@ -61,9 +61,16 @@ export default function ChildrenPage() {
       <Band>
         <Reveal>
           <section aria-labelledby="day-heading" className={DOC_SECTION}>
-            <h1 id="day-heading" className={DOC_HEADING}>
+            {/* h2, and it was an h1. PageHeader already emits the page's
+                h1 — this was a SECOND one, and the session cards below it
+                are h3, so the document went h1, h1, h3 and skipped a
+                level. Lighthouse's heading-order caught it on this route
+                and nowhere else. As an h2 it is a sibling of the two
+                headings further down this page, which is what it always
+                was in meaning. */}
+            <h2 id="day-heading" className={DOC_HEADING}>
               The day, Monday to Friday
-            </h1>
+            </h2>
             <p className={MEASURE}>
               One shape for all five weekdays. The two Sabbaths and Sunday are
               not on the children&rsquo;s sheet: on those days the
