@@ -15,8 +15,8 @@ import {
 /**
  * ── THE SENIOR PASTOR'S WELCOME, ON THE HOME PAGE ────────────────────
  *
- * An excerpt from Dr. Gerald Mochoge's letter, his portrait, and two ways
- * through to the rest of it.
+ * Dr. Gerald Mochoge's greeting line, his portrait, and two ways through
+ * to the rest of it.
  *
  * ── THE TEXT HAS ONE SOURCE AND IT IS NOT HERE ───────────────────────
  *
@@ -28,39 +28,32 @@ import {
  * of any of it on the home page would be a copy that can drift out from
  * under that record.
  *
- * ── WHERE THE EXCERPT ENDS, AND WHY IT IS COMPUTED ───────────────────
+ * ── THE EXCERPT IS HIS GREETING LINE, AND NOTHING AFTER IT ───────────
  *
- * `letterOpening` takes paragraphs from the START of the letter and stops
- * at the first list. Then it drops a trailing paragraph that introduces
- * that list — one ending in a colon — because ending an excerpt on "I
- * suggest we come to Him with:" is ending it mid-thought, with the five
- * things he suggests missing.
+ * "Praise God Newlife fraternity". The whole of the first block, exactly
+ * as he wrote it — lowercase "fraternity" included. It is not a
+ * transcription slip to be tidied on the way past: a signed letter is not
+ * this site's to edit, which is the same rule DATA-NOTES applies to the
+ * nine words that WERE changed and to the several that deliberately were
+ * not.
  *
- * On his letter that resolves to the first two paragraphs: "Praise God
- * Newlife fraternity" and the one that ends "...by God's grace and mercy
- * we have come this far?" — about 65 words, ending on his own question
- * mark, which is a full stop in a way a colon is not.
+ * ── WHY THE COMPUTED CUT IS GONE ─────────────────────────────────────
  *
- * Computed from the blocks rather than sliced by a hardcoded index, so a
- * letter that is re-transcribed, or a future year's senior pastor, still
- * ends somewhere a sentence ends.
+ * This used to walk the blocks, stop at the first list and drop a
+ * trailing paragraph ending in a colon, so an excerpt of unknown length
+ * always finished where a sentence finished. That machinery earned its
+ * place while the excerpt was "as much as fits"; it earns nothing now
+ * that the answer is "the first block". A rule that can only ever return
+ * one thing is not a rule, it is a longer way of writing that thing.
+ *
+ * The one guard that stays is the KIND check. `blocks[0]` is typed as a
+ * heading, a paragraph or a list, and only a paragraph has a `text` to
+ * print — so a letter that opened on a heading renders nothing here
+ * rather than rendering `undefined`.
  */
-export function letterOpening(blocks: LetterBlock[]): string[] {
-  const opening: string[] = [];
-
-  for (const block of blocks) {
-    if (block.kind === "list") break;
-    if (block.kind === "heading") break;
-    opening.push(block.text);
-  }
-
-  // A paragraph whose last character is a colon is introducing something
-  // that is not in the excerpt.
-  while (opening.length > 1 && opening[opening.length - 1]?.endsWith(":")) {
-    opening.pop();
-  }
-
-  return opening;
+export function letterGreeting(blocks: LetterBlock[]): string | undefined {
+  const first = blocks[0];
+  return first?.kind === "paragraph" ? first.text : undefined;
 }
 
 /**
@@ -97,8 +90,8 @@ export function SeniorWelcome({ hostId }: { hostId: string }) {
   // was withdrawn would be a bad trade for a section that is a welcome.
   if (!host || !letter) return null;
 
-  const opening = letterOpening(letter.blocks);
-  if (opening.length === 0) return null;
+  const greeting = letterGreeting(letter.blocks);
+  if (!greeting) return null;
 
   const label = host.title ? `${host.title} ${host.name}` : host.name;
 
@@ -108,7 +101,23 @@ export function SeniorWelcome({ hostId }: { hostId: string }) {
         A welcome from our senior pastor
       </h2>
 
-      <article className={`${UPCOMING_CARD} flex flex-col gap-4`}>
+      {/* ── THE RHYTHM IS TIGHTER THAN IT WAS, AND HAD TO BE ──────────
+          At two paragraphs this card was gap-4 between three stacked
+          rows, which is right when the middle row is 65 words: the text
+          block was the tallest thing in the card and the air around it
+          was proportionate to it.
+
+          The middle row is now four words. At gap-4 the greeting had
+          more space above and below it than it occupied, which is what a
+          card looks like when something has been removed from it rather
+          than when it was built this size. gap-3 closes the three rows
+          into one block, and the greeting sits under the name the way a
+          line of speech sits under the person saying it.
+
+          gap-3 is not a new value — it is what the portrait row inside
+          this card and the section itself already use. Nothing else
+          about the card moved: same surface, same padding, same type. */}
+      <article className={`${UPCOMING_CARD} flex flex-col gap-3`}>
         {/* The same row the host cards on /speakers open with: portrait,
             name in the display face, office beneath it. */}
         <div className="flex items-center gap-3">
@@ -126,18 +135,26 @@ export function SeniorWelcome({ hostId }: { hostId: string }) {
 
         {/* ── PROSE, SO IT TAKES THE PROSE MEASURE ──────────────────
             The card is as wide as Next Up and On Duty because it is
-            their sibling; the TEXT inside it is not, because a
-            paragraph set across 80rem is not a paragraph anybody
-            finishes. `prose-column` is the site's own utility for
-            --width-prose, so this measure and every body column on the
-            site are one value rather than two that agree today. */}
-        <div className="prose-column flex flex-col gap-3">
-          {opening.map((paragraph) => (
-            <p key={paragraph} className="text-base leading-7 text-ink">
-              {paragraph}
-            </p>
-          ))}
-        </div>
+            their sibling; the TEXT inside it is not, because a line set
+            across 80rem is not a line anybody reads as prose.
+            `prose-column` is the site's own utility for --width-prose,
+            so this measure and every body column on the site are one
+            value rather than two that agree today. It is kept for one
+            line rather than dropped as unnecessary: the constraint is
+            about what this text IS, not about how much of it there
+            currently happens to be.
+
+            The wrapper div went with the second paragraph. There is one
+            child now, so a flex column existed only to space it from a
+            sibling it no longer has.
+
+            leading-normal, not leading-7. 28px of line height on a 16px
+            font is inter-line rhythm for a paragraph, and there are no
+            other lines here for it to be rhythm with — it was simply a
+            taller box around one line. */}
+        <p className="prose-column text-base leading-normal text-ink">
+          {greeting}
+        </p>
 
         {/* Two destinations, and they answer different questions: this
             letter in full, and who else is hosting the week. */}
