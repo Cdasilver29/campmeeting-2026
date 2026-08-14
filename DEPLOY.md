@@ -125,8 +125,13 @@ The recordings listed on `/livestream` are maintained by hand, one line
 per video. **This is the only content edit anyone should need to make
 during the week.**
 
+There are **two streams a day**, morning and afternoon, so the week is
+sixteen videos: eight days times two. The page lays all sixteen out in
+programme order and marks the ones that are not up yet, so a reader
+always gets an answer.
+
 There is no YouTube API, no key and no quota, and that is deliberate: for
-eight videos a year, an API key to rotate plus a rebuild trigger so a
+sixteen videos a year, an API key to rotate plus a rebuild trigger so a
 static site notices a video posted after its last deploy is more moving
 parts than the typing it saves. Do not add one.
 
@@ -137,38 +142,49 @@ entry:
 
 ```ts
 export const recordings: Recording[] = [
-  { dayId: "sabbath-15", label: "Divine Service", videoId: "dQw4w9WgXcQ" },
+  { dayId: "sabbath-15", part: "morning", videoId: "dQw4w9WgXcQ" },
 ];
 ```
 
 | field | what to put in it |
 | --- | --- |
 | `dayId` | the programme day this is a recording of, from `src/data/program.ts`: `sabbath-15`, `sunday-16`, `monday-17`, `tuesday-18`, `wednesday-19`, `thursday-20`, `friday-21`, `sabbath-22` |
-| `label` | what the recording IS, and nothing more: "Divine Service", "Morning Devotion". The day is written around it, so do not repeat it |
+| `part` | `"morning"` or `"afternoon"`. Which of the day's two streams this is. Nothing else is a valid value |
 | `videoId` | the **11 characters after `v=`** in the watch URL, not the URL. From `https://www.youtube.com/watch?v=dQw4w9WgXcQ` take `dQw4w9WgXcQ`. A `youtu.be/dQw4w9WgXcQ` share link has the same id after the slash |
+| `label` | **optional.** What the recording is, where that is more than "morning" already says: "Divine Service". Leave it off and the row reads "Morning", which is true of the whole stream. Do not invent a description of a video you have not watched |
+
+**Strip the `?si=...`.** YouTube's share button appends one — it is a
+tracking token belonging to whoever copied the link, not part of the
+video id. `https://youtu.be/dQw4w9WgXcQ?si=Ab12Cd34` is the id
+`dQw4w9WgXcQ` and nothing after the `?`.
 
 Commit and push. Vercel builds on push and the page is live in a couple of
 minutes.
 
-### Four things that are already handled, so do not do them by hand
+### Five things that are already handled, so do not do them by hand
 
-- **Order.** Paste at the end of the array. The list is sorted by the
-  day's own position in the programme, newest first, so where the line
-  sits in the file does not matter.
+- **Order.** Paste at the end of the array. The page is laid out from the
+  programme, day 1 to day 8, and each line is slotted into its own day and
+  part, so where it sits in the file does not matter.
+- **The days with nothing posted.** All sixteen slots are always drawn.
+  A day you have not uploaded yet shows as "Not posted yet" on its own,
+  and turns into a link the moment you add its line. Nothing needs
+  removing or un-commenting.
 - **The day's name.** "Sabbath 15th August 2026" is read from
   `program.ts`, so it cannot disagree with the schedule.
-- **The link to the programme.** Each row links to `/schedule/<dayId>` on
+- **The link to the programme.** Each day links to `/schedule/<dayId>` on
   its own.
-- **The empty state.** While the array is empty the page says recordings
-  are being posted and are listed here as they go up. Nothing needs
-  removing first.
+- **The cover pictures.** YouTube's own thumbnail for each video, from the
+  id. Nothing to upload.
 
 ### If the build fails after you add a line
 
-The likely cause is a mistyped `dayId`, and the failure is deliberate:
+Two causes, and both failures are deliberate.
+
+A mistyped `dayId`:
 
 ```
-Error: Recording "Divine Service" has dayId "sabath-15", which is not a
+Error: Recording "dQw4w9WgXcQ" has dayId "sabath-15", which is not a
 day in src/data/program.ts. Valid ids: sabbath-15, sunday-16, ...
 ```
 
@@ -176,9 +192,23 @@ A wrong day id would otherwise ship a "see that day's programme" link that
 404s, from the page whose whole job that week is catching people up. The
 message lists every valid id; fix the spelling and push again.
 
-### More than one recording of the same day
+Or the same day and part written twice:
 
-Add both. They keep the order you wrote them in, under the same day.
+```
+Error: Two recordings are both "sabbath-15" / "morning": dQw4w9WgXcQ
+and MT1z3LU1IL4. Each day has one morning stream and one afternoon
+stream, so one of these has the wrong day or the wrong part.
+```
+
+One slot cannot hold two videos. Without this the second line would
+silently replace the first and a published stream would quietly vanish
+from the page. Fix whichever line has the wrong day or part.
+
+### A day that streamed in more than two parts
+
+Do not add a third entry — there is no slot for it. Put the extra video on
+the church's channel, which the page links to, and raise it with whoever
+maintains the site if it needs to be listed.
 
 ---
 

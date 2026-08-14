@@ -5,7 +5,7 @@ import { eventPhaseScript } from "@/lib/event-phase-script";
 import { eventStartInstant, eventPhase } from "@/features/schedule/lib/time";
 import { DOC_HEADING } from "@/lib/typography";
 import { LIVESTREAM_CHANNEL_URL } from "../config";
-import { hasRecordings, resolvedRecordings } from "../lib/recordings";
+import { hasRecordings, recordingCount, totalSlots } from "../lib/recordings";
 import { LiveEmbed } from "./live-embed";
 import { NowSlot } from "./now-slot";
 import { RecordingsList } from "./recordings-list";
@@ -39,10 +39,10 @@ function BeforeStream() {
 /**
  * The after phase, in its two shapes.
  *
- * WITH RECORDINGS: the list, newest first, above the channel link. The
- * channel link stays rather than being replaced — this list is curated by
- * hand and is the meetings somebody chose to publish, while the channel is
- * everything the church has ever posted, which is a different and still
+ * WITH RECORDINGS: the archive, day 1 to day 8, above the channel link.
+ * The channel link stays rather than being replaced — this list is curated
+ * by hand and is the meetings somebody chose to publish, while the channel
+ * is everything the church has ever posted, which is a different and still
  * useful thing.
  *
  * WITH NONE: one sentence and the channel link, which is what this page
@@ -63,9 +63,9 @@ function AfterStream() {
       {hasRecordings ? (
         <>
           <p className="text-ink-muted">
-            {eventInfo.edition} has ended. {resolvedRecordings.length}{" "}
-            {resolvedRecordings.length === 1 ? "recording" : "recordings"} from
-            the week, most recent first.
+            {eventInfo.edition} has ended. {recordingCount} of {totalSlots}{" "}
+            streams from the week are posted, morning and afternoon, in
+            programme order. The rest are added here as they go up.
           </p>
           <RecordingsList />
         </>
@@ -91,15 +91,16 @@ function AfterStream() {
 }
 
 /**
- * Catch-up during the event: whatever has been posted so far, below the
- * live player.
+ * Catch-up during the event: the archive, below the live player, so
+ * somebody who missed a morning can find it without leaving the page.
  *
- * Nothing at all when the list is empty, and that is not the same decision
- * the after phase made. There the page has to say something, because a
- * reader has arrived expecting recordings. Here the live player is
- * directly above and is what the reader came for, and an empty "Earlier
- * this week" heading under it would be a hole in the page announcing that
- * somebody has not done the typing yet.
+ * Nothing at all until the FIRST video is posted, and that is not the same
+ * decision the after phase made. There the page has to say something,
+ * because a reader has arrived expecting recordings. Here the live player
+ * is directly above and is what the reader came for, and sixteen empty
+ * boxes under it on the opening morning would be a hole in the page
+ * announcing that somebody has not done the typing yet. From the first
+ * upload on, the unposted slots are the useful half of the answer.
  */
 function CatchUp() {
   if (!hasRecordings) return null;
@@ -107,8 +108,8 @@ function CatchUp() {
     <section className="flex flex-col gap-3">
       <h2 className={DOC_HEADING}>Earlier this week</h2>
       <p className="text-ink-muted">
-        Meetings already posted, most recent first. Sessions that have not been
-        uploaded yet are not listed.
+        Every day of the week, morning and afternoon. {recordingCount} of{" "}
+        {totalSlots} are posted so far; the rest appear here as they go up.
       </p>
       <RecordingsList />
     </section>
