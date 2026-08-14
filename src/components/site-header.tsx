@@ -139,7 +139,23 @@ function BackButton() {
       // pass under it rather than over it if a page ever scrolls it
       // there. `top` is the header's own height plus a gap, read from
       // --spacing-header so the two cannot drift apart.
-      className="fixed right-4 z-30 hidden items-center gap-2 rounded-control bg-surface/90 px-3 py-2 text-sm font-medium text-ink ring-1 ring-line backdrop-blur transition-[background-color,translate] duration-fast ease-out-soft hover:bg-surface active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 lg:inline-flex"
+      //
+      // ── min-h-11, AND IT IS PAINTED RATHER THAN FAKED ────────────────
+      //
+      // `px-3 py-2` around a 20px line measured 81x36, which is under the
+      // 44px floor CLAUDE.md sets and was the last real tap-target
+      // finding on the site. The pseudo-element trick the bookmark toggle
+      // uses is the right answer THERE and the wrong one here: that
+      // control is one of 238 in a row whose height it would set, so an
+      // invisible hit area is what keeps the row from growing. This is a
+      // single floating control with a whole margin to itself, and an
+      // 81x36 pill with an invisible 81x44 target is a control that is
+      // hit where it is not drawn. Nothing was competing for the 8px.
+      //
+      // py-2 stays so the box is 44 by its own padding at any text size a
+      // reader has set, rather than 44 only while the line box happens to
+      // be 20px. min-h-11 is the floor under that, not a replacement.
+      className="fixed right-4 z-30 hidden min-h-11 items-center gap-2 rounded-control bg-surface/90 px-3 py-2 text-sm font-medium text-ink ring-1 ring-line backdrop-blur transition-[background-color,translate] duration-fast ease-out-soft hover:bg-surface active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 lg:inline-flex"
       style={{ top: "calc(var(--spacing-header) + 0.75rem)" }}
     >
       <ArrowLeft aria-hidden className="size-4" />
