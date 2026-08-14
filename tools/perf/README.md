@@ -1,7 +1,20 @@
 # Measurement harnesses
 
-Nine standalone scripts used for the visual pass. They are not part of the
+Ten standalone scripts used for the visual pass. They are not part of the
 build and nothing in `src/` imports them.
+
+`caption-fit.mjs` is the newest and is the only one guarding a constraint
+that is invisible in the source: the hero caption is absolutely positioned
+in a one-line box, so a caption too long for its width draws OUTSIDE that
+box as white type over the photograph, and moves nothing. No CLS check
+catches it. Run it after touching any string in `heroImages`.
+
+**Phase cannot be driven with `?now=`.** That flag only reaches `useNow()`,
+i.e. client components. The `data-hero-phase` and `data-livestream-phase`
+attributes are written by inline scripts reading the real clock, so a
+harness that wants a phase has to set the attribute itself and force a
+layout. A sweep that varies `?now=` and reads hero heights will report the
+same phase every time and look like a pass.
 
 `tools/assets/` is a different kind of thing and lives next door: two
 converters that write `public/speakers/` and `public/headers/` from the

@@ -317,27 +317,42 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
       // clear of the type with the empty plum cropped off instead.
       position: "50% 85%",
     },
-    // ── THE NAME, AND WHY THE PREFIX GOT SHORTER ─────────────────────
+    // ── THE NAME, AND WHY THE CAPTION IS ONLY THE NAME ───────────────
     //
     // "Migori Central" was the caption burnt into the supplied photograph
     // and it was never the choir's name. The committee has settled it:
     // this is the **Newlife Migori Adventist Church Choir**, the same
-    // choir the programme credits on sixteen lines, and program.ts now
-    // prints the full form too so the site has one name for it.
+    // choir the programme credits on sixteen lines, and program.ts prints
+    // the full form too so the site has one name for it.
     //
-    // The fixed half of the caption dropped "Camp Meeting 2026" to pay
-    // for it. The caption row reserves exactly one 20px line (min-h-5,
-    // leading-5 in hero-rotation.tsx) and each caption is absolutely
-    // positioned inside it, so a caption that wraps does not push the
-    // layout — it spills BELOW the bottom scrim, which is the only place
-    // on this photograph where white type is measured to survive. The old
-    // line was 46 characters; "Camp Meeting 2026 Guest Choir · Newlife
-    // Migori Adventist Church Choir" is 69, which is a second line on a
-    // phone and white text on unmeasured pixels. At 50 it is four
-    // characters longer than what was measured. "Camp Meeting 2026" was
-    // also the most redundant thing in it: this is the Camp Meeting 2026
-    // home page.
-    caption: "Guest Choir · Newlife Migori Adventist Church Choir",
+    // ── THE FIXED HALF IS GONE, AND IT WAS MEASURED OUT ──────────────
+    //
+    // The caption row reserves exactly ONE 20px line (min-h-5, leading-5
+    // in hero-rotation.tsx) and each caption is absolutely positioned
+    // inside it. A caption that wraps therefore does not push the layout
+    // — it overflows its own box by 20px, and it is WHITE TYPE OVER THE
+    // PHOTOGRAPH at every width, including below md where the rest of the
+    // text block is ink on the page surface. That was checked rather than
+    // assumed: the caption's computed colour is rgb(255,255,255) at 320
+    // and 360 too.
+    //
+    // Measured in the caption's own font, against the caption box's own
+    // width (248px at 320, 288px at 360, 318px at 390):
+    //
+    //   Camp Meeting 2026 Guest Choir · Migori Central       276.8px
+    //   Guest Choir · Newlife Migori Adventist Church Choir  294.3px
+    //   Newlife Migori Adventist Church Choir                217.0px
+    //
+    // So the old caption already wrapped at 320. "Guest Choir · " plus
+    // the full name wrapped at 320 AND 360, which is a very common phone.
+    // The name on its own clears 320 by 31px and is shorter than what
+    // this site shipped before, at every width.
+    //
+    // Reserving a second line instead (min-h-10 below sm) was the other
+    // way out and was rejected: it is 20px of extra hero on every phone,
+    // to hold a label the photograph already makes obvious. The caption
+    // is a photo credit, and the credit is the name.
+    caption: "Newlife Migori Adventist Church Choir",
   },
   {
     // ── THE ONE PICTURE WITH NO NEW WIDE CROP, AND IT IS INTENDED ────
@@ -387,13 +402,13 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
     // "Taji" appeared nowhere in src/data/program.ts. The near-final
     // version credits **Taji Kenya** on five Heart of Worship lines and on
     // the closing Sabbath's Special Songs, so the caption is the
-    // programme's word now and not only the artwork's. The short form is
-    // kept here because it is what the photograph is captioned and the
-    // line has 20px to live in. DATA-NOTES.md.
+    // programme's word now and not only the artwork's — which is why this
+    // is "Taji Kenya" and no longer the bare "Taji". DATA-NOTES.md.
     //
-    // Prefix shortened with the other caption's, so the two read as one
-    // pair. See the note above for what the 20px buys.
-    caption: "Guest Choir · Taji",
+    // The fixed "Guest Choir · " went with the other caption's, so the
+    // two still read as one pair. See the note above for the measurements
+    // that took it off.
+    caption: "Taji Kenya",
   },
 ];
 

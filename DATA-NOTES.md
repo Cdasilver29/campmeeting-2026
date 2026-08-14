@@ -82,10 +82,15 @@ read against the printed page, and fails if two sessions ever share an id.
   near-final PDF prints the short form and the committee's name wins.
   Confirmed by the committee, asked and answered — the full name is
   wanted in the programme too, not only on the hero. Settled, not open.
-  The hero caption's fixed half was shortened to "Guest Choir · " to pay
-  for the longer name — the caption row has one 20px line and the full
-  old prefix would have wrapped it below the scrim that makes white type
-  legible. Both captions were shortened, so the pair still match.
+  The hero captions are now the choir's name and nothing else — "Newlife
+  Migori Adventist Church Choir" and "Taji Kenya". The caption row holds
+  one 20px line and each caption is absolutely positioned in it, so a
+  caption that wraps overflows its box as white type over the photograph.
+  Measured in the caption's own font against its own box: the old "Camp
+  Meeting 2026 Guest Choir · Migori Central" was 276.8px and already
+  wrapped at 320; "Guest Choir · Newlife Migori Adventist Church Choir"
+  was 294.3px and wrapped at 320 and 360; the bare name is 217px and
+  clears 320 by 31px. See the note in src/lib/hero.ts.
 - **Three Divine Service credits on the opening Sabbath change hands.**
   Pastoral Prayer from Eld. Omondi Oyoo to Eld. Ken Ochuka; Stewardship
   (Tithe and Offerings) from Pr. Elvis Onyango to Eld. Sylvester
