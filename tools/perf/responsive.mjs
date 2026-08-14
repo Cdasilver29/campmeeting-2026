@@ -47,7 +47,9 @@ const ROUTES = [
   "/livestream",
   "/downloads",
   "/announcements",
-  "/prayer-requests",
+  // /prayer-requests was here and is removed. The route no longer exists,
+  // so it was nine 404s per run reported as nine clean rows.
+  "/children",
   "/gallery",
   "/offline",
   "/styleguide",

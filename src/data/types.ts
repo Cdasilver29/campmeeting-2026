@@ -408,7 +408,15 @@ export interface EventInfo {
     address: string;
     website: string;
   };
-  contact: { phone: string; email: string; prayerEmail?: string };
+  /**
+   * `prayerEmail` was here and is deliberately not any more. It was a
+   * second name for `email` from the day the dedicated address failed
+   * verification, and nothing has rendered it since /prayer-requests was
+   * removed. Prayer requests are a topic on the contact form now. The
+   * reasoning, and what would bring a dedicated address back, is in
+   * event.ts.
+   */
+  contact: { phone: string; email: string };
   social: {
     facebook?: string;
     youtube?: string;

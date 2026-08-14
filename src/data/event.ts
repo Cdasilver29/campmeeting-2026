@@ -31,16 +31,26 @@ export const eventInfo: EventInfo = {
     website: "https://www.newlifesdanairobi.org",
   },
   // Phone and email are confirmed against the church's own 2025 bulletin.
+  //
+  // ── `prayerEmail` IS GONE, AND SO IS THE FIELD ──────────────────────
+  //
+  // It held requests@newlifesdanairobi.org until that address could not
+  // be verified against any church source, at which point it was set to
+  // this same info@ value — so for its whole life after that it was a
+  // second name for the address on the line above. /prayer-requests was
+  // then removed and nothing rendered it at all.
+  //
+  // The ROUTE it existed for is not gone. "Prayer request" is a topic on
+  // the contact form, which sets the subject line so the church can sort
+  // on it, and shows the confidentiality note when it is chosen. See
+  // src/features/forms/contact-form.tsx.
+  //
+  // If the church ever confirms a dedicated, monitored prayer address,
+  // it comes back as a field on this object and the form's prepare()
+  // is where it would be used.
   contact: {
     phone: "0795638070",
     email: "info@newlifesdanairobi.org",
-    // ── COMMITTEE OWES THIS ──────────────────────────────────────────
-    // This was requests@newlifesdanairobi.org, which could not be
-    // verified against any church source and is probably wrong, so
-    // prayer requests fall back to the confirmed info@ address. Restore
-    // a dedicated prayer address only once the church confirms it
-    // exists and is monitored.
-    prayerEmail: "info@newlifesdanairobi.org",
   },
   // Verified from newlifesdanairobi.org, July 2026.
   social: {

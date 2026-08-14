@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { Lock } from "lucide-react";
 import { eventInfo } from "@/data";
 import { HoneypotField } from "./components/honeypot-field";
 import { FormStatusBanner } from "./components/form-status-banner";
@@ -11,11 +13,27 @@ import { useWeb3Form } from "./lib/use-web3-form";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/**
+ * ── "PRAYER REQUEST" IS A TOPIC, NOT A PAGE ──────────────────────────
+ *
+ * /prayer-requests was removed, and with it the only route a reader had
+ * for asking to be prayed for. `eventInfo.contact.prayerEmail` outlived
+ * it as a field nothing rendered. Rather than leave a dead field or drop
+ * the route entirely, the route comes back here as a topic: the same
+ * confirmed address, the same delivery, and a subject line the church can
+ * sort on.
+ *
+ * It is deliberately the LAST option before "Something else", so it does
+ * not present itself as the default reason to write.
+ */
+const PRAYER_TOPIC = "prayer";
+
 const TOPIC_OPTIONS = [
   { value: "general", label: "General enquiry" },
   { value: "accommodation", label: "Accommodation and camping" },
   { value: "programme", label: "Programme and speakers" },
   { value: "giving", label: "Giving and tithes" },
+  { value: PRAYER_TOPIC, label: "Prayer request" },
   { value: "other", label: "Something else" },
 ];
 
@@ -40,6 +58,12 @@ function validateContact(data: FormData): Record<string, string> {
 
 export function ContactForm() {
   const online = useOnline();
+  // The chosen topic, held only to decide whether the confidentiality
+  // note is showing. Nothing here is written to localStorage and nothing
+  // is persisted between visits — CLAUDE.md's rule about prayer requests
+  // holds wherever they are typed, and this site carries no analytics on
+  // any page to begin with.
+  const [topic, setTopic] = useState("");
   const { status, errors, formRef, handleSubmit } = useWeb3Form({
     subject: `Contact form — ${eventInfo.edition}`,
     fromName: `${eventInfo.edition} website — contact form`,
@@ -85,7 +109,25 @@ export function ContactForm() {
         error={errors.topic}
         placeholder="Choose a topic"
         options={TOPIC_OPTIONS}
+        value={topic}
+        onChange={(event) => setTopic(event.currentTarget.value)}
       />
+
+      {/* Shown only on the prayer topic, and it is the church's own
+          existing promise rather than a new one this site invents. An
+          icon and a heading-weight opening carry it independently of the
+          tint, so it is not colour alone. */}
+      {topic === PRAYER_TOPIC ? (
+        <p className="field-control flex items-start gap-2 rounded-card bg-surface-muted p-3 text-sm text-ink-muted ring-1 ring-line">
+          <Lock aria-hidden className="mt-0.5 size-4 shrink-0 text-ink" />
+          <span>
+            <span className="font-medium text-ink">In confidence.</span> What
+            you write goes to the pastoral team and is not published, shared
+            or stored on this site.
+          </span>
+        </p>
+      ) : null}
+
       <TextAreaField
         id="contact-message"
         name="message"
