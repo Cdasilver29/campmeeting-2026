@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Lock } from "lucide-react";
 import { eventInfo } from "@/data";
 import { HoneypotField } from "./components/honeypot-field";
@@ -74,6 +74,18 @@ export function ContactForm() {
       if (topic) data.set("subject", `Contact form — ${topic.label}`);
     },
   });
+
+  /*
+   * The topic is the one field React holds rather than the DOM, so the
+   * `form.reset()` that empties every other field on a successful send
+   * leaves this one showing the last choice. On the prayer topic that is
+   * not just untidy: the confidentiality note stays under a form whose
+   * message has already gone, which reads as though something is still
+   * waiting to be sent.
+   */
+  useEffect(() => {
+    if (status === "success") setTopic("");
+  }, [status]);
 
   return (
     <form
