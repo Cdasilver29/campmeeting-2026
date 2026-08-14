@@ -80,6 +80,8 @@ read against the printed page, and fails if two sessions ever share an id.
   this choir rather than a hero and a schedule that disagree.
   **This overrides the transcription** on those sixteen lines: the
   near-final PDF prints the short form and the committee's name wins.
+  Confirmed by the committee, asked and answered — the full name is
+  wanted in the programme too, not only on the hero. Settled, not open.
   The hero caption's fixed half was shortened to "Guest Choir · " to pay
   for the longer name — the caption row has one 20px line and the full
   old prefix would have wrapped it below the scrim that makes white type
