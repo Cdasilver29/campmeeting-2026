@@ -106,9 +106,16 @@ function useRotation(): Rotation {
  * the section. Written out as a literal string: Tailwind finds class names
  * by scanning source text, so a name assembled at runtime is a name it
  * never generates.
+ *
+ * TWO VALUES, SPLIT AT md, because the compact block is a different height
+ * on a phone than on a desktop: the call to action stacks and the verse row
+ * wraps, so 258px at 1440 is 372px at 360. One value derived from the
+ * desktop footprint left white type on unprotected photograph at 390 and
+ * 414 — 1.98:1 measured. The numbers and the derivation are on
+ * HERO_SCRIM_BOTTOM_HEIGHT in src/lib/hero.ts.
  */
 const COMPACT_SCRIM_HEIGHT =
-  "group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact)] group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact)]";
+  "group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact)] group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact)] md:group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact-md)] md:group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact-md)]";
 
 export function HeroRotation({
   images,

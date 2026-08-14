@@ -163,8 +163,35 @@ const HERO_TEXT_ID = "home-hero-text";
 // pixels tall, so the question "how much room is left under the band" has
 // a different answer on a 640px viewport than on a 900px one. 55svh of
 // 640 leaves 288px; 60svh would leave 256px.
+//
+// ── AND A FLOOR UNDER IT, BELOW md ───────────────────────────────────
+//
+// A share of the viewport is the right unit only while the band is taller
+// than the thing inside it, and in the compact phase on a short phone it
+// is not. Measured on the deployed page with the phase forced to `during`:
+// the text block is 340px tall at 320 and 360 wide — the call to action
+// stacks and the verse row wraps — while 55svh is 312px at 320x568 and
+// 352px at 360x640. The block was therefore TALLER than its own band, and
+// since the section is `justify-end` and `overflow-hidden` the overflow
+// went off the TOP and was clipped: at 320x568 the block started 60px
+// above the band, so "Camp Meeting 2026" and the top of "Obey and Live"
+// were cut off and what survived collided with the header.
+//
+// 29rem (464px) is the floor: 340px of block, 32px of the pb-8 below it,
+// and 92px left above, which clears the 80px header. It is also exactly
+// 55svh at 390x844, so no phone that was already correct moves — the floor
+// only bites below about 375px wide, where the band was broken.
+//
+// max-md, so it never applies from md up: 60svh on a short laptop is
+// legitimately smaller than this floor and the desktop block is 226px,
+// which fits it.
+//
+// This costs fold space on the smallest phones — 104px of a 568px screen
+// rather than 256px — and that is the trade being made deliberately. A
+// legible hero beats a live card sitting 150px higher under a hero whose
+// title is sliced in half.
 const COMPACT_HERO_HEIGHT =
-  "data-[hero-phase=during]:h-[55svh] data-[hero-phase=after]:h-[55svh] md:data-[hero-phase=during]:h-[60svh] md:data-[hero-phase=after]:h-[60svh]";
+  "data-[hero-phase=during]:h-[55svh] data-[hero-phase=after]:h-[55svh] max-md:data-[hero-phase=during]:min-h-[29rem] max-md:data-[hero-phase=after]:min-h-[29rem] md:data-[hero-phase=during]:h-[60svh] md:data-[hero-phase=after]:h-[60svh]";
 // COMPACT_SCRIM_HEIGHT moved to ./hero-rotation.tsx with the scrims it
 // styles. The two CSS variables it reads are still declared on the section
 // below, because that is the element the phase attribute is on.
@@ -259,7 +286,11 @@ export function Hero() {
         style={
           {
             "--scrim-h": HERO_SCRIM_BOTTOM_HEIGHT.before,
+            // Two compact values, switched at md by COMPACT_SCRIM_HEIGHT in
+            // ./hero-rotation.tsx. Both are declared here because this is
+            // the element the phase attribute is on.
             "--scrim-h-compact": HERO_SCRIM_BOTTOM_HEIGHT.compact,
+            "--scrim-h-compact-md": HERO_SCRIM_BOTTOM_HEIGHT.compactMd,
           } as CSSProperties
         }
       >

@@ -2387,3 +2387,74 @@ New:
   It has an `sr-only` h1 and the reasoning is in the page, but it is the
   one page on the site with no visible h1 and that is worth someone
   agreeing to rather than discovering.
+
+## The compact hero on a phone (2026-08-15)
+
+The first day of the event, and the first time the `during` phase had ever
+been rendered on a phone in production. The site had spent its whole life
+in `before`, which passes at every phone width, so nothing here had been
+seen before it was live.
+
+Two defects, both below `md`, both in `during` and `after`, neither
+present on any desktop width.
+
+**1. The text block was taller than its own band, and was clipped.** The
+compact band is `55svh`, which is 312px at 320x568 and 352px at 360x640.
+The compact text block is 340px at those widths, because two things happen
+that never happen on a desktop: the call-to-action pair stops fitting on
+one line and stacks (+60px, and it must stack — 48px tap targets), and the
+verse row wraps (+28px). The section is `justify-end` with
+`overflow-hidden`, so the overflow went off the TOP: at 320x568 the block
+started 60px above the band, and "Camp Meeting 2026" and the top half of
+"Obey and Live" were cut off. What survived collided with the header.
+
+**2. White type sat on unprotected photograph.** `HERO_SCRIM_BOTTOM_HEIGHT.compact`
+was 19rem (304px), derived only from the 258px footprint at 1440. Against
+the phone footprints that is 96% at 390 and 414 and 122% at 320 and 360, so
+the top of the type was in the 92-100% band of the gradient, where the
+alpha is on its way to zero by design, or above the scrim entirely.
+
+Measured on the deployed page, phase forced, against the brightest
+composited pixel under the type:
+
+| layer | 390x844 | 414x896 | 1440x900 |
+| --- | --- | --- | --- |
+| hands-bible | 4.47:1 FAIL | — | 5.33:1 |
+| migori-choir | **1.98:1 FAIL** | 2.03:1 FAIL | 5.37:1 |
+| taji-choir | 2.91:1 FAIL | — | 4.98:1 |
+
+This is the same class of failure the `before` phase had when the caption
+row grew the block, and it came back for the same reason: the new value was
+re-derived at one width.
+
+**The fix, both halves measured rather than chosen.**
+
+- A floor under the compact band below `md`: `min-h-[29rem]` (464px) —
+  340px of block, 32px of `pb-8`, and 92px left above, which clears the
+  80px header. It is also exactly `55svh` at 390x844, so no phone that was
+  already correct moves; the floor only bites below about 375px wide.
+- A phone value for the compact scrim: 28rem below `md`, the same the
+  full-bleed phase takes, because with the floor above the worst phone
+  footprint is 372px and 372 against 448 is 83%, inside the held section of
+  the curve. `md` and up is untouched at 19rem.
+
+After, every width passes at every layer, worst 4.94:1 (768, unchanged and
+pre-existing):
+
+| layer | 320 | 360 | 390 | 414 | 768 | 1440 |
+| --- | --- | --- | --- | --- | --- | --- |
+| hands-bible | 5.61 | 5.57 | 5.55 | 5.17 | 5.55 | 5.33 |
+| migori-choir | 5.32 | 5.36 | 5.44 | 5.44 | 5.15 | 5.37 |
+| taji-choir | 5.01 | 5.04 | 4.97 | 5.21 | 4.94 | 4.98 |
+
+`before` is unchanged at every width, and CLS is 0.0000 at 320x568,
+360x640, 390x844 and 1440x900. Both values are CSS resolved against the
+phase attribute before first paint, so neither adds anything to the shift.
+
+## Still open with the committee
+
+- **The hero text collides with the header at 320x568 in the `before`
+  phase.** The block is 438px in a 500px band, so it starts 22px down and
+  runs under an 80px header. Not fixed here: `before` is in the past for
+  2026 and cannot render again this year, and the fix is a design decision
+  about what the narrowest phone drops. It will matter again in 2027.
