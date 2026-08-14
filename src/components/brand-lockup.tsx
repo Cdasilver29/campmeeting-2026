@@ -31,40 +31,46 @@ function Mark({ className }: { className?: string }) {
 }
 
 /**
- * Header and footer lockup: mark, then the church name over "Nairobi".
+ * Header and footer lockup: the mark, then the church's name on three
+ * fixed lines.
  *
- * ── THE PHONE FORM IS "SDA Church Newlife Nairobi" ────────────────────
+ *     Seventh-day
+ *     Adventist Church
+ *     Newlife Nairobi
  *
- * The wordmark used to disappear below `sm` and leave the mark on its
- * own, which meant a phone reader arriving from a shared link saw an
+ * ── THE SAME THREE LINES AT EVERY WIDTH ───────────────────────────────
+ *
+ * Header and footer, phone and desktop, no exceptions and no breakpoint
+ * at which the wordmark says something else.
+ *
+ * That is the whole of the design, and it is worth saying why after
+ * several attempts that were not. The wordmark once disappeared below
+ * `sm` entirely, so a phone reader arriving from a shared link saw an
  * unfamiliar symbol and no name. It came back as "Newlife" over
- * "Nairobi", the desktop lockup truncated, because the desktop one does
- * not fit and shrinking it further is not a fix: at 320px the content box
- * is 280px, and a 48px mark, a 48px theme toggle, a 48px menu button and
- * the gaps between them account for 158px of it.
+ * "Nairobi" — the desktop lockup truncated — which said WHICH church and
+ * never said what kind. Then it took a third form between `lg` and `xl`,
+ * where the nine-link nav left it 142px of the 312 it wanted. Three
+ * breakpoints, four forms, and a mark that changed identity as a window
+ * was resized.
  *
- * That form said WHICH church and it did not say what kind. It is now one
- * wrapping string that says both, plus the city: "SDA Church Newlife
- * Nairobi". It is the same information the two lines carried and the name
- * the congregation actually uses out loud, and it fits in the same box
- * because a name over a city and a phrase that wraps are the same two
- * lines.
+ * Fixed lines end all of it. Nothing here reflows, so nothing here can be
+ * crushed by whatever else is in the bar, and the break points are the
+ * ones chosen in event.ts rather than the ones a container happened to
+ * arrive at. The only thing that still moves is the type SIZE, 12px below
+ * `sm` and 14px from it, which is the same touch/pointer split every
+ * other control on the site uses.
  *
- * ── THE ACCESSIBLE NAME IS NOT THE SAME AT EVERY WIDTH ANY MORE ───────
+ * ── THE ACCESSIBLE NAME IS THE VISIBLE NAME ───────────────────────────
  *
- * It was, and that was worth having while every visible form was a
- * substring of the full church name: the visible text is `aria-hidden`,
- * the full name is `sr-only`, and WCAG 2.5.3 is satisfied because the
- * label a person can see appears inside the name they can speak.
+ * No aria-hidden twin, no sr-only twin, no aria-label. The lines join to
+ * the full church name plus the city, in order — the contract documented
+ * on `church.wordmarkLines` — so what is painted and what is announced
+ * are the same characters.
  *
- * "SDA" is not a substring of "Seventh-day Adventist Church Newlife", so
- * that arrangement would break the very rule it exists to keep — a
- * voice-control user saying "click SDA Church" would match nothing.
- * Below `sm` the visible string is therefore the accessible name as well,
- * which satisfies 2.5.3 by being the same characters rather than by
- * containing them. From `sm` up, nothing changed.
- *
- * No aria-label anywhere, so nothing overrides visible text.
+ * That satisfies WCAG 2.5.3 outright rather than by the substring
+ * shortcut the older forms leaned on, where a truncation was painted and
+ * the full name spoken beside it. A voice-control user can now say any
+ * part of what they can see.
  */
 export function BrandLockup({
   size = "header",
@@ -111,60 +117,60 @@ export function BrandLockup({
       <span
         data-wordmark
         className={cn(
-          // ── ONE LINE, AT EVERY WIDTH ──────────────────────────────
-          // The wordmark was a name over a city. It is now a single
-          // string that never wraps, so the lockup is one line in the
-          // header and one line in the footer, on a phone and on a
+          // ── THREE FIXED LINES, AT EVERY WIDTH ─────────────────────
+          // The lines come from the data, one span each, and they are the
+          // same three in the header and the footer, on a phone and on a
           // desktop.
           //
-          // `whitespace-nowrap` is the instruction; the SIZE STEP is what
-          // makes it safe. At 320px the header's content box is 280px and
-          // a 48px mark, a 48px toggle, a 48px menu button and the gaps
-          // between them take most of it, so the wordmark cannot have
-          // 14px type and one line at the same time. It steps down to
-          // 12px below `sm` and back up at it, which is the same
-          // touch/pointer split every other control on the site uses.
-          "font-display leading-tight whitespace-nowrap",
+          // FIXED, not wrapped. A single string set to wrap breaks
+          // wherever its box happens to end, which is a different place
+          // on every screen — the mark would read as three lines here,
+          // two there and four at 1024, and a mark that reads differently
+          // at two widths is two marks. `whitespace-nowrap` on each line
+          // is what guarantees the break points are the ones chosen in
+          // event.ts and never the ones a container arrived at.
+          //
+          // The size step is the touch/pointer split every other control
+          // on the site uses. The longest line is "Adventist Church"; at
+          // 14px it is wider than a 320px header can give the wordmark
+          // once a 48px mark, a 48px toggle and a 48px menu button have
+          // taken their share, so it is 12px there and 14px from `sm`.
+          "flex flex-col font-display leading-tight",
           "text-xs sm:text-sm",
         )}
       >
-        {/* ── ONE STRING, PAINTED AND ANNOUNCED ───────────────────────
-            "SDA Church Newlife Nairobi", at every width, in the header
-            and the footer alike.
+        {/* ── PAINTED AND ANNOUNCED, THE SAME CHARACTERS ──────────────
+            "Seventh-day / Adventist Church / Newlife Nairobi".
 
-            NO aria-hidden AND NO sr-only TWIN, which is the part that
-            matters. This lockup used to paint a truncation and announce
-            the full church name beside it, because every visible form was
-            a SUBSTRING of that name and WCAG 2.5.3 is satisfied by the
-            visible label appearing inside the accessible one. "SDA" is
-            not a substring of "Seventh-day Adventist Church Newlife", so
-            that arrangement would now break the rule it exists to keep: a
-            voice-control user saying "click SDA Church" would match
-            nothing.
+            NO aria-hidden AND NO sr-only TWIN anywhere in here, and that
+            is what the contract on `wordmarkLines` buys. This lockup used
+            to paint a truncation and announce the full church name beside
+            it, which WCAG 2.5.3 permits only because the visible label
+            was a SUBSTRING of the spoken one. The lines below join to the
+            full name plus the city, in order, so the visible label and
+            the accessible name are now the same characters and 2.5.3 is
+            satisfied outright rather than by that shortcut. A
+            voice-control user can say any part of what they can see.
 
-            So the visible string IS the accessible name. Identical
-            characters satisfies 2.5.3 outright rather than by the
-            substring shortcut. The cost, stated on the type: a screen
-            reader hears the abbreviation, which is what is on the screen.
+            ── THE SAME THREE LINES AT EVERY WIDTH ─────────────────────
+            There were four forms before: a compact one below sm, the full
+            name over "Nairobi" from sm, "Newlife" over "Nairobi" between
+            lg and xl where the nine-link nav crushed the lockup, and the
+            full name again above xl. Three breakpoints at which the mark
+            changed identity as a window was resized. There is one form
+            now, and the lg-to-xl squeeze it was managing is gone rather
+            than managed: nothing here reflows, so nothing can be crushed.
 
-            ── AND IT IS THE SAME STRING AT EVERY WIDTH NOW ────────────
-            There were four forms: the compact one below sm, the full name
-            over "Nairobi" from sm, "Newlife" over "Nairobi" between lg
-            and xl where the nine-link nav crushed the lockup, and the
-            full name again above xl. Four forms is three breakpoints at
-            which the mark changes identity as a window is resized.
-
-            One line of one string removes all of it, and it removes the
-            problem the lg-to-xl form existed to manage rather than
-            managing it: at 1024 the full name wrapped to four lines and
-            stood 100px tall inside an 80px header band. This string does
-            not wrap at any width the site supports.
-
-            The city is inside it, which is why there is no second line
-            for "Nairobi" any more. `shortName` is no longer read by this
-            component; it stays in the data as the substring form for
-            anything that needs one. */}
-        <span>{eventInfo.church.compactName}</span>
+            `shortName` is no longer read by this component. It stays in
+            the data as the substring form for anything that needs one. */}
+        {eventInfo.church.wordmarkLines.map((line) => (
+          // whitespace-nowrap per line, not on the column: the column
+          // must be allowed to be as wide as its widest line, and it is
+          // the LINES that must not break.
+          <span key={line} className="whitespace-nowrap">
+            {line}
+          </span>
+        ))}
       </span>
     </Link>
   );

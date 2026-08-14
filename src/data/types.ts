@@ -409,27 +409,30 @@ export interface EventInfo {
      */
     shortName: string;
     /**
-     * The name on a phone, where a mark, a wordmark and a 48px control
-     * share 280px of content box at 320px wide.
+     * The wordmark, one entry per printed line.
      *
-     * ── THIS ONE IS NOT A SUBSTRING OF `name`, AND CANNOT BE ───────────
+     * The lockup sets these as three fixed lines at every width, in the
+     * header and the footer alike, rather than letting a single string
+     * wrap wherever the box happens to end. A wrapping wordmark breaks in
+     * a different place on every screen; a mark that reads differently at
+     * two widths is two marks.
      *
-     * It abbreviates "Seventh-day Adventist" to "SDA", which is how the
-     * church is spoken about and is the only way the denomination, the
-     * congregation and the city fit on a phone at once. "SDA" appears
-     * nowhere in `name`, so the substring contract `shortName` carries
-     * does not hold here and the WCAG 2.5.3 problem it exists to prevent
-     * is real: a voice-control user saying "click SDA Church" must match
-     * something.
+     * ── THE CONTRACT ───────────────────────────────────────────────────
      *
-     * The lockup solves it by NOT hiding this behind the full name. Below
-     * `sm` this string is both what is painted and what is announced —
-     * visible label and accessible name are the same characters, which
-     * satisfies 2.5.3 outright rather than by the substring shortcut. The
-     * cost, stated: a screen reader on a phone hears the abbreviation
-     * rather than the full church name. That is what is on the screen.
+     * Joined with single spaces these MUST read `${name} ${city}` — the
+     * full church name, in order, with the city last. That is what keeps
+     * the visible label and the accessible name the same characters, so
+     * WCAG 2.5.3 is satisfied outright rather than by the substring
+     * shortcut `shortName` relies on: the lockup paints these lines and
+     * announces exactly what it painted, with no aria-hidden twin and no
+     * aria-label.
+     *
+     * So this is a decision about WHERE the name breaks, never about what
+     * it says. A future year that shortens or abbreviates it here would
+     * be changing the church's name in the one place a voice-control user
+     * has to be able to speak.
      */
-    compactName: string;
+    wordmarkLines: string[];
     address: string;
     website: string;
   };

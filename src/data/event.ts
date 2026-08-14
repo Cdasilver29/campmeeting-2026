@@ -27,12 +27,20 @@ export const eventInfo: EventInfo = {
     // than the denomination. A substring of `name`, which the header
     // lockup depends on: see the note on the type.
     shortName: "Newlife",
-    // The phone lockup, in the header and the footer. Deliberately NOT a
-    // substring of `name` — it abbreviates the denomination the way the
-    // congregation says it out loud, and it names the city, which
-    // "Newlife" alone does not. The type carries the whole accessibility
-    // argument for why that is allowed here and is not allowed above.
-    compactName: "SDA Church Newlife Nairobi",
+    // The wordmark's three printed lines, the same three at every width.
+    // Joined with spaces they read "Seventh-day Adventist Church Newlife
+    // Nairobi" — `name` in order, then the city — which is the contract
+    // the type describes and the reason the lockup can announce exactly
+    // what it paints.
+    //
+    // The break points are typographic: the denomination on two lines
+    // because "Seventh-day Adventist Church" does not fit a phone at a
+    // readable size, and the congregation with its city on the third
+    // because those two are what identify this church rather than the
+    // denomination. "Seventh-day" keeps its lowercase d, which is the
+    // denomination's own style and is how `name` is set everywhere else
+    // on the site, including the page titles.
+    wordmarkLines: ["Seventh-day", "Adventist Church", "Newlife Nairobi"],
     address: "5th Ngong Avenue, Nairobi",
     website: "https://www.newlifesdanairobi.org",
   },
