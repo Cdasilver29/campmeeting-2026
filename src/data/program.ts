@@ -13,9 +13,10 @@ import type { ProgramDay } from "./types";
  *    to-be-confirmed marker, not a person, and rendering it would put a
  *    placeholder on a public programme. The near-final version has
  *    cleared all of them: every cell that held one now names someone.
- *    "Designated Speaker", on the five weekday Bible Studies, is the one
- *    unfilled credit left and IS transcribed — it is what the programme
- *    prints for a reader to see, not a marker to the typesetter.
+ *    "Designated Speaker", on the five weekday Bible Studies, was the one
+ *    unfilled credit left and was transcribed as printed. The committee
+ *    has since filled it: all five are Pr. Kenneth Ayuo, and the Bible
+ *    Study is now his only credit in the week.
  *
  * 2. A presenter cell is split into separate credits only when both
  *    halves name someone: "Israel Jathniel and Choristers" becomes two
@@ -81,14 +82,14 @@ export const program: ProgramDay[] = [
           { id: "sabbath-15-invocation", title: "Invocation", start: "10:32", end: "10:35", presenterIds: ["kennedy-mfune"], ministry: "worship" },
           { id: "sabbath-15-welcome-intro", title: "Welcome & Introduction", start: "10:35", end: "10:39", presenterIds: ["ken-ochuka"] },
           { id: "sabbath-15-welcome-song", title: "Welcome Song — What a Fellowship", start: "10:39", end: "10:45", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-pastoral-prayer", title: "Pastoral Prayer", start: "10:45", end: "10:50", presentedBy: ["Eld. Omondi Oyoo"], ministry: "prayer" },
-          { id: "sabbath-15-offertory", title: "Stewardship (Tithe and Offerings)", start: "10:50", end: "10:53", presentedBy: ["Pr. Elvis Onyango"], ministry: "stewardship" },
+          { id: "sabbath-15-pastoral-prayer", title: "Pastoral Prayer", start: "10:45", end: "10:50", presenterIds: ["ken-ochuka"], ministry: "prayer" },
+          { id: "sabbath-15-offertory", title: "Stewardship (Tithe and Offerings)", start: "10:50", end: "10:53", presentedBy: ["Eld. Sylvester Odhiambo"], ministry: "stewardship" },
           { id: "sabbath-15-offertory-songs", title: "Special Song / Offertory Songs", start: "10:53", end: "11:03", presentedBy: ["Gifted Ministry", "Taji Kenya"], ministry: "music" },
           { id: "sabbath-15-offertory-response", title: "Offertory Response", start: "11:03", end: "11:05", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "sabbath-15-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", presentedBy: ["Elvinah Achieng Kodiwo"], ministry: "children" },
+          { id: "sabbath-15-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", presentedBy: ["Elvina Akinyi Kodiwo"], ministry: "children" },
           { id: "sabbath-15-special-song", title: "Special Song", start: "11:12", end: "11:27", presentedBy: ["Newlife Church Choir"], ministry: "music" },
           // 11:29 to 11:30 is unscheduled in v3. As printed. DATA-NOTES.
-          { id: "sabbath-15-scripture", title: "Scripture Reading", start: "11:27", end: "11:29", presentedBy: ["Pr. Polycarp Nyangau"] },
+          { id: "sabbath-15-scripture", title: "Scripture Reading", start: "11:27", end: "11:29", presentedBy: ["Eld. Robert Nyarango"] },
           { id: "sabbath-15-hymn-of-praise", title: "Hymn of Praise", start: "11:30", end: "11:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sabbath-15-sermon", title: "Sermon", start: "11:35", end: "12:20", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "sabbath-15-closing-hymn", title: "Closing Hymn", start: "12:20", end: "12:25", presentedBy: ["Choristers"], ministry: "music" },
@@ -118,7 +119,7 @@ export const program: ProgramDay[] = [
           { id: "sabbath-15-ev-theme-song", title: "Theme Song", start: "16:15", end: "16:20", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sabbath-15-ev-prayer", title: "Prayer", start: "16:20", end: "16:25", presentedBy: ["Eld. Chris Mbegera"], ministry: "prayer" },
           { id: "sabbath-15-ev-giving", title: "Worship in Giving", start: "16:25", end: "16:30", presentedBy: ["Eld. Sylvester Odhiambo"], ministry: "stewardship" },
-          { id: "sabbath-15-ev-children", title: "Children's Corner", start: "16:30", end: "16:37", presentedBy: ["Elvinah Achieng Kodiwo"], ministry: "children" },
+          { id: "sabbath-15-ev-children", title: "Children's Corner", start: "16:30", end: "16:37", presentedBy: ["Elvina Akinyi Kodiwo"], ministry: "children" },
           { id: "sabbath-15-ev-special-item", title: "Special Item", start: "16:37", end: "16:45", presentedBy: ["Newlife Church Choir"], ministry: "music" },
           { id: "sabbath-15-ev-sermon", title: "Sermon", start: "16:45", end: "17:30", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "sabbath-15-ev-theme-song-2", title: "Theme Song", start: "17:30", end: "17:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
@@ -280,9 +281,9 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "monday-17-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "monday-17-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "monday-17-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
+          { id: "monday-17-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
           { id: "monday-17-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "monday-17-spirit-of-prophecy", title: "Spirit of Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "spirit-of-prophecy", featured: true },
+          { id: "monday-17-spirit-of-prophecy", title: "Spirit of Prophecy", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "spirit-of-prophecy", featured: true },
           { id: "monday-17-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelist"], ministry: "publishing" },
           { id: "monday-17-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
           { id: "monday-17-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Esiiro Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
@@ -352,9 +353,9 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "tuesday-18-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "tuesday-18-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "tuesday-18-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
+          { id: "tuesday-18-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
           { id: "tuesday-18-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "tuesday-18-prophecy", title: "Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "prophecy", featured: true },
+          { id: "tuesday-18-prophecy", title: "Prophecy", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "prophecy", featured: true },
           { id: "tuesday-18-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "tuesday-18-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
           { id: "tuesday-18-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Adventist Women Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
@@ -421,9 +422,9 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "wednesday-19-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "wednesday-19-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "wednesday-19-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
+          { id: "wednesday-19-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
           { id: "wednesday-19-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "wednesday-19-possibility", title: "Possibility Ministry", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "possibility-ministry", featured: true },
+          { id: "wednesday-19-possibility", title: "Possibility Ministry", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "possibility-ministry", featured: true },
           { id: "wednesday-19-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "wednesday-19-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
           { id: "wednesday-19-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Young Adults Choir", "Redemption Singers", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
@@ -488,7 +489,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "thursday-20-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "thursday-20-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "thursday-20-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
+          { id: "thursday-20-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
           { id: "thursday-20-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           // The only session in the week that names a campaign rather
           // than a subject. Title as printed.
@@ -560,9 +561,9 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "friday-21-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "friday-21-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Designated Speaker"], ministry: "bible-study", featured: true },
+          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
           { id: "friday-21-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "friday-21-discipleship", title: "Discipleship", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "discipleship", featured: true },
+          { id: "friday-21-discipleship", title: "Discipleship", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "discipleship", featured: true },
           { id: "friday-21-song-service-3", title: "Song Service", start: "09:40", end: "09:50", presentedBy: ["Choristers"], ministry: "music" },
           // The 09:50 slot was Publishing in v2 and is Stewardship in v3,
           // which puts Friday in step with the other four weekdays. A
@@ -647,7 +648,15 @@ export const program: ProgramDay[] = [
           { id: "sabbath-22-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", presenterIds: ["allan-okoth"], ministry: "children" },
           { id: "sabbath-22-special-song", title: "Special Songs", start: "11:12", end: "11:27", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
           // 11:29 to 11:30 is unscheduled, as on the opening Sabbath.
-          { id: "sabbath-22-scripture", title: "Scripture Reading", start: "11:27", end: "11:29", presenterIds: ["kenneth-ayuo"] },
+          //
+          // READER OWED. This was Pr. Kenneth Ayuo's fifth credit and the
+          // only one outside the 09:00 weekday slot. The committee has
+          // taken every session off him but the Bible Studies, so his name
+          // comes off here too — but a two-minute reading cannot be given
+          // to "Interactive Session" the way the 09:00 subjects were, and
+          // naming a substitute would be inventing one. Left uncredited
+          // until the committee says who reads. DATA-NOTES.
+          { id: "sabbath-22-scripture", title: "Scripture Reading", start: "11:27", end: "11:29" },
           { id: "sabbath-22-hymn-of-praise", title: "Hymn of Praise", start: "11:30", end: "11:35", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sabbath-22-sermon", title: "Sermon", start: "11:35", end: "12:20", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "sabbath-22-closing-hymn", title: "Closing Hymn", start: "12:20", end: "12:25", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },

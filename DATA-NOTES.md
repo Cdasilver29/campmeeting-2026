@@ -34,22 +34,51 @@ read against the printed page, and fails if two sessions ever share an id.
   split into separate credits.
 - **The opening Sabbath is filled in.** Nine cells that were empty in v3
   now name someone: the offering (Pr. Elvis Onyango), the offertory songs,
-  both Children's slots (Elvinah Achieng Kodiwo), the Divine Service
-  Scripture Reading (Pr. Polycarp Nyangau), Christian Education (Eld. Mark
+  both Children's slots (Elvina Akinyi Kodiwo), the Divine Service
+  Scripture Reading, Christian Education (Eld. Mark
   Rotich), and the evening's Scripture Reading (Benter Owino), offering
-  (Eld. Sylvester Odhiambo) and Special Item. **This closes the "three
-  Scripture Readings have no reader" item entirely** — every reading in
-  the programme is now credited.
+  (Eld. Sylvester Odhiambo) and Special Item. **This closed the "three
+  Scripture Readings have no reader" item** — though the closing Sabbath's
+  reading has since been vacated again, see below.
 - **The opening Sabbath's Closing Song and Closing Prayer change hands**,
   from Alice Bonareri to Israel Jathniel and Timothy Anyona respectively.
   Alice Bonareri is now credited nowhere in the programme.
-- **Bible Study is "Designated Speaker"** on all five weekdays, where v3
+- **Bible Study was "Designated Speaker"** on all five weekdays, where v3
   said Pr. Musonera Jason. He is credited nowhere in the near-final
   version, on the Bible Studies or anywhere else, and his six free-text
-  credits are gone. He never had a speaker record to remove.
-- **The closing Sabbath's Scripture Reading is Pr. Kenneth Ayuo**, where
-  v3 gave it to Pr. Musonera Jason. It is his fifth session, and the first
-  outside the 09:00 weekday slot.
+  credits are gone. He never had a speaker record to remove. The
+  placeholder is now filled — see the committee corrections below.
+- **The closing Sabbath's Scripture Reading was Pr. Kenneth Ayuo**, where
+  v3 gave it to Pr. Musonera Jason. It has since been vacated with the
+  rest of his credits — see below.
+
+## Committee corrections, 14th August 2026
+
+- **The Children's slots are Elvina Akinyi Kodiwo.** The near-final
+  version printed "Elvinah Achieng Kodiwo" on both. Corrected on the
+  opening Sabbath's Children Sermon and Children's Corner. The children's
+  sheet already spelled her given name "Elvina" (src/data/children.ts,
+  Tr. Elvina Kodiwo) and is unchanged.
+- **Pr. Kenneth Ayuo takes the five weekday Bible Studies**, and they are
+  now his ONLY credit in the week. The "Designated Speaker" placeholder is
+  gone from the data.
+- **His four 09:00 subjects are now "Interactive Session"** — Spirit of
+  Prophecy (Mon), Prophecy (Tue), Possibility Ministry (Wed) and
+  Discipleship (Fri). The subjects keep their titles; the presenter chip
+  carries "Interactive Session" instead of his name.
+- **The closing Sabbath's Scripture Reading is UNCREDITED, and a reader
+  is owed.** It was his fifth credit and the only one outside the 09:00
+  slot. "Interactive Session" cannot stand as the reader of a two-minute
+  Scripture Reading and naming a substitute would be inventing one, so
+  the credit is empty until the committee says who reads. **Open.**
+- **Three Divine Service credits on the opening Sabbath change hands.**
+  Pastoral Prayer from Eld. Omondi Oyoo to Eld. Ken Ochuka; Stewardship
+  (Tithe and Offerings) from Pr. Elvis Onyango to Eld. Sylvester
+  Odhiambo; Scripture Reading from Pr. Polycarp Nyangau to Eld. Robert
+  Nyarango. The Evening Service's own Scripture Reading (Benter Owino) is
+  untouched. The duty rota corroborates: Eld. Nyarango is the elder on
+  that Sabbath's morning shift and Eld. Odhiambo the afternoon's.
+  Eld. Omondi Oyoo is now credited on no session; he remains a host.
 - **The closing Sabbath's Stewardship gains Pr. Elkanah Mose**, and its
   welcome and farewell name the senior pastor.
 - **Sunday's Medical Camp is fully specified.** Four named providers with
@@ -561,19 +590,17 @@ misspelling, so none was touched:
     the gap.** Janet Oyende-Kariuki and Pr. John Clement are in the same
     position for Ambassadors; note the Ambassadors Choir sings on Thursday
     but no person is credited with the ministry.
-9. **"Designated Speaker" takes the five weekday Bible Studies.** It is
-    transcribed rather than dropped, because unlike v3's "Participant" it
-    is printed for a reader to see rather than left as a note to the
-    typesetter. But it is plainly a placeholder for a person, and the
-    Bible Study is a 40-minute session on five consecutive mornings. Who
-    is it?
+9. **The closing Sabbath's Scripture Reading has no reader.** It was
+    Pr. Kenneth Ayuo's and the committee has taken every session off him
+    but the Bible Studies. Two minutes on the 22nd, uncredited. Who
+    reads? (The five weekday Bible Studies' "Designated Speaker" question
+    that stood here is CLOSED: they are Pr. Kenneth Ayuo.)
 10. **Pr. Elvis Onyango has no speaker profile.** He is in the programme
-    twice — Thursday's Evangelism and the opening Sabbath's Stewardship —
-    and is carried as free text, because no biography was supplied for
-    him. Anyone who finds him in the programme cannot click through. He
-    does appear in the hosts section as an Associate Pastor, with a
-    photograph. Pr. Polycarp Nyangau is in the same position, with three
-    credits.
+    once — Thursday's Evangelism — and is carried as free text, because
+    no biography was supplied for him. Anyone who finds him in the
+    programme cannot click through. He does appear in the hosts section as
+    an Associate Pastor, with a photograph. Pr. Polycarp Nyangau is in the
+    same position, with the closing Sabbath's pastoral prayer.
 11. **Every profile now carries a photograph.** Pr. Elkanah Mose and Pr.
     Kenneth Ayuo were the last two rendering as initials monograms and
     both have arrived, along with a replacement for Eld. Omondi Oyoo —

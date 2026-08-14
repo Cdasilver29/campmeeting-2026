@@ -387,15 +387,15 @@ export const speakers: Speaker[] = [
     id: "kenneth-ayuo",
     name: "Kenneth Ayuo",
     title: "Pr.",
-    // He has the 09:00 slot on four mornings and it is a different
-    // subject each time: Spirit of Prophecy on Monday, Prophecy on
-    // Tuesday, Possibility Ministry on Wednesday, Discipleship on
-    // Friday. `role` named all four, which is 60 characters in a field
-    // whose other values are "Main Speaker" and "Teens" — it set the
-    // page's eyebrow to a comma list and made his card the tallest in
-    // the grid. The four subjects are in the programme, where they
-    // belong, and this names the thread instead.
-    role: "Morning Sessions",
+    // ONE SUBJECT NOW, ON FIVE MORNINGS. He held the 09:00 slot on four
+    // mornings with a different subject each time — Spirit of Prophecy,
+    // Prophecy, Possibility Ministry, Discipleship — plus the closing
+    // Sabbath's Scripture Reading, and `role` said "Morning Sessions"
+    // because naming all four ran to 60 characters in a field whose other
+    // values are "Main Speaker" and "Teens". The committee has since
+    // moved him: the five weekday Bible Studies are his, and they are his
+    // only credit in the week. So the field can name the subject again.
+    role: "Bible Study",
     // The one crop in this batch that is a zoom rather than a shape. He
     // is shot at three-quarter length where the other two are chest-up,
     // so an equal head position still read smaller. See the note in
