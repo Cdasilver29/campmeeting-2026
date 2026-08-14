@@ -72,6 +72,67 @@ export const eventInfo: EventInfo = {
 };
 
 /**
+ * ── SUNDOWN, ONE FIXED TIME PER DAY OF THE CAMP ──────────────────────
+ *
+ * Eight numbers, written down. Not computed at runtime, not fetched, and
+ * no library: a solar calculator in the bundle would be a few kilobytes
+ * of trigonometry shipped to every phone on the campground to re-derive
+ * eight constants that were known months in advance, and it would have to
+ * be right about the horizon, refraction and the timezone to beat a
+ * lookup. It would also stop working offline the moment it became an API.
+ *
+ * ── WHERE THESE CAME FROM ────────────────────────────────────────────
+ *
+ * Open-Meteo's daily `sunset`, queried for -1.2921, 36.8219 (Nairobi, and
+ * about 1.5km from 5th Ngong Avenue — a distance worth under four seconds
+ * of sunset, which does not survive rounding to the minute), with
+ * timezone=Africa/Nairobi so the values below are already EAT and no
+ * conversion was done by hand.
+ *
+ * Cross-checked TWICE, because a wrong sundown is worse than none:
+ *
+ *   - Against an independent implementation of the NOAA solar equations
+ *     at the same coordinates. Solar noon agreed to the second on every
+ *     day; sunset agreed to within one minute on all eight, which is the
+ *     rounding difference between two refraction constants and not a
+ *     disagreement about the sun.
+ *   - Against api.sunrise-sunset.org, which came back about a minute
+ *     LATER on every day (18:40 for the 15th where both NOAA-derived
+ *     sources say 18:39). That service runs the 1990 Almanac for
+ *     Computers approximation, which is known to sit about a minute off,
+ *     and it is the outlier of the three. It is recorded here rather than
+ *     quietly dropped so nobody re-derives it later and thinks the data
+ *     is wrong.
+ *
+ * timeanddate.com, the source anybody would reach for first, returns 403
+ * to a fetch and could not be read.
+ *
+ * ── ROUNDING ─────────────────────────────────────────────────────────
+ *
+ * These are printed as the sources give them, to the minute, with no
+ * padding either way. Sabbath beginning "at sundown" is a moment the
+ * congregation marks together at the venue, and a site that shaved two
+ * minutes off it to be safe would be printing something the sky
+ * contradicts.
+ *
+ * ── COMMITTEE ────────────────────────────────────────────────────────
+ *
+ * If the church publishes its own sundown table — many congregations do,
+ * from the conference calendar — theirs wins over these and this is one
+ * edit. Ask before the programme is printed.
+ */
+export const sundownByDate: Record<string, string> = {
+  "2026-08-15": "18:39", // Sabbath 15th, the opening Sabbath ends
+  "2026-08-16": "18:39", // Sunday 16th
+  "2026-08-17": "18:38", // Monday 17th
+  "2026-08-18": "18:38", // Tuesday 18th
+  "2026-08-19": "18:38", // Wednesday 19th
+  "2026-08-20": "18:38", // Thursday 20th
+  "2026-08-21": "18:38", // Friday 21st — SABBATH BEGINS
+  "2026-08-22": "18:37", // Sabbath 22nd — Sabbath ends, and the camp with it
+};
+
+/**
  * ── ABOUT THE PHOTOGRAPHS ────────────────────────────────────────────
  *
  * `image` points at public/speakers/<id>.webp, cropped out of the

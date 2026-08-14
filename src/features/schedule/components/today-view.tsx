@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Bookmark, CalendarCheck, CalendarClock } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { eventInfo, getDayByDate, type FlatSession } from "@/data";
+import { eventInfo, getDayByDate, program, type FlatSession } from "@/data";
 import { useBookmarks } from "../bookmarks";
 import { getDutyPanel } from "../lib/duty";
 import { getTodayState, nextSavedSession, type TodayState } from "../lib/today";
@@ -27,6 +27,7 @@ import {
   SessionCard,
   TimeRange,
 } from "./session-card";
+import { SundownCard, sundownTone } from "./sundown";
 
 const sectionHeading = SECTION_HEADING;
 
@@ -196,6 +197,40 @@ function RemainingTimeline({ state }: { state: TodayState }) {
 }
 
 /**
+ * Sundown, on the home page, on the two days it is an event.
+ *
+ * ── WHY IT IS HERE AND NOT AT THE TOP ────────────────────────────────
+ *
+ * Friday's sundown is the most meaningful marker of this week and it is
+ * still not what somebody opens this page to find. The question the home
+ * page answers is what is on now and what is next, and a card above
+ * "Next up" would push the answer down to buy emphasis it does not need:
+ * the card is warm, carries the time at display size and is the only
+ * thing on the page that is not a session or a rota, so it is found
+ * whether it is second or fourth.
+ *
+ * ── AND NOTHING AT ALL ON THE OTHER SIX DAYS ─────────────────────────
+ *
+ * No quiet line here, unlike the day pages. This page is a live view of a
+ * single day and every line on it earns its place by being actionable
+ * within the hour; "Sundown 18:38" on a Tuesday morning is neither. The
+ * day pages are where the whole week's sundowns are readable.
+ */
+function Sundown({ state }: { state: TodayState }) {
+  if (!state.day) return null;
+  const tone = sundownTone(state.day, program);
+  if (tone === "quiet") return null;
+
+  return (
+    <SundownCard
+      date={state.day.date}
+      tone={tone}
+      closesCamp={program[program.length - 1]?.id === state.day.id}
+    />
+  );
+}
+
+/**
  * On Duty, directly below Next Up.
  *
  * In all three phases, and never blank: before the event it shows the
@@ -266,6 +301,7 @@ function DuringEvent({ state, saved }: { state: TodayState; saved?: FlatSession 
         <BetweenCard next={state.next} />
       )}
       <Upcoming next={state.next} saved={saved} todayDate={state.now.date} />
+      <Sundown state={state} />
       <OnDuty state={state} />
       <RemainingTimeline state={state} />
     </>

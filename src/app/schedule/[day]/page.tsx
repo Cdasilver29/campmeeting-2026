@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/json-ld";
 import { PageHeader } from "@/components/page-header";
 import { getDay, program } from "@/data";
 import { ScheduleProgramme } from "@/features/schedule/components/schedule-programme";
+import { DaySundown } from "@/features/schedule/components/sundown";
 import { pageMetadata } from "@/lib/metadata";
 import { dayPageDefinition } from "@/lib/page-identity";
 import { dayEventDocument } from "@/lib/structured-data";
@@ -56,6 +57,13 @@ export default async function ScheduleDayPage({
           rather than per-row. The full reasoning is in
           src/app/schedule/page.tsx. */}
       <Band drift={false}>
+        {/* Above the programme, not inside it. Sundown is a fact about the
+            whole day rather than an entry in it, and on Friday it is the
+            thing the afternoon is organised around — the block below is
+            Sabbath Preparation and this is what it is preparing for. Both
+            Sabbaths get the card too, for the end of the day; every other
+            day gets one muted line. See DaySundown. */}
+        <DaySundown day={day} days={program} className="mb-(--space-item)" />
         <ScheduleProgramme day={day} />
       </Band>
     </>
