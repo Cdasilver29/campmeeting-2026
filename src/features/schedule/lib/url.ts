@@ -14,6 +14,33 @@ export function dayPath(dayId?: string): string {
 }
 
 /**
+ * ── ONE SESSION'S OWN ADDRESS ────────────────────────────────────────
+ *
+ * /schedule/{day}/{slug}, nested under the day route rather than a scheme
+ * of its own, because a session belongs to a day and the reader who
+ * arrives on one should be able to walk up.
+ *
+ * The slug is the session id with its own day prefix removed. Ids are
+ * already `{dayId}-{slug}` and stable — they are what localStorage
+ * bookmarks are keyed on — so this invents no second identifier and
+ * nothing has to be kept in step. `sabbath-15-song-service` on the day
+ * `sabbath-15` is /schedule/sabbath-15/song-service.
+ */
+export function sessionSlug(dayId: string, sessionId: string): string {
+  const prefix = `${dayId}-`;
+  return sessionId.startsWith(prefix) ? sessionId.slice(prefix.length) : sessionId;
+}
+
+/** The slug back to the id, which is what everything else is keyed on. */
+export function sessionIdFromSlug(dayId: string, slug: string): string {
+  return `${dayId}-${slug}`;
+}
+
+export function sessionPath(dayId: string, sessionId: string): string {
+  return `${dayPath(dayId)}/${sessionSlug(dayId, sessionId)}`;
+}
+
+/**
  * The whole state of the programme browser. It lives in the URL and
  * nowhere else, so any view a reader is looking at can be copied out of
  * the address bar and sent to someone, and the back button walks the

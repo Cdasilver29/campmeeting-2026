@@ -10,7 +10,8 @@ import {
   fullDayLabel,
   scheduleScope,
 } from "@/features/schedule/lib/entries";
-import { speakerLabel } from "@/features/schedule/lib/presenters";
+import { presenterNames, speakerLabel } from "@/features/schedule/lib/presenters";
+import { sessionPath } from "@/features/schedule/lib/url";
 import {
   ministryCopy,
   ministryPages,
@@ -21,7 +22,7 @@ import { speakerDayGroups } from "@/features/speakers/lib";
 import { faqItems } from "@/features/faq/questions";
 import { eventDateRange } from "@/lib/event-dates";
 import { headerImages, type PageHeaderImage } from "@/lib/page-header-art";
-import type { ProgramDay } from "@/data";
+import type { FlatSession, ProgramDay } from "@/data";
 
 /**
  * What a page calls itself, in the three parts the share card already
@@ -265,6 +266,45 @@ export function dayPageDefinition(day: ProgramDay): PageDefinition {
     meta: `${total} programme entries · ${EAT}`,
     description: `${total} programme entries for ${label}, day ${position} of ${program.length} at ${EDITION}, ${eventInfo.church.name}, ${eventInfo.church.address}. Times are East Africa Time.`,
     path: `/schedule/${day.id}`,
+  };
+}
+
+/**
+ * ── ONE SESSION, AS A SHARE TARGET ───────────────────────────────────
+ *
+ * The card a WhatsApp group sees when somebody sends "come to this". The
+ * brief for it was that it must name the session, its time and its
+ * presenter rather than only the day, and all three are here: the eyebrow
+ * is the day and the block, the title is the session, and the meta line
+ * is the time and whoever is taking it.
+ *
+ * Nothing new is drawn to do it. This is the same PageIdentity every
+ * other card in this module returns, so `ogCard` is unchanged and the
+ * page header and the preview go on reading from one object.
+ *
+ * The presenter is dropped from the meta line rather than printed as an
+ * empty string where a session has none: about a third of the programme's
+ * entries are songs and prayers credited to nobody, and "10:00 - 10:05 ·"
+ * with nothing after it is worse than a time on its own.
+ */
+export function sessionPageDefinition(
+  session: FlatSession,
+  day: ProgramDay,
+): PageDefinition {
+  const names = presenterNames(session);
+  const when = session.start
+    ? session.end
+      ? `${session.start} - ${session.end}`
+      : session.start
+    : "All block";
+  const who = names.length > 0 ? names.join(", ") : undefined;
+
+  return {
+    eyebrow: `${day.displayLabel} · ${session.blockLabel}`,
+    title: session.subtitle ? `${session.title}: ${session.subtitle}` : session.title,
+    meta: who ? `${when} · ${who}` : `${when} · ${EAT}`,
+    description: `${session.title} at ${EDITION}, ${day.displayLabel}, ${when} East Africa Time${who ? `, with ${who}` : ""}. ${eventInfo.church.name}, ${eventInfo.church.address}.`,
+    path: sessionPath(day.id, session.id),
   };
 }
 

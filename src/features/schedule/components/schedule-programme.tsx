@@ -34,6 +34,7 @@ export function ScheduleProgramme({ day }: { day?: ProgramDay }) {
             groups={scope.groups}
             count={scope.total}
             total={scope.total}
+            share={Boolean(day)}
           />
         }
       >

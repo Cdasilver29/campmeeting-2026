@@ -27,12 +27,15 @@ export function ScheduleShell({
   groups,
   count,
   total,
+  share = false,
 }: {
   filters: ScheduleFilters;
   groups: DayGroup[];
   count: number;
   /** Entries the route holds before filtering: the week, or one day. */
   total: number;
+  /** Draws the per-session share control. Day routes only — see ProgramView. */
+  share?: boolean;
 }) {
   // Being on a day page hides other days but removes nothing from the one
   // it keeps, so the printed holes there are still real. Any filter takes
@@ -72,7 +75,7 @@ export function ScheduleShell({
       {filters.mine ? null : <SavedHint />}
 
       {count > 0 ? (
-        <ProgramView groups={groups} showGaps={showGaps} />
+        <ProgramView groups={groups} showGaps={showGaps} share={share} />
       ) : filters.mine ? (
         // Saved sessions are unknown until localStorage has been read,
         // so this branch decides for itself whether "nothing" means

@@ -54,6 +54,7 @@ export function ScheduleBrowser({ day }: { day?: string }) {
       groups={groups}
       count={count}
       total={scope.total}
+      share={Boolean(day)}
     />
   );
 }

@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/opengraph-image": ["./src/assets/fonts/*.ttf"],
     "/schedule/[day]/opengraph-image": ["./src/assets/fonts/*.ttf"],
+    "/schedule/[day]/[session]/opengraph-image": ["./src/assets/fonts/*.ttf"],
     "/speakers/[id]/opengraph-image": ["./src/assets/fonts/*.ttf"],
     "/ministries/[tag]/opengraph-image": ["./src/assets/fonts/*.ttf"],
   },

@@ -2,6 +2,7 @@ import { blockGaps, dayNumber, type BlockGroup, type DayGroup, type ScheduleGap 
 import { AllBlockCard } from "./all-block-card";
 import { BookmarkToggle } from "./bookmark-toggle";
 import { SessionCard } from "./session-card";
+import { ShareSession } from "./share-session";
 
 /**
  * A labelled hole in a block. The closing Sabbath stops at 15:00 and
@@ -24,10 +25,12 @@ function BlockSection({
   group,
   dayId,
   showGaps,
+  share,
 }: {
   group: BlockGroup;
   dayId: string;
   showGaps: boolean;
+  share: boolean;
 }) {
   const headingId = `block-${dayId}-${group.block.id}`;
   const gaps = showGaps ? blockGaps(group.entries) : undefined;
@@ -61,10 +64,19 @@ function BlockSection({
                   headingLevel="h4"
                   showBlockLabel={false}
                   meta={
-                    <BookmarkToggle
-                      sessionId={entry.key}
-                      title={entry.session.title}
-                    />
+                    <>
+                      {share ? (
+                        <ShareSession
+                          dayId={entry.session.dayId}
+                          sessionId={entry.key}
+                          title={entry.session.title}
+                        />
+                      ) : null}
+                      <BookmarkToggle
+                        sessionId={entry.key}
+                        title={entry.session.title}
+                      />
+                    </>
                   }
                 />
               ) : (
@@ -101,7 +113,15 @@ function intrinsicHeight(group: DayGroup): number {
   return 140 + group.blocks.length * 64 + group.count * 100;
 }
 
-function DaySection({ group, showGaps }: { group: DayGroup; showGaps: boolean }) {
+function DaySection({
+  group,
+  showGaps,
+  share,
+}: {
+  group: DayGroup;
+  showGaps: boolean;
+  share: boolean;
+}) {
   const headingId = `day-${group.day.id}-heading`;
 
   return (
@@ -143,6 +163,7 @@ function DaySection({ group, showGaps }: { group: DayGroup; showGaps: boolean })
             group={blockGroup}
             dayId={group.day.id}
             showGaps={showGaps}
+            share={share}
           />
         ))}
       </div>
@@ -159,15 +180,40 @@ function DaySection({ group, showGaps }: { group: DayGroup; showGaps: boolean })
 export function ProgramView({
   groups,
   showGaps = true,
+  share = false,
 }: {
   groups: DayGroup[];
   /** Off once a filter is on: the remaining holes are the filter's, not the programme's. */
   showGaps?: boolean;
+  /**
+   * ── WHY THE SHARE CONTROL IS NOT ON /schedule ──────────────────────
+   *
+   * Off by default, and ON only for the day routes. This is a size
+   * decision, not a taste one.
+   *
+   * /schedule renders all 238 entries at once and its cost is measured
+   * and defended: about 4,700 elements and a forced style+layout of the
+   * whole programme held at under a millisecond by content-visibility.
+   * A second 24px control on every row is 238 more buttons, 238 more
+   * live regions and 238 more client components to hydrate, on the one
+   * page that already carries the whole week.
+   *
+   * A day page carries about 33 entries, is where somebody reading the
+   * programme for a particular day already is, and is the page whose
+   * sessions have somewhere of their own to point at. So that is where
+   * the control lives, and /schedule's numbers are unchanged.
+   */
+  share?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-14">
       {groups.map((group) => (
-        <DaySection key={group.day.id} group={group} showGaps={showGaps} />
+        <DaySection
+          key={group.day.id}
+          group={group}
+          showGaps={showGaps}
+          share={share}
+        />
       ))}
     </div>
   );
