@@ -317,7 +317,27 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
       // clear of the type with the empty plum cropped off instead.
       position: "50% 85%",
     },
-    caption: "Camp Meeting 2026 Guest Choir · Migori Central",
+    // ── THE NAME, AND WHY THE PREFIX GOT SHORTER ─────────────────────
+    //
+    // "Migori Central" was the caption burnt into the supplied photograph
+    // and it was never the choir's name. The committee has settled it:
+    // this is the **Newlife Migori Adventist Church Choir**, the same
+    // choir the programme credits on sixteen lines, and program.ts now
+    // prints the full form too so the site has one name for it.
+    //
+    // The fixed half of the caption dropped "Camp Meeting 2026" to pay
+    // for it. The caption row reserves exactly one 20px line (min-h-5,
+    // leading-5 in hero-rotation.tsx) and each caption is absolutely
+    // positioned inside it, so a caption that wraps does not push the
+    // layout — it spills BELOW the bottom scrim, which is the only place
+    // on this photograph where white type is measured to survive. The old
+    // line was 46 characters; "Camp Meeting 2026 Guest Choir · Newlife
+    // Migori Adventist Church Choir" is 69, which is a second line on a
+    // phone and white text on unmeasured pixels. At 50 it is four
+    // characters longer than what was measured. "Camp Meeting 2026" was
+    // also the most redundant thing in it: this is the Camp Meeting 2026
+    // home page.
+    caption: "Guest Choir · Newlife Migori Adventist Church Choir",
   },
   {
     // ── THE ONE PICTURE WITH NO NEW WIDE CROP, AND IT IS INTENDED ────
@@ -362,12 +382,18 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
       // drops the caps, which are foreground and not the subject.
       position: "50% 85%",
     },
-    // ── NOT IN THE PROGRAMME ─────────────────────────────────────────
-    // "Taji" appears nowhere in src/data/program.ts. Neither does Migori
-    // Central. Draft_Program_v2 has no guest choir items at all, which is
-    // the same staleness the four speakers with no sessions come from. The
-    // caption is the artwork's word, not the programme's. DATA-NOTES.md.
-    caption: "Camp Meeting 2026 Guest Choir · Taji",
+    // ── THIS ONE IS IN THE PROGRAMME AFTER ALL ───────────────────────
+    // Written when Draft_Program_v2 had no guest choir items at all and
+    // "Taji" appeared nowhere in src/data/program.ts. The near-final
+    // version credits **Taji Kenya** on five Heart of Worship lines and on
+    // the closing Sabbath's Special Songs, so the caption is the
+    // programme's word now and not only the artwork's. The short form is
+    // kept here because it is what the photograph is captioned and the
+    // line has 20px to live in. DATA-NOTES.md.
+    //
+    // Prefix shortened with the other caption's, so the two read as one
+    // pair. See the note above for what the 20px buys.
+    caption: "Guest Choir · Taji",
   },
 ];
 

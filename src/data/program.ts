@@ -259,7 +259,7 @@ export const program: ProgramDay[] = [
           { id: "sunday-16-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. Fred Mege"], ministry: "prayer" },
           { id: "sunday-16-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Irene Omondi", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "sunday-16-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "sunday-16-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "sunday-16-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "sunday-16-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "sunday-16-ev-theme-song-2", title: "Theme Song", start: "18:05", end: "18:10", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "sunday-16-ev-benediction", title: "Benediction", start: "18:10", end: "18:15", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -286,7 +286,7 @@ export const program: ProgramDay[] = [
           { id: "monday-17-spirit-of-prophecy", title: "Spirit of Prophecy", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "spirit-of-prophecy", featured: true },
           { id: "monday-17-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelist"], ministry: "publishing" },
           { id: "monday-17-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "monday-17-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Esiiro Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
+          { id: "monday-17-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Esiiro Choir", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -300,7 +300,7 @@ export const program: ProgramDay[] = [
           { id: "monday-17-mm-prayer", title: "Prayer", start: "11:20", end: "11:25", presentedBy: ["Eld. Jim Omollo"], ministry: "prayer" },
           { id: "monday-17-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", presentedBy: ["Eld. Alfred Babu", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "monday-17-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "monday-17-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "monday-17-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "monday-17-mm-sermon", title: "Sermon", start: "11:50", end: "12:35", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "monday-17-mm-theme-song-2", title: "Theme Song", start: "12:35", end: "12:40", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "monday-17-mm-benediction", title: "Benediction", start: "12:40", end: "12:45", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -331,7 +331,7 @@ export const program: ProgramDay[] = [
           // placeholder is dropped, the choir singing the offering kept.
           { id: "monday-17-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Irene Omogi", "Esiiro Choir"], ministry: "stewardship" },
           { id: "monday-17-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "monday-17-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "monday-17-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "monday-17-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "monday-17-ev-theme-song-2", title: "Theme Song", start: "18:05", end: "18:10", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "monday-17-ev-benediction", title: "Benediction", start: "18:10", end: "18:15", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -358,7 +358,7 @@ export const program: ProgramDay[] = [
           { id: "tuesday-18-prophecy", title: "Prophecy", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "prophecy", featured: true },
           { id: "tuesday-18-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "tuesday-18-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "tuesday-18-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Adventist Women Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
+          { id: "tuesday-18-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Adventist Women Ministries Choir", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -374,7 +374,7 @@ export const program: ProgramDay[] = [
           { id: "tuesday-18-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
           // Placeholder alongside the two choirs here, where the other
           // weekdays credit the choirs alone. Placeholder dropped.
-          { id: "tuesday-18-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "tuesday-18-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "tuesday-18-mm-sermon", title: "Sermon", start: "11:50", end: "12:35", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "tuesday-18-mm-theme-song-2", title: "Theme Song", start: "12:35", end: "12:40", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "tuesday-18-mm-benediction", title: "Benediction", start: "12:40", end: "12:45", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -401,7 +401,7 @@ export const program: ProgramDay[] = [
           { id: "tuesday-18-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. Daniel Kittur"], ministry: "prayer" },
           { id: "tuesday-18-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Caroline Ogada", "Adventist Women Ministries Choir"], ministry: "stewardship" },
           { id: "tuesday-18-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "tuesday-18-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "tuesday-18-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "tuesday-18-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "tuesday-18-ev-theme-song-2", title: "Theme Song", start: "18:05", end: "18:10", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "tuesday-18-ev-benediction", title: "Benediction", start: "18:10", end: "18:15", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -427,7 +427,7 @@ export const program: ProgramDay[] = [
           { id: "wednesday-19-possibility", title: "Possibility Ministry", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "possibility-ministry", featured: true },
           { id: "wednesday-19-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "wednesday-19-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "wednesday-19-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Young Adults Choir", "Redemption Singers", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
+          { id: "wednesday-19-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Young Adults Choir", "Redemption Singers", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -441,7 +441,7 @@ export const program: ProgramDay[] = [
           { id: "wednesday-19-mm-prayer", title: "Prayer", start: "11:20", end: "11:25", presentedBy: ["Eld. Maxwell Ngala"], ministry: "prayer" },
           { id: "wednesday-19-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", presentedBy: ["Pendo Samson", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "wednesday-19-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "wednesday-19-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "wednesday-19-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "wednesday-19-mm-sermon", title: "Sermon", start: "11:50", end: "12:35", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "wednesday-19-mm-theme-song-2", title: "Theme Song", start: "12:35", end: "12:40", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "wednesday-19-mm-benediction", title: "Benediction", start: "12:40", end: "12:45", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -467,7 +467,7 @@ export const program: ProgramDay[] = [
           { id: "wednesday-19-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. Zachary Ochako"], ministry: "prayer" },
           { id: "wednesday-19-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Carol Mboya", "Young Adults Choir", "Redemption Singers"], ministry: "stewardship" },
           { id: "wednesday-19-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "wednesday-19-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "wednesday-19-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "wednesday-19-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "wednesday-19-ev-theme-song-2", title: "Theme Song", start: "18:05", end: "18:10", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "wednesday-19-ev-benediction", title: "Benediction", start: "18:10", end: "18:15", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -496,7 +496,7 @@ export const program: ProgramDay[] = [
           { id: "thursday-20-evangelism", title: "Evangelism - One Voice 2027", start: "09:00", end: "09:40", presentedBy: ["Pr. Elvis Onyango"], ministry: "evangelism", featured: true },
           { id: "thursday-20-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "thursday-20-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "thursday-20-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Choristers Choir", "Ambassadors Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
+          { id: "thursday-20-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Choristers Choir", "Ambassadors Choir", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -510,7 +510,7 @@ export const program: ProgramDay[] = [
           { id: "thursday-20-mm-prayer", title: "Prayer", start: "11:20", end: "11:25", presentedBy: ["Eld. Meshack Dwallow"], ministry: "prayer" },
           { id: "thursday-20-mm-giving", title: "Worship in Giving", start: "11:25", end: "11:30", presentedBy: ["Cheryl Majiwa", "Taji Kenya", "Gifted Ministry"], ministry: "stewardship" },
           { id: "thursday-20-mm-children", title: "Children's Corner", start: "11:30", end: "11:45", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "thursday-20-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "thursday-20-mm-special-item", title: "Special Item", start: "11:45", end: "11:50", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "thursday-20-mm-sermon", title: "Sermon", start: "11:50", end: "12:35", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "thursday-20-mm-theme-song-2", title: "Theme Song", start: "12:35", end: "12:40", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "thursday-20-mm-benediction", title: "Benediction", start: "12:40", end: "12:45", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -539,7 +539,7 @@ export const program: ProgramDay[] = [
           { id: "thursday-20-ev-prayer", title: "Prayer", start: "16:50", end: "16:55", presentedBy: ["Eld. William Otieno"], ministry: "prayer" },
           { id: "thursday-20-ev-giving", title: "Worship in Giving", start: "16:55", end: "17:00", presentedBy: ["Olga Nyakongo", "Choristers Choir", "Ambassadors Choir"], ministry: "stewardship" },
           { id: "thursday-20-ev-children", title: "Children's Corner", start: "17:00", end: "17:15", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "thursday-20-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "thursday-20-ev-special-item", title: "Special Item", start: "17:15", end: "17:20", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "thursday-20-ev-sermon", title: "Sermon", start: "17:20", end: "18:05", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "thursday-20-ev-theme-song-2", title: "Theme Song", start: "18:05", end: "18:10", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
           { id: "thursday-20-ev-benediction", title: "Benediction", start: "18:10", end: "18:15", presenterIds: ["kennedy-mfune"], ministry: "prayer" },
@@ -571,7 +571,7 @@ export const program: ProgramDay[] = [
           // the id stays — it is what any bookmark already made points at.
           // The slug is now wrong about its own contents. See DATA-NOTES.
           { id: "friday-21-publishing", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
-          { id: "friday-21-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "10:50", presentedBy: ["Adventist Men's Ministries Choir", "Newlife Migori Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
+          { id: "friday-21-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "10:50", presentedBy: ["Adventist Men's Ministries Choir", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
         ],
       },
       {
@@ -585,7 +585,7 @@ export const program: ProgramDay[] = [
           { id: "friday-21-mm-prayer", title: "Prayer", start: "11:10", end: "11:15", presentedBy: ["Eld. Duncan Amayo"], ministry: "prayer" },
           { id: "friday-21-mm-giving", title: "Worship in Giving", start: "11:15", end: "11:20", presentedBy: ["Gladys Sing'ombe", "Adventist Men's Ministries Choir"], ministry: "stewardship" },
           { id: "friday-21-mm-children", title: "Children's Corner", start: "11:20", end: "11:35", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "friday-21-mm-special-item", title: "Special Item", start: "11:35", end: "11:40", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "friday-21-mm-special-item", title: "Special Item", start: "11:35", end: "11:40", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           { id: "friday-21-mm-sermon", title: "Sermon", start: "11:40", end: "12:25", presenterIds: ["kennedy-mfune"], featured: true },
           { id: "friday-21-mm-theme-song-2", title: "Theme Song", start: "12:25", end: "12:30", presentedBy: ["Choristers (SDAH 590)"], ministry: "music" },
         ],
@@ -646,7 +646,7 @@ export const program: ProgramDay[] = [
           { id: "sabbath-22-offertory-songs", title: "Special Songs", start: "10:53", end: "11:03", presentedBy: ["Taji Kenya", "Gifted Ministry"], ministry: "music" },
           { id: "sabbath-22-offertory-response", title: "Offertory Response", start: "11:03", end: "11:05", presentedBy: ["Choristers"], ministry: "music" },
           { id: "sabbath-22-childrens-corner", title: "Children Sermon", start: "11:05", end: "11:12", presenterIds: ["allan-okoth"], ministry: "children" },
-          { id: "sabbath-22-special-song", title: "Special Songs", start: "11:12", end: "11:27", presentedBy: ["Newlife Migori Church Choir", "Newlife Church Choir"], ministry: "music" },
+          { id: "sabbath-22-special-song", title: "Special Songs", start: "11:12", end: "11:27", presentedBy: ["Newlife Migori Adventist Church Choir", "Newlife Church Choir"], ministry: "music" },
           // 11:29 to 11:30 is unscheduled, as on the opening Sabbath.
           //
           // READER OWED. This was Pr. Kenneth Ayuo's fifth credit and the

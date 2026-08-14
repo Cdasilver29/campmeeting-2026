@@ -71,6 +71,19 @@ read against the printed page, and fails if two sessions ever share an id.
   slot. "Interactive Session" cannot stand as the reader of a two-minute
   Scripture Reading and naming a substitute would be inventing one, so
   the credit is empty until the committee says who reads. **Open.**
+- **The guest choir is the Newlife Migori Adventist Church Choir.** Two
+  strings were wrong and they were wrong differently. The home hero's
+  photograph was captioned "Migori Central", which was the caption burnt
+  into the supplied artwork and never a name the programme used. The
+  programme itself printed the short "Newlife Migori Church Choir" on
+  sixteen lines. Both are now the full form, so the site has ONE name for
+  this choir rather than a hero and a schedule that disagree.
+  **This overrides the transcription** on those sixteen lines: the
+  near-final PDF prints the short form and the committee's name wins.
+  The hero caption's fixed half was shortened to "Guest Choir · " to pay
+  for the longer name — the caption row has one 20px line and the full
+  old prefix would have wrapped it below the scrim that makes white type
+  legible. Both captions were shortened, so the pair still match.
 - **Three Divine Service credits on the opening Sabbath change hands.**
   Pastoral Prayer from Eld. Omondi Oyoo to Eld. Ken Ochuka; Stewardship
   (Tithe and Offerings) from Pr. Elvis Onyango to Eld. Sylvester
@@ -478,13 +491,14 @@ silently resolved; each is listed with the choice made and why.**
   given to Sabbath preparation, and no benediction. Not a gap.
 - **The guest choirs' names** (was an open item raised by the
   photography). v3 prints them, and "Migori Central" — the caption on the
-  supplied photograph — is not among them. The choir is **Newlife Migori
-  Church Choir**, and **Taji Kenya** is named in five Heart of Worship
-  lines and in the closing Sabbath's Special Songs. The full list v3
-  credits: Newlife Church Choir, Newlife Migori Church Choir, Taji Kenya
-  (Gifted Ministry), Esiiro Choir, Adventist Women Ministries Choir, Young
-  Adults Choir, Redemption Singers, Choristers Choir, Ambassadors Choir,
-  Adventist Men's Ministries Choir, Newlife Choristers Choir.
+  supplied photograph — is not among them. The choir is the **Newlife
+  Migori Adventist Church Choir** (see the committee correction below),
+  and **Taji Kenya** is named in five Heart of Worship lines and in the
+  closing Sabbath's Special Songs. The full list v3 credits: Newlife
+  Church Choir, Newlife Migori Church Choir, Taji Kenya (Gifted Ministry),
+  Esiiro Choir, Adventist Women Ministries Choir, Young Adults Choir,
+  Redemption Singers, Choristers Choir, Ambassadors Choir, Adventist Men's
+  Ministries Choir, Newlife Choristers Choir.
 - **Speaker spellings.** v3 prints "Dr. Preskilla Munda" on all four
   Health sessions, agreeing with her poster card and her supplied
   biography against v2's "Priskillah". Her own biography gives the full
