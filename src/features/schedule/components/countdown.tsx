@@ -17,6 +17,7 @@ function parts(remainingMs: number) {
   return {
     days,
     hours,
+    minutes,
     segments: [
       { label: "Days", value: days },
       { label: "Hours", value: hours },
@@ -24,6 +25,27 @@ function parts(remainingMs: number) {
       { label: "Seconds", value: seconds },
     ],
   };
+}
+
+/** "1 day", "2 days" — the unit agrees with the number in front of it. */
+function count(value: number, noun: string) {
+  return `${value} ${noun}${value === 1 ? "" : "s"}`;
+}
+
+/**
+ * The sentence under the digits, and the only form of the countdown
+ * assistive technology is given — the digits above are aria-hidden.
+ *
+ * It names the two largest units that are still non-zero rather than
+ * always saying days and hours. On the last day "0 days and 12 hours"
+ * announced a zero that carried no information, and in the final hour
+ * both leading units were zero, so the sentence said nothing was left
+ * while the clock was still running.
+ */
+function remainingSentence(days: number, hours: number, minutes: number) {
+  if (days > 0) return `${count(days, "day")} and ${count(hours, "hour")}`;
+  if (hours > 0) return `${count(hours, "hour")} and ${count(minutes, "minute")}`;
+  return count(minutes, "minute");
 }
 
 /**
@@ -38,7 +60,7 @@ function parts(remainingMs: number) {
 export function Countdown() {
   const now = useNow(1000);
   const remaining = now ? eventStartInstant.getTime() - now.getTime() : 0;
-  const { days, hours, segments } = parts(remaining);
+  const { days, hours, minutes, segments } = parts(remaining);
 
   return (
     <div className="flex flex-col gap-3">
@@ -63,9 +85,7 @@ export function Countdown() {
 
       <p className="text-sm text-ink-muted">
         {now ? (
-          <>
-            {days} days and {hours} hours until the programme opens.
-          </>
+          <>{remainingSentence(days, hours, minutes)} until the programme opens.</>
         ) : (
           "Counting down to the opening session."
         )}
