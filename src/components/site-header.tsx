@@ -358,20 +358,42 @@ export function SiteHeader() {
           <BrandLockup />
 
           {/*
-            lg, not md. Eight links plus the lockup plus the theme toggle
-            do not fit in a 768px viewport: measured, the bar overflowed
-            the document by 126px at 768 and 74px at 820, on every route,
-            which is a horizontal scrollbar on every page of the site at
-            tablet width. It had been there since the nav was written and
-            was invisible because nothing ever measured it.
+            ── xl, AND IT WAS lg UNTIL THE LOCKUP BECAME ONE LINE ───────
 
-            The gap steps rather than sitting at 6 throughout, because at
-            exactly 1024 the shell's content box is 944px and the bar needs
-            all of it.
+            It was md once, and moved to lg because eight links plus the
+            lockup plus the theme toggle overflowed the document by 126px
+            at 768 and 74px at 820 — a horizontal scrollbar on every page
+            at tablet width, invisible for months because nothing measured
+            it.
+
+            lg then held only by crushing the lockup. At exactly 1024 the
+            shell's content box is 944px, the nine-link nav takes 738 and
+            the toggle-and-menu cluster plus two flex gaps take 64, which
+            left the wordmark 142px of the 312 it wants. While the
+            wordmark could wrap, that was survivable-looking: it wrapped
+            to four lines and stood 100px tall inside an 80px band, which
+            is a bug but not a collision.
+
+            The wordmark is one non-wrapping string now, so there is no
+            wrapping left to absorb the squeeze. Measured at 1024 with it:
+            the lockup box is 141px and the text inside it is 188px, so
+            the name spills out of its own box and under the first nav
+            link. Nothing about that is fixable with a gap — nav at gap-1
+            still leaves the bar 8px short of fitting.
+
+            So the desktop bar starts at xl. At 1280 the content box is
+            1200 and the bar needs 1112, which leaves 88px spare. Between
+            1024 and 1279 the links are in the sheet, which is where they
+            already are on every narrower screen.
+
+            The trade, stated: a 1024-1279 laptop now opens a menu to
+            navigate instead of reading a bar. That is the cost of the
+            church's name being legible and whole at that width, and the
+            sheet is a real navigation rather than a fallback.
           */}
           <nav
             aria-label="Primary"
-            className="hidden lg:flex lg:items-center lg:gap-4 xl:gap-6"
+            className="hidden xl:flex xl:items-center xl:gap-6"
           >
             {navLinks.map((link) => (
               <NavLink key={link.href} {...link} />
@@ -392,7 +414,10 @@ export function SiteHeader() {
                   // already 48px, so --spacing-header's 80px was never the
                   // constraint it was recorded as. This control only
                   // exists below lg, so it needs no compact variant.
-                  className="size-12 lg:hidden group-data-[header-state=transparent]/header:text-white"
+                  // xl, matching the nav above it. These two are one
+                  // decision: the menu button exists exactly where the
+                  // bar does not.
+                  className="size-12 xl:hidden group-data-[header-state=transparent]/header:text-white"
                   aria-label="Open menu"
                 >
                   {/* size-6, or the Button base leaves a 16px glyph in a

@@ -94,7 +94,15 @@ export function BrandLockup({
         className,
       )}
     >
-      <Mark className={isFooter ? "size-10" : "size-12"} />
+      {/* The footer mark was size-10 against the header's size-12, on the
+          reasoning that a footer is quieter than a header. It is 56px now.
+          The footer lockup sits alone at the top of a three-column grid
+          with the whole shell to itself and nothing competing for the
+          space, and it is the last thing on every page — the one place the
+          church's mark can be the size it is drawn at rather than the size
+          a full bar leaves for it. The header stays 48px, where nine nav
+          links and two 48px controls are the constraint. */}
+      <Mark className={isFooter ? "size-14" : "size-12"} />
       {/* data-wordmark is a hook for tools/perf/phone-hero.mjs, which has
           to measure whether this wraps. Shape-sniffing is not good enough:
           `a span:not(.sr-only)` matches the 48px mask span first, and the
@@ -103,94 +111,60 @@ export function BrandLockup({
       <span
         data-wordmark
         className={cn(
-          "font-display leading-tight",
-          isFooter ? "text-xs" : "text-sm",
+          // ── ONE LINE, AT EVERY WIDTH ──────────────────────────────
+          // The wordmark was a name over a city. It is now a single
+          // string that never wraps, so the lockup is one line in the
+          // header and one line in the footer, on a phone and on a
+          // desktop.
+          //
+          // `whitespace-nowrap` is the instruction; the SIZE STEP is what
+          // makes it safe. At 320px the header's content box is 280px and
+          // a 48px mark, a 48px toggle, a 48px menu button and the gaps
+          // between them take most of it, so the wordmark cannot have
+          // 14px type and one line at the same time. It steps down to
+          // 12px below `sm` and back up at it, which is the same
+          // touch/pointer split every other control on the site uses.
+          "font-display leading-tight whitespace-nowrap",
+          "text-xs sm:text-sm",
         )}
       >
-        {/* ── THE PHONE LOCKUP: ONE STRING, PAINTED AND ANNOUNCED ─────
-            "SDA Church Newlife Nairobi", below `sm`, in the header and
-            the footer alike.
+        {/* ── ONE STRING, PAINTED AND ANNOUNCED ───────────────────────
+            "SDA Church Newlife Nairobi", at every width, in the header
+            and the footer alike.
 
             NO aria-hidden AND NO sr-only TWIN, which is the part that
-            matters. Everywhere else in this lockup the visible short form
-            is hidden from assistive technology and the full church name
-            is announced in its place, because those forms are substrings
-            of it and WCAG 2.5.3 is satisfied by the visible label
-            appearing inside the accessible name. "SDA" is not a substring
-            of "Seventh-day Adventist Church Newlife". Pairing it with an
-            sr-only full name would leave a voice-control user saying
-            "click SDA Church" matching nothing at all.
+            matters. This lockup used to paint a truncation and announce
+            the full church name beside it, because every visible form was
+            a SUBSTRING of that name and WCAG 2.5.3 is satisfied by the
+            visible label appearing inside the accessible one. "SDA" is
+            not a substring of "Seventh-day Adventist Church Newlife", so
+            that arrangement would now break the rule it exists to keep: a
+            voice-control user saying "click SDA Church" would match
+            nothing.
 
-            So here the visible string IS the accessible name. Identical
+            So the visible string IS the accessible name. Identical
             characters satisfies 2.5.3 outright rather than by the
-            substring shortcut. The cost is stated on the type: a screen
-            reader on a phone hears the abbreviation, which is what is on
-            the screen.
+            substring shortcut. The cost, stated on the type: a screen
+            reader hears the abbreviation, which is what is on the screen.
 
-            It replaces "Newlife" over "Nairobi", which this file argued
-            for at length and which was right on its own terms — it was
-            the desktop lockup truncated rather than a second lockup. What
-            it did not do is say WHICH Newlife or name the denomination,
-            and both fit once the two lines are allowed to be one wrapping
-            string instead of a name over a city. */}
-        <span className="sm:hidden">{eventInfo.church.compactName}</span>
+            ── AND IT IS THE SAME STRING AT EVERY WIDTH NOW ────────────
+            There were four forms: the compact one below sm, the full name
+            over "Nairobi" from sm, "Newlife" over "Nairobi" between lg
+            and xl where the nine-link nav crushed the lockup, and the
+            full name again above xl. Four forms is three breakpoints at
+            which the mark changes identity as a window is resized.
 
-        {/* From `sm`: the name over the city, as before. */}
-        <span className="hidden sm:flex sm:flex-col">
-          <span>
-            {/* ── THE SHORT FORM FROM lg TO xl, THE MEASURED PART ─────
-                Not symmetry for its own sake: that is exactly where the
-                desktop nav appears and the bar is fullest. Measured at
-                1024 on five routes: the shell's content box is 944px, the
-                nine-link nav takes 738px, the toggle and menu cluster 32,
-                the two flex gaps 32 — which leaves the lockup 142px of a
-                natural 312. It did not overflow. It wrapped "Seventh-day
-                Adventist Church Newlife" to FOUR lines and made the
-                lockup 100px tall inside an 80px header band.
+            One line of one string removes all of it, and it removes the
+            problem the lg-to-xl form existed to manage rather than
+            managing it: at 1024 the full name wrapped to four lines and
+            stood 100px tall inside an 80px header band. This string does
+            not wrap at any width the site supports.
 
-                So the bar fitting at lg was only ever true because the
-                wordmark was being crushed to pay for it. 1100 is two
-                lines, 1152 is two, and it is one line again at 1280 —
-                which is where xl is and why that is the breakpoint the
-                full name comes back at.
-
-                Between sm and lg the nav is in the sheet and the lockup
-                has the whole bar, so the full name stays there. This
-                branch keeps the aria-hidden / sr-only pair, because
-                `shortName` IS a substring of `name` and the accessible
-                name stays the full church name throughout it.
-
-                ── HEADER ONLY, AND THAT WAS A BUG ─────────────────────
-                This whole band is a response to ONE pressure: nine nav
-                links, a lockup and a theme toggle in an 80px bar. The
-                footer has none of it — the lockup is alone at the top of
-                a three-column grid with the whole shell to itself. When
-                this was first written the classes were shared, so the
-                footer took the squeeze too and printed "Newlife" over
-                "Nairobi" at 1024 to solve a problem it does not have.
-                Measured at 91px wide where it has 266px available. */}
-            <span
-              aria-hidden
-              className={cn("hidden", !isFooter && "lg:inline xl:hidden")}
-            >
-              {eventInfo.church.shortName}
-            </span>
-            <span className={isFooter ? undefined : "lg:sr-only xl:not-sr-only"}>
-              {eventInfo.church.name}
-            </span>
-          </span>
-          {/* The city, not the street. eventInfo.church.address is the
-              full postal line and belongs in the footer contact block,
-              not here. Below `sm` the city is inside compactName instead,
-              which is why this line does not repeat there.
-
-              Muted ink would fail against the hero's top scrim, so over
-              the photograph this line is white like the rest of the
-              lockup and stays subordinate by size alone. */}
-          <span className="text-ink-muted group-data-[header-state=transparent]/header:text-white">
-            Nairobi
-          </span>
-        </span>
+            The city is inside it, which is why there is no second line
+            for "Nairobi" any more. `shortName` is no longer read by this
+            component; it stays in the data as the substring form for
+            anything that needs one. */}
+        <span>{eventInfo.church.compactName}</span>
       </span>
     </Link>
   );
