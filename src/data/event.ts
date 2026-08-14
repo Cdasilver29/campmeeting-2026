@@ -27,6 +27,12 @@ export const eventInfo: EventInfo = {
     // than the denomination. A substring of `name`, which the header
     // lockup depends on: see the note on the type.
     shortName: "Newlife",
+    // The phone lockup, in the header and the footer. Deliberately NOT a
+    // substring of `name` — it abbreviates the denomination the way the
+    // congregation says it out loud, and it names the city, which
+    // "Newlife" alone does not. The type carries the whole accessibility
+    // argument for why that is allowed here and is not allowed above.
+    compactName: "SDA Church Newlife Nairobi",
     address: "5th Ngong Avenue, Nairobi",
     website: "https://www.newlifesdanairobi.org",
   },

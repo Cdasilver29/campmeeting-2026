@@ -396,15 +396,40 @@ export interface EventInfo {
   church: {
     name: string;
     /**
-     * The name at the width where the full one cannot be set. The header
-     * lockup uses it below `sm`, where a mark, a wordmark and a 48px
-     * control have to share 280px of content box.
+     * The name at the width where the full one cannot be set.
      *
      * It must be a SUBSTRING of `name`. The lockup shows this and
      * announces `name`, and WCAG 2.5.3 requires the visible label to
      * appear in the accessible name.
+     *
+     * Used in the header bar between `lg` and `xl`, which is the one band
+     * where the nine-link nav leaves the lockup about 140px of a natural
+     * 312. Below `sm` the lockup uses `compactName` instead — see below
+     * for why that one cannot follow this rule.
      */
     shortName: string;
+    /**
+     * The name on a phone, where a mark, a wordmark and a 48px control
+     * share 280px of content box at 320px wide.
+     *
+     * ── THIS ONE IS NOT A SUBSTRING OF `name`, AND CANNOT BE ───────────
+     *
+     * It abbreviates "Seventh-day Adventist" to "SDA", which is how the
+     * church is spoken about and is the only way the denomination, the
+     * congregation and the city fit on a phone at once. "SDA" appears
+     * nowhere in `name`, so the substring contract `shortName` carries
+     * does not hold here and the WCAG 2.5.3 problem it exists to prevent
+     * is real: a voice-control user saying "click SDA Church" must match
+     * something.
+     *
+     * The lockup solves it by NOT hiding this behind the full name. Below
+     * `sm` this string is both what is painted and what is announced —
+     * visible label and accessible name are the same characters, which
+     * satisfies 2.5.3 outright rather than by the substring shortcut. The
+     * cost, stated: a screen reader on a phone hears the abbreviation
+     * rather than the full church name. That is what is on the screen.
+     */
+    compactName: string;
     address: string;
     website: string;
   };
