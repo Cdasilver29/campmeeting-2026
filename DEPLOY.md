@@ -39,24 +39,26 @@ secret.
 
 ### `NEXT_PUBLIC_WEB3FORMS_KEY` — REQUIRED at build time
 
-**The build fails without it.** Not the forms, the build.
+**The build fails without it.** Not the form, the build.
 `src/features/forms/lib/web3forms.ts` throws at module scope when the
-variable is missing, and `/contact` and `/prayer-requests` are prerendered,
-so the error surfaces as a prerender failure and `next build` exits 1:
+variable is missing, and `/contact` is prerendered, so the error surfaces
+as a prerender failure and `next build` exits 1:
 
 ```
-Error occurred prerendering page "/prayer-requests".
+Error occurred prerendering page "/contact".
 Error: NEXT_PUBLIC_WEB3FORMS_KEY is not set. Copy .env.example to
-.env.local and set it to a real Web3Forms access key ...
-Export encountered an error on /prayer-requests/page: /prayer-requests,
-exiting the build.
+.env.local and set it to a real Web3Forms access key — the contact form
+cannot submit without it.
+Export encountered an error on /contact/page: /contact, exiting the build.
 ```
 
-That is deliberate. The alternative is shipping two forms that look fine
+That is deliberate. The alternative is shipping a form that looks fine
 and quietly cannot submit.
 
-- **Purpose:** the Web3Forms access key the contact and prayer request
-  forms post to.
+- **Purpose:** the Web3Forms access key the contact form posts to. Prayer
+  requests are a topic on that form rather than a page of their own, so
+  they arrive through the same key with their own subject line. There is
+  no `/prayer-requests` route and no second key to set.
 - **Value:** the access key from https://web3forms.com, tied to the
   delivery address the committee wants submissions to reach.
 - **Public by design.** It is an alias for an email address, not a

@@ -5,7 +5,7 @@
  * route. Web3Forms rejects server-side submissions on the free plan
  * anyway, and this site has no backend to proxy through.
  *
- * This module is imported (transitively) by both forms, which are
+ * This module is imported (transitively) by the contact form, which is
  * statically rendered at build time, so a missing key fails `pnpm build`
  * here rather than shipping a form that silently cannot submit.
  */
@@ -14,8 +14,8 @@ const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 if (!accessKey) {
   throw new Error(
     "NEXT_PUBLIC_WEB3FORMS_KEY is not set. Copy .env.example to .env.local " +
-      "and set it to a real Web3Forms access key — the contact and prayer " +
-      "request forms cannot submit without it.",
+      "and set it to a real Web3Forms access key — the contact form cannot " +
+      "submit without it.",
   );
 }
 
