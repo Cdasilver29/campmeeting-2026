@@ -109,11 +109,33 @@ export function BrandLockup({
           {/* Below sm the short form is what is painted and the full name
               is what is announced. aria-hidden on the visible one so the
               accessible name is not "Newlife Seventh-day Adventist Church
-              Newlife". */}
-          <span aria-hidden className="sm:hidden">
+              Newlife".
+
+              ── AND AGAIN FROM lg TO xl, WHICH IS THE MEASURED PART ─────
+              The short form comes BACK for one band, 1024 to 1279, and
+              this is not symmetry for its own sake. That is exactly where
+              the desktop nav appears and the bar is fullest. Measured at
+              1024 on five routes: the shell's content box is 944px, the
+              nine-link nav takes 738px, the toggle and menu cluster 32,
+              the two flex gaps 32 — which leaves the lockup 142px of a
+              natural 312. It did not overflow. It wrapped "Seventh-day
+              Adventist Church Newlife" to FOUR lines and made the lockup
+              100px tall inside an 80px header band.
+
+              So the bar fitting at lg was only ever true because the
+              wordmark was being crushed to pay for it. 1100 is two lines,
+              1152 is two, and it is one line again at 1280 — which is
+              where xl is and why that is the breakpoint the full name
+              comes back at.
+
+              Between sm and lg the nav is in the sheet and the lockup has
+              the whole bar, so the full name stays there. The accessible
+              name is the full church name at every width, unchanged: the
+              hidden branch is `sr-only`, not `hidden`. */}
+          <span aria-hidden className="sm:hidden lg:inline xl:hidden">
             {eventInfo.church.shortName}
           </span>
-          <span className="sr-only sm:not-sr-only">
+          <span className="sr-only sm:not-sr-only lg:sr-only xl:not-sr-only">
             {eventInfo.church.name}
           </span>
         </span>
