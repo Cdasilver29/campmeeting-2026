@@ -9,7 +9,28 @@
  *               and not a hunt afterwards
  *   clipped     an element whose content is wider than its box while its
  *               overflow is hidden or clipped — text being cut off
- *   taps        interactive elements under 44px in either dimension.
+ *   taps        interactive elements under the target-size floor, in TWO
+ *               bands, because they are two different findings:
+ *
+ *                 under 24px  fails WCAG 2.2 SC 2.5.8 Target Size
+ *                             (Minimum), which is AA and is the floor
+ *                             CLAUDE.md sets. A real defect.
+ *                 under 44px  misses SC 2.5.5 Target Size (Enhanced),
+ *                             which is AAA. Reported separately and
+ *                             NOT counted as a problem.
+ *
+ *               One number was actively harmful here. This site sizes
+ *               its controls 44px at touch widths and shrinks them at
+ *               `lg`, where there is a pointer — `h-11 lg:h-8` on the
+ *               inputs, `lg:h-9` on the filter selects. That is a
+ *               deliberate affordance and it passes AA at 32 and 36px,
+ *               but a flat 44 threshold reported 36 of them as failures
+ *               and buried the one control that was genuinely wrong (the
+ *               back button, 81x36, since fixed) inside the noise. This
+ *               README's own opening warning is about an instrument that
+ *               drives the design; a threshold that fails compliant
+ *               controls is exactly that.
+ *
  *               Inline links inside running text are exempt (WCAG 2.2
  *               target-size exemption) and are filtered by computed
  *               display rather than by guessing at selectors
@@ -261,11 +282,14 @@ for (const route of ROUTES) {
         const rect = el.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) continue;
         const hit = hitBox(el);
-        if (hit.width < 44 || hit.height < 44) {
+        const smallest = Math.min(hit.width, hit.height);
+        if (smallest < 44) {
           taps.push({
             name: name(el),
             w: Math.round(hit.width),
             h: Math.round(hit.height),
+            // AA is the line that matters. See the header note.
+            failsAA: smallest < 24,
           });
         }
       }
@@ -310,10 +334,11 @@ for (const r of rows) {
   if (r.clipped.length) {
     bits.push(`CLIPPED ${r.clipped.map((c) => `${c.name} by ${c.by}px`).join(", ")}`);
   }
-  if (r.taps.length) {
-    const uniq = [...new Map(r.taps.map((t) => [t.name, t])).values()];
+  const failingAA = r.taps.filter((t) => t.failsAA);
+  if (failingAA.length) {
+    const uniq = [...new Map(failingAA.map((t) => [t.name, t])).values()];
     bits.push(
-      `TAP<44 ${uniq.map((t) => `${t.name} ${t.w}x${t.h}`).join(", ")}`,
+      `TAP<24 (fails AA) ${uniq.map((t) => `${t.name} ${t.w}x${t.h}`).join(", ")}`,
     );
   }
   if (r.rail?.scrollable && r.width >= 768) {
@@ -328,6 +353,27 @@ for (const r of rows) {
 console.log(
   `\n${problems === 0 ? "CLEAN" : `${problems} of ${rows.length} combinations have findings`}`,
 );
+
+/*
+ * The AAA band, listed once by control rather than 36 times by
+ * combination. It is not a failure list — it is what the site would have
+ * to change to clear SC 2.5.5, and every entry in it is currently a
+ * deliberate `lg:` compact variant of a control that is 44px on touch.
+ */
+const enhanced = new Map();
+for (const r of rows) {
+  for (const t of r.taps) {
+    if (t.failsAA) continue;
+    if (!enhanced.has(t.name)) enhanced.set(t.name, { ...t, routes: new Set() });
+    enhanced.get(t.name).routes.add(r.route);
+  }
+}
+if (enhanced.size) {
+  console.log(`\n--- under 44px but passing AA (SC 2.5.5, AAA) ---`);
+  for (const t of enhanced.values()) {
+    console.log(`  ${pad(`${t.w}x${t.h}`, 10)}${pad(t.name, 44)}${[...t.routes].join(" ")}`);
+  }
+}
 
 // The day rail specifically, since it is the named bug.
 console.log(`\n--- day rail, /schedule ---`);
