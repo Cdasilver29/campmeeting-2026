@@ -27,6 +27,7 @@ import {
   SessionCard,
   TimeRange,
 } from "./session-card";
+import { SessionNotices } from "./session-notices";
 import { SundownCard, sundownTone } from "./sundown";
 
 const sectionHeading = SECTION_HEADING;
@@ -110,6 +111,12 @@ function UpcomingCard({
         <h3 className={prominent ? NEXT_UP_TITLE : UPCOMING_TITLE}>
           {session.title}
         </h3>
+        {/* A session that has been moved or cancelled is exactly the
+            session somebody standing in the churchyard is about to walk
+            to, so the notice belongs on the card that sent them rather
+            than only in the timeline below it. The live card gets this
+            already, because it renders a real SessionCard. */}
+        <SessionNotices sessionId={session.id} />
         <PresenterChips session={session} />
         <MinistryChip session={session} />
       </article>
