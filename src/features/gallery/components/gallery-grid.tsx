@@ -49,6 +49,44 @@ import type { GalleryImage } from "@/data";
  * set, and the dialog is labelled by its position ("Photograph 4 of 31"),
  * which is true and useful. Captions are one field on GalleryImage away.
  */
+/**
+ * ── THE CONTROLS ARE SOLID EMPEROR WITH A WHITE RING ─────────────────
+ *
+ * They were `bg-white/15` with `ring-white/40`. On a photograph that is a
+ * pane of glass: 15% white over an unknown picture is whatever the
+ * picture is, and a 40% ring is a suggestion of an edge. The close
+ * control in particular was the one thing in the corner a reader had to
+ * find in a hurry, and it was the least visible thing on the screen.
+ *
+ * The fill is Emperor, the brand token the scrim itself is set in. White
+ * on Emperor measures **11.59:1**, computed from #ffffff against #4b207f
+ * — far past the 4.5 floor CLAUDE.md sets, and the same number the
+ * palette block in globals.css asserts for this pair.
+ *
+ * ── THE RING IS WHAT SEPARATES IT, NOT THE FILL ──────────────────────
+ *
+ * This is the part that is not obvious and is worth writing down. The
+ * dialog's ::backdrop is ALSO Emperor — solid, deliberately, see the note
+ * on the dialog below — and this control row sits above the picture on
+ * that backdrop rather than over the picture itself. So an Emperor pill
+ * on an Emperor ground has 1.00:1 of edge, and Grapevine, the obvious
+ * second reach, is only 1.26:1 against Emperor. No brand fill separates
+ * from this scrim, because the scrim is the brand.
+ *
+ * A ring at FULL white does, at 11.59:1 against both the fill and the
+ * ground, and it is also the one edge that survives a photograph behind
+ * it if the frame ever grows into this row. So the fill carries the glyph
+ * and the ring carries the shape.
+ *
+ * Hover moves the fill to Grapevine, which is the accent's own 500 -> 600
+ * hue step and is 9.22:1 with white, so the hover state is a change a
+ * reader can see and not a downgrade.
+ */
+const LIGHTBOX_FILL = "bg-emperor text-white";
+const LIGHTBOX_CONTROL =
+  `${LIGHTBOX_FILL} ring-1 ring-white transition-colors duration-fast hover:bg-grapevine` +
+  " focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
 export function GalleryGrid({ images }: { images: GalleryImage[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -189,14 +227,14 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
               className="flex shrink-0 items-center justify-between gap-3"
               style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
             >
-              <p className="tabular-figures rounded-control bg-white/15 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-white/30">
+              <p className={`tabular-figures rounded-control px-3 py-1.5 text-sm font-medium ${LIGHTBOX_FILL} ring-1 ring-white/70`}>
                 {(openIndex ?? 0) + 1} / {images.length}
               </p>
               <button
                 type="button"
                 onClick={close}
                 aria-label="Close"
-                className="flex size-11 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/40 transition-colors duration-fast hover:bg-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className={`flex size-11 items-center justify-center rounded-full ${LIGHTBOX_CONTROL}`}
               >
                 <X aria-hidden className="size-5" />
               </button>
@@ -238,7 +276,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 type="button"
                 onClick={() => step(-1)}
                 aria-label="Previous photograph"
-                className="flex size-11 items-center justify-center rounded-control text-white transition-colors duration-fast hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className={`flex size-11 items-center justify-center rounded-full ${LIGHTBOX_CONTROL}`}
               >
                 <ChevronLeft aria-hidden className="size-5" />
               </button>
@@ -246,7 +284,7 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 type="button"
                 onClick={() => step(1)}
                 aria-label="Next photograph"
-                className="flex size-11 items-center justify-center rounded-control text-white transition-colors duration-fast hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className={`flex size-11 items-center justify-center rounded-full ${LIGHTBOX_CONTROL}`}
               >
                 <ChevronRight aria-hidden className="size-5" />
               </button>
