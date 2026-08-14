@@ -4,6 +4,7 @@ import { JsonLd } from "@/components/json-ld";
 import { Reveal } from "@/components/reveal";
 import { SectionWave } from "@/components/section-wave";
 import { Hero } from "@/features/home/components/hero";
+import { SeniorWelcome } from "@/features/home/components/senior-welcome";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { TodayView } from "@/features/schedule/components/today-view";
 import { campMeetingEvent } from "@/lib/structured-data";
@@ -85,6 +86,31 @@ export default function Home() {
           <BookmarksProvider>
             <TodayView />
           </BookmarksProvider>
+        </Reveal>
+      </Band>
+
+      {/* ── THE SENIOR PASTOR'S WELCOME ────────────────────────────────
+          Its own band, below the whole clock-driven block rather than
+          inside it. TodayView paints a skeleton on first frame and
+          reorders itself by event phase; a section inside it would join
+          that mount and would have to be reserved for in the skeleton.
+          Out here on a statically generated page it is in the first
+          paint, cannot move the live card or Next Up, and adds nothing
+          to this page's CLS.
+
+          NOT `tone="muted"`, which was the first instinct and is wrong
+          for one concrete reason: UPCOMING_CARD — the surface Next Up
+          and On Duty share, and which this card takes to be their
+          sibling — IS `bg-surface-muted`. A muted band under it would
+          have painted the card the same colour as its own ground and
+          left it edgeless. The band keeps the page surface, the card
+          keeps its muted fill, and the family reads as one.
+
+          One Reveal for the section, which is the site's rule: sections
+          only, never per item. No new animation. */}
+      <Band>
+        <Reveal>
+          <SeniorWelcome hostId="gerald-mochoge" />
         </Reveal>
       </Band>
     </>
