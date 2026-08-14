@@ -5,6 +5,7 @@ import { Bookmark, CalendarCheck, CalendarClock } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { eventInfo, getDayByDate, program, type FlatSession } from "@/data";
+import { eventDateRange } from "@/lib/event-dates";
 import { useBookmarks } from "../bookmarks";
 import { getDutyPanel } from "../lib/duty";
 import { getTodayState, nextSavedSession, type TodayState } from "../lib/today";
@@ -271,7 +272,7 @@ function AfterEvent({ state }: { state: TodayState }) {
       <EmptyState
         icon={CalendarCheck}
         title={`${eventInfo.edition} has ended`}
-        description={`The programme ran from ${eventInfo.startDate} to ${eventInfo.endDate}. Recordings and notices from the week stay available on the announcements and downloads pages.`}
+        description={`The programme ran ${eventDateRange()}. Recordings and notices from the week stay available on the announcements and downloads pages.`}
         action={
           <Link
             href="/announcements"
