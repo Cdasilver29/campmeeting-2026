@@ -120,8 +120,8 @@ export interface Recording {
  * `dayId` on both lines and nothing else.
  */
 export const recordings: Recording[] = [
-  { dayId: "sabbath-15", part: "morning", videoId: "vPsSmmV-Vps" },
-  { dayId: "sabbath-15", part: "afternoon", videoId: "MT1z3LU1IL4" },
+  { dayId: "sabbath-15", part: "morning", label: "Morning Service", videoId: "vPsSmmV-Vps" },
+  { dayId: "sabbath-15", part: "afternoon", label: "Afternoon and Evening", videoId: "MT1z3LU1IL4" },
 ];
 
 /** A watch URL from a video id. One place, so the shape cannot drift. */

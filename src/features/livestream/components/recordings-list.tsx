@@ -11,6 +11,7 @@ import {
   type ArchiveSlot,
   type ResolvedRecording,
 } from "../lib/recordings";
+import { slotAnchorId } from "../lib/stream-link";
 
 /**
  * The archive: the whole week, day 1 to day 8, morning and afternoon.
@@ -127,7 +128,21 @@ function PendingSlot({ slot }: { slot: ArchiveSlot }) {
   );
 }
 
-export function RecordingsList() {
+/**
+ * `anchors` gives every slot a DOM id, so the home hero's "Watch live"
+ * button can land on the half of the day the viewer is in.
+ *
+ * OFF BY DEFAULT, and that is load-bearing rather than tidy. This page
+ * carries the after-phase copy of this list and the during-phase copy in
+ * the same markup — all three phases are in the HTML, one attribute
+ * decides which is shown, see the note in livestream-view.tsx. Ids on both
+ * copies would be sixteen duplicated ids, and a duplicated id is a broken
+ * anchor rather than a redundant one: the browser would scroll to the
+ * first match, which is inside the `display:none` after-phase block. So
+ * only the catch-up copy is anchored, which is also the only one on screen
+ * during the week the button's hash means anything.
+ */
+export function RecordingsList({ anchors = false }: { anchors?: boolean }) {
   return (
     <ol className="flex flex-col gap-(--space-item)">
       {archiveDays.map((entry) => (
@@ -150,7 +165,16 @@ export function RecordingsList() {
 
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {entry.slots.map((slot) => (
-              <li key={slot.part}>
+              <li
+                key={slot.part}
+                {...(anchors
+                  ? { id: slotAnchorId(entry.day.id, slot.part) }
+                  : {})}
+                /* The site header is an 80px band, so an anchor landing at
+                   the very top of the viewport would put the card under
+                   it. scroll-mt-24 is 96px: the band plus a little air. */
+                className="scroll-mt-24"
+              >
                 {slot.recording ? (
                   <PostedSlot
                     recording={slot.recording}

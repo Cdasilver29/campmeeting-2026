@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowRight, PlayCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/reveal";
 import { eventInfo } from "@/data";
+import { WatchLiveLink } from "@/features/livestream/components/watch-live-link";
 import { eventDateRange } from "@/lib/event-dates";
 import {
   ART_DIRECTION,
@@ -537,14 +538,13 @@ export function Hero() {
                     nothing here may depend on which pixels are behind it.
                     The fill on hover is white/15, which reads on every
                     frame of the rotation without ever approaching the
-                    filled button beside it. */}
-                <Link
-                  href="/livestream"
-                  className="inline-flex min-h-12 items-center gap-2 rounded-control px-5 py-2.5 text-sm font-medium text-white ring-2 ring-white/80 transition-[background-color,translate] duration-fast ease-out-soft hover:bg-white/15 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-h-11"
-                >
-                  <PlayCircle aria-hidden className="size-4" />
-                  Watch live
-                </Link>
+                    filled button beside it.
+
+                    The destination is /livestream and during the week it
+                    also carries the hash of the half of the day the viewer
+                    is in, which is why this one button is a client
+                    component. See watch-live-link.tsx. */}
+                <WatchLiveLink className="inline-flex min-h-12 items-center gap-2 rounded-control px-5 py-2.5 text-sm font-medium text-white ring-2 ring-white/80 transition-[background-color,translate] duration-fast ease-out-soft hover:bg-white/15 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:min-h-11" />
               </div>
             </RevealItem>
           </RevealGroup>

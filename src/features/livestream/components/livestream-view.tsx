@@ -111,7 +111,10 @@ function CatchUp() {
         Every day of the week, morning and afternoon. {recordingCount} of{" "}
         {totalSlots} are posted so far; the rest appear here as they go up.
       </p>
-      <RecordingsList />
+      {/* The anchored copy. The home hero's "Watch live" button links to a
+          slot in this one — see recordings-list.tsx on why only one copy
+          carries the ids. */}
+      <RecordingsList anchors />
     </section>
   );
 }
