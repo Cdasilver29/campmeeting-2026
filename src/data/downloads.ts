@@ -47,6 +47,7 @@ export interface DailyProgramme {
 
 export const dailyProgrammes: DailyProgramme[] = [
   { dayId: "sabbath-15", file: "camp-meeting-day-1.pdf" },
+  { dayId: "sunday-16", file: "camp-meeting-day-2.pdf" },
 ];
 
 /** Where these live in `public/`, and therefore the URL prefix. */
