@@ -77,6 +77,16 @@
  * calendar is not currently in.
  *
  * scheme is "light" | "dark" | "both" (default "both").
+ *
+ * WHAT --layer SELECTS, NOW THAT IT SELECTS TWO THINGS
+ *
+ * The caption belongs to the photograph, so `--layer N` now pins layer N
+ * AND reports layer N's caption. Layer 0 has no caption and that section
+ * is simply absent from its output. Layer 1 is the Migori choir and layer
+ * 2 is Taji Kenya, so those two runs are the ones that measure a caption.
+ *
+ * Exits non-zero if anything measured falls under 4.5:1, the captions
+ * included.
  */
 import { launch } from "puppeteer-core";
 
@@ -201,6 +211,49 @@ for (const v of VIEWPORTS) {
     /* The colour the title is actually set in at this width, so the ratio
        below is computed against the extreme that can hurt it. */
     const typeColor = getComputedStyle(h1).color;
+    /* ── THE CAPTION IS MEASURED SEPARATELY, ON PURPOSE ────────────────
+       The block reading above is the WORST pixel anywhere under
+       #home-hero-text, scored against the h1's colour. The caption is
+       inside that block, so a passing block reading does bound it — but
+       "bounded by something else's number" is not a measurement of this
+       string, and the caption is the one line in the hero whose text
+       changes when a choir is renamed. tools/perf/caption-fit.mjs checks
+       that it fits; nothing checked what it sat on.
+
+       So each caption's own box is measured, keyed by its own text, and
+       against its own computed colour.
+
+       WHICH CAPTION GOES WITH WHICH PHOTOGRAPH: the paragraphs are
+       rendered by the same `images.map` as the layers, so DOM order IS
+       layer order and captions[LAYER] is the caption of the picture
+       --layer has pinned. Their own opacity is irrelevant here — every
+       string in the hero is hidden before the screenshot regardless — so
+       nothing needs pinning beyond the layer that is already pinned.
+
+       The rect is a RANGE over the text, not the element box. The element
+       is `inset-x-0` and so spans the whole caption row however short the
+       string is; measuring that would score pixels to the right of the
+       text that the text never covers. A range gives the painted extent,
+       which is the region the words are actually legible against. */
+    const captions = [...hero.querySelectorAll("#home-hero-text p")]
+      .filter((p) => {
+        const cs = getComputedStyle(p);
+        return cs.position === "absolute" && parseFloat(cs.lineHeight) === 20;
+      })
+      .map((p) => {
+        const text = (p.textContent || "").trim();
+        const range = document.createRange();
+        range.selectNodeContents(p);
+        const r = range.getBoundingClientRect();
+        return {
+          text,
+          color: getComputedStyle(p).color,
+          box:
+            r.width > 0 && r.height > 0
+              ? { x: r.x, y: r.y, width: r.width, height: r.height }
+              : box(p),
+        };
+      });
     /* And the colour the HEADER type is actually set in, in each state.
        Read here, before anything is hidden. In the transparent state
        every string in the header is forced white; in the glass state it
@@ -212,7 +265,7 @@ for (const v of VIEWPORTS) {
     const x = Math.min(...rs.map((r) => r.x)), y = Math.min(...rs.map((r) => r.y));
     const x2 = Math.max(...rs.map((r) => r.right)), y2 = Math.max(...rs.map((r) => r.bottom));
     return {
-      text: { x, y, width: x2 - x, height: y2 - y }, header: box(header), typeColor, headerLinkColor,
+      text: { x, y, width: x2 - x, height: y2 - y }, header: box(header), typeColor, headerLinkColor, captions,
       heroH: Math.round(hero.getBoundingClientRect().height),
       /* How far the type reaches from the bottom of the frame, and how
          tall the bottom scrim is, so coverage can be judged against the
@@ -279,8 +332,17 @@ for (const v of VIEWPORTS) {
 
   await hideType();
   await settle();
-  const px = await scan({ text: geo.text, header: geo.header });
+  /* The caption of the pinned layer, scanned in the same screenshot as
+     the block. A second shot would be a second render of a rotating hero
+     and there would be no guarantee it caught the same photograph. */
+  const cap = geo.captions[LAYER];
+  const px = await scan({
+    text: geo.text,
+    header: geo.header,
+    ...(cap && cap.text ? { caption: cap.box } : {}),
+  });
   const t = extremes(px.text), hd = extremes(px.header);
+  const capEx = extremes(px.caption);
 
   // Glass state: scroll past the sentinel, re-measure the header only.
   await page.evaluate(() => window.scrollTo(0, 400));
@@ -295,7 +357,7 @@ for (const v of VIEWPORTS) {
   }));
   const hg = extremes((await scan({ header: geo.header })).header);
 
-  rows.push({ scheme, v, geo, t, hd, hg, glassState: glass.state, glassLinkColor: glass.linkColor });
+  rows.push({ scheme, v, geo, t, hd, hg, cap, capEx, glassState: glass.state, glassLinkColor: glass.linkColor });
 
   if (v.w === 1920 || v.w === 2560) {
     await page.evaluate(() => window.scrollTo(0, 0));
@@ -345,6 +407,22 @@ for (const scheme of SCHEMES) {
       + pad(`rgb(${p.rgb})`, 18) + verdict(p.ratio));
   }
 
+  const withCaption = group.filter((r) => r.cap && r.cap.text && r.capEx);
+  if (withCaption.length) {
+    console.log(`
+=== ${scheme.toUpperCase()} — caption, layer ${LAYER} (${SOURCE.name}) ===`);
+    console.log(pad("viewport", 12) + pad("caption", 40) + pad("box", 16)
+      + pad("type", 22) + pad("worst px", 18) + "AA");
+    console.log("-".repeat(112));
+    for (const r of withCaption) {
+      const p = pick(r.cap.color, r.capEx);
+      console.log(pad(`${r.v.w}x${r.v.h}`, 12) + pad(r.cap.text.slice(0, 38), 40)
+        + pad(`${Math.round(r.cap.box.width)}x${Math.round(r.cap.box.height)}`, 16)
+        + pad(isLight(r.cap.color) ? "white (brightest px)" : "ink (darkest px)", 22)
+        + pad(`rgb(${p.rgb})`, 18) + verdict(p.ratio));
+    }
+  }
+
   console.log(`
 === ${scheme.toUpperCase()} — header, each state against the colour its type actually is ===`);
   console.log(pad("viewport", 12) + pad("transparent", 36) + "glass");
@@ -372,5 +450,16 @@ const worst = (fn) => Math.min(...rows.map(fn));
 const wt = worst((r) => pick(r.geo.typeColor, r.t).ratio);
 const wh = worst((r) => pick(r.geo.headerLinkColor, r.hd).ratio);
 const wg = worst((r) => pick(r.glassLinkColor, r.hg).ratio);
+const capRows = rows.filter((r) => r.cap && r.cap.text && r.capEx);
+const wc = capRows.length
+  ? Math.min(...capRows.map((r) => pick(r.cap.color, r.capEx).ratio))
+  : null;
 console.log(`
-worst across both schemes: hero text ${wt.toFixed(2)}:1   header transparent ${wh.toFixed(2)}:1   header glass ${wg.toFixed(2)}:1`);
+worst across both schemes: hero text ${wt.toFixed(2)}:1   header transparent ${wh.toFixed(2)}:1   header glass ${wg.toFixed(2)}:1`
+  + (wc === null ? "   caption n/a (layer has none)" : `   caption ${wc.toFixed(2)}:1`));
+
+/* Exit code, so this can gate a commit rather than only be read. The
+   caption is included: it is white type over a photograph at every width
+   and a rename can put a longer string on unmeasured pixels. */
+const floor = Math.min(wt, wh, wg, wc ?? Infinity);
+process.exit(floor >= 4.5 ? 0 : 1);
