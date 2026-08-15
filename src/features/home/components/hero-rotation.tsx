@@ -101,9 +101,24 @@ function useRotation(): Rotation {
  * The compact phase's shorter bottom scrim used to be declared here, in
  * two values split at md. Both are gone with the compact BAND: the hero is
  * one height in all three phases now, so there is one footprint to protect
- * and one scrim height — --scrim-h, set on the section in ./hero.tsx —
- * that protects it. See HERO_SCRIM_BOTTOM_HEIGHT in src/lib/hero.ts.
+ * and one scrim height — --scrim-h, set on the section in ./hero.tsx.
+ *
+ * ONE EXCEPTION, and it is a width, not a phase height. Below 390px the
+ * `before` block wraps to 478px, past the whole of the 448px default, and
+ * the top of the title sat on unprotected photograph — 1.76:1 measured on
+ * hands-bible and 1.42:1 on taji-choir. Those widths take --scrim-h-narrow
+ * instead. The derivation, and why it is scoped to `before` and to below
+ * 390 rather than applied everywhere, is on HERO_SCRIM_BOTTOM_HEIGHT in
+ * src/lib/hero.ts.
+ *
+ * Written out as a literal string, like everything else here: Tailwind
+ * finds class names by scanning source text, so a name assembled at
+ * runtime is a name it never generates. `max-[390px]` compiles to
+ * `width < 390px`, so 390 itself keeps the default — which is what the
+ * measurements say it should, at 83% of it.
  */
+const NARROW_SCRIM_HEIGHT =
+  "max-[390px]:group-data-[hero-phase=before]/hero:h-[var(--scrim-h-narrow)]";
 
 export function HeroRotation({
   images,
@@ -304,10 +319,11 @@ export function HeroBackdrop() {
           />
 
           {/* Behind the text block. One height in every phase, matching the
-              one band height. See HERO_SCRIM_BOTTOM_HEIGHT. */}
+              one band height, except below 390px in `before` where the
+              block outgrows it. See HERO_SCRIM_BOTTOM_HEIGHT. */}
           <div
             aria-hidden
-            className="absolute inset-x-0 bottom-0 z-10 h-[var(--scrim-h)]"
+            className={`absolute inset-x-0 bottom-0 z-10 h-[var(--scrim-h)] ${NARROW_SCRIM_HEIGHT}`}
             style={{ backgroundImage: heroScrimBottom(image.scrimBoost) }}
           />
         </div>

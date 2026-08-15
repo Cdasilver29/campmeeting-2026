@@ -268,8 +268,12 @@ export function Hero() {
         className="group/hero relative isolate flex h-[88svh] flex-col justify-end overflow-hidden bg-emperor -mt-header md:h-svh"
         style={
           {
-            // One scrim height too, for the one band height it protects.
-            "--scrim-h": HERO_SCRIM_BOTTOM_HEIGHT,
+            // One scrim height for the one band height it protects, and a
+            // taller one for `before` below 390px, where the block wraps to
+            // 478px and outgrew the 448px default. The variant that picks
+            // between them is on the scrim itself, in ./hero-rotation.tsx.
+            "--scrim-h": HERO_SCRIM_BOTTOM_HEIGHT.default,
+            "--scrim-h-narrow": HERO_SCRIM_BOTTOM_HEIGHT.narrow,
           } as CSSProperties
         }
       >

@@ -680,5 +680,46 @@ export const HERO_SCRIM_BOTTOM = heroScrimBottom();
  * smaller type, so their block is SHORTER than the `before` block this
  * number was measured against — which means they sit further inside the
  * held part of the curve, not closer to its edge.
+ *
+ * ── EXCEPT BELOW 390px IN `before`, WHERE 28rem WAS NEVER ENOUGH ─────
+ *
+ * The one number above is right for nine of the ten widths this is
+ * measured at and was wrong for two of them for as long as the hero has
+ * existed. The `before` block grows sharply on the narrowest phones —
+ * the call-to-action pair stops fitting on one line and stacks, and the
+ * verse row wraps — and 28rem (448px) is simply shorter than the block it
+ * is supposed to be covering:
+ *
+ *   width   footprint   against 448px   measured
+ *   320     478px       107%            1.76:1  hands-bible
+ *   360     433px        97%            2.80:1  taji-choir was 1.42:1
+ *   390     373px        83%            5.44:1
+ *   414     374px        83%            5.25:1
+ *   430     348px        78%            5.52:1
+ *   1440    380px        85%            5.54:1
+ *
+ * At 320 the type was sitting ABOVE the scrim entirely — 107% of it — so
+ * the top of the title was white on unprotected photograph. This is not a
+ * near miss at the edge of a curve; it is the block being taller than its
+ * own scrim. It predates the tall-band change: the same measurement
+ * against the previous deploy returned the identical numbers.
+ *
+ * Every width that passes sits between 78% and 85% of the scrim. 36rem
+ * (576px) puts the two failures at 83% and 75%, inside that same band
+ * rather than at a new boundary of their own. 35rem would put 320 at
+ * 85.4% — on the edge the passing widths merely reach — and a floor that
+ * lands on its own boundary fails the next time a string wraps.
+ *
+ * Scoped to `before` and to below 390px, both deliberately. The compact
+ * phases already pass at these widths on their smaller type (372px, 83%
+ * of 448), so extending this to them would darken the photograph on every
+ * phone all week to fix something that is not broken. And 390 is the
+ * first width that passes, so the cut is placed between the last failure
+ * and the first pass rather than at a round number near them.
  */
-export const HERO_SCRIM_BOTTOM_HEIGHT = "28rem";
+export const HERO_SCRIM_BOTTOM_HEIGHT = {
+  /** Every width from 390px up, and every width in the compact phases. */
+  default: "28rem",
+  /** `before` below 390px, where the block grows to 478px. */
+  narrow: "36rem",
+} as const;
