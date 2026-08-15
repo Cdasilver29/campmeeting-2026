@@ -2579,3 +2579,45 @@ neither can contribute a shift.
   a design decision about what the narrowest phone drops, or a taller
   scrim in `before` only. This supersedes the collision note above, which
   is the same defect described geometrically.
+
+## The compact type goes too (2026-08-15)
+
+The band was restored to full height earlier today; the type has now
+followed it. `COMPACT_BOTTOM_PADDING`, `COMPACT_STACK_GAP`,
+`COMPACT_THEME`, `COMPACT_VERSE`, `COMPACT_META` and `COMPACT_CTA_OFFSET`
+are all gone, so "Camp Meeting 2026", "Obey and Live", the key text, the
+theme song, the dates and both buttons render at full size in every phase.
+
+There is one hero now. `before`, `during` and `after` are pixel-identical,
+which is why the sweep below measures one phase: the block footprint is
+the same number at every width in all three.
+
+**The narrow scrim had to widen with it.** The 36rem below-390px scrim was
+scoped to `before` when it landed, correctly, because the compact type
+made the `during` block 372px and the 448px default still covered that.
+With full-size type every phase renders the 478px block below 390, so the
+phase scope was removed. Left in place it would have failed `during` at
+320 and 360 in exactly the way `before` was failing.
+
+Contrast, three layers x ten widths x both schemes, phase `during`
+(therefore all three): every cell clears 4.5:1. Worst per layer —
+hands-bible 5.23:1, migori-choir 5.50:1 (caption 9.41:1), taji-choir
+4.87:1 (caption 10.81:1). The worst cell is taji at 390, a width nothing
+in this pass touches.
+
+### What it costs at 320x568
+
+| viewport | band | block | top of type |
+| --- | --- | --- | --- |
+| 320x568 | 500 | 438 | 22px |
+| 360x640 | 563 | 393 | 130px |
+| 390x844 | 743 | 333 | 370px |
+
+Nothing is clipped at any width — the block never starts above the band.
+But at 320x568 it starts 22px down and so runs under the 80px header, in
+**all three phases now** rather than only in `before`. That is the open
+item recorded above, and restoring full-size type has widened it from a
+phase nobody will see again this year to one that is live all week. It is
+a legibility problem at the very narrowest phone, not a contrast one:
+320 passes AA at 6.87:1 and 6.20:1 on the two photographs that carry type
+there.

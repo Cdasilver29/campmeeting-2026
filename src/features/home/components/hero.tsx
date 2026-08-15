@@ -147,47 +147,28 @@ const HERO_ID = "home-hero";
 const HERO_TEXT_ID = "home-hero-text";
 
 /*
- * The compact treatment, once per phase that uses it. `during` and `after`
- * are styled identically, so each pair below says the same thing twice
- * rather than a third rule existing for a third look.
+ * ── THE COMPACT TREATMENT IS GONE ENTIRELY ───────────────────────────
+ *
+ * `during` and `after` used to be a different hero: a shorter band (55svh
+ * below md with a 29rem floor, 60svh above) and smaller type inside it —
+ * a 4xl theme, a base verse, a sm meta line, tighter gaps and a shorter
+ * bottom padding. The band went first, so the photograph could be shown
+ * whole all week; the type has now followed it, so the hero reads at full
+ * size in every phase.
+ *
+ * There is one hero now. The theme, the key text, the theme song, the
+ * dates and the two buttons are the same size in all three phases, which
+ * means `before`, `during` and `after` render identically and the block
+ * footprint is the same number at every width regardless of phase.
+ *
+ * `data-hero-phase` is still set and still matters: the narrow-width scrim
+ * in ./hero-rotation.tsx is the one rule left that could read it, and the
+ * countdown, live and archive states elsewhere on the page read the event
+ * phase through their own clocks. Nothing here reads it any more.
+ *
+ * VISUAL-PASS.md records both halves of the reversal and what fold space
+ * they cost.
  */
-/*
- * ── THE COMPACT BAND IS GONE; THE COMPACT TYPE IS NOT ────────────────
- *
- * `during` and `after` used to shorten the band itself — 55svh below md
- * with a 29rem floor, 60svh above — so that the live session card cleared
- * the fold during the event. That has been withdrawn deliberately: the
- * band is now the full height in all three phases and the photograph is
- * shown whole all week. VISUAL-PASS.md records the trade and why it was
- * reversed.
- *
- * What remains below is the compact TYPE: smaller theme, verse and meta
- * line and tighter spacing in the two event phases. It is kept for two
- * reasons. It is the denser setting the hero wants once the countdown is
- * no longer the point, and it makes the block SHORTER than the `before`
- * block the 28rem scrim was measured against — so the scrim covers it
- * with more margin than the case it was derived from, not less.
- *
- * Everything here is `group-data-`, which compiles to a DESCENDANT
- * selector: the section carries the attribute and these style elements
- * inside it. The height rule that used to sit at the top of this block was
- * the one exception and had to be plain `data-`, since it styled the
- * attribute-carrying element itself.
- */
-// No longer md-scoped. The text block is inside the frame at every width
-// now, so its bottom padding is the phase's business at every width too.
-const COMPACT_BOTTOM_PADDING =
-  "group-data-[hero-phase=during]/hero:pb-8 group-data-[hero-phase=after]/hero:pb-8";
-const COMPACT_STACK_GAP =
-  "group-data-[hero-phase=during]/hero:gap-2 group-data-[hero-phase=after]/hero:gap-2";
-const COMPACT_THEME =
-  "group-data-[hero-phase=during]/hero:text-4xl group-data-[hero-phase=after]/hero:text-4xl";
-const COMPACT_VERSE =
-  "group-data-[hero-phase=during]/hero:text-base group-data-[hero-phase=after]/hero:text-base";
-const COMPACT_META =
-  "group-data-[hero-phase=during]/hero:text-sm group-data-[hero-phase=after]/hero:text-sm";
-const COMPACT_CTA_OFFSET =
-  "group-data-[hero-phase=during]/hero:mt-0 group-data-[hero-phase=after]/hero:mt-0";
 
 export function Hero() {
   const phase = buildTimeHeroPhase();
@@ -349,7 +330,7 @@ export function Hero() {
           whole of it. The measured footprints both scrim heights are
           derived from are in src/lib/hero.ts.
         */}
-        <div className={`shell pb-10 md:pb-16 ${COMPACT_BOTTOM_PADDING}`}>
+        <div className="shell pb-10 md:pb-16">
           {/*
             The measure moved out here from the RevealGroup, and the id with
             it, because the block the bottom scrim has to protect is now the
@@ -395,7 +376,7 @@ export function Hero() {
           <RevealGroup
             immediate
             stagger={0.1}
-            className={`flex flex-col gap-4 ${COMPACT_STACK_GAP}`}
+            className="flex flex-col gap-4"
           >
             {/*
               THE THEME IS THE SUBJECT, AND THE EDITION IS ITS KICKER.
@@ -443,7 +424,7 @@ export function Hero() {
                 <span className="text-sm font-semibold tracking-[0.18em] uppercase">
                   {eventInfo.edition}
                 </span>
-                <span className={`font-display text-hero ${COMPACT_THEME}`}>
+                <span className="font-display text-hero">
                   {eventInfo.theme}
                 </span>
               </h1>
@@ -465,7 +446,7 @@ export function Hero() {
                 separating, at gap-x-6 so the two read as two. */}
             <RevealItem>
               <p
-                className={`flex flex-wrap items-baseline gap-x-6 gap-y-1 text-lg text-white ${COMPACT_VERSE}`}
+                className="flex flex-wrap items-baseline gap-x-6 gap-y-1 text-lg text-white"
               >
                 {/* Labelled, matching /speakers. The reference stood bare
                     here beside a labelled "Theme song", which read as one
@@ -481,12 +462,12 @@ export function Hero() {
                   photograph" any more. Subordinate by size, not by
                   colour: white/80 over these pixels costs about a quarter
                   of the contrast and fails. */}
-              <p className={`text-base text-white ${COMPACT_META}`}>
+              <p className="text-base text-white">
                 {eventDateRange()} at {eventInfo.church.address}
               </p>
             </RevealItem>
 
-            <RevealItem className={`mt-2 ${COMPACT_CTA_OFFSET}`}>
+            <RevealItem className="mt-2">
               {/* TWO ACTIONS, AND ONLY ONE OF THEM IS FILLED.
 
                   The programme is what most people open this site for and

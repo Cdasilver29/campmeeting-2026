@@ -103,13 +103,18 @@ function useRotation(): Rotation {
  * one height in all three phases now, so there is one footprint to protect
  * and one scrim height — --scrim-h, set on the section in ./hero.tsx.
  *
- * ONE EXCEPTION, and it is a width, not a phase height. Below 390px the
- * `before` block wraps to 478px, past the whole of the 448px default, and
- * the top of the title sat on unprotected photograph — 1.76:1 measured on
- * hands-bible and 1.42:1 on taji-choir. Those widths take --scrim-h-narrow
- * instead. The derivation, and why it is scoped to `before` and to below
- * 390 rather than applied everywhere, is on HERO_SCRIM_BOTTOM_HEIGHT in
- * src/lib/hero.ts.
+ * ONE EXCEPTION, and it is a width, not a phase. Below 390px the block
+ * wraps to 478px — the call-to-action pair stacks and the verse row wraps
+ * — which is past the whole of the 448px default, and the top of the title
+ * sat on unprotected photograph: 1.76:1 measured on hands-bible and 1.42:1
+ * on taji-choir. Those widths take --scrim-h-narrow instead.
+ *
+ * NOT scoped to a phase. It was, briefly, while `during` and `after` kept
+ * a smaller type and therefore a shorter block that the default still
+ * covered. The compact type has since gone too, so all three phases render
+ * the same block at the same size and all three need the same scrim. A
+ * phase-scoped rule here would now fail `during` at 320 and 360 in exactly
+ * the way `before` was failing.
  *
  * Written out as a literal string, like everything else here: Tailwind
  * finds class names by scanning source text, so a name assembled at
@@ -117,8 +122,7 @@ function useRotation(): Rotation {
  * `width < 390px`, so 390 itself keeps the default — which is what the
  * measurements say it should, at 83% of it.
  */
-const NARROW_SCRIM_HEIGHT =
-  "max-[390px]:group-data-[hero-phase=before]/hero:h-[var(--scrim-h-narrow)]";
+const NARROW_SCRIM_HEIGHT = "max-[390px]:h-[var(--scrim-h-narrow)]";
 
 export function HeroRotation({
   images,

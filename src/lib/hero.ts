@@ -710,16 +710,18 @@ export const HERO_SCRIM_BOTTOM = heroScrimBottom();
  * 85.4% — on the edge the passing widths merely reach — and a floor that
  * lands on its own boundary fails the next time a string wraps.
  *
- * Scoped to `before` and to below 390px, both deliberately. The compact
- * phases already pass at these widths on their smaller type (372px, 83%
- * of 448), so extending this to them would darken the photograph on every
- * phone all week to fix something that is not broken. And 390 is the
- * first width that passes, so the cut is placed between the last failure
- * and the first pass rather than at a round number near them.
+ * Scoped by WIDTH only, at below 390px. It was briefly scoped to `before`
+ * as well, which was correct while `during` and `after` kept a smaller
+ * type and a 372px block the 448px default still covered. That type has
+ * since gone — the hero is one size in all three phases — so the 478px
+ * block is now what every phase renders below 390 and every phase needs
+ * the taller scrim. 390 is the first width that passes, so the cut sits
+ * between the last failure and the first pass rather than at a round
+ * number near them.
  */
 export const HERO_SCRIM_BOTTOM_HEIGHT = {
-  /** Every width from 390px up, and every width in the compact phases. */
+  /** Every width from 390px up. */
   default: "28rem",
-  /** `before` below 390px, where the block grows to 478px. */
+  /** Below 390px, where the block wraps to 478px. */
   narrow: "36rem",
 } as const;
