@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { PlayCircle } from "lucide-react";
 import { ministryLabels, type CurrentEntry } from "../lib/today";
 import { ministryChipClasses } from "../lib/ministry-tone";
 import {
@@ -58,18 +60,82 @@ const NOW_SURFACE = "bg-primary/[0.06] ring-2 ring-primary";
  * only" for this reason. So the green stays the pulsing dot, which is
  * decorative and carries no information alone, and the words stay ink.
  */
+/**
+ * The "Watch live" affordance, and why it is inside the card.
+ *
+ * ── IT REPLACES A BUTTON THAT WAS ALWAYS THERE ───────────────────────
+ *
+ * There used to be a separate "Watch this live" button under this card,
+ * rendered whatever was on. On a Sunday morning that put it under the
+ * Medical Camp — an untimed all-block activity that is not broadcast —
+ * so the one control on the card promised a stream that did not exist.
+ * The button is gone and the card itself is the target, but only when
+ * there is genuinely something to watch.
+ *
+ * ── A STRETCHED LINK, NOT A WRAPPED CARD ─────────────────────────────
+ *
+ * The whole card is tappable, and it is done with one small link whose
+ * `::after` covers the card rather than by wrapping the card in an
+ * anchor. Wrapping would have made the link's accessible name the entire
+ * contents of the card — the time, the block label, the title and every
+ * presenter chip read out as one string. This way there is exactly one
+ * link with exactly one name: "Watch live: Divine Service".
+ *
+ * It is safe because this card contains no other interactive element.
+ * SessionCard's only control is the bookmark toggle in `meta`, and the
+ * live card does not pass one; nothing else inside is a link or a button,
+ * so there is no nested-interactive problem to create.
+ *
+ * The affordance is visible rather than a hover state, because the readers
+ * who most need it are on phones and have no cursor: a filled chip with a
+ * play glyph, in the card, saying what tapping does.
+ */
+function WatchLive({ href, title }: { href: string; title: string }) {
+  return (
+    <Link
+      href={href}
+      /* `after:` is what stretches the hit area over the whole card. It
+         resolves against the nearest positioned ancestor, which is why the
+         card is given `relative` below — without that it would size to
+         this chip and the card would not be tappable at all. */
+      className="inline-flex w-fit items-center gap-1.5 rounded-control bg-primary px-2.5 py-1 text-xs font-medium text-white transition-colors duration-fast ease-out-soft hover:bg-accent-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 after:absolute after:inset-0 after:rounded-card after:content-['']"
+    >
+      <PlayCircle aria-hidden className="size-3.5" />
+      Watch live
+      {/* The session's name, for a reader hearing the link out of
+          context. Inside the link so it is part of its one name, and
+          sr-only so the chip stays a chip. */}
+      <span className="sr-only">: {title}</span>
+    </Link>
+  );
+}
+
 export function NowCard({
   current,
   variant = "heading",
-  action,
+  watchHref,
 }: {
   current: CurrentEntry;
   /** `heading` on the home page, `badge` beside a live player. */
   variant?: "heading" | "badge";
-  /** Rendered under the card. The home page's link to the live player. */
-  action?: React.ReactNode;
+  /**
+   * Set only when the current session is actually being broadcast right
+   * now — the caller decides, from the same live-loop lookup the player
+   * uses. Undefined means this card is informational and must not
+   * navigate: an all-block activity, a session outside the broadcast, or
+   * a day whose stream ids nobody has entered.
+   */
+  watchHref?: string;
 }) {
   const badge = variant === "badge";
+  /*
+   * A timed session only. An all-block activity — the Medical Camp, the
+   * Sabbath Preparation — is a period of the day rather than something
+   * going out on a stream, and it is the case that produced the wrong
+   * button in the first place. Guarded here as well as at the caller so
+   * the rule cannot be lost by a future caller passing the href in.
+   */
+  const live = watchHref && current.kind === "session" ? watchHref : undefined;
 
   return (
     <section
@@ -91,7 +157,12 @@ export function NowCard({
       {current.kind === "session" ? (
         <SessionCard
           session={current.session}
-          className={`${NOW_SURFACE} [&>h3]:text-lg`}
+          className={`${NOW_SURFACE} [&>h3]:text-lg${live ? " relative" : ""}`}
+          footer={
+            live ? (
+              <WatchLive href={live} title={current.session.title} />
+            ) : undefined
+          }
         />
       ) : (
         <article
@@ -116,8 +187,6 @@ export function NowCard({
           ) : null}
         </article>
       )}
-
-      {action}
     </section>
   );
 }

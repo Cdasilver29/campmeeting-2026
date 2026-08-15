@@ -200,9 +200,29 @@ export function currentSlot(now: Date): LiveSlot | undefined {
  * day, and components/live-embed.tsx for the full priority order.
  */
 export function currentLiveVideoId(now: Date): string | undefined {
-  const slot = currentSlot(now);
-  if (!slot) return undefined;
+  const { date, time } = wallClock(now);
+  return liveVideoIdAt(date, time);
+}
+
+/**
+ * The same lookup, from an event-local date and time rather than an
+ * instant.
+ *
+ * The schedule's TodayState already carries a resolved wall clock and no
+ * Date, so the home page's live card would otherwise have had to either
+ * re-derive one or ask a second question with its own answer. This is the
+ * function; `currentLiveVideoId` above is a thin wrapper on it for callers
+ * holding an instant, which is what keeps the player and the card reading
+ * one source.
+ */
+export function liveVideoIdAt(
+  date: string,
+  time: string,
+): string | undefined {
+  const dayId = dayIdByDate.get(date);
+  if (!dayId) return undefined;
+  const part = partAt(date, time);
   return liveStreams.find(
-    (entry) => entry.dayId === slot.dayId && entry.part === slot.part,
+    (entry) => entry.dayId === dayId && entry.part === part,
   )?.videoId;
 }

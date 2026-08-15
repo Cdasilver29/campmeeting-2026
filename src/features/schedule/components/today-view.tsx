@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { Bookmark, CalendarCheck, CalendarClock } from "lucide-react";
 import {
-  Bookmark,
-  CalendarCheck,
-  CalendarClock,
-  PlayCircle,
-} from "lucide-react";
-import { LIVESTREAM_PATH } from "@/features/livestream/lib/stream-link";
+  LIVESTREAM_PATH,
+  liveVideoIdAt,
+} from "@/features/livestream/lib/stream-link";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { eventInfo, getDayByDate, program, type FlatSession } from "@/data";
@@ -27,15 +25,6 @@ import {
 import { Countdown } from "./countdown";
 import { NowCard } from "./now-card";
 
-/*
- * The live card's own call to action. A filled control rather than the
- * site's underlined ACTION_LINK: it sits under the one card on this page
- * carrying a 2px accent ring, and a text link there reads as a footnote
- * to the card rather than as the thing to do next. Sized and focused like
- * the hero's buttons so the two agree.
- */
-const NOW_WATCH_LINK =
-  "inline-flex min-h-11 w-fit items-center gap-2 rounded-control bg-primary px-4 py-2 text-sm font-medium text-white transition-[background-color,translate] duration-fast ease-out-soft hover:bg-accent-500 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
 import { OnDutyCard } from "./on-duty-card";
 import {
   ENTRY_GRID,
@@ -321,22 +310,29 @@ function DuringEvent({ state, saved }: { state: TodayState; saved?: FlatSession 
     <>
       {state.current ? (
         /*
-         * The home page's live card gets a way out of the page.
+         * ── THE CARD IS THE LINK, AND ONLY WHEN THERE IS A STREAM ─────
          *
-         * It goes to /livestream itself, with no hash. The live PLAYER is
-         * at the top of that page, and this button is about the session
-         * that is on right now — so an anchor scrolling past the player
-         * down to a card in "Earlier this week" would land a button
-         * labelled "Watch this live" on a recording of a broadcast that
-         * has already finished. Plain /livestream is the live one.
+         * This used to be a separate "Watch this live" button under the
+         * card, rendered whatever was on. On a Sunday morning that put it
+         * under the Medical Camp, which is an untimed all-block activity
+         * nobody is broadcasting — a control promising a stream that did
+         * not exist. Sending someone to a page with nothing playing is
+         * worse than the repetition was.
+         *
+         * `currentLiveVideoId` is the lookup the PLAYER itself uses: it
+         * asks whether today's dayId has an id entered for the half of
+         * the day the Nairobi clock is in. One source, so the card and
+         * the player can never disagree about whether anything is live.
+         *
+         * Undefined means no link and no affordance — see NowCard, which
+         * also refuses the href for an all-block activity.
          */
         <NowCard
           current={state.current}
-          action={
-            <Link href={LIVESTREAM_PATH} className={NOW_WATCH_LINK}>
-              <PlayCircle aria-hidden className="size-4" />
-              Watch this live
-            </Link>
+          watchHref={
+            liveVideoIdAt(state.now.date, state.now.time)
+              ? LIVESTREAM_PATH
+              : undefined
           }
         />
       ) : (

@@ -201,6 +201,7 @@ export function SessionCard({
   headingLevel: Heading = "h3",
   showBlockLabel = true,
   meta,
+  footer,
   className,
 }: {
   session: FlatSession;
@@ -209,6 +210,20 @@ export function SessionCard({
   showBlockLabel?: boolean;
   /** Trailing control on the meta row, e.g. the bookmark toggle. */
   meta?: ReactNode;
+  /**
+   * A last row inside the card, under everything else.
+   *
+   * It carries no data-entry, so ENTRY_GRID's general rule places it in
+   * column two at sm and spans it to the last column at lg — the same
+   * treatment the title and the note get, which is what a full-width row
+   * at the foot of the card wants. Undefined on all 238 ordinary cards.
+   *
+   * The one caller is the live card's "Watch live" affordance. The meta
+   * rail was the obvious slot and is wrong for it: that rail lives in a
+   * 9.5rem column from sm, sized for a time and a 16px bookmark icon, and
+   * a text control in it would either wrap or squeeze the time.
+   */
+  footer?: ReactNode;
   className?: string;
 }) {
   return (
@@ -276,6 +291,8 @@ export function SessionCard({
       {session.note ? (
         <p className="text-sm text-ink-muted">{session.note}</p>
       ) : null}
+
+      {footer}
     </article>
   );
 }
