@@ -38,8 +38,16 @@ const NOW_SURFACE = "bg-primary/[0.06] ring-2 ring-primary";
  * `badge` is /livestream. There the live player is already the thing at
  * the top of the page, so a second display heading announcing the same
  * fact is repetition, and a "watch live" button under it points at the
- * player three inches above. The label shrinks to a small eyebrow beside
- * the dot and the gaps close up.
+ * player three inches above. It is ONE LINE: the pulsing dot, the words
+ * "Live now", and nothing else — no display type, no block of its own, no
+ * vertical space beyond the ordinary gap to the card under it.
+ *
+ * Still an `h2`, and that is deliberate rather than left over. The section
+ * is named by `aria-labelledby="now-heading"`, so this element is the
+ * accessible name of the whole live region; demoting it to a `span` to
+ * make it look like a line would have left the section anonymous. It is a
+ * heading that is set small, which is a styling decision, not a semantic
+ * one.
  *
  * ── THE GREEN IS THE DOT AND ONLY THE DOT ────────────────────────────
  *
@@ -72,12 +80,12 @@ export function NowCard({
         id="now-heading"
         className={
           badge
-            ? "flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted"
+            ? "flex items-center gap-2 text-sm font-medium leading-5 text-ink"
             : `flex items-center gap-2 ${sectionHeading}`
         }
       >
         <LiveDot />
-        Happening now
+        {badge ? "Live now" : "Happening now"}
       </h2>
 
       {current.kind === "session" ? (

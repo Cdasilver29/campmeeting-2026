@@ -110,18 +110,30 @@ export interface Recording {
 }
 
 /**
- * ── THE FIRST TWO, AND THE DAY THEY ARE ASSIGNED TO ──────────────────
+ * ── THE ARCHIVE AND THE LIVE LOOP ARE NOW DIFFERENT VIDEOS ───────────
  *
- * ASSUMED to be the opening Sabbath, 15th August, which is day 1. The two
- * ids were supplied without a day. Sabbath 15 is much the likeliest — they
- * are the first two videos of the week and the week opens on it — but it
- * is an assumption and it is recorded as one here rather than left to be
- * discovered from a wrong link. If they belong to another day, change
- * `dayId` on both lines and nothing else.
+ * These two started life as the same ids the live player uses, because on
+ * the opening day the broadcast and the recording of it were one YouTube
+ * object. They are not any more: the church has published edited sermon
+ * cuts of the two halves of Sabbath 15, and those are what somebody
+ * catching up wants — a sermon with a title, not eight hours of stream.
+ *
+ * So `recordings` below holds a83sJFk7bB0 and -5LBJ9QHyJw, and
+ * `liveStreams` further down holds vPsSmmV-Vps and MT1z3LU1IL4. No id
+ * appears in both arrays, and that separation is the point of having two:
+ * the live player embeds what is going out now, the archive lists what has
+ * been published since. Changing one must not change the other.
+ *
+ * The day is still ASSUMED to be the opening Sabbath, 15th August, day 1.
+ * If these belong elsewhere, change `dayId` on both lines and nothing else.
+ *
+ * Neither id carries a `?si=` share token; both are the bare eleven
+ * characters. `-5LBJ9QHyJw` beginning with a hyphen is normal — the id
+ * alphabet includes `-` and `_`, and it is not a stray character.
  */
 export const recordings: Recording[] = [
-  { dayId: "sabbath-15", part: "morning", label: "Morning Service", videoId: "vPsSmmV-Vps" },
-  { dayId: "sabbath-15", part: "afternoon", label: "Afternoon and Evening", videoId: "MT1z3LU1IL4" },
+  { dayId: "sabbath-15", part: "morning", label: "Morning Sermon — You Are on a Subscription Fee", videoId: "a83sJFk7bB0" },
+  { dayId: "sabbath-15", part: "afternoon", label: "Afternoon/Evening Sermon — The Game Is Not Over", videoId: "-5LBJ9QHyJw" },
 ];
 
 /**

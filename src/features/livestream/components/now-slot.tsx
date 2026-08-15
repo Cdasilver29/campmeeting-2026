@@ -1,7 +1,8 @@
 "use client";
 
 import { NowCard } from "@/features/schedule/components/now-card";
-import { getTodayState } from "@/features/schedule/lib/today";
+import { SessionCard } from "@/features/schedule/components/session-card";
+import { getTodayState, type TimedSession } from "@/features/schedule/lib/today";
 import { useNow } from "@/features/schedule/use-now";
 
 /*
@@ -69,10 +70,76 @@ import { useNow } from "@/features/schedule/use-now";
  * it, so the row's height is the player's 441px and the card's own height
  * cannot move anything below it. There is nothing to reserve against, and
  * a reserve there would only reintroduce the dead space this whole change
- * exists to remove. The worst card in that column measures 306px against
+ * exists to remove. The worst card in that column measures 310px against
  * the player's 441px, so it never sets the row height either.
+ *
+ * ── WALKED A THIRD TIME, BECAUSE THE SLOT GAINED A SECOND STATE ──────
+ *
+ * The slot now holds an up-next CARD when nothing is live, where it used
+ * to hold one line of text, so the tallest thing it can contain is no
+ * longer only the live card. Walked again with both states in it:
+ *
+ *   320  336px      390  306px      768  230px      1024  202px
+ *
+ * 336 at 320 is exactly the 21rem this was set to, i.e. no slack at all,
+ * and a floor with no slack fails the first time a title gets longer. So
+ * 21.5rem (344px) below 360, and a third step is added rather than
+ * carrying 320's worst case all the way to 640: 390 needs only 306, and
+ * 19.5rem (312px) there gives back 32px of what would otherwise be empty
+ * on the commonest phone width in this congregation.
+ *
+ * 15rem (240px) from sm, against a 230px worst case.
  */
-const NOW_SLOT = "min-h-[21rem] sm:min-h-[14.5rem] xl:min-h-0";
+const NOW_SLOT =
+  "min-h-[21.5rem] min-[360px]:min-h-[19.5rem] sm:min-h-[15rem] xl:min-h-0";
+
+/**
+ * What the slot holds when nothing is live.
+ *
+ * ── THE RESERVE HAD TO HOLD SOMETHING ────────────────────────────────
+ *
+ * This used to be one 40px line of grey text — "Nothing is scheduled right
+ * now" — sitting in a box reserved for the tallest card of the week. On a
+ * 390px phone that is 40px of content in 336px of box, and the other 296px
+ * is exactly the empty white the page was reported for. Measured on
+ * production at 21:46, when nothing was on: box 336, content 40.
+ *
+ * Collapsing the reserve was measured instead of assumed, cold, at 390:
+ * CLS 0.0112 with nothing scheduled, 0.0540 on a typical card and 0.0860
+ * on the tallest card of the week. All three are inside the 0.1 "good"
+ * threshold and none of them is zero, and this project's gate is a
+ * Lighthouse 100 that only a zero earns. So the reserve stays.
+ *
+ * If the box has to be that tall, the answer is to put something in it.
+ * `state.next` is already computed — it is what the home page's Next Up
+ * reads — and it crosses midnight, so there is always a next session even
+ * at eleven at night on the closing Sabbath. A reader who opens this page
+ * during a break now gets the thing they would otherwise have gone looking
+ * for, in the space that was empty, and the slot holds a card in both
+ * states rather than a card in one and a sentence in the other.
+ */
+function UpNext({ next }: { next: TimedSession }) {
+  return (
+    <section aria-labelledby="now-heading" className="flex flex-col gap-2">
+      {/* The same one-line shape as the live badge, so the slot does not
+          change kind between states — only what the line says and whether
+          the dot is pulsing. A static grey dot rather than the live green
+          one: LiveDot means "this is going out now" and it would be a
+          false claim here. */}
+      <h2
+        id="now-heading"
+        className="flex items-center gap-2 text-sm font-medium leading-5 text-ink"
+      >
+        <span
+          aria-hidden
+          className="size-2.5 shrink-0 rounded-full bg-ink-muted/40"
+        />
+        Not live right now — up next
+      </h2>
+      <SessionCard session={next} />
+    </section>
+  );
+}
 
 /**
  * Split out of LivestreamView so that view can be a server component
@@ -100,6 +167,8 @@ export function NowSlot() {
            button offering to take the reader to the player they are
            already looking at are both saying it twice. */
         <NowCard current={state.current} variant="badge" />
+      ) : state.next ? (
+        <UpNext next={state.next} />
       ) : (
         <p className="text-sm text-ink-muted">
           Nothing is scheduled right now. Check the programme for the next
