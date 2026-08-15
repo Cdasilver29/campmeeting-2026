@@ -60,10 +60,12 @@ function BeforeStream() {
  */
 function AfterStream() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       {hasRecordings ? (
         <>
-          <p className="text-ink-muted">
+          {/* Capped at the measure, left aligned with the grid below it —
+              see the note in CatchUp on why not `prose-column` here. */}
+          <p className="max-w-[var(--width-prose)] text-ink-muted">
             {eventInfo.edition} has ended. {recordingCount} of {totalSlots}{" "}
             streams from the week are posted, morning and afternoon, in
             programme order. The rest are added here as they go up.
@@ -71,7 +73,7 @@ function AfterStream() {
           <RecordingsList />
         </>
       ) : (
-        <p className="text-ink-muted">
+        <p className="max-w-[var(--width-prose)] text-ink-muted">
           {eventInfo.edition} has ended. Recordings are being posted to the
           church&apos;s YouTube channel, and each one is listed here as it goes
           up. Nothing has been published yet.
@@ -81,7 +83,7 @@ function AfterStream() {
         href={LIVESTREAM_CHANNEL_URL}
         target="_blank"
         rel="noreferrer"
-        className={linkClassName}
+        className={`w-fit ${linkClassName}`}
       >
         {hasRecordings
           ? "See the whole channel on YouTube"
@@ -106,9 +108,16 @@ function AfterStream() {
 function CatchUp() {
   if (!hasRecordings) return null;
   return (
-    <section className="flex flex-col gap-3">
-      <h2 className={DOC_HEADING}>Earlier this week</h2>
-      <p className="text-ink-muted">
+    <section className="flex w-full flex-col gap-3">
+      {/* Capped but NOT centred. `prose-column` adds `margin-inline: auto`,
+          which would have floated this heading into the middle of the shell
+          above a grid that starts at its left edge — a heading indented
+          from the thing it heads. The measure still applies; only the
+          centring is dropped. */}
+      <h2 className={`max-w-[var(--width-prose)] ${DOC_HEADING}`}>
+        Earlier this week
+      </h2>
+      <p className="max-w-[var(--width-prose)] text-ink-muted">
         Every day of the week, morning and afternoon. {recordingCount} of{" "}
         {totalSlots} are posted so far; the rest appear here as they go up.
       </p>
@@ -180,7 +189,7 @@ export function LivestreamView() {
         {...{ [PHASE_ATTRIBUTE]: eventPhase(new Date()) }}
         className="group/live"
       >
-        <div className={`${SHOW_BEFORE} flex-col gap-3`}>
+        <div className={`${SHOW_BEFORE} prose-column w-full flex-col gap-3`}>
           <BeforeStream />
         </div>
 
@@ -188,9 +197,49 @@ export function LivestreamView() {
           <AfterStream />
         </div>
 
-        <div className={`${SHOW_DURING} flex-col gap-8`}>
-          <LiveEmbed label={`${eventInfo.edition} livestream`} />
-          <NowSlot />
+        {/* gap-6, not gap-8. The player, the live card and the archive are
+            one sequence about today, not three unrelated sections, and 32px
+            between them read as a page that had run out of things to say. */}
+        <div className={`${SHOW_DURING} flex-col gap-6`}>
+          {/*
+            THE PLAYER AND THE LIVE CARD: STACKED, CAPPED, LEFT ALIGNED.
+
+            Capped because a 16:9 frame at the full 80rem shell is 720px
+            tall — taller than the laptop viewport it has to sit inside.
+            That was always the reason and it has not changed.
+
+            LEFT aligned, which has. `prose-column` centres what it caps,
+            and that was invisible while the whole page was one column;
+            the moment the archive below went full width it left a player
+            floating in the middle of the shell above a heading and a
+            four-column grid that start at its left edge. Everything on
+            this page now begins at the same left edge.
+
+            ── AND SIDE BY SIDE FROM xl, WHICH IS WHERE THE GAP GOES ──
+
+            Stacked, the live card sits in a reserved box sized to the
+            TALLEST card of the week (see now-slot.tsx). Most sessions are
+            nowhere near that, so most of the time the reserve shows as
+            dead space between the card and "Earlier this week" — which is
+            the gap this pass was asked to close.
+
+            From xl it closes completely, because the card moves into the
+            column beside the player and the row is then as tall as the
+            PLAYER, not as tall as the reserve. Measured at 1280 and 1440:
+            the player is 784x441 and the card column is 392 wide, where
+            the worst card in the week is 306. 306 fits inside 441 with
+            135px to spare, so the reserve costs nothing there and is
+            switched off — `xl:min-h-0` in now-slot.tsx.
+
+            lg was tried first and is wrong: at 1024 the column is only
+            307px and the same card grows to 438px in it, taller than the
+            player beside it. The breakpoint is where the column stops
+            making the card worse, and that is 1280, not 1024.
+          */}
+          <div className="flex w-full max-w-[var(--width-prose)] flex-col gap-4 xl:grid xl:max-w-none xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] xl:items-start xl:gap-6">
+            <LiveEmbed label={`${eventInfo.edition} livestream`} />
+            <NowSlot />
+          </div>
           <CatchUp />
         </div>
       </div>

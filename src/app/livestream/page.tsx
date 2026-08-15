@@ -27,8 +27,18 @@ export default function LivestreamPage() {
           section already in view is not given an entrance. It is here so
           the page belongs to the same system as the rest, not so the
           player fades in. */}
+      {/*
+        `prose-column` moved OFF this wrapper and onto the pieces that
+        want it, inside the view. It used to cap the whole page at the
+        68ch measure, which was right while everything here was a player
+        and some prose — and wrong for the archive, which is now a
+        four-column grid of thumbnails and was being squeezed into a
+        column down the middle of a 1440px page. The player, the live
+        card and every paragraph still take the measure; only the grid
+        runs to the shell.
+      */}
       <Band>
-        <Reveal className="prose-column">
+        <Reveal>
           <LivestreamView />
         </Reveal>
       </Band>

@@ -144,7 +144,20 @@ function PendingSlot({ slot }: { slot: ArchiveSlot }) {
  */
 export function RecordingsList({ anchors = false }: { anchors?: boolean }) {
   return (
-    <ol className="flex flex-col gap-(--space-item)">
+    /* One day per row on a phone, TWO from lg.
+
+       This is where the page width is actually used. The list used to be
+       a single column capped at the prose measure, which on a 1440px page
+       was a ribbon of thumbnails down the middle with most of the shell
+       empty either side. Two days to a row, each day still its own pair,
+       comes to four thumbnails across — the density asked for, without
+       splitting a morning from its afternoon.
+
+       gap-x-8 against gap-y-6: the horizontal gutter separates two
+       unrelated days and has to read as a bigger break than the one
+       between a day and the day under it, which already has a ruled
+       heading of its own doing that work. */
+    <ol className="grid gap-x-8 gap-y-(--space-item) lg:grid-cols-2">
       {archiveDays.map((entry) => (
         <li key={entry.day.id} className="flex flex-col gap-3">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-2">
@@ -163,7 +176,19 @@ export function RecordingsList({ anchors = false }: { anchors?: boolean }) {
             </Link>
           </div>
 
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Always two, because a day IS two slots. Morning and afternoon
+              are a pair and they belong on one row at every width, rather
+              than the afternoon hanging under the morning on a phone.
+
+              NOT four on desktop, which was the first attempt: a day has
+              only two videos, so a four-column track left every day row
+              half empty. The width is won on the DAY list instead — see
+              the note on the <ol> below — which puts two days on a row and
+              four thumbnails across, without breaking the pairing.
+
+              gap-3 below sm: at 320 two columns leave 140px each, and 16px
+              of gutter out of that is worth more as picture than as air. */}
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4">
             {entry.slots.map((slot) => (
               <li
                 key={slot.part}

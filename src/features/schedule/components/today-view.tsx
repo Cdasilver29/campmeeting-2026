@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Bookmark, CalendarCheck, CalendarClock } from "lucide-react";
+import {
+  Bookmark,
+  CalendarCheck,
+  CalendarClock,
+  PlayCircle,
+} from "lucide-react";
+import { LIVESTREAM_PATH } from "@/features/livestream/lib/stream-link";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { eventInfo, getDayByDate, program, type FlatSession } from "@/data";
@@ -20,6 +26,16 @@ import {
 } from "./card-styles";
 import { Countdown } from "./countdown";
 import { NowCard } from "./now-card";
+
+/*
+ * The live card's own call to action. A filled control rather than the
+ * site's underlined ACTION_LINK: it sits under the one card on this page
+ * carrying a 2px accent ring, and a text link there reads as a footnote
+ * to the card rather than as the thing to do next. Sized and focused like
+ * the hero's buttons so the two agree.
+ */
+const NOW_WATCH_LINK =
+  "inline-flex min-h-11 w-fit items-center gap-2 rounded-control bg-primary px-4 py-2 text-sm font-medium text-white transition-[background-color,translate] duration-fast ease-out-soft hover:bg-accent-500 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
 import { OnDutyCard } from "./on-duty-card";
 import {
   ENTRY_GRID,
@@ -304,7 +320,25 @@ function DuringEvent({ state, saved }: { state: TodayState; saved?: FlatSession 
   return (
     <>
       {state.current ? (
-        <NowCard current={state.current} />
+        /*
+         * The home page's live card gets a way out of the page.
+         *
+         * It goes to /livestream itself, with no hash. The live PLAYER is
+         * at the top of that page, and this button is about the session
+         * that is on right now — so an anchor scrolling past the player
+         * down to a card in "Earlier this week" would land a button
+         * labelled "Watch this live" on a recording of a broadcast that
+         * has already finished. Plain /livestream is the live one.
+         */
+        <NowCard
+          current={state.current}
+          action={
+            <Link href={LIVESTREAM_PATH} className={NOW_WATCH_LINK}>
+              <PlayCircle aria-hidden className="size-4" />
+              Watch this live
+            </Link>
+          }
+        />
       ) : (
         <BetweenCard next={state.next} />
       )}

@@ -28,11 +28,54 @@ const NOW_SURFACE = "bg-primary/[0.06] ring-2 ring-primary";
  * heading and differ only in body. Shared by the Today view and the
  * livestream page, which both need "happening now" but must never
  * re-derive it independently.
+ *
+ * ── TWO PRESENTATIONS, BECAUSE THE TWO PAGES ASK DIFFERENT THINGS ────
+ *
+ * `heading` is the home page. There "Happening now" is news — the reader
+ * did not come looking for it — so it gets a display-size heading and,
+ * below the card, a way to go and watch it.
+ *
+ * `badge` is /livestream. There the live player is already the thing at
+ * the top of the page, so a second display heading announcing the same
+ * fact is repetition, and a "watch live" button under it points at the
+ * player three inches above. The label shrinks to a small eyebrow beside
+ * the dot and the gaps close up.
+ *
+ * ── THE GREEN IS THE DOT AND ONLY THE DOT ────────────────────────────
+ *
+ * The obvious version of the badge sets the words in --color-live, which
+ * is the brand's Tree Frog green. It was measured before it was written:
+ * #448d21 is 4.14:1 on the page surface and white on it is 4.14:1 too,
+ * both under the 4.5 floor. Its own token comment says "indicator fill
+ * only" for this reason. So the green stays the pulsing dot, which is
+ * decorative and carries no information alone, and the words stay ink.
  */
-export function NowCard({ current }: { current: CurrentEntry }) {
+export function NowCard({
+  current,
+  variant = "heading",
+  action,
+}: {
+  current: CurrentEntry;
+  /** `heading` on the home page, `badge` beside a live player. */
+  variant?: "heading" | "badge";
+  /** Rendered under the card. The home page's link to the live player. */
+  action?: React.ReactNode;
+}) {
+  const badge = variant === "badge";
+
   return (
-    <section aria-labelledby="now-heading" className="flex flex-col gap-3">
-      <h2 id="now-heading" className={`flex items-center gap-2 ${sectionHeading}`}>
+    <section
+      aria-labelledby="now-heading"
+      className={`flex flex-col ${badge ? "gap-2" : "gap-3"}`}
+    >
+      <h2
+        id="now-heading"
+        className={
+          badge
+            ? "flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted"
+            : `flex items-center gap-2 ${sectionHeading}`
+        }
+      >
         <LiveDot />
         Happening now
       </h2>
@@ -65,6 +108,8 @@ export function NowCard({ current }: { current: CurrentEntry }) {
           ) : null}
         </article>
       )}
+
+      {action}
     </section>
   );
 }

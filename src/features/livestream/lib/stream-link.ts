@@ -1,5 +1,5 @@
 import { program } from "@/data";
-import { wallClock } from "@/features/schedule/lib/time";
+import { eventPhase, wallClock } from "@/features/schedule/lib/time";
 import {
   liveStreams,
   RECORDING_PARTS,
@@ -146,6 +146,23 @@ for (const day of program) {
  * rule the whole schedule is built on.
  */
 export function currentStreamHref(now: Date): string {
+  /*
+   * ── DURING THE EVENT THE ANSWER IS THE PLAYER, NOT THE ARCHIVE ─────
+   *
+   * This used to hand back an anchor into "Earlier this week" whenever
+   * today's slot had a video posted — which, now that the ids are typed
+   * in on the morning of, is most of the week. So a button labelled
+   * "Watch live" scrolled the reader PAST the live player and down to a
+   * card for a broadcast that had already finished. The anchor was
+   * written when the player was a channel embed nobody could point at;
+   * it is a real, day-specific stream now.
+   *
+   * So: during the event, plain /livestream, which lands on the player.
+   * The anchor survives only in the `after` phase, where there is no
+   * live stream and the archive IS the page.
+   */
+  if (eventPhase(now) !== "after") return LIVESTREAM_PATH;
+
   const { date, time } = wallClock(now);
   const anchor = anchorByDate.get(date)?.[partAt(date, time)];
   return anchor ? `${LIVESTREAM_PATH}#${anchor}` : LIVESTREAM_PATH;
