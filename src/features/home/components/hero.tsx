@@ -15,6 +15,7 @@ import {
   HeroCaption,
   HeroRotation,
 } from "./hero-rotation";
+import { EventPhaseSync } from "@/components/event-phase-sync";
 import {
   buildTimeHeroPhase,
   HERO_PHASE_ATTRIBUTE,
@@ -561,8 +562,16 @@ export function Hero() {
       </section>
 
       {/* Runs during parse, immediately after the section it corrects, so
-          the final height is in place before the first paint. */}
+          the final height is in place before the first paint.
+
+          It covers the COLD load only. A client-side navigation back to
+          this page never parses a document, so this script never runs
+          again, and React restores the build-time phase from the RSC
+          payload — which put the hero at the wrong height for anyone who
+          visited a second page and came back. The sync below is the other
+          half; see its file for the measurements. */}
       <script dangerouslySetInnerHTML={{ __html: heroPhaseScript(HERO_ID) }} />
+      <EventPhaseSync elementId={HERO_ID} attribute={HERO_PHASE_ATTRIBUTE} />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { eventInfo } from "@/data";
 import { ACTION_LINK } from "@/lib/link-styles";
+import { EventPhaseSync } from "@/components/event-phase-sync";
 import { eventPhaseScript } from "@/lib/event-phase-script";
 import { eventStartInstant, eventPhase } from "@/features/schedule/lib/time";
 import { DOC_HEADING } from "@/lib/typography";
@@ -195,12 +196,18 @@ export function LivestreamView() {
       </div>
 
       {/* Runs during parse, immediately after the element it corrects, so
-          the final state is in place before the first paint. */}
+          the final state is in place before the first paint — on a COLD
+          load. A client-side navigation to this page never parses a
+          document, so React restores the build-time phase and this page
+          would show the countdown during the event. The sync below covers
+          that path; the hero had the same fault and the evidence is in
+          @/components/event-phase-sync. */}
       <script
         dangerouslySetInnerHTML={{
           __html: eventPhaseScript(VIEW_ID, PHASE_ATTRIBUTE),
         }}
       />
+      <EventPhaseSync elementId={VIEW_ID} attribute={PHASE_ATTRIBUTE} />
     </>
   );
 }
