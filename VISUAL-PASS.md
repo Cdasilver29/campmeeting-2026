@@ -2458,3 +2458,124 @@ phase attribute before first paint, so neither adds anything to the shift.
   runs under an 80px header. Not fixed here: `before` is in the past for
   2026 and cannot render again this year, and the fix is a design decision
   about what the narrowest phone drops. It will matter again in 2027.
+
+---
+
+# The compact hero band is withdrawn (2026-08-15)
+
+## A deliberate reversal, not a fix
+
+The section above this one derived a compact hero for the two event
+phases: a shorter band (55svh below `md` with a 29rem floor, 60svh above),
+a shorter bottom scrim to match (28rem below `md`, 19rem above), and
+smaller type inside it. The whole point of that band was **fold space** —
+keeping the live session card visible under the hero during the week the
+card actually means something.
+
+That trade has been reversed on request. The hero is now the full band in
+all three phases, so the photograph is shown whole all week. The cost is
+exactly what the compact band bought: on a 568px phone the live card now
+sits about 150px lower than it did, and on a laptop the section below the
+hero starts a screen further down. That is understood and accepted — the
+photograph earns the space.
+
+## What that removed
+
+Three things went, none of them replaced:
+
+- `COMPACT_HERO_HEIGHT` in `hero.tsx` — the whole phase-dependent height
+  override, including the 29rem phone floor that had been added a few
+  hours earlier to stop the compact band clipping its own text.
+- `COMPACT_SCRIM_HEIGHT` in `hero-rotation.tsx`, and the two CSS variables
+  it read (`--scrim-h-compact`, `--scrim-h-compact-md`).
+- The `compact` / `compactMd` keys on `HERO_SCRIM_BOTTOM_HEIGHT`, which is
+  now a single string. One band height means one footprint to protect and
+  one scrim, and 28rem is the value already derived for it.
+
+The compact **type** stays: `during` and `after` keep the smaller theme,
+verse and meta line and the tighter spacing. It is kept deliberately.
+It is the denser setting the hero wants once the countdown is no longer
+the point, and it makes the block shorter than the `before` block the
+28rem scrim was measured against — so those two phases sit further inside
+the held part of the scrim curve, not closer to its edge. It is also what
+keeps `data-hero-phase` meaningful, and therefore keeps the pre-paint
+phase script and its client-side sync from becoming dead code.
+
+## The narrow-phone clipping this fixes outright
+
+The compact band clipped its own text at 320x568 before the 29rem floor
+was added. With the band tall in every phase there is nothing to clip.
+Measured on the built site, phase driven by the attribute directly:
+
+| viewport | phase | band | block | top of type | verdict |
+| --- | --- | --- | --- | --- | --- |
+| 320x568 | before | 500 | 438 | 22px | tight, under the 80px header |
+| 320x568 | during | 500 | 340 | 128px | ok |
+| 320x568 | after | 500 | 340 | 128px | ok |
+| 360x640 | before | 563 | 393 | 130px | ok |
+| 360x640 | during | 563 | 340 | 191px | ok |
+| 360x640 | after | 563 | 340 | 191px | ok |
+| 390x844 | before | 743 | 333 | 370px | ok |
+| 390x844 | during | 743 | 260 | 451px | ok |
+| 390x844 | after | 743 | 260 | 451px | ok |
+
+No clipping at any width in any phase, and no horizontal overflow. The one
+tight row is `before` at 320x568, which is the open item already recorded
+above and is unchanged by this pass.
+
+## Contrast, three layers x three phases x ten widths
+
+`verify-hero.mjs`, both schemes, widths 320 / 360 / 390 / 414 / 430 / 560
+/ 640 / 768 / 1024 / 1440. Worst reading in each run:
+
+| layer | phase | hero text | caption |
+| --- | --- | --- | --- |
+| hands-bible | before | **1.76** | none |
+| hands-bible | during | 5.23 | none |
+| hands-bible | after | 5.23 | none |
+| migori-choir | before | 5.50 | 9.41 |
+| migori-choir | during | 5.81 | 13.65 |
+| migori-choir | after | 5.81 | 13.65 |
+| taji-choir | before | **1.42** | 10.81 |
+| taji-choir | during | 5.20 | 9.78 |
+| taji-choir | after | 5.20 | 9.78 |
+
+**`during` and `after` pass everywhere** — every layer, every caption,
+every width, both schemes. Worst text 5.20:1, worst caption 9.78:1. Both
+captions ("Newlife Migori Adventist Church Choir" and "Taji Kenya") clear
+the floor with a wide margin in every phase.
+
+## The `before` failure is pre-existing and was measured, not assumed
+
+`before` fails at 320 and 360 on hands-bible and taji-choir. It would be
+easy to read that as this change's doing, so it was checked against the
+previous deploy rather than reasoned about: the same script pointed at
+production, which was still running the old code, returned **1.76:1 at 320
+and 2.80:1 at 360, with the same 478px and 433px footprints against the
+same 448px scrim**. Identical numbers. Nothing in the `before` phase moved
+in this pass — its band is still `h-[88svh] md:h-svh` and its scrim is
+still 28rem — and the measurement confirms it.
+
+The cause is the same one already open above: below about 375px the block
+grows to 478px, past the 448px scrim, so the top of the type sits on
+unprotected photograph. It is not fixed here for the same reason it was
+not fixed there — `before` is in the past for 2026 and cannot render again
+this year — but it now has numbers attached rather than only a collision
+description, and it will matter in 2027.
+
+## CLS
+
+0.0000 median and worst over five cold runs at 1900x1000 and 390x844, no
+layout shifts recorded. Unchanged. Both the band height and the scrim
+height are CSS resolved against the phase attribute before first paint, so
+neither can contribute a shift.
+
+## Still open with the committee
+
+- **The `before` phase fails AA below 375px**, on hands-bible (1.76:1 at
+  320, 2.80:1 at 360) and taji-choir (1.42:1 at 320, 2.33:1 at 360). The
+  block is 478px against a 448px scrim. Pre-existing and measured against
+  the previous deploy; unreachable in 2026, live again in 2027. The fix is
+  a design decision about what the narrowest phone drops, or a taller
+  scrim in `before` only. This supersedes the collision note above, which
+  is the same defect described geometrically.

@@ -97,25 +97,13 @@ function useRotation(): Rotation {
   return value;
 }
 
-/**
- * The compact phase's shorter bottom scrim. It lives here rather than in
- * hero.tsx because the scrims themselves do now — they are per image, so
- * they moved into the layer that owns them.
- *
- * `group-data-`, so it is a descendant selector against `group/hero` on
- * the section. Written out as a literal string: Tailwind finds class names
- * by scanning source text, so a name assembled at runtime is a name it
- * never generates.
- *
- * TWO VALUES, SPLIT AT md, because the compact block is a different height
- * on a phone than on a desktop: the call to action stacks and the verse row
- * wraps, so 258px at 1440 is 372px at 360. One value derived from the
- * desktop footprint left white type on unprotected photograph at 390 and
- * 414 — 1.98:1 measured. The numbers and the derivation are on
- * HERO_SCRIM_BOTTOM_HEIGHT in src/lib/hero.ts.
+/*
+ * The compact phase's shorter bottom scrim used to be declared here, in
+ * two values split at md. Both are gone with the compact BAND: the hero is
+ * one height in all three phases now, so there is one footprint to protect
+ * and one scrim height — --scrim-h, set on the section in ./hero.tsx —
+ * that protects it. See HERO_SCRIM_BOTTOM_HEIGHT in src/lib/hero.ts.
  */
-const COMPACT_SCRIM_HEIGHT =
-  "group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact)] group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact)] md:group-data-[hero-phase=during]/hero:h-[var(--scrim-h-compact-md)] md:group-data-[hero-phase=after]/hero:h-[var(--scrim-h-compact-md)]";
 
 export function HeroRotation({
   images,
@@ -315,13 +303,11 @@ export function HeroBackdrop() {
             style={{ backgroundImage: heroScrimTop(image.scrimBoost) }}
           />
 
-          {/* Behind the text block. Height is phase-dependent because the
-              type is: the compact phases set a smaller theme, verse and
-              meta line, so their footprint is smaller and the scrim that
-              covers it can be shorter. See HERO_SCRIM_BOTTOM_HEIGHT. */}
+          {/* Behind the text block. One height in every phase, matching the
+              one band height. See HERO_SCRIM_BOTTOM_HEIGHT. */}
           <div
             aria-hidden
-            className={`absolute inset-x-0 bottom-0 z-10 h-[var(--scrim-h)] ${COMPACT_SCRIM_HEIGHT}`}
+            className="absolute inset-x-0 bottom-0 z-10 h-[var(--scrim-h)]"
             style={{ backgroundImage: heroScrimBottom(image.scrimBoost) }}
           />
         </div>

@@ -666,55 +666,19 @@ export const HERO_SCRIM_BOTTOM = heroScrimBottom();
  * it at 88.0% — exactly on the boundary — and a floor that lands on its own
  * boundary is a floor that fails the next time a string wraps.
  *
- * The compact phase moves for the same reason: its footprint went 214px to
- * about 258px, which is past the whole of a 16rem (256px) scrim. 19rem
- * (304px) puts it at 85%, matching the full-bleed phase rather than being
- * chosen separately.
+ * ── ONE VALUE, BECAUSE THERE IS ONE BAND AGAIN ───────────────────────
  *
- * ── AND THEN THE COMPACT PHASE NEEDED A PHONE VALUE OF ITS OWN ────────
+ * This used to be three numbers: 28rem for the full-bleed `before` band
+ * and a separate compact pair (28rem below md, 19rem above) for the short
+ * band the site showed during and after the event. That short band has
+ * been withdrawn — the hero is now the same tall height in all three
+ * phases, so the photograph is shown full all week. See VISUAL-PASS.md
+ * for why that trade was reversed.
  *
- * 258px is the compact footprint at 1440. It was the only width the 19rem
- * above was derived from, and the compact phase had never been rendered on
- * a phone in production until the event actually started — the site spent
- * its whole life in `before`, which passes at every phone width. Measured
- * on the deployed page, phase forced to `during`:
- *
- *   width   compact footprint   against a 19rem (304px) scrim
- *   320     372px               122%
- *   360     372px               122%
- *   390     292px                96%
- *   414     292px                96%
- *   768     262px                86%
- *   1440    258px                85%
- *
- * Below md the block is far taller than it is at 1440, because two things
- * happen that do not happen on a desktop: the call-to-action pair stops
- * fitting on one line and stacks (+60px, and it must stack — those are
- * 48px tap targets), and the verse row wraps (+28px). So the top of the
- * type sat in the 92-100% band of the curve, where the alpha is on its way
- * to zero by design, or above the scrim entirely.
- *
- * What that cost, measured against the brightest composited pixel under
- * the type on the deployed page: migori 1.98:1 at 390 and 2.03:1 at 414,
- * taji 2.91:1, hands-bible 4.47:1 — against a 4.5 floor. White type on an
- * unprotected photograph.
- *
- * So below md the compact phase takes the SAME 28rem the full-bleed phase
- * takes. That is not a shortcut: with the band's own floor below (29rem,
- * see COMPACT_HERO_HEIGHT in ../features/home/components/hero.tsx) the
- * worst phone footprint is 372px, and 372 against 448 is 83% — inside the
- * held section of the curve with the same margin every other width has.
- * There is no smaller value that works, because the scrim's whole job is
- * to cover the block and on a phone the block is nearly the height of the
- * band.
- *
- * md and up is untouched at 19rem. It measures 4.94:1 to 5.55:1 across the
- * three photographs and never had this problem.
+ * With one band height there is one footprint to protect, and 28rem is
+ * the value that was derived for it above. The compact phases keep their
+ * smaller type, so their block is SHORTER than the `before` block this
+ * number was measured against — which means they sit further inside the
+ * held part of the curve, not closer to its edge.
  */
-export const HERO_SCRIM_BOTTOM_HEIGHT = {
-  before: "28rem",
-  /** Below md, where the block wraps to nearly the height of the band. */
-  compact: "28rem",
-  /** md and up, derived from the 258px desktop footprint. */
-  compactMd: "19rem",
-} as const;
+export const HERO_SCRIM_BOTTOM_HEIGHT = "28rem";
