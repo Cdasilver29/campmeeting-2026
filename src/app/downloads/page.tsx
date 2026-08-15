@@ -1,11 +1,11 @@
-import fs from "node:fs";
-import path from "node:path";
 import Link from "next/link";
 import { Download, FileText } from "lucide-react";
 import { Band } from "@/components/band";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Reveal } from "@/components/reveal";
+import { DailyProgrammeList } from "@/features/downloads/components/daily-programme-list";
+import { formatSize, probePdf } from "@/features/downloads/pdf-file";
 import { pageMetadata } from "@/lib/metadata";
 import { downloadsPage } from "@/lib/page-identity";
 import { ACTION_LINK } from "@/lib/link-styles";
@@ -15,28 +15,19 @@ export const metadata = pageMetadata(downloadsPage);
 /** Where the committee's signed-off programme PDF is expected to land. */
 const PROGRAM_PDF_PATH = "/downloads/camp-meeting-2026-programme.pdf";
 
-function formatSize(bytes: number): string {
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 /**
- * Checked at build time, since the whole site is statically generated:
- * the file either shipped in public/ before `pnpm build` ran, or it
- * didn't. Dropping the PDF into public/downloads/ and rebuilding is all
- * that is needed to turn this into a real download, no code change.
+ * Two lists, deliberately kept apart.
+ *
+ * The full programme is the whole week in one booklet, signed off once.
+ * The daily sheets are eight separate documents that arrive one a day and
+ * carry the detail the booklet leaves out. They are different things with
+ * different lifecycles, so folding the booklet into the daily list as a
+ * ninth row would have made the list read as "nine days".
+ *
+ * Both use the same build-time probe in ../../features/downloads/pdf-file.
  */
-function programPdf(): { size: number } | undefined {
-  const filePath = path.join(process.cwd(), "public", PROGRAM_PDF_PATH);
-  try {
-    const stats = fs.statSync(filePath);
-    return { size: stats.size };
-  } catch {
-    return undefined;
-  }
-}
-
 export default function DownloadsPage() {
-  const pdf = programPdf();
+  const pdf = probePdf(PROGRAM_PDF_PATH);
 
   return (
     <>
@@ -46,7 +37,7 @@ export default function DownloadsPage() {
       <Reveal className="prose-column">
       {pdf ? (
         <a
-          href={PROGRAM_PDF_PATH}
+          href={pdf.href}
           download
           className="flex items-center gap-4 rounded-card bg-surface p-4 ring-1 ring-line transition-colors duration-fast hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
         >
@@ -77,6 +68,23 @@ export default function DownloadsPage() {
         />
       )}
       </Reveal>
+      </Band>
+
+      <Band tone="muted">
+        <Reveal className="prose-column">
+          <section aria-labelledby="daily-programmes" className="flex flex-col gap-(--space-item)">
+            <div className="flex flex-col gap-2">
+              <h2 id="daily-programmes" className="text-2xl font-semibold text-ink">
+                Daily programmes
+              </h2>
+              <p className="text-ink-muted">
+                One sheet per day, published as each day is finalised. Days
+                still to come are listed so you can see the shape of the week.
+              </p>
+            </div>
+            <DailyProgrammeList />
+          </section>
+        </Reveal>
       </Band>
     </>
   );

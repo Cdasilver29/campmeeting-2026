@@ -46,7 +46,7 @@ const revision = buildRevision();
 const pages = [...siteRoutes, OFFLINE_ROUTE].map((url) => ({ url, revision }));
 
 /**
- * ── THE GALLERY IS THE ONE THING IN public/ THAT IS NOT PRECACHED ────
+ * ── WHAT IN public/ IS NOT PRECACHED ─────────────────────────────────
  *
  * Serwist's own manifest globs everything in public/, and until now that
  * was right: the speaker portraits, the header photographs and the icons
@@ -80,9 +80,49 @@ const pages = [...siteRoutes, OFFLINE_ROUTE].map((url) => ({ url, revision }));
  * an <img> that cannot load offline is the ordinary offline experience of
  * a photograph.
  */
-function isGalleryImage(url: string): boolean {
+/**
+ * ── AND THE PDFs, FOR THE SAME REASON, ONLY MORE SO ──────────────────
+ *
+ * public/downloads/ holds the printed programme PDFs: one per day of the
+ * week plus the full booklet, and the first daily sheet alone is 3.4 MB.
+ * Eight of them is well over 20 MB, which is several times the entire rest
+ * of the site — precaching that would mean every phone downloading the
+ * whole print run before it had opened a single page, on the connection
+ * this phase exists to be kind to.
+ *
+ * And it buys nothing. The schedule is already readable offline as HTML;
+ * that is what `siteRoutes` above is for. The PDF is the same content in a
+ * form somebody chose to save deliberately, and a deliberate download is
+ * the one kind of fetch a service worker should not make on the reader's
+ * behalf. A PDF that has been downloaded is in the phone's own files
+ * anyway, which is better offline storage than a cache the next deploy
+ * clears.
+ *
+ * The /downloads PAGE is still precached — it is in `siteRoutes` — so it
+ * opens offline and shows its rows. Only the files behind them need signal.
+ *
+ * ── THIS RULE IS NOT REDUNDANT, AND IT WAS CHECKED ───────────────────
+ *
+ * Serwist also refuses any single file over 2 MB on its own, and day 1 is
+ * 3.44 MB, so the first build after this rule was written reported "0
+ * downloads excluded": the size limit had already dropped the only PDF
+ * before the transform ever saw it. That is the same silent "0 excluded"
+ * the gallery note above was written about, and it would have been very
+ * easy to read as proof that the rule worked.
+ *
+ * So it was tested rather than assumed. A 65-byte PDF dropped into
+ * public/downloads/ and rebuilt reported "1 downloads excluded" with the
+ * kept-entry count unchanged, then was deleted. That is the case that
+ * matters: the size limit only catches the big ones, and a day whose sheet
+ * happens to export under 2 MB is caught by this rule and by nothing else.
+ */
+function isExcludedFromPrecache(url: string): boolean {
+  // The prefix is stripped first because @serwist/turbopack appends its
+  // own transform AFTER this one, and that is the transform that rewrites
+  // `public/x` to `/x`. Testing the final URL here matches nothing while
+  // cheerfully reporting "0 excluded" — see the note above.
   const path = url.startsWith("public/") ? url.slice("public".length) : url;
-  return path.startsWith("/gallery/");
+  return path.startsWith("/gallery/") || path.startsWith("/downloads/");
 }
 
 export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
@@ -91,10 +131,19 @@ export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
     additionalPrecacheEntries: pages,
     manifestTransforms: [
       (entries) => {
-        const kept = entries.filter((entry) => !isGalleryImage(entry.url));
-        const dropped = entries.length - kept.length;
+        const kept = entries.filter((entry) => !isExcludedFromPrecache(entry.url));
+        // Counted per prefix, not as one total. The gallery figure is the
+        // check that the prefix-stripping above still works — it must say
+        // 31 — and a combined number would hide either count going to zero.
+        const dropped = entries.filter((entry) =>
+          isExcludedFromPrecache(entry.url),
+        );
+        const galleries = dropped.filter((e) =>
+          e.url.replace(/^public/, "").startsWith("/gallery/"),
+        ).length;
         console.log(
-          `[precache] ${kept.length} entries, ${dropped} gallery images excluded`,
+          `[precache] ${kept.length} entries, ${galleries} gallery images and ` +
+            `${dropped.length - galleries} downloads excluded`,
         );
         return { manifest: kept, warnings: [] };
       },
