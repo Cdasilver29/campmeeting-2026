@@ -650,7 +650,34 @@ misspelling, so none was touched:
     goes to the same place. Pr. Elvis Onyango's photograph is on his host
     record and is also the one the programme means on Thursday, where he
     is credited as free text.
-13. **`featured` flags are v2's.** They record which rows were red or bold
+13. **The Day 1 daily sheet disagrees with the near-final programme on two
+    evening credits.** `Newlife Camp Meeting Daily Program 15 August
+    2026.pdf` (Canva, authored 14 August, now shipped as
+    `public/downloads/camp-meeting-day-1.pdf`) is a per-day reprint of the
+    opening Sabbath. It matches the near-final version line for line
+    except in the Evening Service, where:
+
+    - **Benediction, 17:35–17:40, is credited to "Choristers".** The
+      near-final version gives it to **Pr. Kennedy Mfune**, and
+      `program.ts` follows the near-final version. A choir taking the
+      benediction rather than the preacher who has just given the sermon
+      would be unusual, so this looks like a slip in the day sheet — but
+      it is what the day sheet prints.
+    - **Special Item, 16:37–16:45, has an EMPTY presenter cell.** The
+      near-final version credits **Newlife Church Choir**, which is what
+      `program.ts` carries. The day sheet does print "Newlife Church
+      Choir", but loose at the FOOT of the page below the table rather
+      than in the row, so it is not certain the two belong together — it
+      may equally be a standalone credit for the evening.
+
+    **`program.ts` was not changed.** Both readings are the near-final
+    version's, which is the signed-off source; the day sheet is a
+    later-authored reprint and could be either a correction or a
+    typesetting slip. Confirm which document wins before touching either
+    session. If the day sheet is right, the two edits are
+    `sabbath-15-ev-benediction` and `sabbath-15-ev-special-item`.
+
+14. **`featured` flags are v2's.** They record which rows were red or bold
     in the printed programme, and that formatting cannot be read out of
     the extracted text reliably. If a later draft re-marked anything, the
     flags need a pass against the printed page.
