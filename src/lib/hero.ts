@@ -424,10 +424,34 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
     // below. Profiled per row rather than judged by eye, since the whole
     // crop decision turns on where the crowd actually sits:
     //
-    //   desktop  heads first appear y 0.25, the rank is solid and FULL
-    //            WIDTH (x 0.00-0.99) from y 0.32 to 0.79, carpet below
+    //   desktop  heads first appear y 0.22, the rank is solid and FULL
+    //            WIDTH (x 0.00-0.99) from y 0.35 down, carpet below 0.78
     //   mobile   empty wall for the top 42% of the frame, heads from
-    //            y 0.46, rank full width from 0.57 to 0.81
+    //            y 0.42, rank full width from 0.54 to 0.81
+    //
+    // ── RE-DERIVED FOR THE UNGRADED FILES, NOT CARRIED OVER ──────────
+    //
+    // These numbers are not the ones this entry shipped with. The first
+    // export of both crops had a warm peach wash baked in; the pair here
+    // is the same photograph ungraded, and three things moved with it.
+    //
+    // The desktop crop changed shape: 1626x906 became 1629x917, taking
+    // the aspect from 1.7947 to 1.7764 and across the 16:9 line. That
+    // inverts which axis `cover` crops at 1920 and 2560 — the graded file
+    // was wider than the frame and lost width, this one is a hair
+    // narrower and loses 0.08% of its HEIGHT instead. Negligible in
+    // pixels, but it means the vertical value is now read at those two
+    // widths where it previously was not.
+    //
+    // The heads sit 0.03 higher on desktop and 0.04 higher on mobile.
+    //
+    // And the row profile can no longer find the foot of the rank on its
+    // own: ungraded, the blue carpet is dark enough to fall under the
+    // same threshold the black robes do, so the dark-pixel fraction runs
+    // to 1.00 all the way to the bottom edge on both crops. The wash used
+    // to lift the floor clear of it. The rank's foot below was therefore
+    // read off the frame directly rather than from the profile, which is
+    // worth knowing before anybody trusts a re-run of that script here.
     //
     // WIDEST AND NARROWEST, which is the check a group photograph needs
     // and a portrait does not. The rank is at its widest through its
@@ -440,27 +464,29 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
     // simply copied from migori.
     desktop: {
       src: "/hero/newlife-choir.webp",
-      width: 1626,
-      height: 906,
+      width: 1629,
+      height: 917,
       // 50% across, and here that is the derived answer rather than the
       // default. The rank runs x 0.00-0.99, so every window is a window
       // onto the middle of it and the only question is which middle. The
-      // conductor is the frame's own subject and sits at x 0.42-0.55, so
+      // conductor is the frame's own subject and sits at x 0.43-0.54, so
       // centred holds him at every width: the tightest crop is 768x1024,
-      // where the frame is 0.75:1 against a 1.795:1 file and `cover` keeps
-      // 42% of the width — x 0.291-0.709, which still contains him with
+      // where the frame is 0.75:1 against a 1.776:1 file and `cover` keeps
+      // 42% of the width — x 0.289-0.711, which still contains him with
       // four or five singers either side.
       //
-      // 45% down, AND IT IS INERT AT ALL SIX MEASURED VIEWPORTS. Worth
-      // stating rather than leaving to be rediscovered: this file is
-      // 1.795:1, which is WIDER in aspect than every frame the site
-      // measures (1.778:1 at 1920 and 2560, less below), so `cover` scales
-      // by height everywhere and keeps all of it. The value is read only
-      // on a viewport wider than 1.795:1 — an ultrawide 2560x1080 — where
-      // k = 0.757 and 45% puts the window at y 0.124-0.881, holding the
-      // heads at 0.25 and the rank's foot at 0.79 with the carpet going
-      // instead. Biased up rather than centred because the people centre
-      // at y 0.52 and what is below them is floor.
+      // 45% down, and it survives the re-derivation unchanged. At 1024 and
+      // below the file is still wider than the frame, so `cover` scales by
+      // height and the value is inert. At 1920 and 2560 it is now read,
+      // because 1.7764 is a hair NARROWER than 16:9 — but only 0.08% of
+      // the height comes off, which no value could meaningfully place.
+      //
+      // Where it genuinely decides anything is a viewport wider than
+      // 1.776:1: an ultrawide 2560x1080 gives k = 0.75, and 45% puts the
+      // window at y 0.1125-0.8625, holding the heads at 0.22 and the
+      // rank's foot at 0.78 with the carpet going instead. Biased up
+      // rather than centred because the people centre at y 0.50 and what
+      // is below them is floor.
       position: "50% 45%",
     },
     mobile: {
@@ -485,10 +511,15 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
       // The one case that still reads it is a LANDSCAPE phone under 768px,
       // where the desktop crop has not taken over yet: 667x375 gives a
       // 2.02:1 frame and k = 0.35. At 85% the window would be y 0.55-0.90
-      // — under the heads at 0.46 entirely, a crop of torsos and carpet.
+      // — under the heads at 0.42 entirely, a crop of torsos and carpet.
       // 60% puts it at y 0.39-0.74, which holds the heads and most of the
       // rank. It costs nothing at every width that is actually measured
       // and is the only value that is right at the one that is not.
+      //
+      // Unchanged by the regrade, and checked rather than assumed: this
+      // crop kept its exact dimensions, 1587x2245, so the only thing that
+      // moved was the heads rising from y 0.46 to 0.42 — which widens the
+      // margin this value already had rather than eating into it.
       position: "50% 60%",
     },
     // Exact text as supplied by the committee. It names the choir's ROLE

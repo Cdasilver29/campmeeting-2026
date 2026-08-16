@@ -164,8 +164,23 @@ const PHOTOS = [
   // renamed: this table is the one place the supplied name and the output
   // name are tied together, and renaming on disk would break that tie for
   // whoever re-runs this with the same drop.
-  { name: "newlife-choir-mobile", file: "Host Newlife choir mobile.png", viewport: 430 },
-  { name: "newlife-choir", file: "Host Newlife choir desktop.png", viewport: 1920 },
+  //
+  // ── SECOND DROP, AND THE FIRST ONE WAS GRADED ────────────────────────
+  //
+  // These point at "Host choir *.png" and no longer at the "Host Newlife
+  // choir *.png" pair they shipped with. Same photograph, same people,
+  // same framing — but the first export carried a warm peach wash baked
+  // into it, and these are the true colours: a blue and teal backdrop, a
+  // blue carpet, red and gold stoles that are actually red and gold.
+  //
+  // It is not a free swap and was re-measured rather than assumed. The
+  // wash was suppressing the highlights, so the ungraded desktop file
+  // contains a PURE WHITE pixel where the graded one topped out below it,
+  // and the desktop crop also changed shape slightly: 1626x906 became
+  // 1629x917, which moves the aspect from 1.7947 to 1.7764 and across the
+  // 16:9 line. See the note on this entry in src/lib/hero.ts.
+  { name: "newlife-choir-mobile", file: "Host choir mobile.png", viewport: 430 },
+  { name: "newlife-choir", file: "Host choir desktop.png", viewport: 1920 },
 ];
 
 const rows = [];

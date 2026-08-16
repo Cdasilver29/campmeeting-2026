@@ -129,7 +129,7 @@ const SOURCES = [
      drop and these numbers were not updated with them. That affects only
      the upscale column, never the contrast gate, and correcting it is not
      this change's business. */
-  { name: "newlife-choir", w: 1626, h: 906 },
+  { name: "newlife-choir", w: 1629, h: 917 },
 ];
 
 const layerArg = process.argv.indexOf("--layer");
