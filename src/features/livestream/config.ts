@@ -7,11 +7,27 @@ import { eventInfo } from "@/data";
  * - LIVESTREAM_CHANNEL_ID: the channel's UC... id. `live_stream?channel=`
  *   resolves whatever that channel is broadcasting at the moment the
  *   visitor presses play, so the embed needs no per-event edit and no
- *   video id chosen ahead of time. This is the normal path.
+ *   video id chosen ahead of time. THIS IS THE PATH. Live viewing has no
+ *   other mechanism and needs none.
  * - LIVESTREAM_VIDEO_ID: a specific video or stream id. Deliberately
- *   unset. It exists only to pin one recording later (a re-run of a
- *   particular meeting, say) and takes priority over the channel when set,
- *   which would freeze the embed on that video for everyone.
+ *   unset, and it is a global override rather than anything per-day: it
+ *   exists to pin one video for everybody (a re-run of a particular
+ *   meeting, say) and takes priority over the channel when set, which
+ *   freezes the embed on that video until it is unset again.
+ *
+ * ── WHY THERE IS NO PER-DAY LIVE ID ANY MORE ─────────────────────────
+ *
+ * There used to be a `liveStreams` array here holding two ids a day, one
+ * per half of the day, looked up against a boundary derived from
+ * program.ts. It was removed after a mistyped id took a live broadcast
+ * off the site mid-week — a pinned id that did not exist beat the channel
+ * embed, which had been resolving the real stream correctly on its own.
+ *
+ * The lesson taken was not "check the ids harder". It was that a
+ * mechanism which can silently point the player at the wrong video, and
+ * whose failure only shows during the broadcast it exists to serve, is
+ * not worth what it bought — and it bought nothing the channel lookup was
+ * not already delivering. Do not reintroduce it.
  */
 export const LIVESTREAM_VIDEO_ID: string | undefined = undefined;
 
@@ -110,22 +126,26 @@ export interface Recording {
 }
 
 /**
- * ── THE ARCHIVE AND THE LIVE LOOP ARE NOW DIFFERENT VIDEOS ───────────
+ * ── THE ARCHIVE IS THE ONLY PLACE VIDEO IDS LIVE NOW ─────────────────
  *
- * These two started life as the same ids the live player uses, because on
- * the opening day the broadcast and the recording of it were one YouTube
- * object. They are not any more: the church has published edited sermon
- * cuts of the two halves of Sabbath 15, and those are what somebody
- * catching up wants — a sermon with a title, not eight hours of stream.
+ * These are PAST broadcasts, and that is what makes ids the right tool
+ * here where they were the wrong one for live viewing. A recording is
+ * finished: somebody has watched it, checked the id resolves, and given
+ * it a title. It is verifiable before it ships and it does not change
+ * under anybody. The live player, by contrast, was being handed ids for
+ * broadcasts that had not started yet — unverifiable by definition, and
+ * wrong in a way nobody could see until the stream was on.
  *
- * So `recordings` below holds a83sJFk7bB0 and -5LBJ9QHyJw, and
- * `liveStreams` further down holds vPsSmmV-Vps and MT1z3LU1IL4. No id
- * appears in both arrays, and that separation is the point of having two:
- * the live player embeds what is going out now, the archive lists what has
- * been published since. Changing one must not change the other.
+ * So this array stays exactly as it is, and it is not a fallback for
+ * anything: it fills "Earlier this week", and the live player never
+ * reads it.
  *
- * The day is still ASSUMED to be the opening Sabbath, 15th August, day 1.
- * If these belong elsewhere, change `dayId` on both lines and nothing else.
+ * These hold edited sermon cuts of the two halves of Sabbath 15 rather
+ * than the raw stream, which is what somebody catching up wants — a
+ * sermon with a title, not eight hours of broadcast.
+ *
+ * The day is ASSUMED to be the opening Sabbath, 15th August, day 1. If
+ * these belong elsewhere, change `dayId` on both lines and nothing else.
  *
  * Neither id carries a `?si=` share token; both are the bare eleven
  * characters. `-5LBJ9QHyJw` beginning with a hyphen is normal — the id
@@ -134,63 +154,6 @@ export interface Recording {
 export const recordings: Recording[] = [
   { dayId: "sabbath-15", part: "morning", label: "Morning Sermon — You Are on a Subscription Fee", videoId: "a83sJFk7bB0" },
   { dayId: "sabbath-15", part: "afternoon", label: "Afternoon/Evening Sermon — The Game Is Not Over", videoId: "-5LBJ9QHyJw" },
-];
-
-/**
- * The stream that is AIRING, per day and per half-day.
- *
- * ── WHY THIS IS NOT `recordings` ─────────────────────────────────────
- *
- * A recording is a finished upload somebody has watched and can label. A
- * live entry is the broadcast currently going out, typed in before or
- * during it, and it is what the player embeds. The two happen to hold the
- * same eleven characters for the same broadcast — a YouTube stream keeps
- * its id when it stops being live and becomes a video — but they are
- * filled in at different times, by different people, for different parts
- * of the page, and merging them would mean the archive could not list a
- * video until the player was ready to embed it, or the reverse.
- *
- * ── WHY NOT JUST LET YOUTUBE FIND IT ─────────────────────────────────
- *
- * The player used to embed `live_stream?channel=…`, which asks YouTube to
- * resolve whatever the channel is broadcasting. On the opening morning it
- * answered "This video is unavailable" at 08:37 while vPsSmmV-Vps was
- * genuinely live. Whatever the cause, the answer is not to depend on the
- * lookup: a known id embeds a known stream. The channel embed stays as the
- * fallback for a day nobody has typed ids for yet — see
- * components/live-embed.tsx for the full order.
- *
- * ── HOW TO ADD ONE ───────────────────────────────────────────────────
- *
- * Two lines a day, ideally before the morning goes out. Order in this
- * array does not matter; it is looked up by day and part.
- *
- *   { dayId: "sunday-16", part: "morning", videoId: "dQw4w9WgXcQ" },
- *   { dayId: "sunday-16", part: "afternoon", videoId: "aBcDeFgHiJk" },
- *
- * `dayId` and `videoId` follow exactly the rules `recordings` above sets
- * out: a day id from src/data/program.ts, and the 11 characters after
- * `v=` in a watch URL — never the URL, and never the `?si=…` a share
- * button appends. A day with no entry falls back to the channel embed
- * rather than breaking, so a morning that gets away from you degrades to
- * the behaviour the page had before this existed.
- *
- * Which of the two is showing at any moment is decided from the
- * PROGRAMME, not from a fixed clock time — the afternoon starts at 14:00
- * on Sabbath and 13:30 on Sunday. See lib/stream-link.ts.
- */
-export interface LiveStream {
-  /** A day id from src/data/program.ts. */
-  dayId: string;
-  /** Which half of the day this broadcast covers. */
-  part: RecordingPart;
-  /** The 11-character YouTube video id, not a URL. */
-  videoId: string;
-}
-
-export const liveStreams: LiveStream[] = [
-  { dayId: "sabbath-15", part: "morning", videoId: "vPsSmmV-Vps" },
-  { dayId: "sabbath-15", part: "afternoon", videoId: "MT1z3LU1IL4" },
 ];
 
 /** A watch URL from a video id. One place, so the shape cannot drift. */

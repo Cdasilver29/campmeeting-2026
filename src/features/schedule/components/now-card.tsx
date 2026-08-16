@@ -119,21 +119,31 @@ export function NowCard({
   /** `heading` on the home page, `badge` beside a live player. */
   variant?: "heading" | "badge";
   /**
-   * Set only when the current session is actually being broadcast right
-   * now — the caller decides, from the same live-loop lookup the player
-   * uses. Undefined means this card is informational and must not
-   * navigate: an all-block activity, a session outside the broadcast, or
-   * a day whose stream ids nobody has entered.
+   * Where "watch this" goes, when the caller wants the card to offer it
+   * at all. The home page passes /livestream; /livestream itself passes
+   * nothing, because the player is already three inches above the card.
+   *
+   * Passing it is a request, not a guarantee — an all-block activity
+   * refuses it below. It is no longer conditioned on knowing which video
+   * is live, because nothing on this site knows that any more: the
+   * livestream page asks YouTube at the moment somebody presses play.
    */
   watchHref?: string;
 }) {
   const badge = variant === "badge";
   /*
-   * A timed session only. An all-block activity — the Medical Camp, the
+   * A timed session only, and this is now the WHOLE rule rather than one
+   * half of it. An all-block activity — Sunday's Medical Camp, Friday's
    * Sabbath Preparation — is a period of the day rather than something
    * going out on a stream, and it is the case that produced the wrong
-   * button in the first place. Guarded here as well as at the caller so
-   * the rule cannot be lost by a future caller passing the href in.
+   * button in the first place. A link there would send a reader to a
+   * player with nothing on it, which is the same "video unavailable"
+   * confusion arriving by a different road.
+   *
+   * `current.kind` is the same discriminant that chooses which of the two
+   * cards below to draw, so the card that says "this is a session" and
+   * the card that is tappable are decided by one value and cannot drift
+   * apart.
    */
   const live = watchHref && current.kind === "session" ? watchHref : undefined;
 

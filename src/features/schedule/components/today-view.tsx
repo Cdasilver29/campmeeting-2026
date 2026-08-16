@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import { Bookmark, CalendarCheck, CalendarClock } from "lucide-react";
-import {
-  LIVESTREAM_PATH,
-  liveVideoIdAt,
-} from "@/features/livestream/lib/stream-link";
+import { LIVESTREAM_PATH } from "@/features/livestream/lib/stream-link";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { eventInfo, getDayByDate, program, type FlatSession } from "@/data";
@@ -310,31 +307,27 @@ function DuringEvent({ state, saved }: { state: TodayState; saved?: FlatSession 
     <>
       {state.current ? (
         /*
-         * ── THE CARD IS THE LINK, AND ONLY WHEN THERE IS A STREAM ─────
+         * ── THE CARD IS THE LINK WHENEVER A REAL SESSION IS ON ────────
          *
          * This used to be a separate "Watch this live" button under the
          * card, rendered whatever was on. On a Sunday morning that put it
          * under the Medical Camp, which is an untimed all-block activity
          * nobody is broadcasting — a control promising a stream that did
-         * not exist. Sending someone to a page with nothing playing is
-         * worse than the repetition was.
+         * not exist.
          *
-         * `currentLiveVideoId` is the lookup the PLAYER itself uses: it
-         * asks whether today's dayId has an id entered for the half of
-         * the day the Nairobi clock is in. One source, so the card and
-         * the player can never disagree about whether anything is live.
+         * Between those two states there was a third: the href was also
+         * conditioned on a per-day video id being present in config, so
+         * the card went dead during real, broadcast sessions whenever
+         * nobody had typed that day's ids in. That whole id table is gone
+         * — see livestream/config.ts — and with it the idea that this
+         * page can know which video is live. It cannot, and it does not
+         * need to: /livestream asks YouTube at the moment of the press.
          *
-         * Undefined means no link and no affordance — see NowCard, which
-         * also refuses the href for an all-block activity.
+         * So the only question left is whether the thing on now is a real
+         * timed session, and NowCard answers it from `current.kind`, the
+         * same discriminant it already uses to choose which card to draw.
          */
-        <NowCard
-          current={state.current}
-          watchHref={
-            liveVideoIdAt(state.now.date, state.now.time)
-              ? LIVESTREAM_PATH
-              : undefined
-          }
-        />
+        <NowCard current={state.current} watchHref={LIVESTREAM_PATH} />
       ) : (
         <BetweenCard next={state.next} />
       )}

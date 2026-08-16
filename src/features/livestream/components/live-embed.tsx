@@ -1,91 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ExternalLink, Play } from "lucide-react";
-import { useNow } from "@/features/schedule/use-now";
 import {
   LIVESTREAM_CHANNEL_ID,
   LIVESTREAM_CHANNEL_URL,
   LIVESTREAM_VIDEO_ID,
-  PART_LABEL,
 } from "../config";
-import { currentLiveVideoId, currentSlot } from "../lib/stream-link";
 
 /**
  * Click-to-load: no iframe, and no request to any YouTube host, until the
  * play control is activated. A visit before the event or on mobile data
  * during it costs nothing until the visitor chooses to spend it. That is
  * why this component exists in this shape and none of what follows
- * weakens it — every branch below decides what the src WOULD be; the
- * iframe is still only mounted once `activated` is true.
+ * weakens it — the branch below decides what the src WOULD be; the iframe
+ * is still only mounted once `activated` is true.
  *
- * ── WHICH STREAM, AND WHY IT IS NOT THE CHANNEL LOOKUP ───────────────
+ * ── WHICH STREAM: THE CHANNEL DECIDES, NOT THIS SITE ─────────────────
  *
  * The src is built in this order:
  *
- *   1. today's own id for the half of the day it is now, from
- *      `liveStreams` in ../config
- *   2. LIVESTREAM_VIDEO_ID, if one has been pinned
- *   3. the channel auto-detect embed
- *   4. no embed at all: the link-out to the channel
+ *   1. LIVESTREAM_VIDEO_ID, if one has been pinned globally
+ *   2. the channel auto-detect embed — the normal path
+ *   3. no embed at all: the link-out to the channel
  *
- * 1 is new and is the normal path during the week. The channel embed at 3
- * asks YouTube to work out what is live, and on the opening morning it
- * answered "This video is unavailable" while a broadcast was genuinely
- * going out. It stays as the fallback for a day whose ids nobody has
- * typed in yet — which is exactly the state every day is in until
- * somebody adds two lines — but it is no longer what the page depends on.
+ * 2 is what serves every live viewer. `live_stream?channel=` asks YouTube
+ * what this channel is broadcasting at the moment the visitor presses
+ * play, so the answer is resolved fresh, per visitor, per press — it
+ * cannot go stale and there is nothing to type in before a service.
  *
- * ── THE CUTOVER, AND WHAT HAPPENS TO A PLAYING VIDEO ─────────────────
+ * There was briefly a step above these: a per-day, per-half-day id looked
+ * up from a hand-maintained table. It is gone. One wrong id in that table
+ * took a live broadcast off the site, because pinning any id — including
+ * one pointing at nothing — beat the channel lookup that was working. A
+ * mechanism that fails silently, and only while the thing it serves is
+ * happening, is worse than the lookup it was added to protect against.
  *
- * `useNow()` is the schedule feature's own 30-second clock, the same one
- * the Today view and the "Watch live" button use; no second timer
- * mechanism is introduced. So somebody who opens this at 11am and leaves
- * the tab open is not stuck on the morning stream after the afternoon
- * starts.
- *
- * What the cutover does to an ALREADY PLAYING video is a decision, and it
- * is this: the player is closed and the poster comes back, so the visitor
- * presses play once more and gets the afternoon stream. It does not swap
- * the src underneath a playing iframe. Changing an iframe's src reloads
- * it, which would interrupt playback without warning and, worse, would do
- * it to somebody who had deliberately pressed play on the morning stream
- * to catch up on it. Returning to the poster is visible, undoes nothing,
- * and costs one press — which is the trade the brief allowed for.
+ * That original complaint is not forgotten: on the opening morning the
+ * channel embed did once answer "This video is unavailable" while a
+ * broadcast was going out. The answer to that is the link-out below and
+ * the archive further down the page, both of which reach the stream
+ * without this site having to guess at an id.
  */
 export function LiveEmbed({ label }: { label: string }) {
   const [activated, setActivated] = useState(false);
-  const now = useNow();
   const embeddable = Boolean(LIVESTREAM_VIDEO_ID || LIVESTREAM_CHANNEL_ID);
-
-  /*
-   * Undefined until mount, and undefined outside the week. Both mean "no
-   * day-specific id", which falls through to the pinned id or the channel
-   * — the behaviour this page had before today.
-   */
-  const slot = now ? currentSlot(now) : undefined;
-  const todayVideoId = now ? currentLiveVideoId(now) : undefined;
-  const part = slot?.part;
-
-  /*
-   * The cutover. Close the player when the half of the day changes under
-   * a visitor who already pressed play; the poster returns carrying the
-   * new part's id. Keyed on the part alone rather than on the video id,
-   * so re-typing today's id in config does not eject anybody mid-sermon.
-   */
-  const [activatedPart, setActivatedPart] = useState<typeof part>(undefined);
-  useEffect(() => {
-    if (activated && activatedPart && part && part !== activatedPart) {
-      setActivated(false);
-      setActivatedPart(undefined);
-    }
-  }, [activated, activatedPart, part]);
-
-  /* "Camp Meeting 2026 livestream, Morning" once the clock has resolved.
-     It names the iframe and the play button, so a screen reader hears
-     which half of the day is about to load rather than a title that is
-     the same all week. */
-  const fullLabel = part ? `${label}, ${PART_LABEL[part]}` : label;
 
   if (!embeddable) {
     return (
@@ -109,16 +68,15 @@ export function LiveEmbed({ label }: { label: string }) {
 
   if (activated) {
     // The priority order from the note above, in one expression.
-    const pinned = todayVideoId ?? LIVESTREAM_VIDEO_ID;
-    const src = pinned
-      ? `https://www.youtube-nocookie.com/embed/${pinned}?autoplay=1`
+    const src = LIVESTREAM_VIDEO_ID
+      ? `https://www.youtube-nocookie.com/embed/${LIVESTREAM_VIDEO_ID}?autoplay=1`
       : `https://www.youtube-nocookie.com/embed/live_stream?channel=${LIVESTREAM_CHANNEL_ID}&autoplay=1`;
 
     return (
       <div className="aspect-video w-full overflow-hidden rounded-card ring-1 ring-line">
         <iframe
           src={src}
-          title={fullLabel}
+          title={label}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           className="h-full w-full"
@@ -162,13 +120,8 @@ export function LiveEmbed({ label }: { label: string }) {
     <>
       <button
       type="button"
-      onClick={() => {
-        // Remember which half of the day was pressed, so the effect above
-        // can tell a real cutover from an ordinary re-render.
-        setActivatedPart(part);
-        setActivated(true);
-      }}
-      aria-label={`Load the livestream video from YouTube: ${fullLabel}`}
+      onClick={() => setActivated(true)}
+      aria-label={`Load the livestream video from YouTube: ${label}`}
       className="group flex aspect-video w-full items-center justify-center rounded-card bg-accent-700 ring-1 ring-line transition-[background-color,box-shadow] duration-fast ease-out-soft hover:bg-accent-500 active:ring-2 active:ring-accent-300/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
     >
       <span className="flex size-16 items-center justify-center rounded-full bg-white text-accent-700 transition-transform duration-fast ease-out-soft group-hover:scale-105 group-active:scale-100">
@@ -179,11 +132,10 @@ export function LiveEmbed({ label }: { label: string }) {
       {/* Click-to-load is a JavaScript mechanism, so with scripting off the
           poster above is a button that does nothing. It always was. One
           link fixes that, and it costs nothing to anyone else because
-          <noscript> is inert when scripts run. It goes to the channel
-          rather than to today's video id: this is server-rendered markup
-          on a statically generated page, so the id it could name is the one
-          that was true at BUILD time, and a stale video id is worse than a
-          channel that is always right. */}
+          <noscript> is inert when scripts run. The channel URL is the
+          right destination with or without scripting: it is what the
+          embed resolves to anyway, worked out by YouTube rather than
+          named by this page. */}
       <noscript>
         <a
           href={LIVESTREAM_CHANNEL_URL}
