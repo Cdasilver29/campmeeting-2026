@@ -77,8 +77,8 @@ export default async function SpeakerPage({
           with a portrait, a role and a programme does not need a
           sentence apologising for what it has not got; see the
           no-sessions note below for the one absence that does have to be
-          stated. Eight of the ten profiles have a biography today; Eld.
-          Ken Ochuka and Allan Okoth do not. */}
+          stated. Ten of the eleven profiles have a biography today; Eld.
+          Ken Ochuka is the only one who does not. */}
       {speaker.bio ? (
         <Reveal>
           <section
@@ -105,9 +105,12 @@ export default async function SpeakerPage({
 
       {total === 0 ? (
         /*
-         * THREE SPEAKERS ARE IN THIS STATE TODAY and it is not an error.
+         * FOUR SPEAKERS ARE IN THIS STATE TODAY and it is not an error.
          * janet-oyende-kariuki, john-clement and barrack-bosire are
-         * credited in no session, in v2 and again in v3. The wording has
+         * credited in no session, in v2 and again in v3, and
+         * matthew-marion-barake joined them: the programme's five Family
+         * Life slots name no presenter, so which is theirs is unknown
+         * rather than unlisted. The wording has
          * to say that the sessions are coming, not that the page is
          * broken or that the person has nothing to do: "No sessions are
          * listed" reads as the latter.

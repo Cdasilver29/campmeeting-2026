@@ -62,8 +62,8 @@ export default function SpeakersPage() {
           column count, and the card has since been sized for it — see
           person-card.ts, where every value is derived from the 102px of
           content two cards leave at 320. What changed the balance is
-          that there are ten speakers now rather than four, plus five
-          hosts, and fifteen single-file cards is a scroll nobody reads
+          that there are eleven speakers now rather than four, plus five
+          hosts, and sixteen single-file cards is a scroll nobody reads
           to the end of.
 
           `presenterSpeakers`, not `speakers`: Eld. Ken Ochuka belongs to

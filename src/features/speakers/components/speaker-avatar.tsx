@@ -15,8 +15,8 @@ type Sitter = Pick<Speaker, "name" | "image" | "imagePosition">;
 /**
  * The monogram, and why it is still here.
  *
- * Nobody renders as one today. All eight speakers have a photograph now
- * that Eld. Ken Ochuka's has arrived, and so do all five hosts.
+ * Nobody renders as one today. All eleven speakers have a photograph, and
+ * so do all five hosts.
  *
  * It is not dead code waiting to be deleted. It is the state this list is
  * in whenever it GROWS: the committee has added a name before sending the
@@ -133,11 +133,11 @@ export function SpeakerAvatar({
  * right once the photographs arrived and these pages had a picture and
  * nothing else on them about the person.
  *
- * Eight of the ten now carry a biography below the band as well, so the
+ * Ten of the eleven now carry a biography below the band as well, so the
  * portrait is no longer the only thing on the page that is about its
  * subject. It stays this size anyway: at 160px it sets the top of the
- * page, and shrinking it back to a circle would make the two pages that
- * still have no biography look like the other eight, minus something.
+ * page, and shrinking it back to a circle would make the one page that
+ * still has no biography look like the other ten, minus something.
  */
 export function SpeakerPortrait({
   speaker,

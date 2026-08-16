@@ -121,6 +121,28 @@ export interface Speaker {
   name: string;
   /** honorific as printed: Pr. | Eld. | Dr. */
   title?: string;
+  /**
+   * The individual people this ONE record stands for, when it stands for
+   * more than one.
+   *
+   * Matthew and Marion Barake are a husband-and-wife team who present
+   * together, were supplied as one biography under one heading, and were
+   * photographed in one frame. Splitting them into two speaker records
+   * would give the site two portraits it does not have, two biographies
+   * nobody wrote, and two presenter chips on a session that is one
+   * couple presenting once.
+   *
+   * So `name` carries the joint display name and everything that draws a
+   * speaker — the card, the page header, the presenter chip, the avatar
+   * — needs nothing new and reads it as it always has. This field exists
+   * for the one consumer that CANNOT accept a joint name: schema.org's
+   * `Person`, which is one human being, and which would otherwise be
+   * emitted with two people's names in it the moment the committee links
+   * them to a session. See lib/structured-data.ts.
+   *
+   * Omitted means the record is one person, which is every other record.
+   */
+  people?: string[];
   role?: string;
   /** Cloudinary public id or /images path — fill in when photos are available */
   image?: string;

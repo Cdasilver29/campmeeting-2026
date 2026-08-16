@@ -523,7 +523,7 @@ silently resolved; each is listed with the choice made and why.**
 
 ## The biographies, and every character that changed
 
-Eight were supplied. They are the speakers' own words. The brief was to
+Ten were supplied. They are the speakers' own words. The brief was to
 correct clear typos and normalise obvious spacing and to change nothing
 else — not to rewrite anyone's voice, not to convert first person to
 third, not to shorten. **This is the complete list of edits**, so the
@@ -539,6 +539,8 @@ committee can check each one against what they sent.
 | Janet Oyende-Kariuki | 3 form labels dropped | "FULL NAME:", "CHURCH OF SERVICE:", "Bio :" |
 | Kennedy Mfune | 2 spellings, 5 spacing | decardes → decades; were → where; mfune → Mfune; four doubled/missing spaces; "Rwanda ,am" → "Rwanda, am" |
 | Barrack Bosire | nothing but trailing spaces | — |
+| Allan Okoth | 1 heading dropped, 2 characters | "Biodata - Allan Okoth" removed; non-breaking hyphen (U+2011) in "church‑based" → "-"; curly apostrophe in "year's" → "'" |
+| Matthew and Marion Barake | 1 label merged, 1 punctuation | "Their favourite verse is;" joined to the verse it introduces, semicolon → colon |
 
 **Flagged rather than fixed.** Each is a phrasing question, not a
 misspelling, so none was touched:
@@ -573,6 +575,17 @@ misspelling, so none was touched:
   Church, was on the supplied form but `Speaker` has no field for it. It
   is recorded in a comment in `event.ts` rather than written into a
   sentence she did not write. Add a field if it should show.
+- **Allan Okoth**: "his spiritual journey and his passion for mentorship
+  has grown" takes a singular verb after a compound subject, and
+  "programs" is spelled US-style in a file that spells it "programme"
+  everywhere else. Neither is a misspelling.
+- **The Barakes' middle paragraph is missing punctuation on both sides of
+  a list**: "the topics that shape a whole life careers, finance, and
+  marriage blending practical wisdom with biblical truth". Something is
+  wanted after "whole life" and after "marriage", but supplying it would
+  be rewriting the sentence rather than correcting it — the same
+  reasoning as Kennedy Mfune's. Also left: the missing comma before "but
+  their hearts beat loudest for the youth".
 
 ## Issues to confirm with the committee
 
@@ -611,6 +624,28 @@ misspelling, so none was touched:
     the gap.** Janet Oyende-Kariuki and Pr. John Clement are in the same
     position for Ambassadors; note the Ambassadors Choir sings on Thursday
     but no person is credited with the ministry.
+
+    **Matthew and Marion Barake are the fourth, and theirs is a narrower
+    question than the other three.** The programme has FIVE slots they
+    could hold and names them all the same way:
+
+    | Session id | Day | Time | Credited to |
+    | --- | --- | --- | --- |
+    | `sunday-16-family-life` | Sunday 16th | 15:00–16:20 | Various Divisions and Speakers |
+    | `monday-17-family-life` | Monday 17th | 15:00–16:20 | Various Divisions and Speakers |
+    | `tuesday-18-family-life` | Tuesday 18th | 15:00–16:20 | Various Divisions and Speakers |
+    | `wednesday-19-family-life` | Wednesday 19th | 15:00–16:20 | Various Divisions and Speakers |
+    | `thursday-20-family-life` | Thursday 20th | 15:00–16:20 | Various Divisions and Speakers |
+
+    All five are "Family Life Sessions", all five carry
+    `ministry: "family-life"`, all five are `featured`, and not one names
+    a presenter. Their supplied biography and photograph name no day. So
+    **nothing was linked**: putting a named couple at 15:00 on a
+    particular afternoon on the strength of a guess would be worse than
+    the placeholder that is there now. Tell us which day or days are
+    theirs and it is one `presenterIds` entry per occurrence. The
+    placeholder credit stays alongside it — "Various Divisions and
+    Speakers" says the slot holds more than them.
 9. **The closing Sabbath's Scripture Reading has no reader.** It was
     Pr. Kenneth Ayuo's and the committee has taken every session off him
     but the Bible Studies. Two minutes on the 22nd, uncredited. Who
@@ -622,14 +657,43 @@ misspelling, so none was touched:
     programme cannot click through. He does appear in the hosts section as
     an Associate Pastor, with a photograph. Pr. Polycarp Nyangau is in the
     same position, with the closing Sabbath's pastoral prayer.
-11. **Every profile now carries a photograph.** Pr. Elkanah Mose and Pr.
-    Kenneth Ayuo were the last two rendering as initials monograms and
-    both have arrived, along with a replacement for Eld. Omondi Oyoo —
-    see below. What is still owed is BIOGRAPHIES: Eld. Ken Ochuka and
-    Allan Okoth have none, and Allan Okoth's is the emptiest page
-    relative to how much of the programme he carries, the Children's
-    Corner on all seven days that have one.
-12. **The five welcome letters are published; five host BIOGRAPHIES are
+11. **Every profile carries a photograph, and all but one carry a
+    biography.** Pr. Elkanah Mose and Pr. Kenneth Ayuo were the last two
+    rendering as initials monograms and both have arrived, along with a
+    replacement for Eld. Omondi Oyoo — see below. Allan Okoth's
+    biography has since arrived too, which closes what was the emptiest
+    page on the site relative to how much of the programme its subject
+    carries. **Eld. Ken Ochuka is now the only speaker with no
+    biography**, and he is the Camp Meeting Chair and one of the two
+    people who open the opening Sabbath.
+12. **"Mathew" or "Matthew" Barake.** The supplied file heads them
+    "Mr & Mrs / Mathew Barake" with one t, and the photograph was sent
+    under the same spelling. The biography printed directly underneath
+    that heading then spells him **Matthew**, three times, in every
+    sentence he is named in.
+
+    The data uses **Matthew**, on the rule that already settled Janet
+    Oyende-Kariuki's surname: where a caption and a person's own
+    biography disagree about that person's name, the biography wins. It
+    is also three mentions to one. But hers was answered by a line
+    reading "FULL NAME:" and this is an inference from prose, so it is
+    **not settled** — say the word and the id
+    (`matthew-marion-barake`), the portrait file and the name migrate
+    together, the way `preskillah-munda` did.
+
+    Marion's spelling is not in question; she appears only in the
+    biography, twice, and only as Marion.
+13. **The Barakes are one record, not two.** They present together, were
+    supplied as one biography under one heading, and were photographed
+    in one frame, so `speakers` holds them once with
+    `name: "Matthew and Marion Barake"` and a `people` list naming them
+    individually. Everything that draws a speaker reads the joint name
+    as it always has; `people` exists for schema.org's `Person`, which
+    is one human being and would otherwise carry two names the moment
+    they are linked to a session. If the committee wants them listed
+    separately — two cards, two pages — that needs a second photograph
+    and a second biography first.
+14. **The five welcome letters are published; five host BIOGRAPHIES are
     still owed.** All five cards in the hosts and elders section on
     `/speakers` — Dr. Gerald Mochoge, Pr. Elvis Onyango, Pr. Polycarp
     Nyangau, Eld. Ken Ochuka, Eld. Omondi Oyoo — carry a portrait, cut
@@ -650,7 +714,7 @@ misspelling, so none was touched:
     goes to the same place. Pr. Elvis Onyango's photograph is on his host
     record and is also the one the programme means on Thursday, where he
     is credited as free text.
-13. **The Day 1 daily sheet disagrees with the near-final programme on two
+15. **The Day 1 daily sheet disagrees with the near-final programme on two
     evening credits.** `Newlife Camp Meeting Daily Program 15 August
     2026.pdf` (Canva, authored 14 August, now shipped as
     `public/downloads/camp-meeting-day-1.pdf`) is a per-day reprint of the
@@ -677,7 +741,7 @@ misspelling, so none was touched:
     session. If the day sheet is right, the two edits are
     `sabbath-15-ev-benediction` and `sabbath-15-ev-special-item`.
 
-14. **`featured` flags are v2's.** They record which rows were red or bold
+16. **`featured` flags are v2's.** They record which rows were red or bold
     in the printed programme, and that formatting cannot be read out of
     the extracted text reliably. If a later draft re-marked anything, the
     flags need a pass against the printed page.
@@ -685,20 +749,21 @@ misspelling, so none was touched:
 Open items are renumbered when one is resolved. Refer to them by title,
 not number.
 
-## The three later portraits
+## The later portraits
 
-Three files arrived after the speaker and host batches, and they are a
-third KIND of source rather than more of either — clean cut-outs on the
+Four files have arrived after the speaker and host batches, and they are
+a third KIND of source rather than more of either — clean cut-outs on the
 poster's plum ground with **no caption burnt into them**. So they are cut
 by `tools/assets/portrait-photos.mjs` rather than by
 `speaker-photos.mjs`, whose whole crop model is one number meaning "where
 this poster's caption begins".
 
-| id | source | crop | output |
-| --- | --- | --- | --- |
-| `kenneth-ayuo` | 1254x1254, 1.6 MB | 725x966 at 352,100 | 540x720, 29.2 KB |
-| `elkanah-mose` | 1122x1402, 2.0 MB | 842x1122 at 140,140 | 540x720, 79.6 KB |
-| `omondi-oyoo` | 1122x1402, 1.6 MB | 842x1122 at 162,28 | 540x720, 25.6 KB |
+| id | source | crop | output | object-position |
+| --- | --- | --- | --- | --- |
+| `kenneth-ayuo` | 1254x1254, 1.6 MB | 725x966 at 352,100 | 540x720, 29.2 KB | 50% 0% |
+| `elkanah-mose` | 1122x1402, 2.0 MB | 842x1122 at 140,140 | 540x720, 79.6 KB | 50% 0% |
+| `omondi-oyoo` | 1122x1402, 1.6 MB | 842x1122 at 162,28 | 540x720, 25.6 KB | 50% 0% |
+| `matthew-marion-barake` | 1023x1537, 2.0 MB | 1022x1363 at 1,31 | 540x720, 68.8 KB | 50% 0% |
 
 - **Eld. Omondi Oyoo's REPLACES a file.** The path did not change; what
   is behind it did. The old crop came from the only landscape source in
@@ -715,6 +780,24 @@ this poster's caption begins".
   he is shot at three-quarter length where they are chest-up, so an equal
   head position left a third of his window as empty plum. The reasoning
   is in the script.
+- **The Barakes' is the only two-person source any of these scripts has
+  had**, and it constrains the crop rather than complicating it. The
+  source is 0.67:1, taller than 3:4, so the window is a crop of the
+  HEIGHT — and it has to keep the FULL width, because he stands at
+  x 0.05 and her dress reaches x 0.98 and any narrowing cuts one of them
+  out of the picture. That leaves 173px of vertical slack as the only
+  real choice, and `top: 0.02` spends it putting the pair of faces at
+  0.153-0.490 of the window, the same register the other three sit in.
+
+  **Both faces have to survive twice**, once in the 3:4 portrait and
+  again in the square the round card avatar takes out of it. The avatar
+  keeps a 1023-square from a 1364-tall window, so `object-position: 50%
+  0%` chooses among 341px of travel; 0% puts the faces at 209-669px
+  inside a 0-1023 square, leaving 209px above his hat and 354px below
+  her chin. Both heads are whole in both renderings — checked against
+  the script's `--preview` output, which is what that flag is for. No
+  positive value improves the balance, because the pair sits high in the
+  frame; above about 35 the square starts closing on the hat brim.
 
 ## About the supplied speaker artwork
 

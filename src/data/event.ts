@@ -157,14 +157,21 @@ export const sundownByDate: Record<string, string> = {
  *
  * `imagePosition` is per photo and is not decoration. See types.ts.
  *
- * ── ABOUT THE THREE SPEAKERS WITH NO SESSIONS ────────────────────────
+ * ── ABOUT THE FOUR SPEAKERS WITH NO SESSIONS ─────────────────────────
  *
- * janet-oyende-kariuki, john-clement and barrack-bosire appear in no
- * session in program.ts. Draft Program v3 credits a presenter on nearly
- * every slot and still names none of them, so this is now a programme
- * that has been revised twice without placing them rather than one that
- * simply predates their appointment. isaac-oenga was the fourth and v3
- * gives him the morning devotion on all six days that have one.
+ * janet-oyende-kariuki, john-clement, barrack-bosire and
+ * matthew-marion-barake appear in no session in program.ts. For the
+ * first three, Draft Program v3 credits a presenter on nearly every slot
+ * and still names none of them, so this is a programme that has been
+ * revised twice without placing them rather than one that simply
+ * predates their appointment. isaac-oenga was the fourth of that set and
+ * v3 gives him the morning devotion on all six days that have one.
+ *
+ * The Barakes are a different case and a narrower one. The programme has
+ * five Family Life slots they could hold, Sunday through Thursday, and
+ * credits all five to "Various Divisions and Speakers"; what nobody has
+ * said is WHICH. That is a question for the committee, not a gap to be
+ * closed by picking one.
  *
  * The sessions are owed by the committee. Nothing here invents one, and
  * no ministry tag was attached to make the pages look fuller than the
@@ -220,9 +227,23 @@ export const speakers: Speaker[] = [
     role: "Children's Corner",
     image: "/speakers/allan-okoth.webp",
     imagePosition: "50% 19%",
-    // No biography supplied. He carries the Children's Corner on all
-    // seven days that have one, so this is the emptiest page relative to
-    // how much of the programme its subject is actually doing.
+    // Supplied under the heading "Biodata - Allan Okoth", which is
+    // dropped: the page is already headed with his name, the same way
+    // Pr. Clement's signature is dropped below.
+    //
+    // Corrected: a non-breaking hyphen (U+2011) in "church-based" and a
+    // curly apostrophe in "year's", both normalised to the plain
+    // characters every other biography here uses. Nothing else.
+    //
+    // Left alone: "his spiritual journey and his passion for mentorship
+    // has grown", where a compound subject takes a singular verb, and
+    // "programs" in a file that spells it "programme" elsewhere. Neither
+    // is a misspelling and correcting either would be editing his voice.
+    // DATA-NOTES.
+    bio: [
+      "Allan Okoth is a committed member of Ngong Hills Central SDA Church, where his spiritual journey and his passion for mentorship has grown. For over a decade, he has actively been engaged in teaching and guiding children and teens through church-based outreach programs in primary and secondary schools. He has a keen interest in making profound biblical truths simple, relatable, and accessible to young minds, inspiring them to embrace faith and live with purpose.",
+      "At this year's camp meeting, Allan brings the same energy, vision, and dedication to nurturing the next generation in Christ, with a heart to see young people strengthened, united, and empowered in their walk with God.",
+    ],
   },
   {
     id: "preskilla-munda",
@@ -417,6 +438,87 @@ export const speakers: Speaker[] = [
       "Pr. Kenneth Ayuo is a member of JKIA Central Seventh-day Adventist Church, an employee of SNKF, an associate pastor at Rongai West District, a husband, and a father.",
       "This Camp Meeting will present a cosmic view of the Gospel as the revelation of God's character and government within the framework of the 2026 Camp Meeting theme: OBEY AND LIVE, Disobey and Perish. The Choice is Yours.",
       "He will explore biblical obedience, not as mere outward performance, but as a humble willingness to listen to and trust God. Come expecting a warm communion with our infinitely powerful yet deeply personal, friendly, and gracious God. He never disappoints those who put their trust in Him.",
+    ],
+  },
+  /*
+   * ── THE ONE RECORD THAT IS TWO PEOPLE ────────────────────────────────
+   *
+   * Supplied as ONE biography, under one heading, with ONE photograph of
+   * the pair, and they present together. So this is one record with a
+   * joint `name` and a `people` list, not two records that would each
+   * have to borrow the other's half of the picture. The reasoning is on
+   * the field in types.ts; the only consumer that needs the split is the
+   * schema.org `Person` in lib/structured-data.ts.
+   *
+   * ── MATHEW OR MATTHEW: THE COMMITTEE HAS TO SETTLE THIS ──────────────
+   *
+   * The supplied file heads them "Mr & Mrs / Mathew Barake" with one t,
+   * and the photograph is filed under the same spelling. The biography
+   * UNDERNEATH that heading then spells him "Matthew" three times, in
+   * every sentence he is named in.
+   *
+   * "Matthew" is used here on the rule this file already followed for
+   * Janet Oyende-Kariuki: where a caption and a person's own biography
+   * disagree about that person's name, the biography wins. It is also
+   * three mentions to one. It is NOT settled the way hers is, because
+   * hers was answered by a line reading "FULL NAME:" and this is an
+   * inference from prose. If the committee says Mathew, the id and the
+   * portrait file migrate with the name, the way preskilla-munda did.
+   * DATA-NOTES.
+   *
+   * ── NO SESSION, DELIBERATELY ─────────────────────────────────────────
+   *
+   * The programme carries five "Family Life Sessions" blocks, Sunday
+   * through Thursday, 15:00-16:20, and every one of them is credited to
+   * "Various Divisions and Speakers" with no named presenter. Their
+   * biography and photograph name no day, so which of the five is theirs
+   * is a question this repository cannot answer, and attaching them to a
+   * guess would put a named couple at a specific hour on a specific
+   * afternoon on the strength of nothing. They are the fourth profile in
+   * the "sessions to be confirmed" state; see the note above `speakers`.
+   */
+  {
+    id: "matthew-marion-barake",
+    name: "Matthew and Marion Barake",
+    // No `title`. It holds an honorific — Pr., Eld., Dr. — and is printed
+    // in front of `name` by speakerLabel. "Mr. & Mrs." in it would set
+    // "Mr. & Mrs. Matthew and Marion Barake", and the sheet's own
+    // "Mr & Mrs Mathew Barake" names only one of the two people in the
+    // photograph. The joint name names both, which is the point of the
+    // record.
+    people: ["Matthew Barake", "Marion Barake"],
+    // The ministry, then who they serve, which is what the sheet's third
+    // line ("young Adults") says and the one fact about them that is not
+    // in the biography. No new field for it: `role` already carries an
+    // audience rather than a ministry on two records here — "Teens" and
+    // "Ambassadors" — so this is the field's existing job, and adding an
+    // `audience` for a single entry would be inventing a column.
+    role: "Family Life, Young Adults",
+    // 1023x1537, the only two-person source any of the crop scripts have
+    // had. Full width is kept because narrowing the window cuts one of
+    // them out of it; see tools/assets/portrait-photos.mjs for the crop
+    // and for why the avatar's square starts at the top.
+    image: "/speakers/matthew-marion-barake.webp",
+    imagePosition: "50% 0%",
+    // Corrected: one character. "Their favourite verse is;" is joined to
+    // the verse it introduces and its semicolon made a colon — a
+    // semicolon cannot introduce a quotation, and the source's own next
+    // line uses a colon after the reference. Joining it is what was done
+    // with Pr. Clement's "Message:" label, and for the same reason: a
+    // paragraph reading "Their favourite verse is" and nothing else is
+    // not a paragraph.
+    //
+    // Left alone, and both are flagged in DATA-NOTES rather than
+    // smoothed out: "a whole life careers, finance, and marriage
+    // blending practical wisdom", which is missing the punctuation on
+    // both sides of the list and would have to be rewritten rather than
+    // corrected; and the missing comma before "but their hearts beat
+    // loudest for the youth".
+    bio: [
+      "Matthew and Marion Barake are a husband-and-wife team, born-again Christians, and servants of God with a shared passion for raising up the next generation. By profession, Matthew is a strategy professional and Marion is a tax and finance expert but their hearts beat loudest for the youth.",
+      "Together, they founded Career254, a career consulting practice dedicated to equipping young people for the job market and helping them walk confidently into their God-given purpose. They love engaging youth on the topics that shape a whole life careers, finance, and marriage blending practical wisdom with biblical truth.",
+      "Matthew and Marion are proud parents of two girls, and they bring the same intentionality they invest in their own home into every young life they mentor. It's their joy to walk alongside this generation, helping them build lives of faith, purpose, and excellence.",
+      "Their favourite verse is: Jeremiah 29:11: \"For I know the plans I have for you,\" declares the LORD, \"plans to prosper you and not to harm you, plans to give you hope and a future.\"",
     ],
   },
 ];

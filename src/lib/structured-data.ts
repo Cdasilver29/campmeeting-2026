@@ -124,11 +124,24 @@ function performers(session: Session): JsonLd[] {
   const people = (session.presenterIds ?? [])
     .map((id) => speakerById[id])
     .filter((speaker) => speaker !== undefined)
-    .map((speaker) => ({
-      "@type": "Person",
-      name: speaker.title ? `${speaker.title} ${speaker.name}` : speaker.name,
-      url: absoluteUrl(`/speakers/${speaker.id}`),
-    }));
+    .flatMap((speaker) => {
+      const url = absoluteUrl(`/speakers/${speaker.id}`);
+      // A joint record is two human beings and `Person` is one, so it
+      // becomes two of them pointing at the shared page rather than one
+      // whose name is two names. `speakerLabel` is not used here for the
+      // same reason it is used everywhere else: the honorific belongs to
+      // the display name, and a joint record has none.
+      if (speaker.people) {
+        return speaker.people.map((name) => ({ "@type": "Person", name, url }));
+      }
+      return [
+        {
+          "@type": "Person",
+          name: speaker.title ? `${speaker.title} ${speaker.name}` : speaker.name,
+          url,
+        },
+      ];
+    });
 
   const groups = (session.presentedBy ?? []).map((name) => ({
     "@type": "PerformingGroup",

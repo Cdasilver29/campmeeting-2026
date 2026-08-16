@@ -43,7 +43,7 @@ export function SpeakerCard({
           however long the names above it run.
 
           A zero count says "to be confirmed" rather than rendering
-          nothing. Three of the ten speakers are in that state today — the
+          nothing. Four of the eleven speakers are in that state today — the
           committee owes their sessions, see DATA-NOTES — and a card that
           simply stops after the role reads as a card that is still
           loading, or as a data slip. The whole point of saying it is that

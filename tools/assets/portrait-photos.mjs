@@ -128,6 +128,35 @@ const PORTRAITS = [
     cx: 0.52,
     posY: 0,
   },
+  {
+    id: "matthew-marion-barake",
+    file: "Mr&Mrs Mathew Barake.PNG",
+    // ── THE ONLY TWO-PERSON SOURCE IN ANY OF THESE SCRIPTS ───────────
+    //
+    // 1023x1537, 0.67:1, so taller than 3:4 and the window is a crop of
+    // the HEIGHT with the full width kept. That is not a preference
+    // here, it is the constraint: he stands at x 0.05 and her dress
+    // reaches x 0.98, so ANY narrowing of the window cuts one of them
+    // out of the picture. cx is therefore clamped and only `top` is a
+    // real choice — 173px of vertical slack, and nothing else.
+    //
+    // Two faces, both of which have to survive TWICE: once in the 3:4
+    // portrait, and again in the square the round card avatar takes out
+    // of it. His hat crown is at y 0.156 and her chin at y 0.453 of the
+    // source, so the pair of faces occupies a band 0.30 of the height
+    // tall and sits high. 0.02 puts that band at 0.153-0.490 of the
+    // window, which is the same register the other three sit in.
+    top: 0.02,
+    bottom: 0.907,
+    cx: 0.5,
+    // The avatar keeps a 1023-square out of a 1364-tall window, so posY
+    // chooses among 341px of travel. 0 puts the square at 0-0.75 of the
+    // window with the faces at 209-669px inside it: 209px of clearance
+    // above his hat and 354 below her chin, BOTH heads whole. Anything
+    // higher than about 35 starts closing on the hat brim, and the pair
+    // sits high enough that no positive value improves the balance.
+    posY: 0,
+  },
 ];
 
 const rows = [];
