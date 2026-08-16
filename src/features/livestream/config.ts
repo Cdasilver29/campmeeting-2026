@@ -191,6 +191,7 @@ export interface LiveStream {
 export const liveStreams: LiveStream[] = [
   { dayId: "sabbath-15", part: "morning", videoId: "vPsSmmV-Vps" },
   { dayId: "sabbath-15", part: "afternoon", videoId: "MT1z3LU1IL4" },
+  { dayId: "sunday-16", part: "afternoon", videoId: "kX9mQ2vLp3A" },
 ];
 
 /** A watch URL from a video id. One place, so the shape cannot drift. */
