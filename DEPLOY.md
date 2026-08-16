@@ -119,11 +119,31 @@ and quietly cannot submit.
 
 ---
 
-## During camp meeting: adding a recording
+## During camp meeting
 
-The recordings listed on `/livestream` are maintained by hand, one line
-per video. **This is the only content edit anyone should need to make
-during the week.**
+`/livestream` has two halves, and only one of them is your job.
+
+### Watching live: nothing to do
+
+**No daily action. Nothing to type, before a service or during one.**
+
+The player embeds the church's YouTube channel, which resolves whatever is
+broadcasting at the moment a visitor presses play. It needs no video id, no
+switch-over between the morning and the afternoon service, and no undoing
+when a service ends. If a stream is on the channel, it is on the page.
+
+There was briefly a routine here for entering two video ids a day. It is
+gone: a wrong id took a live broadcast off the site, because pinning an id
+overrides the channel embed even when it points at nothing. Do not
+reintroduce it.
+
+### Adding a recording: the one thing that does need doing
+
+**This is the only content edit anyone should need to make during the week.**
+
+Separate system, separate array, no effect on the live player. After a
+session ends and its recording is uploaded, add it by hand so it appears in
+"Earlier this week".
 
 There are **two streams a day**, morning and afternoon, so the week is
 sixteen videos: eight days times two. The page lays all sixteen out in
@@ -157,6 +177,16 @@ export const recordings: Recording[] = [
 tracking token belonging to whoever copied the link, not part of the
 video id. `https://youtu.be/dQw4w9WgXcQ?si=Ab12Cd34` is the id
 `dQw4w9WgXcQ` and nothing after the `?`.
+
+**Check the id resolves before you commit.** Open, with your id in it:
+
+```
+https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ&format=json
+```
+
+A real id returns JSON with the video's title. A wrong one returns **404**.
+Takes seconds, and it is the check that would have caught the bad id that
+once broke the live player.
 
 Commit and push. Vercel builds on push and the page is live in a couple of
 minutes.
@@ -196,7 +226,7 @@ Or the same day and part written twice:
 
 ```
 Error: Two recordings are both "sabbath-15" / "morning": dQw4w9WgXcQ
-and MT1z3LU1IL4. Each day has one morning stream and one afternoon
+and a83sJFk7bB0. Each day has one morning stream and one afternoon
 stream, so one of these has the wrong day or the wrong part.
 ```
 
