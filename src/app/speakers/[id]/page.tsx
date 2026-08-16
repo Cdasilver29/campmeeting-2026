@@ -81,9 +81,28 @@ export default async function SpeakerPage({
           Ken Ochuka is the only one who does not. */}
       {speaker.bio ? (
         <Reveal>
+          {/* `prose-column`, not the bare measure it used to carry. Both
+              cap at --width-prose; the utility also sets margin-inline,
+              which is the whole difference. Ranged left, a 686px column
+              under a page header that is itself centred left 554px of
+              empty page to its right at 1280 — the "layout that lost its
+              right half" globals.css describes at the utility itself.
+
+              The measure is UNCHANGED. Only the column's position moves,
+              and the text inside it stays left-aligned.
+
+              KNOWN AND ACCEPTED: on the seven speakers who have sessions,
+              this column no longer shares a left edge with the day lists
+              below it, which run the full shell. /livestream made the
+              opposite call on the same shape for that reason — see the
+              note in CatchUp. This page goes the other way deliberately:
+              the biography is a document section rather than a heading
+              for the programme under it, and on the four speakers with no
+              sessions it now sits on the same axis as the EmptyState
+              card's own centred contents. */}
           <section
             aria-labelledby="biography-heading"
-            className="flex max-w-(--width-prose) flex-col gap-4"
+            className="prose-column flex flex-col gap-4"
           >
             {/* A heading rather than an unlabelled block of type, so the
                 page's heading list reads "biography, then the days" and a

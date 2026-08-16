@@ -74,7 +74,28 @@ export default async function HostPage({
         media={<SpeakerPortrait speaker={sitter} />}
       />
 
-      <Band innerClassName="flex flex-col gap-(--space-section)">
+      {/* The letter is a document, so it nests at the measure inside the
+          shell and is CENTRED there — the same shape /about uses, and for
+          the reason written on `prose-column` in globals.css: ranged left,
+          a 686px column under a centred page header left 554px of empty
+          page to its right at 1280.
+
+          The wrapper is a CHILD of the shell rather than the shell itself.
+          `shell` and `prose-column` both set max-width, and putting the two
+          on one element would make the result depend on Tailwind's sort
+          order rather than on anything written here. Band's innerClassName
+          lands on the shell, so it cannot be used for this; the gap moved
+          onto this div with it.
+
+          The links row is inside the column too. It is not prose, but it
+          is the foot of this document, and leaving it on the shell's left
+          edge under a centred letter would strand it — which is the
+          artifact the centring exists to remove. HostLetterBody is
+          untouched: its own uncapped-but-measured column now sits inside
+          one of the same width, exactly as DOC_BODY does inside
+          PROSE_COLUMN on /about. */}
+      <Band>
+        <div className="prose-column flex flex-col gap-(--space-section)">
         <Reveal>
           <article aria-label={`Welcome letter from ${host.name}`}>
             <HostLetterBody letter={letter} />
@@ -95,6 +116,7 @@ export default async function HostPage({
             ) : null}
           </p>
         </Reveal>
+        </div>
       </Band>
     </>
   );

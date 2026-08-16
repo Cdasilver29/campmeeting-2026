@@ -66,6 +66,16 @@ const ROUTES = [
   "/styleguide",
   "/speakers/kennedy-mfune",
   "/ministries/children",
+  /* Two detail routes added when their prose columns were centred, and
+     they are here because each is a shape no other route in this list
+     has. /speakers/matthew-marion-barake is a biography above an
+     EmptyState — the one speaker shape where nothing below the column is
+     left-aligned. /hosts/omondi-oyoo is the longest welcome letter, and
+     the only route whose whole body, letter and foot links together, is
+     one centred column. Neither was covered while both were ranged
+     left. */
+  "/speakers/matthew-marion-barake",
+  "/hosts/omondi-oyoo",
 ];
 
 const browser = await launch({
