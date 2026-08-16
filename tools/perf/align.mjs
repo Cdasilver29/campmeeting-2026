@@ -60,7 +60,12 @@ const ROUTES = [
   "/livestream",
   "/downloads",
   "/announcements",
-  "/prayer-requests",
+  // /prayer-requests was here and is removed. The route no longer exists,
+  // so it was five 404s per run — and unlike responsive.mjs's nine clean
+  // rows, these were scored: the 404 page has no header band, so the
+  // harness fell back to its h1, found it centred, and reported five
+  // FAILURES at every width. A permanent red line in the summary is worse
+  // than a silent one, because it teaches you to read past the number.
   "/gallery",
   "/offline",
   "/styleguide",
