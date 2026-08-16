@@ -9,7 +9,7 @@
  * decide against it the change has to be one line here rather than an
  * unpicking of the hero component.
  *
- * ── THREE IMAGES NOW, AND WHAT ROTATION DOES NOT TOUCH ───────────────
+ * ── FOUR IMAGES NOW, AND WHAT ROTATION DOES NOT TOUCH ────────────────
  *
  * The list rotates: background and caption only, crossfaded, six seconds
  * each. The theme, the key verse, the theme song, the dates, the venue and
@@ -27,7 +27,7 @@
  *      rotation stops dead there rather than slowing down: a slowed
  *      carousel is still a carousel.
  *
- * `caption` is present only on the two choir photographs, because a
+ * `caption` is present only on the three choir photographs, because a
  * caption is for a picture whose subject a reader could not otherwise
  * name. hands-bible has no caption and the caption line renders empty for
  * it, keeping its own height reserved so the rotation cannot shift layout.
@@ -410,6 +410,93 @@ export const HERO_IMAGES: HeroImage[] | undefined = [
     // that took it off.
     caption: "Taji Kenya",
   },
+  {
+    // ── THE HOST CHOIR, AND THE FIRST PAIR SUPPLIED TOGETHER ─────────
+    //
+    // Both crops arrived in one drop, cut by whoever framed them, so this
+    // is the only entry that needed no compromise on either end: no shared
+    // file standing in for a missing crop as on hands-bible, and no
+    // inherited wide crop as on taji.
+    //
+    // The subject is a rank of about twenty in black robes with red and
+    // gold stoles, a conductor with his back to the camera at the centre,
+    // two microphone stands, a pastel backdrop wall above and carpet
+    // below. Profiled per row rather than judged by eye, since the whole
+    // crop decision turns on where the crowd actually sits:
+    //
+    //   desktop  heads first appear y 0.25, the rank is solid and FULL
+    //            WIDTH (x 0.00-0.99) from y 0.32 to 0.79, carpet below
+    //   mobile   empty wall for the top 42% of the frame, heads from
+    //            y 0.46, rank full width from 0.57 to 0.81
+    //
+    // WIDEST AND NARROWEST, which is the check a group photograph needs
+    // and a portrait does not. The rank is at its widest through its
+    // middle, where it runs edge to edge on both crops — so there is no
+    // horizontal window that holds "all of it" and centred is the only
+    // defensible value. It is NARROWEST at the top: the back row's heads
+    // span x 0.36-0.98 on desktop and x 0.07-0.85 on mobile, both biased
+    // off centre. That asymmetry is why the vertical values below matter
+    // more than they would on a rank of even height, and why neither is
+    // simply copied from migori.
+    desktop: {
+      src: "/hero/newlife-choir.webp",
+      width: 1626,
+      height: 906,
+      // 50% across, and here that is the derived answer rather than the
+      // default. The rank runs x 0.00-0.99, so every window is a window
+      // onto the middle of it and the only question is which middle. The
+      // conductor is the frame's own subject and sits at x 0.42-0.55, so
+      // centred holds him at every width: the tightest crop is 768x1024,
+      // where the frame is 0.75:1 against a 1.795:1 file and `cover` keeps
+      // 42% of the width — x 0.291-0.709, which still contains him with
+      // four or five singers either side.
+      //
+      // 45% down, AND IT IS INERT AT ALL SIX MEASURED VIEWPORTS. Worth
+      // stating rather than leaving to be rediscovered: this file is
+      // 1.795:1, which is WIDER in aspect than every frame the site
+      // measures (1.778:1 at 1920 and 2560, less below), so `cover` scales
+      // by height everywhere and keeps all of it. The value is read only
+      // on a viewport wider than 1.795:1 — an ultrawide 2560x1080 — where
+      // k = 0.757 and 45% puts the window at y 0.124-0.881, holding the
+      // heads at 0.25 and the rank's foot at 0.79 with the carpet going
+      // instead. Biased up rather than centred because the people centre
+      // at y 0.52 and what is below them is floor.
+      position: "50% 45%",
+    },
+    mobile: {
+      src: "/hero/newlife-choir-mobile.webp",
+      width: 1587,
+      height: 2245,
+      // 50% across, for the reason above: the rank is full width and the
+      // conductor is centred. At 390x844 the band is 88svh, so the frame
+      // is 0.525:1 against a 0.707:1 file and `cover` keeps 74% of the
+      // width — x 0.129-0.871. That clips the outermost singer on each
+      // side and holds everyone else, which is the same trade the other
+      // two phone crops make.
+      //
+      // 60% down, AND NOT MIGORI'S 85%, which is a deliberate departure.
+      // 85% was derived for the COMPACT phase, and that phase no longer
+      // exists — the hero is one height in all three now — so on a
+      // portrait phone this value is inert here exactly as it is there:
+      // the file is wider per unit height than any portrait frame, so
+      // `cover` scales by height and keeps all of it at 320, 390 and 430
+      // alike.
+      //
+      // The one case that still reads it is a LANDSCAPE phone under 768px,
+      // where the desktop crop has not taken over yet: 667x375 gives a
+      // 2.02:1 frame and k = 0.35. At 85% the window would be y 0.55-0.90
+      // — under the heads at 0.46 entirely, a crop of torsos and carpet.
+      // 60% puts it at y 0.39-0.74, which holds the heads and most of the
+      // rank. It costs nothing at every width that is actually measured
+      // and is the only value that is right at the one that is not.
+      position: "50% 60%",
+    },
+    // Exact text as supplied by the committee. It names the choir's ROLE
+    // as well as the choir, which the other two captions do not need to:
+    // migori and taji are visiting, and this one is the host, which is the
+    // fact a reader seeing a fourth rank of robes would otherwise ask.
+    caption: "Host Choir - Newlife Church Choir",
+  },
 ];
 
 /**
@@ -547,7 +634,7 @@ export const SCRIM_ALPHA_FLOOR = 0.62;
  */
 /*
  * A function of the per-image boost rather than a constant, since the hero
- * took three photographs. Each image carries its own pair of scrims, so an
+ * took several photographs. Each image carries its own pair of scrims, so an
  * image whose brightest pixel needs more alpha can have it without
  * deepening the two that measured fine — which is the whole reason the
  * scrims are per-layer rather than one pair over the stack.

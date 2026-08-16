@@ -99,7 +99,7 @@ import {
  * hero at any width.
  *
  * MOTION
- * The photographs crossfade, three of them, 800ms of fade and six seconds
+ * The photographs crossfade, four of them, 800ms of fade and six seconds
  * of dwell, with a caption that fades with its picture and a visible pause
  * control. No parallax, no ken burns, no typing effect. Under
  * prefers-reduced-motion the rotation does not happen at all: first image
@@ -194,8 +194,8 @@ export function Hero() {
         resolves, from the same constant, so the preload cannot select a
         different file from the one the element ends up using.
 
-        Only the first image. The other two are `loading="lazy"` and are
-        six and thirteen seconds away; preloading them would spend the
+        Only the first image. The others are `loading="lazy"` and are six,
+        thirteen and twenty seconds away; preloading them would spend the
         LCP's bandwidth on pictures nobody is looking at yet.
 
         React 19 hoists these into <head>. They are rendered before the
@@ -298,7 +298,7 @@ export function Hero() {
           One picture has no wide re-cut and that is intended: taji keeps
           its existing desktop file and gains only a phone crop.
 
-          The frame, the three layers and their scrims are in
+          The frame, the four layers and their scrims are in
           ./hero-rotation.tsx. HERO_IMAGES going undefined removes all of
           it and leaves the Emperor band, which is the point of the switch.
         */}

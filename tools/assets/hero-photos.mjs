@@ -155,6 +155,17 @@ const PHOTOS = [
   { name: "migori-choir", file: "Migori-desktop.PNG", viewport: 1920 },
   { name: "taji-choir-mobile", file: "Taji-mobile.PNG", viewport: 430 },
   // taji-choir.webp is absent on purpose. See the note above.
+  //
+  // The host choir, added fourth. Both crops were supplied together, so
+  // unlike taji this one has a real pair from the start and needs no note
+  // explaining a missing half.
+  //
+  // The supplied filenames carry spaces and are used verbatim rather than
+  // renamed: this table is the one place the supplied name and the output
+  // name are tied together, and renaming on disk would break that tie for
+  // whoever re-runs this with the same drop.
+  { name: "newlife-choir-mobile", file: "Host Newlife choir mobile.png", viewport: 430 },
+  { name: "newlife-choir", file: "Host Newlife choir desktop.png", viewport: 1920 },
 ];
 
 const rows = [];
@@ -173,7 +184,15 @@ for (const p of PHOTOS) {
   const meta = await sharp(src).metadata();
 
   const out = join(OUT, `${p.name}.webp`);
-  await sharp(src).webp({ quality: QUALITY, effort: 6, smartSubsample: true }).toFile(out);
+  /*
+   * removeAlpha, and it is a no-op for every source that has no alpha
+   * channel to remove. The host choir's desktop file arrived as RGBA with
+   * every one of its 1,473,156 pixels at alpha 255 — a fully opaque
+   * channel, carried for nothing. These are full-bleed backgrounds behind
+   * `bg-emperor`, so transparency is never wanted here: any pixel that was
+   * genuinely transparent would show the band through the photograph.
+   */
+  await sharp(src).removeAlpha().webp({ quality: QUALITY, effort: 6, smartSubsample: true }).toFile(out);
 
   rows.push({
     ...p,

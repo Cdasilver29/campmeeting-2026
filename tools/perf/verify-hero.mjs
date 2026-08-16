@@ -52,9 +52,9 @@
  *
  * WHY A LAYER HAS TO BE FORCED, AND WHY WITH A STYLESHEET
  *
- * The hero rotates three photographs, each carrying its own pair of
+ * The hero rotates four photographs, each carrying its own pair of
  * scrims, and the whole point of per-image scrims is that one image can be
- * given more alpha than the others. That makes "the hero's contrast" three
+ * given more alpha than the others. That makes "the hero's contrast" four
  * separate questions, so `--layer N` measures one of them: layer N is
  * pinned to opacity 1 and the rest to 0.
  *
@@ -65,8 +65,8 @@
  * two photographs at partial alpha and a number that describes neither.
  *
  * The scrim and image queries are scoped to the forced layer for the same
- * reason. `hero.querySelectorAll("div[aria-hidden]")` now matches the three
- * layer WRAPPERS as well as the six scrims, so unscoped it reported the
+ * reason. `hero.querySelectorAll("div[aria-hidden]")` now matches every
+ * layer WRAPPER as well as their scrims, so unscoped it reported the
  * frame's own height as a scrim height.
  *
  * Usage: node verify-hero.mjs <screenshot-output-dir> [forcePhase] [scheme] [--layer N]
@@ -82,8 +82,9 @@
  *
  * The caption belongs to the photograph, so `--layer N` now pins layer N
  * AND reports layer N's caption. Layer 0 has no caption and that section
- * is simply absent from its output. Layer 1 is the Migori choir and layer
- * 2 is Taji Kenya, so those two runs are the ones that measure a caption.
+ * is simply absent from its output. Layer 1 is the Migori choir, layer 2
+ * is Taji Kenya and layer 3 is the host choir, so those three runs are the
+ * ones that measure a caption.
  *
  * Exits non-zero if anything measured falls under 4.5:1, the captions
  * included.
@@ -96,7 +97,7 @@ const ALL_VIEWPORTS = [
   { w: 390, h: 844 }, { w: 768, h: 1024 }, { w: 1024, h: 768 },
   { w: 1440, h: 900 }, { w: 1920, h: 1080 }, { w: 2560, h: 1440 },
 ];
-/* `--widths 390,768,1440` narrows the sweep. Three photographs x six
+/* `--widths 390,768,1440` narrows the sweep. Four photographs x six
    viewports x two schemes is 36 page loads to answer a question that three
    widths answer, and re-measuring a width nothing changed at is not
    evidence. Heights are kept from the table above so a narrowed run is
@@ -117,6 +118,18 @@ const SOURCES = [
   { name: "hands-bible", w: 735, h: 616 },
   { name: "migori-choir", w: 1600, h: 885 },
   { name: "taji-choir", w: 1491, h: 1055 },
+  /* Layer 3, the host choir. Added with the photograph rather than after
+     it: `SOURCES[LAYER] ?? SOURCES[0]` falls back silently, so a missing
+     row here does not error — it reports the upscale column using
+     hands-bible's dimensions and labels it with hands-bible's name, which
+     is a wrong number that looks like a right one.
+
+     The first two rows are stale for the same class of reason and are
+     left alone deliberately: both files were re-cut to 1672x941 in a later
+     drop and these numbers were not updated with them. That affects only
+     the upscale column, never the contrast gate, and correcting it is not
+     this change's business. */
+  { name: "newlife-choir", w: 1626, h: 906 },
 ];
 
 const layerArg = process.argv.indexOf("--layer");

@@ -48,7 +48,7 @@ import {
  * `mounted` is false during server rendering and on the first client
  * render, so the first paint is one image, eager and at high fetch
  * priority, and nothing else: no second request competing with the LCP,
- * no third. The other two mount in an effect, which by definition runs
+ * no third. The others mount in an effect, which by definition runs
  * after that paint, and they carry `loading="lazy"`, so they are fetched
  * afterwards.
  *
@@ -63,7 +63,7 @@ import {
  * ── REDUCED MOTION STOPS IT DEAD ─────────────────────────────────────
  *
  * Not slowed, not crossfaded more gently: `rotating` is false, the other
- * two images are never mounted at all, no interval is ever created, and
+ * images after the first are never mounted at all, no interval is ever created, and
  * the pause control is not rendered because there is nothing to pause. A
  * slowed carousel is still a carousel.
  *
@@ -276,7 +276,7 @@ export function HeroBackdrop() {
               width={image.mobile.width}
               height={image.mobile.height}
               // Only the first, and only ever the first. Eagerly fetching
-              // three photographs would take bandwidth from the LCP to get
+              // four photographs would take bandwidth from the LCP to get
               // two pictures that cannot be seen for another six seconds.
               // `high` rather than `priority`: this is a plain img, so it
               // says the same thing to the browser directly, and the
@@ -349,7 +349,7 @@ export function HeroBackdrop() {
  * problem.
  *
  * Its height is reserved whether or not there is a caption to show. Only
- * two of the three photographs have one, so a row that collapsed when
+ * three of the four photographs have one, so a row that collapsed when
  * empty would move the entire text block up and down by its own height
  * every six seconds. That is layout shift caused by decoration, on the
  * page whose CLS matters most.
