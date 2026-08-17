@@ -693,8 +693,14 @@ misspelling, so none was touched:
    ends with the farewell. Either the rota is ahead of the programme or it
    is stale. **Nothing was added to the programme from it.**
 8. **Eld. Barrack Bosire is on no session.** He was supplied as poster
-    artwork for "Teens" and the programme credits him nowhere. His profile publishes
-    and reads "Sessions to be confirmed"; `programSpeakers` keeps him out
+    artwork for "Teens" and the programme credits him nowhere. **"Teens"
+    is not in program.ts at all** — not as a session, not as a ministry
+    tag, not as a word — and the same is true of "Ambassadors", which
+    appears only as the name of a choir singing on Thursday. So his page
+    says he leads Teens and that the published programme does not list a
+    Teens session of its own, and it offers no link, because there is
+    nothing on the schedule to open. It does NOT say the sessions are
+    coming: nobody has said they are. `programSpeakers` keeps him out
     of the programme's speaker filter so no facet offers a search that
     returns nothing. **No session and no ministry tag was invented to fill
     the gap.** Janet Oyende-Kariuki and Pr. John Clement are in the same
@@ -745,9 +751,16 @@ misspelling, so none was touched:
     five slots and three claimed audiences do not divide evenly, so at
     least one afternoon holds more than one of them or at least one of
     them is somewhere else entirely. Until that arrives, a guess would
-    credit the wrong presenter as easily as the wrong hour, and all three
-    profiles stay in the "Sessions to be confirmed" state. **Open, and
+    credit the wrong presenter as easily as the wrong hour. **Open, and
     now the largest open item on the speakers.**
+
+    What their three pages say in the meantime is the track, not the
+    absence: "… lead Family Life for Young Professionals. The Family Life
+    sessions run Sunday to Thursday, 15:00 to 16:20," with a link to the
+    Family Life filter on the schedule. The days and the hours are read
+    out of program.ts by `speakerTrack`, never typed into the copy, so
+    they cannot drift from the programme. None of the three claims an
+    afternoon and nothing is linked to a dated session.
 
     Andrew Owino's five Bible Studies do **not** change this. They are a
     free-text credit to him alone and say nothing about which Family Life

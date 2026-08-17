@@ -193,10 +193,26 @@ export const sundownByDate: Record<string, string> = {
  * no ministry tag was attached to make the pages look fuller than the
  * data is. See DATA-NOTES.md.
  *
- * Their pages render, and read as "sessions to be confirmed" rather than
- * as an error. `programSpeakers` (features/schedule/lib/presenters.ts)
- * already keeps a profile with no sessions out of the programme filter,
- * so no facet offers a search that returns nothing.
+ * Their pages render, and none of them reads as an error.
+ * `programSpeakers` (features/schedule/lib/presenters.ts) keeps a profile
+ * with no sessions out of the programme filter, so no facet offers a
+ * search that returns nothing.
+ *
+ * ── WHAT THOSE PAGES SAY IS READ OFF `role` ──────────────────────────
+ *
+ * They used to say one thing — that the sessions had not been published
+ * yet — and it was the wrong thing twice over. The three Family Life
+ * records have a track the programme CARRIES, five sessions of it at a
+ * known hour, with only the afternoon unassigned; Ambassadors and Teens
+ * have no session in program.ts at all, and promising one invented it.
+ *
+ * So `role` is now load-bearing beyond the card. `speakerTrack` in
+ * features/speakers/lib.ts splits it into ministry and audience, matches
+ * the ministry against the programme's own tag labels, and the page says
+ * what the track is and when it runs, or says the programme does not
+ * carry it, or — with no `role` at all — keeps the original wording.
+ * A role written here is a sentence on a public page: "Family Life,
+ * Young Adults" prints as "lead Family Life for Young Adults".
  */
 export const speakers: Speaker[] = [
   {
@@ -495,8 +511,9 @@ export const speakers: Speaker[] = [
    * biography and photograph name no day, so which of the five is theirs
    * is a question this repository cannot answer, and attaching them to a
    * guess would put a named couple at a specific hour on a specific
-   * afternoon on the strength of nothing. They are the fourth profile in
-   * the "sessions to be confirmed" state; see the note above `speakers`.
+   * afternoon on the strength of nothing. Their page says what they lead
+   * and when the Family Life sessions run, and links to the track rather
+   * than to any one of them; see the note above `speakers`.
    */
   {
     id: "matthew-marion-barake",
@@ -714,8 +731,9 @@ export const speakers: Speaker[] = [
    * audience each.
    *
    * Nothing is linked. Not a session, not a ministry tag. The committee
-   * owes the mapping, and until it arrives this profile reads as
-   * "sessions to be confirmed" like the other two. DATA-NOTES.
+   * owes the mapping, and until it arrives this page says what she leads
+   * and when Family Life runs, exactly as the other two do, without any
+   * of the three claiming an afternoon. DATA-NOTES.
    */
   {
     id: "resper-gogo",

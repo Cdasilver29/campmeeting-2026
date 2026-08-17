@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, Users } from "lucide-react";
 import { Band } from "@/components/band";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
@@ -10,9 +10,15 @@ import { eventInfo, speakerById, speakers } from "@/data";
 import { TimeRange } from "@/features/schedule/components/session-card";
 import { speakerLabel } from "@/features/schedule/lib/presenters";
 import { ministryLabels } from "@/features/schedule/lib/today";
-import { SCHEDULE_PATH } from "@/features/schedule/lib/url";
+import { SCHEDULE_PATH, scheduleHref } from "@/features/schedule/lib/url";
 import { SpeakerPortrait } from "@/features/speakers/components/speaker-avatar";
-import { speakerDayGroups } from "@/features/speakers/lib";
+import {
+  speakerDayGroups,
+  speakerTrack,
+  trackAbsentSentence,
+  trackLeadSentence,
+  trackWhenSentence,
+} from "@/features/speakers/lib";
 import { ACTION_LINK } from "@/lib/link-styles";
 import { pageMetadata } from "@/lib/metadata";
 import { speakerPageDefinition } from "@/lib/page-identity";
@@ -51,6 +57,11 @@ export default async function SpeakerPage({
 
   const groups = speakerDayGroups(speaker.id);
   const total = groups.reduce((count, group) => count + group.sessions.length, 0);
+  /* Only read when `total` is 0. A speaker with sessions of their own has
+     them listed below, and a track sentence above that list would be
+     describing the same week twice. */
+  const track = speakerTrack(speaker);
+  const trackWhen = track ? trackWhenSentence(track) : undefined;
 
   return (
     <>
@@ -124,32 +135,77 @@ export default async function SpeakerPage({
 
       {total === 0 ? (
         /*
-         * FOUR SPEAKERS ARE IN THIS STATE TODAY and it is not an error.
-         * janet-oyende-kariuki, john-clement and barrack-bosire are
-         * credited in no session, in v2 and again in v3, and
-         * matthew-marion-barake joined them: the programme's five Family
-         * Life slots name no presenter, so which is theirs is unknown
-         * rather than unlisted. The wording has
-         * to say that the sessions are coming, not that the page is
-         * broken or that the person has nothing to do: "No sessions are
-         * listed" reads as the latter.
+         * SIX SPEAKERS ARE IN THIS STATE TODAY and it is not an error —
+         * but it is not ONE state either, which is what it used to be
+         * rendered as.
          *
-         * EmptyState rather than a bare paragraph, because that is the
-         * component this site uses whenever a view has nothing in it, and
-         * a fifth different way of saying "not yet" is how a site stops
-         * having a voice. It is deliberately NOT ErrorState.
+         * Every one of them got the same sentence: the sessions "have
+         * not been published yet". For the three Family Life records
+         * that threw away the fact the reader wanted, because the
+         * programme HAS Family Life — five sessions, Sunday through
+         * Thursday, at a known hour — and the only unknown is which
+         * afternoon is whose. For Ambassadors and Teens it was worse
+         * than useless: it promised sessions that no published document
+         * mentions.
+         *
+         * So there are three states now, and which one a page gets is
+         * read off `role` and out of program.ts. See `speakerTrack` in
+         * features/speakers/lib.ts — the classification is there, with
+         * no speaker id in it, and these three branches only choose the
+         * wording.
+         *
+         * NOTHING HERE LINKS A PERSON TO A DATED SESSION. The first
+         * branch links to the ministry filter, which is the whole track
+         * and says so; program.ts is untouched by any of this.
+         *
+         * EmptyState in all three, because that is the component this
+         * site uses when a view has nothing of its own in it, and a
+         * second way of saying it is how a site stops having a voice. It
+         * is deliberately NOT ErrorState.
          */
         <Reveal>
-          <EmptyState
-            icon={CalendarClock}
-            title="Sessions to be confirmed"
-            description={`${speakerLabel(speaker)} is on the ${eventInfo.edition} programme, but the sessions have not been published yet. They will appear here, and on the full programme, as soon as the committee confirms them.`}
-            action={
-              <Link href={SCHEDULE_PATH} className={ACTION_LINK}>
-                See the full programme
-              </Link>
-            }
-          />
+          {track && trackWhen ? (
+            /* The track is in the programme: say what they lead, say
+               when that track runs — days and hours from program.ts by
+               way of `speakerTrack`, never written here — and open the
+               filtered schedule so the reader can go and look. */
+            <EmptyState
+              icon={CalendarClock}
+              title={track.label}
+              description={`${trackLeadSentence(speaker, track)} ${trackWhen}`}
+              action={
+                <Link
+                  href={scheduleHref({ ministry: track.ministry })}
+                  className={ACTION_LINK}
+                >
+                  See the {track.label} sessions
+                </Link>
+              }
+            />
+          ) : track ? (
+            /* The track is real and the programme does not carry it.
+               Say what they lead and stop: no link, because there is
+               nothing on the schedule to open, and no invented session
+               to make the page look complete. */
+            <EmptyState
+              icon={Users}
+              title={track.label}
+              description={`${trackLeadSentence(speaker, track)} ${trackAbsentSentence(track)}`}
+            />
+          ) : (
+            /* No role and no session: nothing is known, which is exactly
+               what this wording says. Unchanged, and kept for that. */
+            <EmptyState
+              icon={CalendarClock}
+              title="Sessions to be confirmed"
+              description={`${speakerLabel(speaker)} is on the ${eventInfo.edition} programme, but the sessions have not been published yet. They will appear here, and on the full programme, as soon as the committee confirms them.`}
+              action={
+                <Link href={SCHEDULE_PATH} className={ACTION_LINK}>
+                  See the full programme
+                </Link>
+              }
+            />
+          )}
         </Reveal>
       ) : (
         /* The count line and one item per day the speaker appears on. A

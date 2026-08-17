@@ -18,7 +18,11 @@ import {
   type MinistryPageTag,
 } from "@/features/ministries/copy";
 import { ministryDayGroups } from "@/features/ministries/lib";
-import { speakerDayGroups } from "@/features/speakers/lib";
+import {
+  speakerDayGroups,
+  speakerTrack,
+  trackMetaSentence,
+} from "@/features/speakers/lib";
 import { faqItems } from "@/features/faq/questions";
 import { eventDateRange } from "@/lib/event-dates";
 import { headerImages, type PageHeaderImage } from "@/lib/page-header-art";
@@ -335,14 +339,23 @@ export function speakerPageDefinition(speaker: Speaker): PageDefinition {
     0,
   );
   const roleText = speaker.role ? `${speaker.role} at ` : "Speaking at ";
-  /* Four speakers have no session in the programme yet — see the note in
+  /* Six speakers have no session in the programme — see the note in
      event.ts. "0 sessions across the programme" is a true sentence that
      says the wrong thing in a link preview and in a search result, so a
-     zero is described rather than counted. */
+     zero is described rather than counted.
+
+     And it is described by what IS known. Where the role names a track
+     the programme carries, that track's own days and hours go here;
+     where it names one the programme does not carry, the preview says
+     so rather than promising sessions. Same classification as the page
+     and the card, from `speakerTrack`. */
+  const track = total === 0 ? speakerTrack(speaker) : undefined;
   const sessionText =
-    total === 0
-      ? "Sessions to be confirmed."
-      : `${total} ${total === 1 ? "session" : "sessions"} across the programme.`;
+    total > 0
+      ? `${total} ${total === 1 ? "session" : "sessions"} across the programme.`
+      : track
+        ? trackMetaSentence(track)
+        : "Sessions to be confirmed.";
 
   return {
     // The role is the eyebrow when there is one. "Speaker" is the honest
