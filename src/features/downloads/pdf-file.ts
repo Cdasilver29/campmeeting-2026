@@ -7,16 +7,18 @@ import path from "node:path";
  * The whole site is statically generated, so a file in `public/` either
  * shipped before `pnpm build` ran or it did not — there is no request at
  * which a later answer could be given. That makes `statSync` during the
- * render the right check rather than a lazy one: dropping a PDF into
- * `public/downloads/` and rebuilding turns a pending row into a real
- * download with no code change, which is the entire point.
+ * render the right check rather than a lazy one: replacing the PDF in
+ * `public/downloads/` and rebuilding updates the size shown beside it
+ * with no code change, which is the entire point.
  *
- * This was the full programme's private helper. The daily programmes need
- * exactly the same probe eight times over, so it moved here rather than
- * being written a second time — one mechanism, one place it can be wrong.
+ * It is down to one caller again — the single programme download — having
+ * been shared with the eight daily sheets while those existed. It stays a
+ * module of its own rather than folding back into that component: the
+ * size formatting is a decision worth keeping where it can be read, and
+ * the next download the committee sends will want the same probe.
  */
 export interface PdfFile {
-  /** Public URL, e.g. `/downloads/camp-meeting-day-1.pdf`. */
+  /** Public URL, e.g. `/downloads/camp-meeting-2026-programme.pdf`. */
   href: string;
   /** Size on disk in bytes. */
   size: number;

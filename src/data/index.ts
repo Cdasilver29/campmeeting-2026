@@ -13,10 +13,9 @@ export { duty, dutyByDayId } from "./duty";
 export { childrenProgram } from "./children";
 export { galleryImages } from "./gallery";
 export {
-  dailyProgrammes,
-  dailyProgrammeFor,
   DOWNLOADS_DIR,
-  type DailyProgramme,
+  PROGRAMME_PDF_FILE,
+  programmePdfPath,
 } from "./downloads";
 export {
   announcements,

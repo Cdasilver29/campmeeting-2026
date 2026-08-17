@@ -823,10 +823,12 @@ misspelling, so none was touched:
     is credited as free text.
 15. **The Day 1 daily sheet disagrees with the near-final programme on two
     evening credits.** `Newlife Camp Meeting Daily Program 15 August
-    2026.pdf` (Canva, authored 14 August, now shipped as
-    `public/downloads/camp-meeting-day-1.pdf`) is a per-day reprint of the
-    opening Sabbath. It matches the near-final version line for line
-    except in the Evening Service, where:
+    2026.pdf` (Canva, authored 14 August) is a per-day reprint of the
+    opening Sabbath. It shipped as `public/downloads/camp-meeting-day-1.pdf`
+    until the per-day sheets were replaced by the committee's single
+    complete programme on the 17th, and is no longer on the site; the
+    disagreement it records is still unresolved. It matches the near-final
+    version line for line except in the Evening Service, where:
 
     - **Benediction, 17:35–17:40, is credited to "Choristers".** The
       near-final version gives it to **Pr. Kennedy Mfune**, and

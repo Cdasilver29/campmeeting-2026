@@ -83,12 +83,17 @@ const pages = [...siteRoutes, OFFLINE_ROUTE].map((url) => ({ url, revision }));
 /**
  * ── AND THE PDFs, FOR THE SAME REASON, ONLY MORE SO ──────────────────
  *
- * public/downloads/ holds the printed programme PDFs: one per day of the
- * week plus the full booklet, and the first daily sheet alone is 3.4 MB.
- * Eight of them is well over 20 MB, which is several times the entire rest
- * of the site — precaching that would mean every phone downloading the
- * whole print run before it had opened a single page, on the connection
- * this phase exists to be kind to.
+ * public/downloads/ holds the printed programme PDF — one file now, the
+ * committee's complete eight-day programme, 3.1 MB. It was eight daily
+ * sheets running well over 20 MB between them, and the rule is unchanged
+ * by that: 3.1 MB is still more than the entire rest of public/, and
+ * precaching it would mean every phone downloading the print edition
+ * before it had opened a single page, on the connection this phase exists
+ * to be kind to.
+ *
+ * The rule matches the DIRECTORY, not a filename, so the eight-to-one
+ * change needed no edit here and the next PDF dropped in that folder is
+ * excluded the day it lands.
  *
  * And it buys nothing. The schedule is already readable offline as HTML;
  * that is what `siteRoutes` above is for. The PDF is the same content in a
@@ -99,22 +104,23 @@ const pages = [...siteRoutes, OFFLINE_ROUTE].map((url) => ({ url, revision }));
  * clears.
  *
  * The /downloads PAGE is still precached — it is in `siteRoutes` — so it
- * opens offline and shows its rows. Only the files behind them need signal.
+ * opens offline and shows the download. Only the file behind it needs
+ * signal.
  *
  * ── THIS RULE IS NOT REDUNDANT, AND IT WAS CHECKED ───────────────────
  *
- * Serwist also refuses any single file over 2 MB on its own, and day 1 is
- * 3.44 MB, so the first build after this rule was written reported "0
- * downloads excluded": the size limit had already dropped the only PDF
- * before the transform ever saw it. That is the same silent "0 excluded"
- * the gallery note above was written about, and it would have been very
- * easy to read as proof that the rule worked.
+ * Serwist also refuses any single file over 2 MB on its own, and the
+ * programme is 3.1 MB — as day 1's sheet was 3.44 MB before it. So the
+ * build log's "1 downloads excluded" does not by itself prove this rule
+ * fired: the size limit would have dropped the file first either way.
+ * That is the same silent pass the gallery note above was written about.
  *
  * So it was tested rather than assumed. A 65-byte PDF dropped into
- * public/downloads/ and rebuilt reported "1 downloads excluded" with the
- * kept-entry count unchanged, then was deleted. That is the case that
- * matters: the size limit only catches the big ones, and a day whose sheet
- * happens to export under 2 MB is caught by this rule and by nothing else.
+ * public/downloads/ and rebuilt reported an extra excluded download with
+ * the kept-entry count unchanged, then was deleted. That is the case that
+ * matters: the size limit only catches the big ones, and a programme that
+ * happens to export under 2 MB is caught by this rule and by nothing
+ * else.
  */
 function isExcludedFromPrecache(url: string): boolean {
   // The prefix is stripped first because @serwist/turbopack appends its
