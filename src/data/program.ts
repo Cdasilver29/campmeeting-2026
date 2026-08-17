@@ -15,8 +15,40 @@ import type { ProgramDay } from "./types";
  *    cleared all of them: every cell that held one now names someone.
  *    "Designated Speaker", on the five weekday Bible Studies, was the one
  *    unfilled credit left and was transcribed as printed. The committee
- *    has since filled it: all five are Pr. Kenneth Ayuo, and the Bible
- *    Study is now his only credit in the week.
+ *    filled it once with Pr. Kenneth Ayuo and has now filled it again, in
+ *    the morning restructure below.
+ *
+ * ── THE MORNING RESTRUCTURE ──────────────────────────────────────────
+ *
+ * The committee has separated the 08:10 Bible Study from the 09:00
+ * subject slot, which had briefly been held by the same man:
+ *
+ *   Bible Study, all five weekdays          Andrew Owino
+ *   Spirit of Prophecy / Prophecy /
+ *     Discipleship, whichever runs          Pr. Kenneth Ayuo
+ *   Stewardship, all five weekdays          Pr. Elkanah Mose (unchanged)
+ *
+ * The two 09:00 slots NOT in Pr. Ayuo's list keep what they had:
+ * Wednesday's Possibility Ministry is still an Interactive Session and
+ * Thursday's Evangelism is still Pr. Elvis Onyango. The committee named
+ * three subjects and those are not among them, so neither is moved.
+ *
+ * ── WHY ANDREW OWINO IS A FREE-TEXT CREDIT ───────────────────────────
+ *
+ * `presentedBy`, not `presenterIds`, and it is a deliberate choice rather
+ * than a missing profile. He is one half of `andrew-diane-owino` in
+ * event.ts — the same man — and that record is a COUPLE: one joint
+ * biography, one photograph of the pair, one joint name. Pointing the
+ * Bible Study at it would credit Diane Owino with five sessions she does
+ * not present and would print them under a shared portrait.
+ *
+ * The alternative was a second speaker record for Andrew alone. It was
+ * rejected: there is no solo photograph and no solo biography, so it
+ * would stand up a second card and a second page for one human being,
+ * one of them hollow, and emit two schema.org `Person`s for him. A
+ * free-text credit claims exactly what is true — this session is
+ * presented by Andrew Owino — and claims nothing else. The full argument
+ * is on the record in event.ts.
  *
  * 2. A presenter cell is split into separate credits only when both
  *    halves name someone: "Israel Jathniel and Choristers" becomes two
@@ -281,9 +313,9 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "monday-17-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "monday-17-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "monday-17-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
+          { id: "monday-17-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Andrew Owino"], ministry: "bible-study", featured: true },
           { id: "monday-17-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "monday-17-spirit-of-prophecy", title: "Spirit of Prophecy", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "spirit-of-prophecy", featured: true },
+          { id: "monday-17-spirit-of-prophecy", title: "Spirit of Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "spirit-of-prophecy", featured: true },
           { id: "monday-17-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelist"], ministry: "publishing" },
           { id: "monday-17-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
           { id: "monday-17-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Esiiro Choir", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
@@ -353,9 +385,9 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "tuesday-18-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "tuesday-18-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "tuesday-18-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
+          { id: "tuesday-18-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Andrew Owino"], ministry: "bible-study", featured: true },
           { id: "tuesday-18-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "tuesday-18-prophecy", title: "Prophecy", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "prophecy", featured: true },
+          { id: "tuesday-18-prophecy", title: "Prophecy", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "prophecy", featured: true },
           { id: "tuesday-18-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "tuesday-18-stewardship", title: "Stewardship", start: "09:50", end: "10:30", presenterIds: ["elkanah-mose"], ministry: "stewardship", featured: true },
           { id: "tuesday-18-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Adventist Women Ministries Choir", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
@@ -422,7 +454,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "wednesday-19-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "wednesday-19-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "wednesday-19-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
+          { id: "wednesday-19-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Andrew Owino"], ministry: "bible-study", featured: true },
           { id: "wednesday-19-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           { id: "wednesday-19-possibility", title: "Possibility Ministry", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "possibility-ministry", featured: true },
           { id: "wednesday-19-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
@@ -489,7 +521,7 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "thursday-20-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "thursday-20-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "thursday-20-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
+          { id: "thursday-20-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Andrew Owino"], ministry: "bible-study", featured: true },
           { id: "thursday-20-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           // The only session in the week that names a campaign rather
           // than a subject. Title as printed.
@@ -561,9 +593,9 @@ export const program: ProgramDay[] = [
         sessions: [
           { id: "friday-21-devotion", title: "Prayers and Morning Devotion", start: "07:00", end: "08:00", presenterIds: ["isaac-oenga"], ministry: "prayer", featured: true },
           { id: "friday-21-song-service-1", title: "Song Service", start: "08:00", end: "08:10", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presenterIds: ["kenneth-ayuo"], ministry: "bible-study", featured: true },
+          { id: "friday-21-bible-study", title: "Bible Study", start: "08:10", end: "08:50", presentedBy: ["Andrew Owino"], ministry: "bible-study", featured: true },
           { id: "friday-21-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
-          { id: "friday-21-discipleship", title: "Discipleship", start: "09:00", end: "09:40", presentedBy: ["Interactive Session"], ministry: "discipleship", featured: true },
+          { id: "friday-21-discipleship", title: "Discipleship", start: "09:00", end: "09:40", presenterIds: ["kenneth-ayuo"], ministry: "discipleship", featured: true },
           { id: "friday-21-song-service-3", title: "Song Service", start: "09:40", end: "09:50", presentedBy: ["Choristers"], ministry: "music" },
           // The 09:50 slot was Publishing in v2 and is Stewardship in v3,
           // which puts Friday in step with the other four weekdays. A

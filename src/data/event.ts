@@ -181,6 +181,12 @@ export const sundownByDate: Record<string, string> = {
  * at all, and "Young Adults" occurs in it only as a choir. So a guess
  * would now pick the wrong couple as readily as the wrong hour.
  *
+ * `andrew-diane-owino` is in this list as a COUPLE. Andrew Owino
+ * presents the five weekday Bible Studies on his own, credited by name
+ * in `presentedBy` and pointed at no record here — the reasoning is on
+ * that record below. So the couple has no session; one half of it has
+ * five, under his own name, and this file does not claim them for her.
+ *
  * The sessions are owed by the committee. Nothing here invents one, and
  * no ministry tag was attached to make the pages look fuller than the
  * data is. See DATA-NOTES.md.
@@ -416,15 +422,20 @@ export const speakers: Speaker[] = [
     id: "kenneth-ayuo",
     name: "Kenneth Ayuo",
     title: "Pr.",
-    // ONE SUBJECT NOW, ON FIVE MORNINGS. He held the 09:00 slot on four
-    // mornings with a different subject each time — Spirit of Prophecy,
-    // Prophecy, Possibility Ministry, Discipleship — plus the closing
-    // Sabbath's Scripture Reading, and `role` said "Morning Sessions"
-    // because naming all four ran to 60 characters in a field whose other
-    // values are "Main Speaker" and "Teens". The committee has since
-    // moved him: the five weekday Bible Studies are his, and they are his
-    // only credit in the week. So the field can name the subject again.
-    role: "Bible Study",
+    // BACK TO THE 09:00 SLOT, AND NOW ON THREE MORNINGS OF IT. He held
+    // that slot on four mornings with a different subject each time —
+    // Spirit of Prophecy, Prophecy, Possibility Ministry, Discipleship —
+    // plus the closing Sabbath's Scripture Reading; then the committee
+    // moved him wholesale to the five weekday Bible Studies; and it has
+    // now moved him back to three of the four subjects. Possibility
+    // Ministry is not among them and is an Interactive Session again.
+    //
+    // `role` names all three rather than falling back to "Morning
+    // Sessions". Four subjects ran to 60 characters in a field whose
+    // other values are "Main Speaker" and "Teens"; three fit in 42, which
+    // is within a few characters of "Family Life, Young Professionals"
+    // below and still one line on a card.
+    role: "Spirit of Prophecy, Prophecy, Discipleship",
     // The one crop in this batch that is a zoom rather than a shape. He
     // is shot at three-quarter length where the other two are chest-up,
     // so an equal head position still read smaller. See the note in
@@ -577,20 +588,54 @@ export const speakers: Speaker[] = [
    * the 3:4 window. Read the note on the row before changing it; 113px of
    * them has to go and which 113px is measured, not chosen.
    *
-   * ── NO SESSION, DELIBERATELY, AND NOW FOR A SHARPER REASON ───────────
+   * ── NO SESSION ON THIS RECORD, DELIBERATELY ──────────────────────────
    *
    * The same five "Family Life Sessions" blocks the Barakes could hold,
    * Sunday through Thursday, 15:00-16:20, all credited to "Various
    * Divisions and Speakers". Nothing is linked here.
    *
-   * The reason is now stronger than it was for the Barakes alone. Their
+   * The reason is stronger than it was for the Barakes alone. Their
    * `role` says Young Adults and this one says Young Professionals, which
    * are different audiences — and the programme distinguishes NEITHER.
    * "Young Professionals" appears nowhere in program.ts, and "Young
-   * Adults" appears in it only as the name of a choir. So there are two
+   * Adults" appears in it only as the name of a choir. So there are
    * unnamed couples, five identical unnamed slots, and no line anywhere
    * in the data that would attach either couple to any of them. Guessing
-   * would now risk crediting the wrong couple as well as the wrong hour.
+   * would risk crediting the wrong couple as well as the wrong hour.
+   *
+   * ── ANDREW OWINO ALSO PRESENTS ALONE, AND NOT THROUGH THIS RECORD ────
+   *
+   * The committee's morning restructure gives the five weekday Bible
+   * Studies to Andrew Owino — confirmed as the same man who is half of
+   * this record. Those five sessions credit him by name in `presentedBy`
+   * and DO NOT point at `andrew-diane-owino`.
+   *
+   * That is the point of the decision rather than an oversight in it.
+   * This record is a COUPLE: one joint biography written about both of
+   * them, one photograph of the pair, one joint `name`, and — through
+   * `people` — two schema.org `Person`s. Linking the Bible Study to it
+   * would put Diane Owino on a presenter chip for five sessions she does
+   * not present, count them on her side of a shared profile, and set them
+   * under a portrait of two people where one is presenting.
+   *
+   * A SECOND RECORD for Andrew alone was the other option and was
+   * rejected. Nothing exists to fill it: the biography is joint and names
+   * them both in its first sentence, and the photograph is the landscape
+   * frame of the two of them. It would be a card and a page carrying a
+   * monogram and no text, standing beside this one, for the same human
+   * being — and `speakerById` would hold him twice, which is how a site
+   * ends up counting one man as two speakers. `Speaker` also has no field
+   * that says "this record is also that record", and inventing one for a
+   * single cross-reference is the column this file has declined to add
+   * before (see the note on the Barakes' `role`).
+   *
+   * A free-text credit needs no new field, claims exactly what is true of
+   * each session, and leaves this record meaning one thing. A reader sees
+   * "Andrew Owino" on the Bible Study and "Andrew and Diane Owino" on
+   * /speakers, and nothing on either page contradicts the other. If a
+   * solo biography and a solo photograph ever arrive, a second record
+   * becomes honest and the five `presentedBy` credits become
+   * `presenterIds` in one edit. DATA-NOTES.
    */
   {
     id: "andrew-diane-owino",

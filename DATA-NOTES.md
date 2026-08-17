@@ -105,6 +105,69 @@ read against the printed page, and fails if two sessions ever share an id.
   about twenty services between them, terms per provider, and an on-site
   ambulance. See below.
 
+## Committee corrections, 17th August 2026 — the morning restructure
+
+The 08:10 Bible Study and the 09:00 subject slot are separated again, and
+the Bible Study has a named presenter for the first time.
+
+| Slot | Days | Was | Is |
+| --- | --- | --- | --- |
+| Bible Study, 08:10–08:50 | Mon–Fri | Pr. Kenneth Ayuo | Andrew Owino |
+| Spirit of Prophecy, 09:00 | Mon | Interactive Session | Pr. Kenneth Ayuo |
+| Prophecy, 09:00 | Tue | Interactive Session | Pr. Kenneth Ayuo |
+| Discipleship, 09:00 | Fri | Interactive Session | Pr. Kenneth Ayuo |
+| Stewardship, 09:50 | Mon–Fri | Pr. Elkanah Mose | unchanged |
+
+- **Nine sessions changed presenter**, five Bible Studies and three 09:00
+  subjects, plus Pr. Ayuo's `role`. Nothing else moved.
+- **Two 09:00 slots did NOT move.** Wednesday's Possibility Ministry is
+  still "Interactive Session" and Thursday's Evangelism - One Voice 2027
+  is still Pr. Elvis Onyango. The committee named three subjects — Spirit
+  of Prophecy, Prophecy, Discipleship — and neither of those is among
+  them, so neither was touched.
+- **The five Stewardship sessions were already Pr. Elkanah Mose** and are
+  unchanged. The instruction confirms the existing data rather than
+  altering it. The closing Sabbath's "Stewardship (Tithe and Offerings)"
+  is also already his and is a Divine Service offering appeal rather than
+  the weekday teaching slot; it is left alone. The opening Sabbath's
+  equivalent stays with Eld. Sylvester Odhiambo.
+- **The closing Sabbath's Scripture Reading is still uncredited.** It was
+  vacated when Pr. Ayuo's credits were pared back on the 14th and this
+  restructure does not restore it — he is back on three subjects, not on
+  that reading. **Still open.**
+- **Pr. Kenneth Ayuo's `role` is now "Spirit of Prophecy, Prophecy,
+  Discipleship"**, replacing "Bible Study", which replaced "Morning
+  Sessions". Three subjects fit where four did not.
+
+### Andrew Owino is a free-text credit, and that is the decision
+
+The five Bible Studies carry `presentedBy: ["Andrew Owino"]`. They do
+**not** point at the `andrew-diane-owino` speaker record, though the
+committee has confirmed it is the same man.
+
+- **Why not link the joint record.** It stands for a couple: one joint
+  biography naming both of them, one photograph of the pair, one joint
+  `name`, two schema.org `Person`s via `people`. Linking the Bible Study
+  to it would credit Diane Owino with five sessions she does not present,
+  count them on her side of a shared profile, and set them under a
+  portrait of two people where one is presenting.
+- **Why not a second record for Andrew alone.** There is nothing to fill
+  it with: no solo biography and no solo photograph, so it would be a
+  second card and a second page carrying a monogram and no text, for one
+  human being, standing beside the couple's. `speakerById` would hold him
+  twice. `Speaker` also has no field meaning "this record is also that
+  record", and adding one for a single cross-reference invents a column
+  for one entry — the thing this file declined to do for the Barakes'
+  audience.
+- **What the free-text credit costs.** The Bible Study's presenter chip
+  does not link anywhere, and Andrew Owino is not in the presenter
+  filter, which is built from `presenterIds`. That is the same treatment
+  every other named-but-unprofiled presenter in the programme gets, and
+  it is what `presentedBy` is documented for in `types.ts`.
+- **What reverses it.** A solo biography and a solo photograph. Then a
+  record for Andrew alone is honest, and the five credits become
+  `presenterIds` in one edit. **Open, low priority.**
+
 ## What v3 changed
 
 - **A presenter on nearly every slot.** v2 left the third column blank on
@@ -675,11 +738,17 @@ misspelling, so none was touched:
     shared. Until both arrive, a guess would credit the wrong couple as
     easily as the wrong hour, and both profiles stay in the
     "Sessions to be confirmed" state.
+
+    Andrew Owino's five Bible Studies do **not** change this. They are a
+    free-text credit to him alone and say nothing about which Family Life
+    afternoon is the couple's; the joint record still holds no session.
 9. **The closing Sabbath's Scripture Reading has no reader.** It was
-    Pr. Kenneth Ayuo's and the committee has taken every session off him
-    but the Bible Studies. Two minutes on the 22nd, uncredited. Who
-    reads? (The five weekday Bible Studies' "Designated Speaker" question
-    that stood here is CLOSED: they are Pr. Kenneth Ayuo.)
+    Pr. Kenneth Ayuo's, was vacated when his credits were pared back on
+    the 14th, and the 17th's restructure did not restore it — that put
+    him back on three 09:00 subjects, not on this reading. Two minutes on
+    the 22nd, uncredited. Who reads? (The five weekday Bible Studies'
+    "Designated Speaker" question that stood here is CLOSED: they are
+    Andrew Owino, credited as free text — see the morning restructure.)
 10. **Pr. Elvis Onyango has no speaker profile.** He is in the programme
     once — Thursday's Evangelism — and is carried as free text, because
     no biography was supplied for him. Anyone who finds him in the
