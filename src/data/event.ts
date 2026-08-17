@@ -157,29 +157,31 @@ export const sundownByDate: Record<string, string> = {
  *
  * `imagePosition` is per photo and is not decoration. See types.ts.
  *
- * ── ABOUT THE FIVE SPEAKERS WITH NO SESSIONS ─────────────────────────
+ * ── ABOUT THE SIX SPEAKERS WITH NO SESSIONS ──────────────────────────
  *
  * janet-oyende-kariuki, john-clement, barrack-bosire,
- * matthew-marion-barake and andrew-diane-owino appear in no session in
- * program.ts. For the first three, Draft Program v3 credits a presenter
+ * matthew-marion-barake, andrew-diane-owino and resper-gogo appear in no
+ * session in program.ts. For the first three, Draft Program v3 credits a presenter
  * on nearly every slot and still names none of them, so this is a
  * programme that has been revised twice without placing them rather than
  * one that simply predates their appointment. isaac-oenga was the fourth
  * of that set and v3 gives him the morning devotion on all six days that
  * have one.
  *
- * The last two are a different case and a narrower one. The programme has
- * five Family Life slots they could hold, Sunday through Thursday, and
- * credits all five to "Various Divisions and Speakers"; what nobody has
- * said is WHICH. That is a question for the committee, not a gap to be
- * closed by picking one.
+ * The last three are a different case and a narrower one. The programme
+ * has five Family Life slots they could hold, Sunday through Thursday,
+ * and credits all five to "Various Divisions and Speakers"; what nobody
+ * has said is WHICH. That is a question for the committee, not a gap to
+ * be closed by picking one.
  *
- * There are now TWO couples in that position and it is no longer only a
- * question of which afternoon. The Barakes' role says Young Adults and
- * the Owinos' says Young Professionals, and the programme names neither
- * audience anywhere: "Young Professionals" does not occur in program.ts
- * at all, and "Young Adults" occurs in it only as a choir. So a guess
- * would now pick the wrong couple as readily as the wrong hour.
+ * There are now THREE Family Life audiences claimed against those five
+ * identical slots, and it is no longer only a question of which
+ * afternoon. The Barakes' role says Young Adults, the Owinos' says Young
+ * Professionals, and Resper Gogo's says Singles (Widows & Widowers) — and
+ * the programme names none of the three: "Young Professionals" and
+ * "Singles" do not occur in program.ts at all, and "Young Adults" occurs
+ * in it only as a choir. So a guess would now pick the wrong presenter as
+ * readily as the wrong hour, out of three rather than two.
  *
  * `andrew-diane-owino` is in this list as a COUPLE. Andrew Owino
  * presents the five weekday Bible Studies on his own, credited by name
@@ -672,6 +674,79 @@ export const speakers: Speaker[] = [
     // "journey and his passion ... has grown".
     bio: [
       "Andrew and Diane Owino are educators, mentors, entrepreneurs and ministry-minded leaders passionate about helping people build lives of purpose, character and impact. Andrew is an engineer and quality-systems specialist, trainer and consultant, while Diane is a consultant physician and is deeply involved in their shared work of strengthening individuals, families and communities. Together, they lead initiatives through The Art of Building Institute to help people overcome stagnation, develop their potential, build healthy relationships, steward their resources and turn their gifts into meaningful contribution. They have been married for 10 years and are blessed with one baby. Together, they have authored several books and resources addressing family, excellence, health and money. Their latest book, Hope Between Two Lines: How to Protect Your Faith, Relationships and Purpose in Seasons of Waiting, reflecting their passion for helping people navigate life's challenging seasons with faith, wisdom and intentionality.",
+    ],
+  },
+  /*
+   * ── ONE PERSON, AND NOT A COUPLE ─────────────────────────────────────
+   *
+   * She arrives between two joint records and is neither of them. No
+   * `people`: that field splits ONE record that stands for two human
+   * beings, for the single consumer — schema.org's `Person` — that cannot
+   * take a joint name. This record is one woman, so it is the ordinary
+   * shape every record here had before the Barakes, and `people` on it
+   * would be a list of one that told the structured data nothing it did
+   * not already have.
+   *
+   * No `title` either, because none was supplied. The biography gives
+   * degrees and an office and no honorific, and Pr./Eld./Dr. is what that
+   * field holds. Inventing one for a woman who did not send one is not a
+   * courtesy.
+   *
+   * `name` is the short form the brief heads her with; her own biography
+   * opens with the full "Resper Anyango Gogo" and that stands where she
+   * wrote it, exactly as Dr. Preskilla Ochieng-Munda's full name stands
+   * in hers.
+   *
+   * ── NOT LINKED TO A FAMILY LIFE SESSION, AND THIS IS NOW WORSE ───────
+   *
+   * `role` says Family Life, Singles (Widows & Widowers). The programme
+   * has five "Family Life Sessions", Sunday through Thursday,
+   * 15:00-16:20, every one credited to "Various Divisions and Speakers"
+   * and none of them naming an audience.
+   *
+   * THREE audiences are now claimed against those five identical slots —
+   * Young Adults (the Barakes), Young Professionals (the Owinos), and
+   * Singles (this record) — and program.ts distinguishes none of them:
+   * "Young Professionals" and "Singles" appear in it nowhere at all, and
+   * "Young Adults" appears only as the name of a choir. So the guess is
+   * no longer one-in-five about the hour; it is also one-in-three about
+   * whose afternoon it is, and the five slots may not even be one
+   * audience each.
+   *
+   * Nothing is linked. Not a session, not a ministry tag. The committee
+   * owes the mapping, and until it arrives this profile reads as
+   * "sessions to be confirmed" like the other two. DATA-NOTES.
+   */
+  {
+    id: "resper-gogo",
+    name: "Resper Gogo",
+    role: "Family Life, Singles (Widows & Widowers)",
+    // 1023x1537, the Barakes' shape, and the first CLOSE-UP any of the
+    // three crop scripts has been given: head and shoulders, with the
+    // head alone filling 52% of the frame. Full width kept, top of the
+    // frame kept, and `imagePosition` measured rather than defaulted —
+    // 52% is the middle of the band where the avatar's square holds both
+    // the crown of her headwrap and her chin. See the row in
+    // tools/assets/portrait-photos.mjs.
+    image: "/speakers/resper-gogo.webp",
+    imagePosition: "50% 52%",
+    // Corrected: one character. The curly apostrophe in "God's" is
+    // normalised to the plain one every other biography here uses, which
+    // is what was done to Allan Okoth's "year's".
+    //
+    // Left alone: the en dash in "(2026-2030)" is correct in a span of
+    // years and is hers; "Counselling" and "programme"-style British
+    // spellings match the rest of the file; nothing is misspelled.
+    //
+    // THE THIRD PARAGRAPH IS THE COMMITTEE'S WELCOME, not her own words,
+    // and it is kept for the same reason Pr. Elkanah Mose's second
+    // paragraph is: it was supplied as part of the biography, it is about
+    // her, and cutting it would be editing the brief rather than
+    // correcting it.
+    bio: [
+      "Resper Anyango Gogo is a devoted servant of God, a mother of six and grandmother of three, whose life reflects faith, resilience, and dedication to family and community. With a strong academic foundation in Commerce (BCom), MBA, and a Diploma in Counselling, she blends professional excellence with compassionate ministry.",
+      "She has faithfully served on various public and private boards, offering wisdom in governance and leadership. Passionate about writing and speaking, Resper inspires and uplifts diverse groups in society with messages of hope, empowerment, and spiritual renewal. Currently, she leads the Nairobi Central SDA Church Strategic Plan (2026–2030), guiding the church toward growth and mission-focused impact.",
+      "We joyfully welcome Resper Anyango Gogo to the Newlife Camp Meeting 2026, where her presence and ministry will be a blessing to all who gather in worship, fellowship, and obedience to God's call.",
     ],
   },
 ];

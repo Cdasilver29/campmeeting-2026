@@ -605,6 +605,7 @@ committee can check each one against what they sent.
 | Allan Okoth | 1 heading dropped, 2 characters | "Biodata - Allan Okoth" removed; non-breaking hyphen (U+2011) in "church‑based" → "-"; curly apostrophe in "year's" → "'" |
 | Matthew and Marion Barake | 1 label merged, 1 punctuation | "Their favourite verse is;" joined to the verse it introduces, semicolon → colon |
 | Andrew and Diane Owino | 2 spacing, nothing else | doubled space after "trainer and consultant,"; doubled space after "The Art of Building Institute to" |
+| Resper Gogo | 1 character | curly apostrophe in "God's" (U+2019) → "'" |
 
 **Flagged rather than fixed.** Each is a phrasing question, not a
 misspelling, so none was touched:
@@ -727,17 +728,26 @@ misspelling, so none was touched:
     table above, and again nothing linked. But there are now TWO couples
     who could hold them and the programme cannot tell them apart:
 
-    | Couple | `role` says | Occurs in `program.ts`? |
+    **Resper Gogo makes it three, and she is not a couple.** Added on the
+    17th with `role: "Family Life, Singles (Widows & Widowers)"`, no
+    session linked and no ministry tag attached. There are now THREE
+    audiences claimed against the SAME five identical unlabelled slots:
+
+    | Speaker | `role` says | Occurs in `program.ts`? |
     | --- | --- | --- |
     | Matthew and Marion Barake | Family Life, Young Adults | "Young Adults" only as a CHOIR name |
     | Andrew and Diane Owino | Family Life, Young Professionals | "Young Professionals" does not occur at all |
+    | Resper Gogo | Family Life, Singles (Widows & Widowers) | "Singles" does not occur at all |
 
-    So do not read the two audiences off the programme, because neither
+    So do not read the audiences off the programme, because none of them
     is in it. **Two answers are needed, not one:** which of the five
-    afternoons belongs to each couple, and whether any afternoon is
-    shared. Until both arrive, a guess would credit the wrong couple as
-    easily as the wrong hour, and both profiles stay in the
-    "Sessions to be confirmed" state.
+    afternoons belongs to whom, and whether any afternoon is shared —
+    five slots and three claimed audiences do not divide evenly, so at
+    least one afternoon holds more than one of them or at least one of
+    them is somewhere else entirely. Until that arrives, a guess would
+    credit the wrong presenter as easily as the wrong hour, and all three
+    profiles stay in the "Sessions to be confirmed" state. **Open, and
+    now the largest open item on the speakers.**
 
     Andrew Owino's five Bible Studies do **not** change this. They are a
     free-text credit to him alone and say nothing about which Family Life
@@ -768,6 +778,9 @@ misspelling, so none was touched:
     portraits section for why theirs is the one crop that cannot keep its
     subjects whole. Nothing had to be invented in between, which is what
     the monogram fallback is kept for.
+
+    Resper Gogo is the thirteenth and arrived complete: biography and
+    photograph together, one character corrected, cropped and in.
 
     **Eld. Ken Ochuka is still the only speaker with no biography**, and
     he is the Camp Meeting Chair and one of the two people who open the
@@ -895,6 +908,7 @@ this poster's caption begins".
 | `omondi-oyoo` | 1122x1402, 1.6 MB | 842x1122 at 162,28 | 540x720, 25.6 KB | 50% 0% |
 | `matthew-marion-barake` | 1023x1537, 2.0 MB | 1022x1363 at 1,31 | 540x720, 68.8 KB | 50% 0% |
 | `andrew-diane-owino` | 1537x1023, 1.8 MB | 767x1023 at 305,0 | 540x720, 68.2 KB | 50% 0% |
+| `resper-gogo` | 1023x1537, 2.2 MB | 1023x1364 at 0,0 | 540x720, 71.4 KB | 50% 52% |
 
 - **Eld. Omondi Oyoo's REPLACES a file.** The path did not change; what
   is behind it did. The old crop came from the only landscape source in
@@ -963,6 +977,28 @@ this poster's caption begins".
   landscape frame**, or simply less cropped at the sides, the full couple
   fits and the 113px comes back. It is the one photograph here where a
   different original would visibly improve the result.
+- **Resper Gogo's is the first CLOSE-UP**, and it is the first row where
+  `object-position` is not `0%`. The source is 1023x1537, the Barakes'
+  shape, so the same constraint applies — full width kept, 173px of
+  vertical slack, `top` the only real choice — but the framing is not
+  theirs or anyone's here: it is head and shoulders, with the head alone
+  running y 290..1090, **52% of the frame**. No crop makes that sit like
+  the chest-up and three-quarter-length sources, and zooming out is not
+  on offer, because the photograph ends at her shoulders.
+
+  `top: 0` spends the slack on headroom, leaving 290px above the headwrap
+  rather than 117, and the bottom edge lands mid-sweater either way.
+
+  **`object-position: 50% 52%` is measured.** The output is 540x720, so
+  the avatar's square has 180px of travel, and her head lands at y
+  153..575 inside it. The square has to start at or above 153 to keep the
+  crown of her headwrap and at or below 35 from the top to keep her chin
+  — so the whole legal range is 35..153, and **94 is its middle**: 59px of
+  clearance above the wrap and 59px below the chin. `0%` would have been
+  legal and lopsided, with all the air above her and the chin 35px off the
+  edge. Checked in `--preview`, portrait and avatar, and against a
+  rendered circular mask: the whole face is inside the circle at both the
+  crown and the chin.
 
 ## About the supplied speaker artwork
 

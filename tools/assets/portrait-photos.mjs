@@ -206,6 +206,43 @@ const PORTRAITS = [
     // starts closing on his crown while gaining nothing below.
     posY: 0,
   },
+  {
+    id: "resper-gogo",
+    file: "Resper Gogo.PNG",
+    // ── THE FIRST CLOSE-UP IN THIS FOLDER ────────────────────────────
+    //
+    // 1023x1537, the Barakes' shape exactly — 0.67:1, taller than 3:4 —
+    // so the window keeps the FULL WIDTH and only `top` is a real
+    // choice, with 173px of vertical slack and nothing else. cx is 0.5
+    // because there is no other value: any narrowing is a crop of a
+    // frame that is already only her head and shoulders.
+    //
+    // What is different is the register. Every other source here is shot
+    // chest-up or three-quarter length with the head in the top third;
+    // this one is a head-and-shoulders portrait where the head alone
+    // runs y 290..1090, 52% of the frame. There is no crop that makes it
+    // sit like the others, and zooming out is not available — the
+    // photograph ends at her shoulders. So the crop's job is only to
+    // keep the whole head comfortably inside both renderings.
+    //
+    // top 0 rather than the 173 the slack allows: it leaves 290px of air
+    // above the headwrap instead of 117, and the bottom edge lands
+    // mid-sweater either way. The tighter setting reads as a frame
+    // pressing on the top of her head for nothing gained below.
+    top: 0,
+    bottom: 0.888,
+    cx: 0.5,
+    // MEASURED, not the 0 every row above uses, and this is the row that
+    // needed the --preview render. The output is 540x720, so the avatar
+    // square has 180px of travel; her head lands at y 153..575 of it.
+    // The square must start at or above 153 to keep the headwrap crown
+    // and at or below... at least 35 to keep the chin, so the whole legal
+    // range is 35..153 and 94 is its middle: 59px of clearance above the
+    // wrap and 59px below the chin, which is the balance 0 would not
+    // have given — 0 would have put the chin 35px from the edge with all
+    // the air above it. 94/180 is 52%.
+    posY: 52,
+  },
 ];
 
 const rows = [];
