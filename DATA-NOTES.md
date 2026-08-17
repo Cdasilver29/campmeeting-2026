@@ -541,6 +541,7 @@ committee can check each one against what they sent.
 | Barrack Bosire | nothing but trailing spaces | — |
 | Allan Okoth | 1 heading dropped, 2 characters | "Biodata - Allan Okoth" removed; non-breaking hyphen (U+2011) in "church‑based" → "-"; curly apostrophe in "year's" → "'" |
 | Matthew and Marion Barake | 1 label merged, 1 punctuation | "Their favourite verse is;" joined to the verse it introduces, semicolon → colon |
+| Andrew and Diane Owino | 2 spacing, nothing else | doubled space after "trainer and consultant,"; doubled space after "The Art of Building Institute to" |
 
 **Flagged rather than fixed.** Each is a phrasing question, not a
 misspelling, so none was touched:
@@ -586,6 +587,17 @@ misspelling, so none was touched:
   be rewriting the sentence rather than correcting it — the same
   reasoning as Kennedy Mfune's. Also left: the missing comma before "but
   their hearts beat loudest for the youth".
+- **The Owinos' last sentence has no main verb.** "Their latest book, Hope
+  Between Two Lines: How to Protect Your Faith, Relationships and Purpose
+  in Seasons of Waiting, reflecting their passion for helping people
+  navigate life's challenging seasons with faith, wisdom and
+  intentionality." wants "reflects" where it has "reflecting". That is one
+  word of their own prose, so it is flagged rather than changed — the same
+  call as Allan Okoth's "journey and his passion ... has grown". Say the
+  word and it becomes "reflects".
+- **The Owinos' book title is set as plain text**, like every other title
+  in these biographies, because `bio` is `string[]` and carries no markup.
+  If titles should be italicised the field needs to change, not the text.
 
 ## Issues to confirm with the committee
 
@@ -646,6 +658,23 @@ misspelling, so none was touched:
     theirs and it is one `presenterIds` entry per occurrence. The
     placeholder credit stays alongside it — "Various Divisions and
     Speakers" says the slot holds more than them.
+
+    **Andrew and Diane Owino are the fifth, and they make the Family Life
+    question harder rather than just longer.** Same five slots, same
+    table above, and again nothing linked. But there are now TWO couples
+    who could hold them and the programme cannot tell them apart:
+
+    | Couple | `role` says | Occurs in `program.ts`? |
+    | --- | --- | --- |
+    | Matthew and Marion Barake | Family Life, Young Adults | "Young Adults" only as a CHOIR name |
+    | Andrew and Diane Owino | Family Life, Young Professionals | "Young Professionals" does not occur at all |
+
+    So do not read the two audiences off the programme, because neither
+    is in it. **Two answers are needed, not one:** which of the five
+    afternoons belongs to each couple, and whether any afternoon is
+    shared. Until both arrive, a guess would credit the wrong couple as
+    easily as the wrong hour, and both profiles stay in the
+    "Sessions to be confirmed" state.
 9. **The closing Sabbath's Scripture Reading has no reader.** It was
     Pr. Kenneth Ayuo's and the committee has taken every session off him
     but the Bible Studies. Two minutes on the 22nd, uncredited. Who
@@ -657,15 +686,25 @@ misspelling, so none was touched:
     programme cannot click through. He does appear in the hosts section as
     an Associate Pastor, with a photograph. Pr. Polycarp Nyangau is in the
     same position, with the closing Sabbath's pastoral prayer.
-11. **Every profile carries a photograph, and all but one carry a
-    biography.** Pr. Elkanah Mose and Pr. Kenneth Ayuo were the last two
-    rendering as initials monograms and both have arrived, along with a
-    replacement for Eld. Omondi Oyoo — see below. Allan Okoth's
-    biography has since arrived too, which closes what was the emptiest
-    page on the site relative to how much of the programme its subject
-    carries. **Eld. Ken Ochuka is now the only speaker with no
-    biography**, and he is the Camp Meeting Chair and one of the two
-    people who open the opening Sabbath.
+11. **One profile is now back to a monogram, and it is a new one.**
+    Pr. Elkanah Mose and Pr. Kenneth Ayuo were the last two rendering as
+    initials and both photographs arrived, along with a replacement for
+    Eld. Omondi Oyoo — see below. Allan Okoth's biography has since
+    arrived too, which closes what was the emptiest page on the site
+    relative to how much of the programme its subject carries.
+
+    **Andrew and Diane Owino have a biography and NO photograph**, so
+    they render as an "AO" monogram on the speakers index and as a 3:4
+    monogram at the top of their own page. Nothing is broken and no
+    placeholder was invented; this is the documented fallback doing its
+    job. **A photograph of the couple is owed.** If they are photographed
+    together, one frame is all that is wanted — the Barakes' portrait is
+    already a two-person source and `tools/assets/portrait-photos.mjs`
+    has the crop reasoning for that shape.
+
+    **Eld. Ken Ochuka is still the only speaker with no biography**, and
+    he is the Camp Meeting Chair and one of the two people who open the
+    opening Sabbath.
 12. **"Mathew" or "Matthew" Barake.** The supplied file heads them
     "Mr & Mrs / Mathew Barake" with one t, and the photograph was sent
     under the same spelling. The biography printed directly underneath
@@ -683,16 +722,16 @@ misspelling, so none was touched:
 
     Marion's spelling is not in question; she appears only in the
     biography, twice, and only as Marion.
-13. **The Barakes are one record, not two.** They present together, were
-    supplied as one biography under one heading, and were photographed
-    in one frame, so `speakers` holds them once with
-    `name: "Matthew and Marion Barake"` and a `people` list naming them
-    individually. Everything that draws a speaker reads the joint name
-    as it always has; `people` exists for schema.org's `Person`, which
-    is one human being and would otherwise carry two names the moment
-    they are linked to a session. If the committee wants them listed
-    separately — two cards, two pages — that needs a second photograph
-    and a second biography first.
+13. **The Barakes are one record, not two, and so are the Owinos.** Each
+    couple presents together and was supplied as one biography under one
+    heading, so `speakers` holds each of them once with a joint `name`
+    and a `people` list naming them individually. Everything that draws a
+    speaker reads the joint name as it always has; `people` exists for
+    schema.org's `Person`, which is one human being and would otherwise
+    carry two names the moment they are linked to a session. If the
+    committee wants either couple listed separately — two cards, two
+    pages — that needs a second photograph and a second biography first,
+    and for the Owinos it needs a first photograph before a second.
 14. **The five welcome letters are published; five host BIOGRAPHIES are
     still owed.** All five cards in the hosts and elders section on
     `/speakers` — Dr. Gerald Mochoge, Pr. Elvis Onyango, Pr. Polycarp
@@ -745,6 +784,27 @@ misspelling, so none was touched:
     in the printed programme, and that formatting cannot be read out of
     the extracted text reliably. If a later draft re-marked anything, the
     flags need a pass against the printed page.
+17. **"Okwany" or "Owino" — ANSWERED, and recorded because it is not the
+    same kind of disagreement as "Mathew"/"Matthew".** The biography for
+    the new couple was supplied in a file named
+    **`Mr&Mrs Andrew Okwany.txt`**, and the request to add them called
+    them Okwany. The text inside opens **"Andrew and Diane Owino"**. That
+    is a different surname, not a spelling variant, and there is no
+    tiebreak by count: one mention on each side.
+
+    **Owino was confirmed** and is what the record uses
+    (`andrew-diane-owino`, `/speakers/andrew-diane-owino`). It agrees with
+    the rule already applied to Janet Oyende-Kariuki and to Matthew
+    Barake: where a caption and a person's own biography disagree about
+    that person's name, the biography wins.
+
+    Two consequences worth knowing. The **source file keeps its original
+    name** — renaming it to match a decision about its contents would
+    destroy the evidence that there was a conflict. And if this is ever
+    reversed, the id, the URL and any portrait file migrate together, the
+    way `preskillah-munda` did. Diane's first name is not in question; she
+    appears only in the biography, and only as Diane. **If the couple
+    spell it Okwany, say so before the URL is shared rather than after.**
 
 Open items are renumbered when one is resolved. Refer to them by title,
 not number.

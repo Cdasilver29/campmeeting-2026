@@ -157,21 +157,29 @@ export const sundownByDate: Record<string, string> = {
  *
  * `imagePosition` is per photo and is not decoration. See types.ts.
  *
- * ── ABOUT THE FOUR SPEAKERS WITH NO SESSIONS ─────────────────────────
+ * ── ABOUT THE FIVE SPEAKERS WITH NO SESSIONS ─────────────────────────
  *
- * janet-oyende-kariuki, john-clement, barrack-bosire and
- * matthew-marion-barake appear in no session in program.ts. For the
- * first three, Draft Program v3 credits a presenter on nearly every slot
- * and still names none of them, so this is a programme that has been
- * revised twice without placing them rather than one that simply
- * predates their appointment. isaac-oenga was the fourth of that set and
- * v3 gives him the morning devotion on all six days that have one.
+ * janet-oyende-kariuki, john-clement, barrack-bosire,
+ * matthew-marion-barake and andrew-diane-owino appear in no session in
+ * program.ts. For the first three, Draft Program v3 credits a presenter
+ * on nearly every slot and still names none of them, so this is a
+ * programme that has been revised twice without placing them rather than
+ * one that simply predates their appointment. isaac-oenga was the fourth
+ * of that set and v3 gives him the morning devotion on all six days that
+ * have one.
  *
- * The Barakes are a different case and a narrower one. The programme has
+ * The last two are a different case and a narrower one. The programme has
  * five Family Life slots they could hold, Sunday through Thursday, and
  * credits all five to "Various Divisions and Speakers"; what nobody has
  * said is WHICH. That is a question for the committee, not a gap to be
  * closed by picking one.
+ *
+ * There are now TWO couples in that position and it is no longer only a
+ * question of which afternoon. The Barakes' role says Young Adults and
+ * the Owinos' says Young Professionals, and the programme names neither
+ * audience anywhere: "Young Professionals" does not occur in program.ts
+ * at all, and "Young Adults" occurs in it only as a choir. So a guess
+ * would now pick the wrong couple as readily as the wrong hour.
  *
  * The sessions are owed by the committee. Nothing here invents one, and
  * no ministry tag was attached to make the pages look fuller than the
@@ -519,6 +527,97 @@ export const speakers: Speaker[] = [
       "Together, they founded Career254, a career consulting practice dedicated to equipping young people for the job market and helping them walk confidently into their God-given purpose. They love engaging youth on the topics that shape a whole life careers, finance, and marriage blending practical wisdom with biblical truth.",
       "Matthew and Marion are proud parents of two girls, and they bring the same intentionality they invest in their own home into every young life they mentor. It's their joy to walk alongside this generation, helping them build lives of faith, purpose, and excellence.",
       "Their favourite verse is: Jeremiah 29:11: \"For I know the plans I have for you,\" declares the LORD, \"plans to prosper you and not to harm you, plans to give you hope and a future.\"",
+    ],
+  },
+  /*
+   * ── THE SECOND RECORD THAT IS TWO PEOPLE ─────────────────────────────
+   *
+   * Same shape as the Barakes above and for the same reasons: supplied as
+   * ONE biography naming both of them in its first sentence, they present
+   * together, and `people` carries the split that schema.org's `Person`
+   * needs. No `title`, because it holds an honorific and is printed in
+   * front of `name` — "Mr. & Mrs. Andrew and Diane Owino" is not a name.
+   *
+   * `people` is now used by two records rather than one, which is what it
+   * was added for. It is no longer the field that exists for a single
+   * entry, so the argument for keeping it is settled.
+   *
+   * ── OKWANY OR OWINO: ANSWERED, AND NOT BY THIS FILE ──────────────────
+   *
+   * The supplied file is named "Mr&Mrs Andrew Okwany.txt" and the request
+   * to add them called them Okwany. The biography inside it opens "Andrew
+   * and Diane Owino". That is a different surname, not a spelling
+   * variant, and unlike "Mathew"/"Matthew" above there is no tiebreak by
+   * count: one mention on each side.
+   *
+   * Owino was CONFIRMED for this record when the conflict was put to the
+   * committee, which is why it is not carrying a "the committee has to
+   * settle this" note the way the Barakes' name does. It agrees with the
+   * rule this file already applies twice — where a caption and a person's
+   * own biography disagree about that person's name, the biography wins,
+   * as for Janet Oyende-Kariuki and for Matthew Barake. The filename is
+   * left as it was received; renaming a source file to match a decision
+   * about its contents would destroy the evidence of the conflict.
+   *
+   * If it is ever reversed, the id and the URL migrate with the name, the
+   * way preskilla-munda did. DATA-NOTES.
+   *
+   * ── NO PHOTOGRAPH, SO NO `image` ─────────────────────────────────────
+   *
+   * None was supplied. Omitting `image` is the whole mechanism: the
+   * monogram in features/speakers/components/speaker-avatar.tsx is what
+   * renders, and it renders "AO" from the joint name. There is no
+   * placeholder file to add and none should be sourced — a portrait of
+   * the wrong couple is worse than an absence that reads as one.
+   *
+   * They are the first record to exercise that fallback in production,
+   * which is the state the avatar's own note says the list is in whenever
+   * it grows. No `imagePosition` either: it positions a photograph and
+   * there is none.
+   *
+   * ── NO SESSION, DELIBERATELY, AND NOW FOR A SHARPER REASON ───────────
+   *
+   * The same five "Family Life Sessions" blocks the Barakes could hold,
+   * Sunday through Thursday, 15:00-16:20, all credited to "Various
+   * Divisions and Speakers". Nothing is linked here.
+   *
+   * The reason is now stronger than it was for the Barakes alone. Their
+   * `role` says Young Adults and this one says Young Professionals, which
+   * are different audiences — and the programme distinguishes NEITHER.
+   * "Young Professionals" appears nowhere in program.ts, and "Young
+   * Adults" appears in it only as the name of a choir. So there are two
+   * unnamed couples, five identical unnamed slots, and no line anywhere
+   * in the data that would attach either couple to any of them. Guessing
+   * would now risk crediting the wrong couple as well as the wrong hour.
+   */
+  {
+    id: "andrew-diane-owino",
+    name: "Andrew and Diane Owino",
+    people: ["Andrew Owino", "Diane Owino"],
+    // The ministry, then who they serve, exactly as the Barakes' role is
+    // built. NOT the same audience as theirs: Young Professionals, per
+    // the brief that supplied the biography.
+    role: "Family Life, Young Professionals",
+    // Corrected: two characters, both of them doubled spaces — after
+    // "trainer and consultant," and after "The Art of Building Institute
+    // to". Nothing else. The file is pure ASCII, so unlike Allan Okoth's
+    // there were no curly apostrophes or non-breaking hyphens to
+    // normalise, and the apostrophe in "life's" is already a plain one.
+    //
+    // ONE array entry because the source is ONE paragraph. The other
+    // multi-paragraph biographies here are split where their own sources
+    // broke; this one never breaks, and splitting it into paragraphs
+    // would be composing the text rather than correcting it.
+    //
+    // Left alone and flagged in DATA-NOTES rather than repaired: the last
+    // sentence has no main verb. "Their latest book, Hope Between Two
+    // Lines: ..., reflecting their passion for helping people navigate
+    // life's challenging seasons" wants "reflects", but supplying it
+    // changes a word of their own prose, which is the line this file
+    // holds everywhere else — the same call made on Allan Okoth's
+    // "journey and his passion ... has grown".
+    bio: [
+      "Andrew and Diane Owino are educators, mentors, entrepreneurs and ministry-minded leaders passionate about helping people build lives of purpose, character and impact. Andrew is an engineer and quality-systems specialist, trainer and consultant, while Diane is a consultant physician and is deeply involved in their shared work of strengthening individuals, families and communities. Together, they lead initiatives through The Art of Building Institute to help people overcome stagnation, develop their potential, build healthy relationships, steward their resources and turn their gifts into meaningful contribution. They have been married for 10 years and are blessed with one baby. Together, they have authored several books and resources addressing family, excellence, health and money. Their latest book, Hope Between Two Lines: How to Protect Your Faith, Relationships and Purpose in Seasons of Waiting, reflecting their passion for helping people navigate life's challenging seasons with faith, wisdom and intentionality.",
     ],
   },
 ];
