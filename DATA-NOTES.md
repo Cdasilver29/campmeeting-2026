@@ -686,21 +686,19 @@ misspelling, so none was touched:
     programme cannot click through. He does appear in the hosts section as
     an Associate Pastor, with a photograph. Pr. Polycarp Nyangau is in the
     same position, with the closing Sabbath's pastoral prayer.
-11. **One profile is now back to a monogram, and it is a new one.**
-    Pr. Elkanah Mose and Pr. Kenneth Ayuo were the last two rendering as
-    initials and both photographs arrived, along with a replacement for
-    Eld. Omondi Oyoo — see below. Allan Okoth's biography has since
-    arrived too, which closes what was the emptiest page on the site
-    relative to how much of the programme its subject carries.
+11. **Every profile carries a photograph again, and all but one carry a
+    biography.** Pr. Elkanah Mose and Pr. Kenneth Ayuo were the last two
+    rendering as initials and both photographs arrived, along with a
+    replacement for Eld. Omondi Oyoo — see below. Allan Okoth's biography
+    has since arrived too, which closes what was the emptiest page on the
+    site relative to how much of the programme its subject carries.
 
-    **Andrew and Diane Owino have a biography and NO photograph**, so
-    they render as an "AO" monogram on the speakers index and as a 3:4
-    monogram at the top of their own page. Nothing is broken and no
-    placeholder was invented; this is the documented fallback doing its
-    job. **A photograph of the couple is owed.** If they are photographed
-    together, one frame is all that is wanted — the Barakes' portrait is
-    already a two-person source and `tools/assets/portrait-photos.mjs`
-    has the crop reasoning for that shape.
+    Andrew and Diane Owino were briefly the twelfth case: the biography
+    came on its own and they rendered as an "AO" monogram until the
+    photograph followed the same day. **It is in and cropped** — see the
+    portraits section for why theirs is the one crop that cannot keep its
+    subjects whole. Nothing had to be invented in between, which is what
+    the monogram fallback is kept for.
 
     **Eld. Ken Ochuka is still the only speaker with no biography**, and
     he is the Camp Meeting Chair and one of the two people who open the
@@ -730,8 +728,9 @@ misspelling, so none was touched:
     schema.org's `Person`, which is one human being and would otherwise
     carry two names the moment they are linked to a session. If the
     committee wants either couple listed separately — two cards, two
-    pages — that needs a second photograph and a second biography first,
-    and for the Owinos it needs a first photograph before a second.
+    pages — that needs a second photograph and a second biography first.
+    Both couples were photographed in ONE frame, so splitting either would
+    mean each half borrowing the other's portrait.
 14. **The five welcome letters are published; five host BIOGRAPHIES are
     still owed.** All five cards in the hosts and elders section on
     `/speakers` — Dr. Gerald Mochoge, Pr. Elvis Onyango, Pr. Polycarp
@@ -811,7 +810,7 @@ not number.
 
 ## The later portraits
 
-Four files have arrived after the speaker and host batches, and they are
+Five files have arrived after the speaker and host batches, and they are
 a third KIND of source rather than more of either — clean cut-outs on the
 poster's plum ground with **no caption burnt into them**. So they are cut
 by `tools/assets/portrait-photos.mjs` rather than by
@@ -824,6 +823,7 @@ this poster's caption begins".
 | `elkanah-mose` | 1122x1402, 2.0 MB | 842x1122 at 140,140 | 540x720, 79.6 KB | 50% 0% |
 | `omondi-oyoo` | 1122x1402, 1.6 MB | 842x1122 at 162,28 | 540x720, 25.6 KB | 50% 0% |
 | `matthew-marion-barake` | 1023x1537, 2.0 MB | 1022x1363 at 1,31 | 540x720, 68.8 KB | 50% 0% |
+| `andrew-diane-owino` | 1537x1023, 1.8 MB | 767x1023 at 305,0 | 540x720, 68.2 KB | 50% 0% |
 
 - **Eld. Omondi Oyoo's REPLACES a file.** The path did not change; what
   is behind it did. The old crop came from the only landscape source in
@@ -840,8 +840,8 @@ this poster's caption begins".
   he is shot at three-quarter length where they are chest-up, so an equal
   head position left a third of his window as empty plum. The reasoning
   is in the script.
-- **The Barakes' is the only two-person source any of these scripts has
-  had**, and it constrains the crop rather than complicating it. The
+- **The Barakes' was the first of two two-person sources**, and it
+  constrains the crop rather than complicating it. The
   source is 0.67:1, taller than 3:4, so the window is a crop of the
   HEIGHT — and it has to keep the FULL width, because he stands at
   x 0.05 and her dress reaches x 0.98 and any narrowing cuts one of them
@@ -858,6 +858,40 @@ this poster's caption begins".
   the script's `--preview` output, which is what that flag is for. No
   positive value improves the balance, because the pair sits high in the
   frame; above about 35 the square starts closing on the hat brim.
+- **The Owinos' is the second two-person source and the first LANDSCAPE
+  one, and it is the only crop here that cannot keep its subjects whole.**
+  1537x1023 is the Barakes' 1023x1537 transposed — same pipeline, turned
+  90 degrees — so it inverts their crop exactly: 1.50:1 is wider than 3:4,
+  the window keeps the full HEIGHT, and `cx` becomes the only real choice
+  where for them it was `top`.
+
+  The arithmetic is what makes it different in kind. A 3:4 window on a
+  1023px-tall frame is **767px wide, 49.9% of the 1537px source**, and the
+  couple measures **880px across** (x 248..1128, by pixel scan). They do
+  not fit. 113px of them has to go and no setting avoids it — giving up
+  height to reframe only narrows the 767 further, which is why `top: 0,
+  bottom: 1` is forced rather than preferred, and why the 144px of empty
+  plum above his head is kept.
+
+  `cx: 0.448` is their measured midpoint, x 688, not the frame's. It
+  splits the loss almost evenly — **57px off the outside of his left
+  shoulder, 56px off the right edge of her dress**, both cloth at the
+  frame's edge. Their heads (x 520..980) and their linked hands
+  (x 640..1070) are well inside. Centring on the frame instead would have
+  spent about 100px of the window on the empty plum that fills the right
+  26% of the source, and taken that 100px out of his shoulder.
+
+  Both faces survive twice, checked against `--preview`. Their faces are
+  stacked diagonally rather than side by side, because he leans down to
+  her: his crown is the highest point of the pair and her chin the lowest.
+  `object-position: 50% 0%` keeps both heads whole with air above his and
+  her chin clear of the bottom edge, and no positive value gains anything
+  below while it starts closing on his crown.
+
+  **If the committee can send this one as a portrait rather than a
+  landscape frame**, or simply less cropped at the sides, the full couple
+  fits and the 113px comes back. It is the one photograph here where a
+  different original would visibly improve the result.
 
 ## About the supplied speaker artwork
 

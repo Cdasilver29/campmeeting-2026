@@ -562,18 +562,20 @@ export const speakers: Speaker[] = [
    * If it is ever reversed, the id and the URL migrate with the name, the
    * way preskilla-munda did. DATA-NOTES.
    *
-   * ── NO PHOTOGRAPH, SO NO `image` ─────────────────────────────────────
+   * ── THE PHOTOGRAPH ARRIVED SEPARATELY ────────────────────────────────
    *
-   * None was supplied. Omitting `image` is the whole mechanism: the
-   * monogram in features/speakers/components/speaker-avatar.tsx is what
-   * renders, and it renders "AO" from the joint name. There is no
-   * placeholder file to add and none should be sourced — a portrait of
-   * the wrong couple is worse than an absence that reads as one.
+   * This record shipped for a few minutes with no `image` at all, drawing
+   * the monogram, because the biography came without one. The photograph
+   * followed and is cut by tools/assets/portrait-photos.mjs like the
+   * other four late arrivals.
    *
-   * They are the first record to exercise that fallback in production,
-   * which is the state the avatar's own note says the list is in whenever
-   * it grows. No `imagePosition` either: it positions a photograph and
-   * there is none.
+   * It is the SECOND two-person source and the FIRST landscape one:
+   * 1537x1023, which is the Barakes' 1023x1537 transposed. That inverts
+   * their crop exactly — theirs keeps the full width and chooses `top`,
+   * this keeps the full height and chooses `cx` — and it is the only
+   * source in any of the three scripts where the two subjects DO NOT FIT
+   * the 3:4 window. Read the note on the row before changing it; 113px of
+   * them has to go and which 113px is measured, not chosen.
    *
    * ── NO SESSION, DELIBERATELY, AND NOW FOR A SHARPER REASON ───────────
    *
@@ -598,6 +600,13 @@ export const speakers: Speaker[] = [
     // built. NOT the same audience as theirs: Young Professionals, per
     // the brief that supplied the biography.
     role: "Family Life, Young Professionals",
+    // 1537x1023, the first landscape two-person source. Full height is
+    // kept because the 3:4 window is only 767px of a 1537px frame and the
+    // couple measures 880px across; see the row in portrait-photos.mjs
+    // for what the crop gives up and why the avatar square starts at the
+    // top.
+    image: "/speakers/andrew-diane-owino.webp",
+    imagePosition: "50% 0%",
     // Corrected: two characters, both of them doubled spaces — after
     // "trainer and consultant," and after "The Art of Building Institute
     // to". Nothing else. The file is pure ASCII, so unlike Allan Okoth's

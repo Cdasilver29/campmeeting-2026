@@ -15,16 +15,17 @@ type Sitter = Pick<Speaker, "name" | "image" | "imagePosition">;
 /**
  * The monogram, and why it is still here.
  *
- * It is live. andrew-diane-owino was added without a photograph and
- * renders as "AO" — on the speakers index, on their own page, and
- * anywhere else a speaker is drawn. The other eleven speakers and all
- * five hosts have one.
+ * Nobody renders as one today. All twelve speakers have a photograph, and
+ * so do all five hosts.
  *
- * That is exactly what this was kept for, and the prediction it was kept
- * on held: the committee has added a name before sending the picture
- * every time so far, and a card with a monogram is what stands there in
- * the weeks between. Deleting the fallback would have meant that
- * addition shipping a broken image instead.
+ * It is not dead code waiting to be deleted, and the twelfth speaker is
+ * the proof rather than a counterexample: andrew-diane-owino was added
+ * from a biography that arrived on its own and DID render as "AO" until
+ * the photograph followed. That is the state this list is in whenever it
+ * GROWS — the committee has sent the name before the picture every time
+ * so far, and a card with a monogram is what stands there in between.
+ * Deleting the fallback would mean the next addition ships a broken image
+ * instead.
  *
  * It is meant to look chosen rather than missing, which is three small
  * things. Letter-spacing, because a two-letter monogram set solid reads as
@@ -140,13 +141,6 @@ export function SpeakerAvatar({
  * subject. It stays this size anyway: at 160px it sets the top of the
  * page, and shrinking it back to a circle would make the one page that
  * still has no biography look like the other eleven, minus something.
- *
- * One page is now the other way round — andrew-diane-owino has the
- * biography and no photograph, so the 3:4 monogram above is what sets the
- * top of it. That is the right size for it to be: a page whose portrait
- * shrank to a circle because the picture had not arrived would read as a
- * different kind of page, and the biography underneath is the same length
- * as everyone else's.
  */
 export function SpeakerPortrait({
   speaker,

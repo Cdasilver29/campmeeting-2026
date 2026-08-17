@@ -157,6 +157,55 @@ const PORTRAITS = [
     // sits high enough that no positive value improves the balance.
     posY: 0,
   },
+  {
+    id: "andrew-diane-owino",
+    file: "Mr&Mrs Andrew Okwany.PNG",
+    // ── THE SECOND TWO-PERSON SOURCE, AND THE FIRST LANDSCAPE ONE ────
+    //
+    // The file name is the one it was received under. It says Okwany and
+    // the id says Owino, deliberately: the biography inside the text file
+    // of the same name spells them Owino, that was confirmed, and the
+    // source keeps its original name so the conflict stays visible. See
+    // event.ts and DATA-NOTES.
+    //
+    // 1537x1023 — the Barakes' 1023x1537 TRANSPOSED, same pipeline, this
+    // time landscape. That makes it the exact inverse of their crop and
+    // the constraint flips with it. Theirs was 0.67:1, taller than 3:4,
+    // so the window kept the full WIDTH and only `top` was a real choice.
+    // This is 1.50:1, wider than 3:4, so the window keeps the full HEIGHT
+    // and only `cx` is a real choice.
+    //
+    // FULL HEIGHT IS FORCED, and this is the whole reason. At 3:4 the
+    // window is 767px wide, which is 49.9% of the frame — half the width
+    // is discarded no matter what. Giving up any height narrows that 767
+    // further, and the two of them measure 880px across (x 248..1128 by
+    // pixel scan). They ALREADY do not fit: 113px has to go. So top 0 /
+    // bottom 1 is not a preference about headroom, it is the setting that
+    // loses the least of them. The 144px of empty plum above his head
+    // comes along with it and is the price.
+    //
+    // WHAT THE 113px IS. Their measured midpoint is x 688, so cx 0.448
+    // puts the window at 305..1072 and splits the loss almost evenly: 57px
+    // off the outside of his left shoulder, 56px off the right edge of her
+    // dress. Both are cloth at the frame's edge, not faces and not hands
+    // — their heads sit at x 520..980 and their linked hands at x 640..1070,
+    // all of it well inside. cx is measured rather than 0.5 because the
+    // right 26% of the source (x 1128..1537) is empty plum: centring the
+    // window on the FRAME would spend 100px of it on backdrop and take
+    // that 100px out of his shoulder instead.
+    top: 0,
+    bottom: 1,
+    cx: 0.448,
+    // Verified in --preview, which is what the note at the top of this
+    // file says to do and what this pose needs: the avatar keeps a 540
+    // square out of the 720-tall output, so posY chooses among 180px of
+    // travel, and their faces are stacked DIAGONALLY rather than side by
+    // side — he leans down to her, so his crown is high and her chin is
+    // the lowest point of the pair. 0 keeps both heads whole with air
+    // above his and her chin clear of the bottom edge; any positive value
+    // starts closing on his crown while gaining nothing below.
+    posY: 0,
+  },
 ];
 
 const rows = [];
