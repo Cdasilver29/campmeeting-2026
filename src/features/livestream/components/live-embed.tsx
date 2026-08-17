@@ -41,6 +41,29 @@ import {
  * broadcast was going out. The answer to that is the link-out below and
  * the archive further down the page, both of which reach the stream
  * without this site having to guess at an id.
+ *
+ * ── WHY THERE IS NO autoplay=1 ───────────────────────────────────────
+ *
+ * The src used to carry `autoplay=1`, so the one press on the poster
+ * both mounted the iframe and started the video. On day 3 of the event
+ * that parameter took the live broadcast off the site: the iframe
+ * mounted, YouTube resolved the right stream, and the player rendered a
+ * black rectangle with no poster, no controls and no error.
+ *
+ * It was checked against the running broadcast, on this page, six ways.
+ * With `autoplay=1` the frame is black on both youtube-nocookie.com and
+ * youtube.com, for the channel embed AND for a direct video id, and
+ * adding `mute=1` does not rescue it. With the parameter dropped, every
+ * one of those combinations renders the poster and plays on the press.
+ * So the trigger is autoplay alone, not the channel lookup, not the
+ * host, and not the broadcast.
+ *
+ * A live stream has no still frame to fall back to, so when the player
+ * comes up in a playing state and the play is refused there is nothing
+ * left to draw. The cost of dropping it is one extra press, on YouTube's
+ * own play button, and that press is the thing that makes the playback a
+ * gesture YouTube will honour. `playsinline=1` stays: it keeps iOS from
+ * throwing the video into the fullscreen player on that press.
  */
 export function LiveEmbed({ label }: { label: string }) {
   const [activated, setActivated] = useState(false);
@@ -69,8 +92,8 @@ export function LiveEmbed({ label }: { label: string }) {
   if (activated) {
     // The priority order from the note above, in one expression.
     const src = LIVESTREAM_VIDEO_ID
-      ? `https://www.youtube-nocookie.com/embed/${LIVESTREAM_VIDEO_ID}?autoplay=1`
-      : `https://www.youtube-nocookie.com/embed/live_stream?channel=${LIVESTREAM_CHANNEL_ID}&autoplay=1`;
+      ? `https://www.youtube-nocookie.com/embed/${LIVESTREAM_VIDEO_ID}?playsinline=1`
+      : `https://www.youtube-nocookie.com/embed/live_stream?channel=${LIVESTREAM_CHANNEL_ID}&playsinline=1`;
 
     return (
       <div className="aspect-video w-full overflow-hidden rounded-card ring-1 ring-line">
