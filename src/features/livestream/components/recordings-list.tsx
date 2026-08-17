@@ -23,10 +23,23 @@ import { slotAnchorId } from "../lib/stream-link";
  *
  * ── EVERY SLOT IS DRAWN, POSTED OR NOT ───────────────────────────────
  *
- * Sixteen slots, always. A day with nothing posted is rendered in place
- * and marked as not yet up, rather than left out, so the page shows the
- * shape of the week filling in and a reader looking for a particular
- * morning gets an answer instead of a gap they have to interpret.
+ * A day with nothing posted is rendered in place and marked as not yet
+ * up, rather than left out, so the page shows the shape of the week
+ * filling in and a reader looking for a particular morning gets an answer
+ * instead of a gap they have to interpret.
+ *
+ * ── EXCEPT THE TWO HALF-DAYS THAT HOLD NO SERVICE ────────────────────
+ *
+ * Fourteen slots, not sixteen. Sunday morning is the Medical Camp and
+ * Friday afternoon is Sabbath Preparation, and neither is broadcast, so
+ * neither gets a frame — "Not posted yet" would be promising a video that
+ * was never going to exist. `archiveDays` works out which halves those
+ * are from the programme itself; see ../lib/recordings.ts.
+ *
+ * The missing slot leaves plain empty space in the two-column grid, not a
+ * box: the afternoon card keeps its own column through `col-start-2`, so
+ * the morning column stays the morning column all the way down the page
+ * rather than an afternoon sliding left into it.
  *
  * ── THE THUMBNAILS ARE THIRD-PARTY AND STAY THAT WAY ─────────────────
  *
@@ -197,8 +210,13 @@ export function RecordingsList({ anchors = false }: { anchors?: boolean }) {
                   : {})}
                 /* The site header is an 80px band, so an anchor landing at
                    the very top of the viewport would put the card under
-                   it. scroll-mt-24 is 96px: the band plus a little air. */
-                className="scroll-mt-24"
+                   it. scroll-mt-24 is 96px: the band plus a little air.
+
+                   col-start-2 pins an afternoon to the second column on
+                   the one day whose morning has no slot at all, so it does
+                   not slide into the morning's position. Harmless on every
+                   other day, where it is already the second child. */
+                className={`scroll-mt-24 ${slot.part === "afternoon" ? "col-start-2" : ""}`}
               >
                 {slot.recording ? (
                   <PostedSlot

@@ -146,12 +146,20 @@ session ends and its recording is uploaded, add it by hand so it appears in
 "Earlier this week".
 
 There are **two streams a day**, morning and afternoon, so the week is
-sixteen videos: eight days times two. The page lays all sixteen out in
-programme order and marks the ones that are not up yet, so a reader
-always gets an answer.
+**fourteen** videos rather than sixteen: eight days times two, less the two
+half-days that hold no service. Sunday morning is the Medical Camp and
+Friday afternoon is Sabbath preparation, so neither is broadcast and
+neither gets a slot on the page — that is read from the programme, not
+typed anywhere, so nothing to maintain. The page lays the fourteen out in
+programme order and marks the ones that are not up yet, so a reader always
+gets an answer.
+
+If one of those two half-days ever does get streamed, add the line anyway:
+a slot appears wherever a recording exists, whatever the programme says.
+It will not be dropped and it will not fail the build.
 
 There is no YouTube API, no key and no quota, and that is deliberate: for
-sixteen videos a year, an API key to rotate plus a rebuild trigger so a
+fourteen videos a year, an API key to rotate plus a rebuild trigger so a
 static site notices a video posted after its last deploy is more moving
 parts than the typing it saves. Do not add one.
 
@@ -178,6 +186,11 @@ tracking token belonging to whoever copied the link, not part of the
 video id. `https://youtu.be/dQw4w9WgXcQ?si=Ab12Cd34` is the id
 `dQw4w9WgXcQ` and nothing after the `?`.
 
+**Strip `&list=`, `&index=` and `&t=` too.** A link copied out of a
+playlist or paused part-way through carries a playlist position and a
+timestamp. Neither is part of the id. Keep the eleven characters and
+nothing else.
+
 **Check the id resolves before you commit.** Open, with your id in it:
 
 ```
@@ -188,6 +201,11 @@ A real id returns JSON with the video's title. A wrong one returns **404**.
 Takes seconds, and it is the check that would have caught the bad id that
 once broke the live player.
 
+**Read the title it returns, do not skim it.** It gives the day, the half
+of the day and usually the sermon, and it is what a `label` should be
+written from. An id can resolve perfectly and still be the wrong meeting —
+the 404 catches a typo, and the title is what catches a mix-up.
+
 Commit and push. Vercel builds on push and the page is live in a couple of
 minutes.
 
@@ -196,7 +214,7 @@ minutes.
 - **Order.** Paste at the end of the array. The page is laid out from the
   programme, day 1 to day 8, and each line is slotted into its own day and
   part, so where it sits in the file does not matter.
-- **The days with nothing posted.** All sixteen slots are always drawn.
+- **The days with nothing posted.** All fourteen slots are always drawn.
   A day you have not uploaded yet shows as "Not posted yet" on its own,
   and turns into a link the moment you add its line. Nothing needs
   removing or un-commenting.

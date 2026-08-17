@@ -140,20 +140,47 @@ export interface Recording {
  * anything: it fills "Earlier this week", and the live player never
  * reads it.
  *
- * These hold edited sermon cuts of the two halves of Sabbath 15 rather
- * than the raw stream, which is what somebody catching up wants — a
- * sermon with a title, not eight hours of broadcast.
+ * These hold edited sermon cuts rather than the raw stream, which is what
+ * somebody catching up wants — a sermon with a title, not eight hours of
+ * broadcast.
  *
- * The day is ASSUMED to be the opening Sabbath, 15th August, day 1. If
- * these belong elsewhere, change `dayId` on both lines and nothing else.
+ * No id here carries a `?si=` share token, a `&list=`, an `&index=` or a
+ * `&t=`. Those are a playlist position and a timestamp belonging to
+ * whoever copied the link, not part of the id, and they are stripped
+ * before an id is written down. `-5LBJ9QHyJw` beginning with a hyphen is
+ * normal — the id alphabet includes `-` and `_`, and it is not a stray
+ * character.
  *
- * Neither id carries a `?si=` share token; both are the bare eleven
- * characters. `-5LBJ9QHyJw` beginning with a hyphen is normal — the id
- * alphabet includes `-` and `_`, and it is not a stray character.
+ * ── EVERY ID IS OEMBED-CHECKED BEFORE IT IS COMMITTED ────────────────
+ *
+ * `https://www.youtube.com/oembed?url=…&format=json` returns the title
+ * and the channel for a real id and 404s for one that is wrong. A wrong
+ * id took a live broadcast off the site earlier this week, and the labels
+ * below are written FROM what oembed returned rather than from what
+ * anybody expected it to say — which is the check that catches a video
+ * that exists but is the wrong meeting. All five have been through it and
+ * all five are on the church's own channel.
+ *
+ * ── DAY 2 HAS NO MORNING LINE, AND THAT IS NOT AN OMISSION ───────────
+ *
+ * There was no morning sermon on Sunday the 16th: the morning is the
+ * Medical Camp. No entry is written for it, and the archive draws no
+ * Day 2 morning slot at all rather than a "not posted yet" frame
+ * promising a video that does not exist. See lib/recordings.ts.
  */
 export const recordings: Recording[] = [
   { dayId: "sabbath-15", part: "morning", label: "Morning Sermon — You Are on a Subscription Fee", videoId: "a83sJFk7bB0" },
   { dayId: "sabbath-15", part: "afternoon", label: "Afternoon/Evening Sermon — The Game Is Not Over", videoId: "-5LBJ9QHyJw" },
+  // Preached by Ev. Andrew Owino, per the channel's own title — the same
+  // man the committee has just given the five weekday Bible Studies to.
+  // The label follows the two above and names the sermon, not the
+  // preacher; the programme is where credits belong.
+  { dayId: "sunday-16", part: "afternoon", label: "Evening Sermon — Obey and Enjoy", videoId: "GyLV5dkqpDw" },
+  // The channel's title sets this one as "''The Bishop's Bedroom'" with
+  // unbalanced quotes. Quoted plainly here, which is how the other four
+  // are set; the words are untouched.
+  { dayId: "monday-17", part: "morning", label: "Morning Sermon — The Bishop's Bedroom", videoId: "bWHo14MGJ44" },
+  { dayId: "monday-17", part: "afternoon", label: "Evening Sermon — New Level, New Evil", videoId: "fpcfaILn4V0" },
 ];
 
 /** A watch URL from a video id. One place, so the shape cannot drift. */

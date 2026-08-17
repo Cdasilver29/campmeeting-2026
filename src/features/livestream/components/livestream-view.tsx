@@ -67,8 +67,8 @@ function AfterStream() {
               see the note in CatchUp on why not `prose-column` here. */}
           <p className="max-w-[var(--width-prose)] text-ink-muted">
             {eventInfo.edition} has ended. {recordingCount} of {totalSlots}{" "}
-            streams from the week are posted, morning and afternoon, in
-            programme order. The rest are added here as they go up.
+            streams from the week are posted, in programme order. The rest
+            are added here as they go up.
           </p>
           <RecordingsList />
         </>
@@ -118,7 +118,7 @@ function CatchUp() {
         Earlier this week
       </h2>
       <p className="max-w-[var(--width-prose)] text-ink-muted">
-        Every day of the week, morning and afternoon. {recordingCount} of{" "}
+        Every stream of the week, in programme order. {recordingCount} of{" "}
         {totalSlots} are posted so far; the rest appear here as they go up.
       </p>
       {/* The anchored copy. The home hero's "Watch live" button links to a
