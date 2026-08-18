@@ -440,20 +440,11 @@ export const speakers: Speaker[] = [
     id: "kenneth-ayuo",
     name: "Kenneth Ayuo",
     title: "Pr.",
-    // BACK TO THE 09:00 SLOT, AND NOW ON THREE MORNINGS OF IT. He held
-    // that slot on four mornings with a different subject each time —
-    // Spirit of Prophecy, Prophecy, Possibility Ministry, Discipleship —
-    // plus the closing Sabbath's Scripture Reading; then the committee
-    // moved him wholesale to the five weekday Bible Studies; and it has
-    // now moved him back to three of the four subjects. Possibility
-    // Ministry is not among them and is an Interactive Session again.
-    //
-    // `role` names all three rather than falling back to "Morning
-    // Sessions". Four subjects ran to 60 characters in a field whose
-    // other values are "Main Speaker" and "Teens"; three fit in 42, which
-    // is within a few characters of "Family Life, Young Professionals"
-    // below and still one line on a card.
-    role: "Spirit of Prophecy, Prophecy, Discipleship",
+    // Per the final PDF programme, he presents four weekday morning
+    // subject slots at 08:10–08:50 (Spirit of Prophecy, Prophecy,
+    // Possibility Ministry, Discipleship) and the closing Sabbath's
+    // Scripture Reading at 11:27–11:29.
+    role: "Spirit of Prophecy, Prophecy, Possibility Ministry, Discipleship",
     // The one crop in this batch that is a zoom rather than a shape. He
     // is shot at three-quarter length where the other two are chest-up,
     // so an equal head position still read smaller. See the note in

@@ -27,7 +27,8 @@ const ROOT = resolve(HERE, "..", "..");
 
 const args = process.argv.slice(2);
 const full = args.includes("--full");
-const onlyDay = args[args.indexOf("--day") + 1];
+const dayIdx = args.indexOf("--day");
+const onlyDay = dayIdx !== -1 ? args[dayIdx + 1] : undefined;
 
 const out = mkdtempSync(join(tmpdir(), "cm-verify-"));
 const bundle = join(out, "program.mjs");
