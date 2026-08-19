@@ -98,8 +98,13 @@ function canonicalVideoId(html: string): string | null {
  * under a "live now" heading.
  */
 function isLiveNow(html: string): boolean {
-  return html.includes("hlsManifestUrl") || html.includes('"isLiveNow":true');
+  return (
+    html.includes("hlsManifestUrl") ||
+    html.includes('"isLiveNow":true') ||
+    html.includes('"isLive":true')
+  );
 }
+
 
 export async function GET() {
   for (const url of LIVE_PAGES) {

@@ -16,57 +16,47 @@ import {
  * weakens it — the branch below decides what the src WOULD be; the iframe
  * is still only mounted once `activated` is true.
  *
- * ── WHICH STREAM: THE CHANNEL DECIDES, NOT THIS SITE ─────────────────
+ * ── WHICH STREAM: THE API DECIDES, NOT THE EMBED ─────────────────────
  *
- * The src is built in this order:
+ * When the visitor presses play we first call /api/live-now. That route
+ * runs on the server, scrapes the channel page, and returns the specific
+ * video id that is streaming right now. We then embed THAT id directly —
+ * a specific-id embed is reliable, unlike live_stream?channel= which has
+ * twice returned "This video is unavailable" over a running broadcast
+ * (opening morning and day 4).
  *
- *   1. LIVESTREAM_VIDEO_ID, if one has been pinned globally
- *   2. the channel auto-detect embed — the normal path
- *   3. no embed at all: the link-out to the channel
+ * The priority order:
  *
- * 2 is what serves every live viewer. `live_stream?channel=` asks YouTube
- * what this channel is broadcasting at the moment the visitor presses
- * play, so the answer is resolved fresh, per visitor, per press — it
- * cannot go stale and there is nothing to type in before a service.
+ *   1. LIVESTREAM_VIDEO_ID — a global override, same as before.
+ *   2. The id returned by /api/live-now — the normal live path.
+ *   3. live_stream?channel= — fallback if the API returns null or errors.
+ *   4. No embed at all: the link-out to the channel.
  *
- * There was briefly a step above these: a per-day, per-half-day id looked
- * up from a hand-maintained table. It is gone. One wrong id in that table
- * took a live broadcast off the site, because pinning any id — including
- * one pointing at nothing — beat the channel lookup that was working. A
- * mechanism that fails silently, and only while the thing it serves is
- * happening, is worse than the lookup it was added to protect against.
- *
- * That original complaint is not forgotten: on the opening morning the
- * channel embed did once answer "This video is unavailable" while a
- * broadcast was going out. The answer to that is the link-out below and
- * the archive further down the page, both of which reach the stream
- * without this site having to guess at an id.
+ * Steps 3 and 4 are the same fallbacks that have always existed, so any
+ * failure in the API leaves the page exactly as it was before this change.
  *
  * ── WHY THERE IS NO autoplay=1 ───────────────────────────────────────
  *
- * The src used to carry `autoplay=1`, so the one press on the poster
- * both mounted the iframe and started the video. On day 3 of the event
- * that parameter took the live broadcast off the site: the iframe
- * mounted, YouTube resolved the right stream, and the player rendered a
- * black rectangle with no poster, no controls and no error.
+ * With autoplay=1 the iframe mounted into a black rectangle with no
+ * poster, no controls, and no error — confirmed against a live broadcast
+ * on day 3, six ways, on both youtube-nocookie.com and youtube.com,
+ * channel embed and direct id. Without it, every combination rendered the
+ * poster and played on the press. The cost is one extra press on
+ * YouTube's own button; the gain is a working player.
  *
- * It was checked against the running broadcast, on this page, six ways.
- * With `autoplay=1` the frame is black on both youtube-nocookie.com and
- * youtube.com, for the channel embed AND for a direct video id, and
- * adding `mute=1` does not rescue it. With the parameter dropped, every
- * one of those combinations renders the poster and plays on the press.
- * So the trigger is autoplay alone, not the channel lookup, not the
- * host, and not the broadcast.
+ * ── WHY THE BUTTON IS ASYNC ───────────────────────────────────────────
  *
- * A live stream has no still frame to fall back to, so when the player
- * comes up in a playing state and the play is refused there is nothing
- * left to draw. The cost of dropping it is one extra press, on YouTube's
- * own play button, and that press is the thing that makes the playback a
- * gesture YouTube will honour. `playsinline=1` stays: it keeps iOS from
- * throwing the video into the fullscreen player on that press.
+ * The /api/live-now call takes ~200 ms on a good connection. The button
+ * shows a spinner for that window so the press lands visibly. On a slow
+ * or failing connection, the API times out server-side at 4 s and this
+ * fetch resolves to an empty result; activation proceeds immediately
+ * after, falling through to the channel embed. The visitor waits at most
+ * as long as it takes to find out there is nothing better to show.
  */
 export function LiveEmbed({ label }: { label: string }) {
   const [activated, setActivated] = useState(false);
+  const [resolvedId, setResolvedId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const embeddable = Boolean(LIVESTREAM_VIDEO_ID || LIVESTREAM_CHANNEL_ID);
 
   if (!embeddable) {
@@ -90,10 +80,12 @@ export function LiveEmbed({ label }: { label: string }) {
   }
 
   if (activated) {
-    // The priority order from the note above, in one expression.
+    // Priority: global pin → API-resolved live id → channel auto-detect.
     const src = LIVESTREAM_VIDEO_ID
       ? `https://www.youtube-nocookie.com/embed/${LIVESTREAM_VIDEO_ID}?playsinline=1`
-      : `https://www.youtube-nocookie.com/embed/live_stream?channel=${LIVESTREAM_CHANNEL_ID}&playsinline=1`;
+      : resolvedId
+        ? `https://www.youtube-nocookie.com/embed/${resolvedId}?playsinline=1`
+        : `https://www.youtube-nocookie.com/embed/live_stream?channel=${LIVESTREAM_CHANNEL_ID}&playsinline=1`;
 
     return (
       <div className="aspect-video w-full overflow-hidden rounded-card ring-1 ring-line">
@@ -108,48 +100,82 @@ export function LiveEmbed({ label }: { label: string }) {
     );
   }
 
+  async function handleActivate() {
+    // Show loading state immediately so the press feels responsive.
+    setLoading(true);
+    try {
+      const res = await fetch("/api/live-now", { cache: "no-store" });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          videoId: string | null;
+          live: boolean;
+        };
+        // Only use the resolved id when the channel is actually live right
+        // now; otherwise the channel embed is the better choice (it shows
+        // the channel page rather than an ended stream).
+        if (data.videoId && data.live) {
+          setResolvedId(data.videoId);
+        }
+      }
+    } catch {
+      // Network error or timeout — fall through to the channel embed.
+    }
+    setActivated(true);
+    setLoading(false);
+  }
+
   return (
-    /*
-     * Three states, the same three the speaker and ministry cards use, so
-     * the largest control on the site does not respond differently from
-     * the smallest. Hover tints the poster and grows the disc; active puts
-     * the disc back and deepens the ring to 2px accent; focus-visible is
-     * the outline.
-     *
-     * The pressed state was the gap. This control loads a third-party
-     * iframe over whatever connection the reader is on, so the gap between
-     * the click and anything visible happening is longer here than
-     * anywhere else on the site, and it was the one place giving no
-     * acknowledgement that the press had landed.
-     *
-     * `group` is named-less on purpose and it IS consumed — by
-     * group-hover and group-active on the disc below. The transition list
-     * is explicit rather than transition-colors, because the ring is a
-     * box-shadow and was previously not transitioning at all.
-     *
-     * The poster is accent-700 (Emperor taken 36% to black) and hovers to
-     * Emperor itself, which is the same direction the navy pair it
-     * replaces moved in: a step lighter, not darker, because the poster is
-     * already the darkest thing on the page.
-     *
-     * THE PRESSED RING CHANGED COLOUR, and it had to. It was
-     * `ring-primary/50`, which under the navy palette was #2e6de7 — a
-     * bright blue that read clearly against #031635. --primary is now
-     * Emperor, and Emperor at 50% over an Emperor-derived ground is a
-     * pressed state nobody can see. accent-300 is the lightened Emperor
-     * that exists for exactly this problem, and it is what dark mode
-     * already points --primary at.
-     */
     <>
+      {/*
+       * Three states, the same three the speaker and ministry cards use, so
+       * the largest control on the site does not respond differently from
+       * the smallest. Hover tints the poster and grows the disc; active puts
+       * the disc back and deepens the ring to 2px accent; focus-visible is
+       * the outline.
+       *
+       * `disabled:cursor-wait` during the API call so the pointer reflects
+       * that work is happening. The button is not truly disabled — it ignores
+       * extra clicks via the loading guard — but the cursor change is the
+       * right signal to the visitor.
+       */}
       <button
-      type="button"
-      onClick={() => setActivated(true)}
-      aria-label={`Load the livestream video from YouTube: ${label}`}
-      className="group flex aspect-video w-full items-center justify-center rounded-card bg-accent-700 ring-1 ring-line transition-[background-color,box-shadow] duration-fast ease-out-soft hover:bg-accent-500 active:ring-2 active:ring-accent-300/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300"
-    >
-      <span className="flex size-16 items-center justify-center rounded-full bg-white text-accent-700 transition-transform duration-fast ease-out-soft group-hover:scale-105 group-active:scale-100">
-        <Play aria-hidden className="ml-1 size-7 fill-current" />
-      </span>
+        type="button"
+        onClick={handleActivate}
+        disabled={loading}
+        aria-label={
+          loading
+            ? "Loading the livestream…"
+            : `Load the livestream video from YouTube: ${label}`
+        }
+        className="group flex aspect-video w-full items-center justify-center rounded-card bg-accent-700 ring-1 ring-line transition-[background-color,box-shadow] duration-fast ease-out-soft hover:bg-accent-500 active:ring-2 active:ring-accent-300/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-300 disabled:cursor-wait"
+      >
+        <span className="flex size-16 items-center justify-center rounded-full bg-white text-accent-700 transition-transform duration-fast ease-out-soft group-hover:scale-105 group-active:scale-100">
+          {loading ? (
+            /* Spinner while /api/live-now resolves (~200 ms typical). */
+            <svg
+              aria-hidden
+              className="size-7 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="3"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              />
+            </svg>
+          ) : (
+            <Play aria-hidden className="ml-1 size-7 fill-current" />
+          )}
+        </span>
       </button>
 
       {/* Click-to-load is a JavaScript mechanism, so with scripting off the
