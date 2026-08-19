@@ -181,8 +181,8 @@ export const recordings: Recording[] = [
   // are set; the words are untouched.
   { dayId: "monday-17", part: "morning", label: "Morning Sermon — The Bishop's Bedroom", videoId: "bWHo14MGJ44" },
   { dayId: "monday-17", part: "afternoon", label: "Evening Sermon — New Level, New Evil", videoId: "fpcfaILn4V0" },
-  { dayId: "tuesday-18", part: "morning", label: "Morning Sermon — ''Obey and Live, Disobey and Perish''", videoId: "_1OZ7IrKrLA" },
-  { dayId: "tuesday-18", part: "afternoon", label: "Afternoon Service — ''Obey and Live, Disobey and Perish''", videoId: "mrig_3CZX6I" },
+  { dayId: "tuesday-18", part: "morning", label: "Morning Sermon — ''In The Right Place, But...''", videoId: "uwoFZyIBakU" },
+  { dayId: "tuesday-18", part: "afternoon", label: "Evening Sermon — \"Spot the Difference\"", videoId: "BXH4YXR-Y94" },
 ];
 
 /** A watch URL from a video id. One place, so the shape cannot drift. */
