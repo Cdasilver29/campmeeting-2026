@@ -79,16 +79,24 @@ const HEADERS = {
  * channel that is not, it resolves to the channel page and the canonical
  * is the channel URL, which has no `watch?v=` in it — so the absence of
  * a match is the "nothing is live" answer rather than a parse failure.
+ *
+ * ── WHY THE LOOSE "videoId" PATTERN WAS REMOVED ──────────────────────
+ *
+ * The earlier fallback `/"videoId":"([\w-]{11})"/` matched the FIRST
+ * "videoId" occurrence in YouTube's serialised page JSON, which is NOT
+ * guaranteed to be the live stream. YouTube's HTML embeds video ids for
+ * recommended/related content from ANY channel. During the event it
+ * returned an unrelated video from a different channel because that
+ * video appeared earlier in the JSON than the live stream itself.
+ *
+ * The canonical <link> is set by YouTube specifically to the live video
+ * when the channel is broadcasting. It is the only source used now.
  */
 function canonicalVideoId(html: string): string | null {
-  const canonical = html.match(
+  const match = html.match(
     /<link\s+rel="canonical"\s+href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/,
   );
-  if (canonical?.[1]) return canonical[1];
-
-  // Second pattern for the same fact, in case the head changes shape.
-  const meta = html.match(/"videoId":"([\w-]{11})"/);
-  return meta?.[1] ?? null;
+  return match?.[1] ?? null;
 }
 
 /**
@@ -105,6 +113,17 @@ function isLiveNow(html: string): boolean {
   );
 }
 
+/**
+ * Confirm the page we fetched belongs to our channel before trusting
+ * any video id found in it. YouTube's page HTML embeds the channel id
+ * in multiple places in its serialised data. If LIVESTREAM_CHANNEL_ID
+ * does not appear at all, we fetched the wrong page (redirect, layout
+ * change, geo-block interstitial, etc.) and must not use any id from it.
+ */
+function belongsToOurChannel(html: string): boolean {
+  if (!LIVESTREAM_CHANNEL_ID) return true; // no id configured → skip check
+  return html.includes(LIVESTREAM_CHANNEL_ID);
+}
 
 export async function GET() {
   for (const url of LIVE_PAGES) {
@@ -119,6 +138,12 @@ export async function GET() {
       if (!response.ok) continue;
 
       const html = await response.text();
+
+      // Guard: verify this page belongs to our channel before reading
+      // any video id from it. Protects against redirects or layout
+      // changes that land on a generic YouTube page.
+      if (!belongsToOurChannel(html)) continue;
+
       const videoId = canonicalVideoId(html);
       if (!videoId) continue;
 
