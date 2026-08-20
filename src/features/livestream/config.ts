@@ -69,7 +69,7 @@ export const RECORDING_PARTS: readonly RecordingPart[] = [
 /** What each part is called on the page. */
 export const PART_LABEL: Record<RecordingPart, string> = {
   morning: "Morning",
-  afternoon: "Afternoon",
+  afternoon: "Evening",
 };
 
 /**
@@ -183,6 +183,8 @@ export const recordings: Recording[] = [
   { dayId: "monday-17", part: "afternoon", label: "Evening Sermon — New Level, New Evil", videoId: "fpcfaILn4V0" },
   { dayId: "tuesday-18", part: "morning", label: "Morning Sermon — ''In The Right Place, But...''", videoId: "uwoFZyIBakU" },
   { dayId: "tuesday-18", part: "afternoon", label: "Evening Sermon — \"Spot the Difference\"", videoId: "BXH4YXR-Y94" },
+  { dayId: "wednesday-19", part: "morning", label: "Morning Sermon — \"Life Is Complicated, You Never Know\"", videoId: "SgfedHK75do" },
+  { dayId: "wednesday-19", part: "afternoon", label: "Evening Sermon — \"Unstable as Water\"", videoId: "fAHYbQfipQo" },
 ];
 
 /** A watch URL from a video id. One place, so the shape cannot drift. */
