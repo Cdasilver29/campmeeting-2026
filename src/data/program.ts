@@ -26,7 +26,7 @@ import type { ProgramDay } from "./types";
  *                Discipleship (whichever runs that day) — Pr. Kenneth Ayuo
  *                (Thursday 20 differs: Stewardship moves here — Pr. Elkanah Mose)
  *   09:00–09:40  Stewardship — Pr. Elkanah Mose (Mon, Tue, Wed, Fri)
- *                (Thursday 20 differs: Evangelism - One Voice 2027 — Pr. Elvis Onyango)
+ *                (Thursday 20 differs: Evangelism - One Voice 27 — Pr. Elvis Onyango)
  *   09:50–10:30  Bible Study — Andrew Owino (all five weekdays)
  *
  * ── WHY ANDREW OWINO IS A FREE-TEXT CREDIT ───────────────────────────
@@ -521,7 +521,7 @@ export const program: ProgramDay[] = [
           { id: "thursday-20-song-service-2", title: "Song Service", start: "08:50", end: "09:00", presentedBy: ["Choristers"], ministry: "music" },
           // The only session in the week that names a campaign rather
           // than a subject. Title as printed.
-          { id: "thursday-20-evangelism", title: "Evangelism - One Voice 2027", start: "09:00", end: "09:40", presentedBy: ["Pr. Elvis Onyango"], ministry: "evangelism", featured: true },
+          { id: "thursday-20-evangelism", title: "Evangelism - One Voice 27", start: "09:00", end: "09:40", presentedBy: ["Pr. Elvis Onyango"], ministry: "evangelism", featured: true },
           { id: "thursday-20-book-promotion", title: "Book Promotion", start: "09:40", end: "09:50", presentedBy: ["Literature Evangelists"], ministry: "publishing" },
           { id: "thursday-20-bible-study", title: "Bible Study", start: "09:50", end: "10:30", presentedBy: ["Andrew Owino"], ministry: "bible-study", featured: true },
           { id: "thursday-20-heart-of-worship", title: "Heart of Worship — Praise and Music", start: "10:30", end: "11:00", presentedBy: ["Choristers Choir", "Ambassadors Choir", "Newlife Migori Adventist Church Choir", "Newlife Church Choir", "Taji Kenya", "Gifted Ministry"], ministry: "music" },
