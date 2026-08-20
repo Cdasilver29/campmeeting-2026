@@ -1,5 +1,6 @@
 "use client";
 
+import { CalendarClock } from "lucide-react";
 import { NowCard } from "@/features/schedule/components/now-card";
 import { SessionCard } from "@/features/schedule/components/session-card";
 import { getTodayState, type TimedSession } from "@/features/schedule/lib/today";
@@ -89,9 +90,38 @@ import { useNow } from "@/features/schedule/use-now";
  * on the commonest phone width in this congregation.
  *
  * 15rem (240px) from sm, against a 230px worst case.
+ *
+ * ── AND A FOURTH TIME, BECAUSE THE HEADING LINE BECAME A PILL ────────
+ *
+ * The line above the card — "Live now" / "Not live right now — up next" —
+ * gained a tinted ground and a hairline in the livestream visual pass, so
+ * it is 10px taller than it was: py-1 either side plus the 1px ring. Every
+ * one of the four numbers above measures a heading PLUS a card, so all
+ * four move by the same 10px, and 0.75rem (12px) is added rather than
+ * 10px so each keeps the slack it was derived with.
+ *
+ * 22.25rem (356px) / 20.25rem (324px) / 15.75rem (252px).
+ *
+ * Then walked again to check the arithmetic rather than trust it — eight
+ * days, seventeen times each, eight widths, tallest slot content recorded:
+ *
+ *   320  344px    480  260px    1024  210px
+ *   360  290px    640  238px    1279  210px
+ *   390  290px    768  238px
+ *
+ * Every step clears its own worst case: 356 > 344, 324 > 290, 252 > 238.
+ *
+ * The 390 reading is 16px UNDER the derivation above (306 + 10 = 316) and
+ * the reserve is deliberately left at the higher number. Seventeen times a
+ * day is a coarser sample than the twelve-per-day-per-width walk the
+ * original numbers came from, so a lower reading here is evidence that
+ * this sample missed the worst case, not that the worst case moved.
+ *
+ * CLS on /livestream after the change: 0.0000 median and 0.0000 max over
+ * 7 cold runs at both 390x844 and 1440x900 (tools/perf/cls.mjs).
  */
 const NOW_SLOT =
-  "min-h-[21.5rem] min-[360px]:min-h-[19.5rem] sm:min-h-[15rem] xl:min-h-0";
+  "min-h-[22.25rem] min-[360px]:min-h-[20.25rem] sm:min-h-[15.75rem] xl:min-h-0";
 
 /**
  * What the slot holds when nothing is live.
@@ -128,7 +158,10 @@ function UpNext({ next }: { next: TimedSession }) {
           false claim here. */}
       <h2
         id="now-heading"
-        className="flex items-center gap-2 text-sm font-medium leading-5 text-ink"
+        /* The same pill NowCard's badge variant now draws, kept in step by
+           hand because the two are different components rendering the same
+           line in the same slot. If one gains an edge the other has to. */
+        className="flex w-fit items-center gap-2 rounded-control bg-surface-muted px-2.5 py-1 text-sm font-medium leading-5 text-ink ring-1 ring-line"
       >
         <span
           aria-hidden
@@ -170,10 +203,23 @@ export function NowSlot() {
       ) : state.next ? (
         <UpNext next={state.next} />
       ) : (
-        <p className="text-sm text-ink-muted">
-          Nothing is scheduled right now. Check the programme for the next
-          session.
-        </p>
+        /* Unreachable in practice — `state.next` crosses midnight, so there
+           is always a next session — but it is the fallback and it renders
+           in the same reserved box as the two cards above. As a bare line
+           of grey it looked like the card had failed to draw. The dashed
+           panel is the same shape the archive's pending slots and the
+           after-phase empty state use, so "nothing here yet" has one look
+           across the page. */
+        <div className="flex items-start gap-3 rounded-card border border-dashed border-line bg-surface-muted/50 p-4">
+          <CalendarClock
+            aria-hidden
+            className="mt-0.5 size-5 shrink-0 text-ink-muted"
+          />
+          <p className="text-sm text-ink-muted">
+            Nothing is scheduled right now. Check the programme for the next
+            session.
+          </p>
+        </div>
       )}
     </div>
   );

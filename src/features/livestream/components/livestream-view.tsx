@@ -1,4 +1,6 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
+import { ExternalLink, Video } from "lucide-react";
 import { eventInfo } from "@/data";
 import { ACTION_LINK } from "@/lib/link-styles";
 import { EventPhaseSync } from "@/components/event-phase-sync";
@@ -22,6 +24,94 @@ const startLabel = new Intl.DateTimeFormat("en-GB", {
 
 const VIEW_ID = "livestream-view";
 const PHASE_ATTRIBUTE = "data-livestream-phase";
+
+/**
+ * ── THE STAGE ────────────────────────────────────────────────────────
+ *
+ * A tray the player sits in, and the one thing on this page that says
+ * "this is the main event".
+ *
+ * The problem it fixes: the player, the archive thumbnails and the empty
+ * states were all a rounded-card on the page surface with a 1px ring, so
+ * the reason the page exists had the same visual weight as a thumbnail a
+ * third its size. Nothing was above anything else.
+ *
+ * A tray rather than a shadow. The brief rules out elevation heavier than
+ * the site already uses, and this site's whole emphasis vocabulary is
+ * rings and grounds — see NOW_SURFACE in schedule/components/now-card.tsx,
+ * which marks the live card with a 2px ring and a tint rather than a lift.
+ * So the player is separated by being INSET into a surface of its own
+ * instead of raised off the page.
+ *
+ * `surface-muted`, which is theme-aware, holding an Emperor poster, which
+ * is not. That pairing is the point: in light the tray is a pale ground
+ * around a deep plum rectangle, in dark it is a plum ground around the
+ * same deep plum rectangle with the ring separating them. The poster
+ * itself never changes colour between themes, so the white type on it
+ * measures 11.59:1 at noon and at midnight. See the note in live-embed.tsx.
+ *
+ * The outer radius is the card radius plus the padding, which is what
+ * keeps the tray's corner concentric with the player's rather than
+ * running a fat corner around a tight one.
+ *
+ * No text of its own except the caption strip below, which is at
+ * `ink`/`ink-muted` on `surface-muted`: 15.76:1 / 5.96:1 light, 14.83:1 /
+ * 10.49:1 dark.
+ */
+const STAGE =
+  "flex flex-col gap-2 rounded-[1.25rem] bg-surface-muted p-2 ring-1 ring-line sm:gap-2.5 sm:rounded-[1.5rem] sm:p-3";
+
+function Stage({ children }: { children: ReactNode }) {
+  return (
+    <div className={STAGE}>
+      {children}
+      {/* The caption strip. It gives the tray a bottom edge that is content
+          rather than padding, and it puts the one link the during phase
+          never had — the channel — beside the player instead of only in
+          the before and after copy. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-1.5 pb-0.5">
+        <p className="text-sm font-medium text-ink">
+          {eventInfo.edition} livestream
+        </p>
+        <a
+          href={LIVESTREAM_CHANNEL_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm text-ink-muted underline underline-offset-4 transition-colors duration-fast hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+        >
+          On YouTube
+          <ExternalLink aria-hidden className="size-3.5 shrink-0" />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * An empty state that looks decided rather than broken.
+ *
+ * The three places this page can have nothing to show — no recordings
+ * posted, no stream link published, nothing scheduled right now — were
+ * each a bare grey sentence sitting where content would have been, which
+ * is indistinguishable from content that failed to arrive. One shape for
+ * all of them: a dashed panel, an icon, and a sentence that says which of
+ * "not yet" and "not ever" this is.
+ *
+ * Dashed rather than solid, matching PendingSlot in recordings-list.tsx,
+ * so "a thing that is coming" has one look across the whole page.
+ *
+ * `ink-muted` on `surface-muted` at 50%: the panel composites to #fcfbfd
+ * in light and #230f3b in dark, where ink-muted measures 6.17:1 and
+ * 10.79:1. Both clear 4.5, and both are asserted in tools/perf/contrast.mjs.
+ */
+function EmptyPanel({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex max-w-[var(--width-prose)] items-start gap-3 rounded-card border border-dashed border-line bg-surface-muted/50 p-4">
+      <Video aria-hidden className="mt-0.5 size-5 shrink-0 text-ink-muted" />
+      <p className="text-ink-muted">{children}</p>
+    </div>
+  );
+}
 
 function BeforeStream() {
   return (
@@ -73,11 +163,11 @@ function AfterStream() {
           <RecordingsList />
         </>
       ) : (
-        <p className="max-w-[var(--width-prose)] text-ink-muted">
+        <EmptyPanel>
           {eventInfo.edition} has ended. Recordings are being posted to the
           church&apos;s YouTube channel, and each one is listed here as it goes
           up. Nothing has been published yet.
-        </p>
+        </EmptyPanel>
       )}
       <a
         href={LIVESTREAM_CHANNEL_URL}
@@ -108,7 +198,19 @@ function AfterStream() {
 function CatchUp() {
   if (!hasRecordings) return null;
   return (
-    <section className="flex w-full flex-col gap-3">
+    /* THE RULE IS THE FIX FOR "THREE UNRELATED BLOCKS".
+
+       The player, the live card and the archive were separated by one flat
+       gap-6 each, so the page read as three things that happened to be
+       stacked. They are not three things: the player and the card are one
+       unit about right now, and the archive is a different unit about the
+       rest of the week. So the gap inside the unit is tightened to gap-4
+       and the boundary between the units is marked the way this site marks
+       every other section boundary — --space-section of air and a
+       hairline — with the heading held close under it at --space-item.
+
+       See the `during` block below for the other half of the arrangement. */
+    <section className="flex w-full flex-col gap-(--space-item) border-t border-line pt-(--space-item)">
       {/* Capped but NOT centred. `prose-column` adds `margin-inline: auto`,
           which would have floated this heading into the middle of the shell
           above a grid that starts at its left edge — a heading indented
@@ -197,10 +299,13 @@ export function LivestreamView() {
           <AfterStream />
         </div>
 
-        {/* gap-6, not gap-8. The player, the live card and the archive are
-            one sequence about today, not three unrelated sections, and 32px
-            between them read as a page that had run out of things to say. */}
-        <div className={`${SHOW_DURING} flex-col gap-6`}>
+        {/* --space-section between the stage row and the archive, which is
+            the same step every other section boundary on this site takes,
+            and CatchUp draws the hairline on its own top edge. Inside the
+            row the gap is 4, so the player and the live card group and the
+            archive separates. It was one flat gap-6 for both, which is why
+            the page read as three unrelated blocks. */}
+        <div className={`${SHOW_DURING} flex-col gap-(--space-section)`}>
           {/*
             THE PLAYER AND THE LIVE CARD: STACKED, CAPPED, LEFT ALIGNED.
 
@@ -237,7 +342,9 @@ export function LivestreamView() {
             making the card worse, and that is 1280, not 1024.
           */}
           <div className="flex w-full max-w-[var(--width-prose)] flex-col gap-4 xl:grid xl:max-w-none xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] xl:items-start xl:gap-6">
-            <LiveEmbed label={`${eventInfo.edition} livestream`} />
+            <Stage>
+              <LiveEmbed label={`${eventInfo.edition} livestream`} />
+            </Stage>
             <NowSlot />
           </div>
           <CatchUp />

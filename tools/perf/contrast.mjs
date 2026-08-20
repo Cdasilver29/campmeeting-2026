@@ -46,6 +46,30 @@ export function contrast(a, b) {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
+/**
+ * `fg` at `alpha` over `bg`, as an opaque hex.
+ *
+ * A ratio is only defined between two opaque colours, and several of the
+ * pairings below are written in the components as `text-white/85` or
+ * `bg-surface-muted/50` — an alpha, not a colour. Compositing them here is
+ * what lets those rows be asserted at all rather than eyeballed. sRGB
+ * source-over, which is what the browser paints.
+ */
+const mix = (fg, bg, alpha) => {
+  const f = rgb(fg);
+  const b = rgb(bg);
+  return (
+    "#" +
+    [0, 1, 2]
+      .map((i) =>
+        Math.round(f[i] * alpha + b[i] * (1 - alpha))
+          .toString(16)
+          .padStart(2, "0"),
+      )
+      .join("")
+  );
+};
+
 /* ── read the tokens back out of the stylesheet ────────────────────── */
 
 /**
@@ -139,6 +163,31 @@ const pairs = (t, mode) => [
   [t["--color-live"], t["--color-surface-muted"], UI, "live dot on surface-muted"],
   [t["--color-bookmark"], t["--color-surface"], UI, "bookmark icon on surface"],
   [t["--color-bookmark"], t["--color-surface-muted"], UI, "bookmark icon on surface-muted (its hover)"],
+
+  // ── /livestream ───────────────────────────────────────────────────
+  // The player's poster, the archive's part chip and the archive's play
+  // disc are all filled with a RAW PALETTE NAME rather than a step of the
+  // accent scale, because the accent scale flips with the theme and these
+  // carry white type. Emperor and Grapevine hold one value in both modes,
+  // so both rows below are the same number twice — which is the property
+  // being asserted, not an oversight.
+  ["#ffffff", t["--color-emperor"], TEXT, "livestream poster: white on the Emperor ground"],
+  ["#ffffff", t["--color-grapevine"], TEXT, "livestream poster: white on the Grapevine hover ground"],
+  // The poster's second line, composited: white at 85% over each ground.
+  [mix("#ffffff", t["--color-emperor"], 0.85), t["--color-emperor"], TEXT, "livestream poster: the white/85 hint line on Emperor"],
+  [mix("#ffffff", t["--color-grapevine"], 0.85), t["--color-grapevine"], TEXT, "livestream poster: the white/85 hint line on Grapevine"],
+  [t["--color-emperor"], "#ffffff", TEXT, "livestream poster: the Emperor play glyph in its white disc"],
+  // The focus ring, offset onto the stage tray rather than onto the page.
+  [t["--color-accent-500"], t["--color-surface-muted"], UI, "livestream: the focus ring on the stage tray"],
+  // The live badge, which gained a ground in the same pass.
+  [t["--color-ink"], t["--color-surface-muted"], TEXT, "livestream: the live badge's words on its pill"],
+  // The archive card, which gained a body in the same pass. `primary` is
+  // the accent scale here and SHOULD flip: it is ordinary link text on an
+  // ordinary surface, not white type on a fill.
+  [t["--primary"], t["--color-surface-muted"], TEXT, "livestream archive: the recording title on the card body"],
+  [t["--color-ink-muted"], t["--color-surface-muted"], TEXT, "livestream archive: the card's meta line"],
+  // The dashed empty panels are surface-muted at 50% over the page.
+  [t["--color-ink-muted"], mix(t["--color-surface-muted"], t["--color-surface"], 0.5), TEXT, "livestream: empty-panel copy on the 50% muted ground"],
 
   // Ministry families, ink on its own tint
   ...["devotion", "word", "care", "community"].flatMap((family) => [

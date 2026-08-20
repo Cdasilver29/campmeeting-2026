@@ -156,7 +156,22 @@ export function NowCard({
         id="now-heading"
         className={
           badge
-            ? "flex items-center gap-2 text-sm font-medium leading-5 text-ink"
+            ? /* A pill, not a bare line.
+
+                 The badge form sits beside a player in a plum tray, and as
+                 four words of 14px ink floating on the page surface it was
+                 the quietest thing in the row — the one piece of the page
+                 that says the broadcast is running, reading as a caption.
+
+                 A tinted ground and a hairline give it an edge without
+                 raising its voice: the words stay `ink` and the only
+                 colour is still the dot. ink on surface-muted is 15.76:1
+                 light / 14.83:1 dark, and the Tree Frog dot on
+                 surface-muted is 3.87:1 light / 4.11:1 dark against the
+                 3:1 floor that a non-text indicator takes. The rule in the
+                 token comment stands: the green is the dot and never the
+                 words. */
+              "flex w-fit items-center gap-2 rounded-control bg-surface-muted px-2.5 py-1 text-sm font-medium leading-5 text-ink ring-1 ring-line"
             : `flex items-center gap-2 ${sectionHeading}`
         }
       >

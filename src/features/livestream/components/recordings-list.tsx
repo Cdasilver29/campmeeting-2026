@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink, Video } from "lucide-react";
+import { ExternalLink, Play, Video } from "lucide-react";
 import {
   THUMBNAIL_HEIGHT,
   THUMBNAIL_WIDTH,
@@ -74,8 +74,53 @@ import { slotAnchorId } from "../lib/stream-link";
  * the app, and a YouTube URL leaves it.
  */
 
-const FRAME =
-  "relative aspect-video w-full overflow-hidden rounded-card bg-surface-muted ring-1 ring-line";
+/**
+ * ── THE CARD, WHICH IS NEW, AND WHY IT IS A CARD ─────────────────────
+ *
+ * A slot used to be a bare 16:9 image with a line of link text floating
+ * under it and nothing joining the two. Fourteen of those in a grid read
+ * as a contact sheet: no edge, no ground, and the only thing marking a
+ * posted slot from a pending one was whether its rectangle was dashed.
+ *
+ * Now both are one shape — frame flush to the top, a padded body under it,
+ * one ring around the whole — so posted and pending are the SAME object in
+ * two states rather than two different objects. `h-full` on both, so a
+ * morning and its afternoon are the same height whatever their titles do,
+ * which is what makes the two-column pairing read as a pair.
+ *
+ * `bg-surface-muted` rather than the page ground, so a card has a body a
+ * reader can see the edges of. Measured on it: title in `primary` 10.86:1
+ * light / 7.06:1 dark, the meta line in `ink-muted` 5.96:1 light /
+ * 10.49:1 dark. Both clear 4.5, and both are asserted in
+ * tools/perf/contrast.mjs.
+ *
+ * ── THE PART LABEL IS ON THE PICTURE, NOT UNDER IT ───────────────────
+ *
+ * Which half of the day this is is the thing a reader scanning for
+ * "Tuesday morning" needs first, and under the frame it sat below the fold
+ * of the card and competed with the sermon title. On the frame it is read
+ * before the title is. Emperor with white on it, 11.59:1 in both themes —
+ * a brand token rather than the accent scale precisely because it has to
+ * hold white type over an unknown photograph in dark mode too. The pending
+ * chip is deliberately NOT Emperor: a filled brand chip says "this is
+ * live", and half of these are not.
+ *
+ * ── PLAYABILITY ──────────────────────────────────────────────────────
+ *
+ * A disc in the corner of every posted frame, at rest, not on hover: most
+ * of this congregation reads this page on a phone and a hover state is a
+ * state they never enter. Hover then adds an Emperor wash over the
+ * picture, grows the disc, lifts the ring to 2px accent and underlines the
+ * title — four cues, none of them load-bearing alone.
+ *
+ * `ring` and `scale` only. Neither reflows: a Tailwind ring is a
+ * box-shadow and the scale is on the image inside its own overflow-hidden
+ * frame, so nothing here can move anything on the page.
+ */
+const CARD = "flex h-full flex-col overflow-hidden rounded-card";
+const FRAME = "relative aspect-video w-full overflow-hidden bg-surface-muted";
+const CHIP =
+  "absolute left-2 top-2 rounded-control px-2 py-0.5 text-xs font-medium";
 
 function PostedSlot({
   recording,
@@ -91,7 +136,7 @@ function PostedSlot({
       href={watchUrl(recording.videoId)}
       target="_blank"
       rel="noreferrer"
-      className="group/rec flex flex-col gap-2 rounded-card transition-opacity duration-fast hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+      className={`group/rec ${CARD} bg-surface-muted ring-1 ring-line transition-[box-shadow] duration-fast ease-out-soft hover:ring-2 hover:ring-accent-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500`}
     >
       <span className={FRAME}>
         {/* eslint-disable-next-line @next/next/no-img-element -- deliberately
@@ -106,18 +151,34 @@ function PostedSlot({
           loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-base ease-out-soft group-hover/rec:scale-105"
         />
+        <span
+          aria-hidden
+          className="absolute inset-0 bg-emperor/0 transition-colors duration-fast ease-out-soft group-hover/rec:bg-emperor/25"
+        />
+        <span className={`${CHIP} bg-emperor text-white`}>{partLabel}</span>
+        <span
+          aria-hidden
+          className="absolute right-2 bottom-2 flex size-9 items-center justify-center rounded-full bg-emperor text-white ring-2 ring-white/80 transition-transform duration-fast ease-out-soft group-hover/rec:scale-110"
+        >
+          <Play className="ml-0.5 size-4 fill-current" />
+        </span>
       </span>
-      <span className="flex items-center gap-1.5 text-sm font-medium text-primary">
-        {recording.title}
-        <ExternalLink aria-hidden className="size-3.5 shrink-0" />
+      <span className="flex flex-1 flex-col gap-1 p-3">
+        <span className="text-sm font-medium text-primary underline-offset-4 group-hover/rec:underline">
+          {recording.title}
+        </span>
+        <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
+          Watch on YouTube
+          <ExternalLink aria-hidden className="size-3 shrink-0" />
+        </span>
         {/* The day and the part are in the accessible name as well as
             beside the link, because a screen reader reading the links on
             this page out of context otherwise hears "Morning" eight
             times. */}
         <span className="sr-only">
-          , {partLabel}, {dayLabel}, watch on YouTube
+          , {partLabel}, {dayLabel}
         </span>
       </span>
     </a>
@@ -126,17 +187,18 @@ function PostedSlot({
 
 function PendingSlot({ slot }: { slot: ArchiveSlot }) {
   return (
-    <div className="flex flex-col gap-2">
-      <div
-        className={`${FRAME} flex items-center justify-center border border-dashed border-line bg-surface-muted/60 ring-0`}
-      >
+    <div
+      className={`${CARD} border border-dashed border-line bg-surface-muted/50`}
+    >
+      <div className={`${FRAME} flex items-center justify-center bg-transparent`}>
         <Video aria-hidden className="size-6 text-ink-muted/50" />
+        <span
+          className={`${CHIP} bg-surface text-ink-muted ring-1 ring-line`}
+        >
+          {slot.partLabel}
+        </span>
       </div>
-      <p className="text-sm text-ink-muted">
-        {slot.partLabel}
-        {" · "}
-        <span className="text-ink-muted/80">Not posted yet</span>
-      </p>
+      <p className="flex-1 p-3 text-sm text-ink-muted">Not posted yet</p>
     </div>
   );
 }
@@ -166,19 +228,27 @@ export function RecordingsList({ anchors = false }: { anchors?: boolean }) {
        comes to four thumbnails across — the density asked for, without
        splitting a morning from its afternoon.
 
-       gap-x-8 against gap-y-6: the horizontal gutter separates two
-       unrelated days and has to read as a bigger break than the one
-       between a day and the day under it, which already has a ruled
-       heading of its own doing that work. */
-    <ol className="grid gap-x-8 gap-y-(--space-item) lg:grid-cols-2">
+       gap-x-8 for the horizontal gutter between two unrelated days.
+
+       gap-y is --space-section, not --space-item. It was --space-item,
+       which is the step between a heading and the things under it — so a
+       day was separated from the NEXT DAY by exactly the air that
+       separated its own heading from its own thumbnails, and eight day
+       groups ran together into one undifferentiated column. A day boundary
+       is a section boundary and takes the section step. */
+    <ol className="grid gap-x-8 gap-y-(--space-section) lg:grid-cols-2">
       {archiveDays.map((entry) => (
-        <li key={entry.day.id} className="flex flex-col gap-3">
+        <li key={entry.day.id} className="flex flex-col gap-(--space-item)">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-2">
-            <h3 className="text-sm font-medium text-ink">
-              <span className="tabular-figures text-ink-muted">
+            {/* "Day 3" as a chip rather than grey words with a middot after
+                them. It is the index of the row and the thing a reader
+                counts along, so it reads better as an object beside the
+                label than as a prefix inside it. ink-muted on
+                surface-muted: 5.96:1 light, 10.49:1 dark. */}
+            <h3 className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm font-medium text-ink">
+              <span className="tabular-figures rounded-control bg-surface-muted px-1.5 py-0.5 text-xs font-medium text-ink-muted ring-1 ring-line">
                 Day {entry.dayNumber}
               </span>
-              {" · "}
               {entry.dayLabel}
             </h3>
             <Link
