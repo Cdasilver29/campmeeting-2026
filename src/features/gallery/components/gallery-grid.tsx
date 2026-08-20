@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { GalleryImage } from "@/data";
+import type { GalleryGroup } from "../lib/collections";
 
 /**
  * ── THE GALLERY, AND ITS VIEWER ──────────────────────────────────────
@@ -11,13 +12,30 @@ import type { GalleryImage } from "@/data";
  * A masonry grid of thumbnails; tapping one opens it full size in a
  * dialog you can page through and dismiss.
  *
+ * ── GROUPS IN, ONE INDEX SPACE OUT ───────────────────────────────────
+ *
+ * It takes GROUPS rather than a flat list, because the 2026 collection is
+ * divided by day and each division carries a heading. What it does NOT do
+ * is give each group its own lightbox: `images` is the collection
+ * flattened in render order and the dialog indexes into that, so paging
+ * with the arrow keys runs off the end of Tuesday and into Wednesday and
+ * the counter reads "12 of 40" rather than restarting at every heading.
+ * The flattening is done in ../lib/collections.ts, where the order is
+ * decided, rather than recomputed here.
+ *
+ * A group with no `label` renders no heading. That is the previous-years
+ * collection, which is one undivided set with nothing to distinguish it
+ * from.
+ *
  * ── WHY THIS IS A CLIENT COMPONENT AND THE PAGE IS NOT ───────────────
  *
  * Only the viewer needs JavaScript. The grid is server-rendered inside
  * this component and the dialog is `null` until something is opened, so
- * the page still ships its 31 images as plain markup: it renders,
- * scrolls and reads with JavaScript off, and the pictures are the point.
- * The interaction is what is added on top, not what the page is made of.
+ * the page still ships its images as plain markup: it renders, scrolls
+ * and reads with JavaScript off, and the pictures are the point. The
+ * interaction is what is added on top, not what the page is made of. The
+ * year tabs above are held to the same rule — see the noscript block in
+ * gallery-view.tsx.
  *
  * ── THE DIALOG ───────────────────────────────────────────────────────
  *
@@ -38,7 +56,8 @@ import type { GalleryImage } from "@/data";
  * Every thumbnail reserves its own space from an `aspect-ratio` computed
  * out of the file's real dimensions, before anything downloads. That is
  * why src/data/gallery.ts is generated rather than typed — see the note
- * in tools/assets/gallery-photos.mjs.
+ * in tools/assets/gallery-photos.mjs — and why the hand-kept 2026 file
+ * still demands both numbers on every line.
  *
  * ── ALT TEXT ─────────────────────────────────────────────────────────
  *
@@ -87,7 +106,15 @@ const LIGHTBOX_CONTROL =
   `${LIGHTBOX_FILL} ring-1 ring-white transition-colors duration-fast hover:bg-grapevine` +
   " focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
-export function GalleryGrid({ images }: { images: GalleryImage[] }) {
+export function GalleryGrid({
+  groups,
+  images,
+}: {
+  /** What is drawn, in order, with a heading per labelled group. */
+  groups: GalleryGroup[];
+  /** The same photographs flattened — the lightbox's index space. */
+  images: GalleryImage[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   // Where focus goes back to on close. Without this, dismissing the
@@ -138,38 +165,64 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
 
   return (
     <>
-      <ul className="columns-1 gap-3 sm:columns-2 lg:columns-3">
-        {images.map((image, index) => (
-          <li key={image.id} className="mb-3 break-inside-avoid">
-            <button
-              type="button"
-              onClick={(event) => {
-                returnFocusRef.current = event.currentTarget;
-                setOpenIndex(index);
-              }}
-              aria-label={`View photograph ${index + 1} of ${images.length}`}
-              className="block w-full cursor-zoom-in overflow-hidden rounded-card bg-surface-muted ring-1 ring-line transition-[box-shadow] duration-fast ease-out-soft hover:ring-ink-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
-              style={{ aspectRatio: `${image.width} / ${image.height}` }}
-            >
-              <Image
-                src={image.src}
-                alt=""
-                width={image.width}
-                height={image.height}
-                /* The first three are the only ones that can be above the
-                   fold at any width this site supports, so they are eager
-                   and everything after them is lazy. Lazy on all 31 would
-                   delay the ones already on screen; eager on all 31 is
-                   3.2 MB on open, which is the thing this page is trying
-                   not to do. */
-                loading={index < 3 ? "eager" : "lazy"}
-                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
-                className="h-full w-full object-cover"
-              />
-            </button>
-          </li>
+      <div className="flex flex-col gap-(--space-section)">
+        {groups.map((group) => (
+          <section key={group.id} className="flex flex-col gap-(--space-item)">
+            {/* Only a group that HAS a label draws one. The previous-years
+                collection is a single undivided set, and a heading over
+                the whole of it would repeat the tab that selected it. */}
+            {/* h3, under the collection's own h2 in gallery-view.tsx —
+                that heading is sr-only with scripting on, but it is still
+                in the outline, and a day is a division OF a year. */}
+            {group.label ? (
+              <h3 className="border-b border-line pb-2 text-sm font-medium text-ink">
+                {group.label}
+              </h3>
+            ) : null}
+            <ul className="columns-1 gap-3 sm:columns-2 lg:columns-3">
+              {group.images.map((image) => {
+                /* The position in the FLATTENED collection, not in this
+                   group, because that is the number the dialog pages
+                   through and the counter prints. indexOf over a list this
+                   size is cheaper than threading a running offset through
+                   the map and getting it wrong. */
+                const index = images.indexOf(image);
+                return (
+                  <li key={image.id} className="mb-3 break-inside-avoid">
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        returnFocusRef.current = event.currentTarget;
+                        setOpenIndex(index);
+                      }}
+                      aria-label={`View photograph ${index + 1} of ${images.length}`}
+                      className="block w-full cursor-zoom-in overflow-hidden rounded-card bg-surface-muted ring-1 ring-line transition-[box-shadow] duration-fast ease-out-soft hover:ring-ink-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+                      style={{ aspectRatio: `${image.width} / ${image.height}` }}
+                    >
+                      <Image
+                        src={image.src}
+                        alt=""
+                        width={image.width}
+                        height={image.height}
+                        /* The first three are the only ones that can be
+                           above the fold at any width this site supports,
+                           so they are eager and everything after them is
+                           lazy. Lazy on all 31 would delay the ones
+                           already on screen; eager on all 31 is 3.2 MB on
+                           open, which is the thing this page is trying not
+                           to do. */
+                        loading={index < 3 ? "eager" : "lazy"}
+                        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
 
       <dialog
         ref={dialogRef}

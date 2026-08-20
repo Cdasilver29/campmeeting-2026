@@ -375,6 +375,39 @@ export interface GalleryImage {
   height: number;
 }
 
+/**
+ * One photograph taken during THIS camp meeting, filed under the day it
+ * was taken on.
+ *
+ * ── WHY THIS IS A SEPARATE TYPE AND A SEPARATE FILE ──────────────────
+ *
+ * src/data/gallery.ts is GENERATED, wholesale, every time
+ * tools/assets/gallery-photos.mjs runs. Anything hand-written in it
+ * survives until the next regeneration and no longer. The 2026 set is
+ * hand-written by definition — photographs arrive one at a time during the
+ * week, from phones, not from a folder somebody batch-converts — so it
+ * lives in src/data/gallery-2026.ts, which the generator never opens.
+ *
+ * ── NO `id` ──────────────────────────────────────────────────────────
+ *
+ * `src` is already unique (it is a path) and the collection builder
+ * derives the id from it, so adding a photograph is four fields on one
+ * line and none of them is a name somebody has to invent and keep
+ * unique. See src/features/gallery/lib/collections.ts.
+ *
+ * `width` and `height` are still required and still mandatory to get
+ * right: they are what the grid reserves each cell with, and a wrong pair
+ * here is a layout shift on the one page made entirely of images.
+ */
+export interface DayGalleryImage extends Omit<GalleryImage, "id"> {
+  /**
+   * A day id from src/data/program.ts — sabbath-15 … sabbath-22. An id
+   * that is not one of those FAILS THE BUILD rather than filing the
+   * photograph under a heading that does not exist.
+   */
+  dayId: string;
+}
+
 export type AnnouncementPriority = "normal" | "urgent";
 
 /**

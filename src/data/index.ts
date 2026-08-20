@@ -11,7 +11,11 @@ export { hostLetters, hostLetter } from "./host-letters";
 export { program } from "./program";
 export { duty, dutyByDayId } from "./duty";
 export { childrenProgram } from "./children";
-export { galleryImages } from "./gallery";
+/* Two files, on purpose: one generated and one hand-kept. See the note at
+   the top of src/features/gallery/lib/collections.ts, which is what joins
+   them into the year collections /gallery renders. */
+export { previousGalleryImages } from "./gallery";
+export { gallery2026Images } from "./gallery-2026";
 export {
   DOWNLOADS_DIR,
   PROGRAMME_PDF_FILE,

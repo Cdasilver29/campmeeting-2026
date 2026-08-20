@@ -179,14 +179,19 @@ export const childrenPage: PageDefinition = {
 };
 
 /**
- * The gallery. Titled "Previous Camp Meetings" rather than "Gallery",
- * because that is what is in it: this year's photographs are not taken
- * yet, and a page called Gallery during camp meeting week promises
- * pictures of the week it is in.
+ * The gallery.
+ *
+ * Titled "Gallery", which it was NOT: it read "Previous Camp Meetings",
+ * on the reasoning that a page called Gallery during camp meeting week
+ * promises pictures of the week it is in. That reasoning was right and
+ * the page has since caught up with it — /gallery now opens on a 2026
+ * collection, grouped by day, that fills in as the photographs arrive.
+ * The promise is kept, so the title can be the page rather than one of
+ * its two years.
  */
 export const galleryPage: PageDefinition = {
   eyebrow: EDITION,
-  title: "Previous Camp Meetings",
+  title: "Gallery",
   /* No meta line, and it is the fifth page in the list above to drop
      one. It said "31 photographs from earlier years", which is a count of
      the pictures directly beneath it — the same restatement /speakers
@@ -194,7 +199,7 @@ export const galleryPage: PageDefinition = {
      eight presenters. The page draws no header band at all now, so the
      eyebrow and title below survive only for pageMetadata and the share
      card. */
-  description: `Photographs from previous camp meetings at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
+  description: `Photographs from ${EDITION} and from previous camp meetings at ${eventInfo.church.name}, ${eventInfo.church.address}.`,
   path: "/gallery",
 };
 

@@ -60,6 +60,12 @@ const pages = [...siteRoutes, OFFLINE_ROUTE].map((url) => ({ url, revision }));
  * anything — against a public/ that is otherwise 2.9 MB — to have last
  * year's pictures ready offline.
  *
+ * The rule matches the DIRECTORY, so photographs from THIS year, which
+ * land in public/gallery/2026/ during the week, are excluded the day they
+ * are added and need no edit here. They are the same argument only more
+ * so: a phone standing in the churchyard does not need to pre-download
+ * pictures of the meeting it is standing in.
+ *
  * So the manifest is filtered rather than the files being hidden. They
  * stay in public/ and are served like any other static asset; they are
  * simply not in the list the service worker fetches on install, so they
@@ -73,7 +79,8 @@ const pages = [...siteRoutes, OFFLINE_ROUTE].map((url) => ({ url, revision }));
  * `startsWith("/gallery/")` test — which is what this was first written
  * as — matched nothing at all while reporting a cheerful "0 excluded".
  * The prefix is stripped before the test, and the count below is the
- * check: it must say 31.
+ * check: it must say 31, plus one for every photograph added under
+ * /gallery/2026/ since.
  *
  * The /gallery PAGE is still precached — it is in `siteRoutes` — so it
  * opens offline and shows its own text. Only its pictures are absent, and

@@ -3,11 +3,18 @@
 // Re-run it against the source folder to regenerate:
 //   node tools/assets/gallery-photos.mjs <source-dir>
 //
+// PREVIOUS CAMP MEETINGS ONLY. This file is rewritten from top to bottom
+// on every run, so anything typed into it is gone the next time the
+// previous-years set is regenerated. Photographs from CAMP MEETING 2026
+// go in src/data/gallery-2026.ts, which is hand-edited and which the
+// generator does not open. The two are joined into the year collections
+// the page renders by src/features/gallery/lib/collections.ts.
+//
 // The width and height are the file's real dimensions and are what the
 // grid reserves space with, so nothing reflows as the images decode.
 import type { GalleryImage } from "./types";
 
-export const galleryImages: GalleryImage[] = [
+export const previousGalleryImages: GalleryImage[] = [
   { id: "camp-01", src: "/gallery/camp-01.webp", width: 1600, height: 1068 },
   { id: "camp-02", src: "/gallery/camp-02.webp", width: 1600, height: 1066 },
   { id: "camp-03", src: "/gallery/camp-03.webp", width: 1440, height: 960 },
