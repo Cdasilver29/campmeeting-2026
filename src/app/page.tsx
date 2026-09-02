@@ -4,6 +4,7 @@ import { JsonLd } from "@/components/json-ld";
 import { Reveal } from "@/components/reveal";
 import { SectionWave } from "@/components/section-wave";
 import { Hero } from "@/features/home/components/hero";
+import { HomeArchive } from "@/features/home/components/home-archive";
 import { SeniorWelcome } from "@/features/home/components/senior-welcome";
 import { BookmarksProvider } from "@/features/schedule/bookmarks";
 import { TodayView } from "@/features/schedule/components/today-view";
@@ -54,6 +55,26 @@ export default function Home() {
           pixel behind its type (tools/perf/verify-hero.mjs), and nothing
           painted below it can reach that measurement. */}
       <SectionWave />
+
+      {/* ── THE ARCHIVE ────────────────────────────────────────────────
+          Directly under the hero, above the clock-dependent block, and
+          phase-aware: the full showcase in the `after` phase, one line in
+          `before`, nothing at all `during`. All of it is in the HTML with
+          one attribute deciding, so no part of it appears or disappears
+          after first paint — see the note in home-archive.tsx.
+
+          Its own band on the page surface. Not `tone="muted"`, for the
+          same reason SeniorWelcome below is not: the cards inside it are
+          `bg-surface-muted`, and a muted band would paint them the same
+          colour as their own ground and leave them edgeless.
+
+          One Reveal for the section, which is the site's rule: sections
+          only, never per item. */}
+      <Band>
+        <Reveal>
+          <HomeArchive />
+        </Reveal>
+      </Band>
 
       {/* One reveal for the whole clock-dependent block, not one per
           session inside it. */}
