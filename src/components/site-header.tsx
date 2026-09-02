@@ -25,9 +25,17 @@ import { cn } from "@/lib/utils";
  * `/children` sits next to Ministries because that is where somebody
  * would look for it, and it is a top-level entry rather than a page
  * inside /ministries because it is what a parent opens this site to find.
- * Nine links now; the bar is set in a size that holds them to lg, and
- * below that they are the sheet's problem, where the list is vertical and
- * a tenth would cost nothing.
+ *
+ * `/archive` sits directly after Livestream, which is where it was taken
+ * from: /livestream is now live viewing only, and the recordings that
+ * used to sit under the player are a page of their own. Somebody who
+ * opens Livestream out of season and finds nothing on has the next entry
+ * in the bar as the answer.
+ *
+ * Ten links now. The bar is set in a size that held nine to lg and holds
+ * ten at the same size — measured, not assumed — and below lg they are
+ * the sheet's problem, where the list is vertical and an eleventh would
+ * cost nothing.
  */
 const navLinks = [
   { href: "/", label: "Today" },
@@ -36,6 +44,7 @@ const navLinks = [
   { href: "/ministries", label: "Ministries" },
   { href: "/children", label: "Children" },
   { href: "/livestream", label: "Livestream" },
+  { href: "/archive", label: "Archive" },
   { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },

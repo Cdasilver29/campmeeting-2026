@@ -31,6 +31,12 @@ const fixedRoutes = [
   "/children",
   "/announcements",
   "/livestream",
+  // The recordings archive. Precached like every other page, so the list
+  // of what exists reads on campground signal; the thumbnails and the
+  // players inside it are on youtube.com and are matched by the
+  // NetworkOnly rule in src/sw.ts, so none of them is ever stored. See
+  // the note on thumbnailUrl in src/features/archive/config.ts.
+  "/archive",
   "/gallery",
   "/about",
   "/contact",

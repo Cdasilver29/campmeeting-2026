@@ -24,6 +24,11 @@ import {
   trackMetaSentence,
 } from "@/features/speakers/lib";
 import { faqItems } from "@/features/faq/questions";
+import {
+  earliestArchiveYear,
+  latestArchiveYear,
+  latestYearRecordings,
+} from "@/features/archive/lib/entries";
 import { eventDateRange } from "@/lib/event-dates";
 import { headerImages, type PageHeaderImage } from "@/lib/page-header-art";
 import type { FlatSession, ProgramDay } from "@/data";
@@ -255,6 +260,33 @@ export const livestreamPage: PageDefinition = {
   description: `Watch ${EDITION} live from ${eventInfo.church.name}.`,
   path: "/livestream",
   image: headerImages.livestream,
+};
+
+/**
+ * The recordings archive.
+ *
+ * ── ITS EYEBROW IS THE CHURCH, NOT THE EDITION ───────────────────────
+ *
+ * Every other page here is headed with `EDITION` — "Camp Meeting 2026" —
+ * because every other page is about this event. The archive is the one
+ * page that spans events: it holds 2020 to 2026 today and 2027 the moment
+ * that year's file is written, so putting one edition above it would date
+ * the page and would go stale on exactly the deploy that adds a year.
+ *
+ * ── AND ITS META LINE IS COUNTED, NOT TYPED ──────────────────────────
+ *
+ * Both figures are read from src/data/archive, so adding a year updates
+ * the header, the share card and the metadata description together. The
+ * earliest year is read off the sorted list rather than written as 2020
+ * for the same reason. This is the one page whose meta line is guaranteed
+ * to be wrong within a year if it is written by hand.
+ */
+export const archivePage: PageDefinition = {
+  eyebrow: eventInfo.church.name,
+  title: "Recordings Archive",
+  meta: `${latestYearRecordings} recordings from ${latestArchiveYear.year}, and every year back to ${earliestArchiveYear.year}`,
+  description: `Watch again: sermons and sessions from ${latestArchiveYear.year}, and the camp meeting playlists back to ${earliestArchiveYear.year}, at ${eventInfo.church.name}.`,
+  path: "/archive",
 };
 
 /*
