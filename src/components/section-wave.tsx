@@ -73,6 +73,12 @@ export function SectionWave({ className }: { className?: string }) {
   return (
     <div
       aria-hidden
+      /* The hook the rhythm rule in globals.css selects on: the band that
+         follows a wave takes the section step rather than the band step,
+         because the wave is already the boundary between them. An
+         attribute rather than a class name, so the rule cannot be undone
+         by someone tidying up a utility. */
+      data-section-wave
       className={cn(
         // overflow-hidden is belt and braces: the SVG is width:100% and
         // cannot exceed its parent, but a full-bleed decorative element

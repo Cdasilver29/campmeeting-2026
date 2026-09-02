@@ -657,6 +657,79 @@
   padding-block: var(--space-band);
 }
 
+/* ── WHERE A BAND MEETS WHAT IS ABOVE IT ──────────────────────────────
+
+   `--space-band` is a band's own padding, so two stacked bands put twice
+   it between their contents. The note on the token says that is right
+   because "a band boundary is the largest break on a page and it also
+   changes surface colour". Both halves of that have to be true, and there
+   are two arrangements on this site where the second half is not — in
+   each of them the page was paying for a boundary it never drew.
+
+   Neither rule below invents a number. Both pick a different step of the
+   same three-token scale for a join that is already doing part of the
+   work another way.
+
+   ── 1. THE BAND UNDER A WAVE ────────────────────────────────────────
+
+   Every page-header band and the home hero close with SectionWave, which
+   is a transition: it hangs off the band above and resolves into the page
+   surface, and its lowest crest reaches only y=50 of its 80-unit viewBox,
+   so its bottom ~37% is already clear page. Then the band below it added a
+   further `--space-band` on top.
+
+   Measured on the deployed site before this rule, from the bottom of the
+   header band to the first line of content: 80px at 390 and 144px at
+   1440, against 32px / 40px between /gallery's h1 and its first content.
+   /gallery has no band and no wave, and it is the page that reads right.
+   At 1440 the banded routes were spending three and a half times as much
+   air on the same join, most of it below the wave, where it reads as the
+   page having failed to start.
+
+   The wave IS the boundary. What follows it takes the section step, not
+   the band step: 64px at 390 and 120px at 1440, of which the wave itself
+   is half.
+
+   This reaches all sixteen routes that carry a PageHeader and the home
+   page, which is the point — the join is the same join on every one of
+   them. It does not touch the band's own padding, its height, or the type
+   inside it, so the eleven bands whose photographic crop and scrim alpha
+   are derived from the band's used height (src/lib/page-header-art.ts,
+   tools/perf/verify-page-header.mjs) are unaffected by construction.
+
+   ── 2. TWO BANDS OF THE SAME TONE ───────────────────────────────────
+
+   A surface band under a surface band draws no boundary at all: there is
+   no edge, no colour change, nothing but 2 x `--space-band` of empty page
+   — 96px at 390 and 128px at 1440 — between two sections that on the home
+   page belong to one another. That is the gap that made the front page
+   read as unrelated blocks stacked up rather than as a page.
+
+   So the second of a same-tone pair contributes nothing of its own and
+   the pair is separated by ONE band step, which is the largest gap the
+   scale has and the right one for a break with no edge to it. A pair that
+   DOES change tone is untouched and keeps both steps, because there the
+   surface change is real and the extra air is what stops it reading as a
+   stripe.
+
+   ONE route has such a pair today: `/`, whose three bands below the hero
+   are all on the page surface, for the reason each of them records — the
+   cards inside them are `bg-surface-muted`, and a muted band would paint
+   them the same colour as their own ground and leave them edgeless. Every
+   other multi-band page alternates tone (/children, /contact, /ministries,
+   /offline, /speakers), so none of them is touched. The rule is written
+   as a rule rather than as a home-page override because the next page to
+   stack two surface bands should get the right gap without anyone having
+   to remember this. */
+[data-section-wave] + .band {
+  padding-block-start: var(--space-section);
+}
+
+.band[data-tone="surface"] + .band[data-tone="surface"],
+.band[data-tone="muted"] + .band[data-tone="muted"] {
+  padding-block-start: 0;
+}
+
 /* The day rail's edge fade, below md where the rail genuinely scrolls.
    Painted as a mask rather than as a gradient overlay so it works on any
    background and cannot be a colour that has to be kept in step with the

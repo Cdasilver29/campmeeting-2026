@@ -54,7 +54,18 @@ export function Band({
   const inner = cn("shell", innerClassName);
 
   return (
-    <div className={cn("band", tone === "muted" && "bg-surface-muted", className)}>
+    /* data-tone is what lets the stylesheet see a join with no edge in
+       it. Two bands of the SAME tone put 2 x --space-band between their
+       contents and draw no boundary for it, which is the gap that made
+       the home page read as three unrelated blocks; two bands of
+       DIFFERENT tones keep both steps, because there the surface change
+       is real. CSS cannot read a prop, and sniffing for the background
+       utility would be a class name doing a data attribute's job. The
+       rule is in globals.css beside the `band` utility. */
+    <div
+      data-tone={tone}
+      className={cn("band", tone === "muted" && "bg-surface-muted", className)}
+    >
       {drift ? (
         <BandDrift className={inner}>{children}</BandDrift>
       ) : (
