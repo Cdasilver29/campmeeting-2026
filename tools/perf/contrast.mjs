@@ -181,13 +181,42 @@ const pairs = (t, mode) => [
   [t["--color-accent-500"], t["--color-surface-muted"], UI, "livestream: the focus ring on the stage tray"],
   // The live badge, which gained a ground in the same pass.
   [t["--color-ink"], t["--color-surface-muted"], TEXT, "livestream: the live badge's words on its pill"],
-  // The archive card, which gained a body in the same pass. `primary` is
-  // the accent scale here and SHOULD flip: it is ordinary link text on an
-  // ordinary surface, not white type on a fill.
-  [t["--primary"], t["--color-surface-muted"], TEXT, "livestream archive: the recording title on the card body"],
-  [t["--color-ink-muted"], t["--color-surface-muted"], TEXT, "livestream archive: the card's meta line"],
   // The dashed empty panels are surface-muted at 50% over the page.
   [t["--color-ink-muted"], mix(t["--color-surface-muted"], t["--color-surface"], 0.5), TEXT, "livestream: empty-panel copy on the 50% muted ground"],
+
+  // ── /archive, and the home page's showcase of it ──────────────────
+  // The recordings archive moved off /livestream into a route of its own
+  // (src/features/archive). It carries the same four surfaces the archive
+  // grid always did, so these rows moved with it rather than being new
+  // ones — but the labels have to follow, or the next person to read a
+  // failure goes looking on the wrong page.
+  //
+  // The card body. `primary` is the accent scale here and SHOULD flip
+  // with the theme: it is ordinary link text on an ordinary surface, not
+  // white type on a fill.
+  [t["--primary"], t["--color-surface-muted"], TEXT, "archive: the recording title on the card body"],
+  [t["--color-ink-muted"], t["--color-surface-muted"], TEXT, "archive: the card's speaker and date lines"],
+  // The part chip on the thumbnail, and the play disc. Raw brand names
+  // rather than a step of the accent scale, because the accent scale flips
+  // and these carry white type over an unknown photograph — so both rows
+  // are the same number twice, which is the property being asserted.
+  ["#ffffff", t["--color-emperor"], TEXT, "archive: the part chip, white on Emperor"],
+  // The playlist poster for 2020-2025, which is the live player's poster
+  // in a smaller frame and takes the same four measurements it does.
+  ["#ffffff", t["--color-grapevine"], TEXT, "archive: the playlist poster's Grapevine hover ground"],
+  [mix("#ffffff", t["--color-emperor"], 0.85), t["--color-emperor"], TEXT, "archive: the playlist poster's white/85 hint line"],
+  // The year tabs and the theme chips are one control in two states, and
+  // both states are pairs asserted above: primary-foreground on primary
+  // when selected, ink-muted on surface-muted when not. The "Latest" pill
+  // is currentColor on the tab's own ground, so it adds no pairing — see
+  // the note on LatestPill in features/archive/components/archive-view.tsx.
+  // The empty-search panel is the same 50% muted ground as the row above.
+  [t["--color-ink-muted"], mix(t["--color-surface-muted"], t["--color-surface"], 0.5), TEXT, "archive: no-results copy on the 50% muted ground"],
+  // The home page showcase: its heading, its caption, and the pause
+  // control, all on the page ground rather than on a card.
+  [t["--color-ink"], t["--color-surface"], TEXT, "archive showcase: the heading on the page ground"],
+  [t["--color-ink-muted"], t["--color-surface"], TEXT, "archive showcase: the caption and the pause control"],
+  [t["--primary"], t["--color-surface"], TEXT, "archive showcase: the \"All recordings\" link on the page ground"],
 
   // Ministry families, ink on its own tint
   ...["devotion", "word", "care", "community"].flatMap((family) => [

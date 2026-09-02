@@ -87,6 +87,7 @@ offline behaviour.
 | `responsive.mjs` | nine widths x seventeen routes: horizontal overflow with the offending elements named, clipped text, tap targets under 44px, and whether the day rail is scrollable. |
 | `reduced-motion.mjs` | emulates the preference before the document runs, byte-compares eight frames per route, and reports where they differ. Also checks `.live-pulse` directly, since the live dot only renders during the event. |
 | `card-contrast.mjs` | every text pair on the home page's three clock-driven cards — Happening now, Next up, On duty — plus the host cards, a host letter, /children and /gallery, in both themes, against the floor each pair's own size and weight requires. Stubs the clock to a mid-camp-meeting Tuesday morning, which is the only phase where all three cards are on the page at once. |
+| `archive.mjs` | /archive and the home page's showcase, end to end: that no YouTube player is framed before a press, that the thumbnails are lazy and only in-viewport ones are fetched, that the year tabs and theme chips do what they claim, that all 55 of 2026's sessions are listed with 54 as links and the one unrecorded session is not a link, that the showcase rotates and its pause control stops it, that `prefers-reduced-motion` stops it dead while leaving every card reachable, and that /livestream carries no recording thumbnails any more. 21 assertions; exits 1 on any failure. |
 
 `contrast.mjs` and `card-contrast.mjs` answer different questions and both
 are needed. The first checks the PALETTE: every ratio asserted in a

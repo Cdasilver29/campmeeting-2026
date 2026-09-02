@@ -1025,7 +1025,88 @@ source photographs**, which would need no crop, would not be pre-tinted to
 the poster's plum, and would let the portraits be lit consistently with
 each other.
 
+
+## The recordings archive — `NEWLIFE CAMP MEETING PROGRAM.docx`
+
+A second source document, separate from the programme PDFs above, and it
+feeds a separate system: `src/data/archive/year-2026.ts`, which is what
+`/archive` renders. **Nothing in the archive reads `program.ts`.** See
+the note at the top of `src/data/archive/types.ts` for why that boundary
+is deliberate.
+
+Sixteen tables, 55 rows, parsed programmatically rather than transcribed.
+54 rows carry a YouTube link; one does not.
+
+### Every id was oembed-checked
+
+All 54 went through
+`https://www.youtube.com/oembed?url=…&format=json` before the file was
+committed. **54 of 54 resolve, and all 54 are on "Seventh-day Adventist
+Church Newlife, Nairobi".** None failed. The channel was read back rather
+than just the status code, which is the check that catches an id that is
+a real video on the wrong channel.
+
+### Issues in the source document, for the committee
+
+1. **One session has no recording link.** 18 August, Family Life Session
+   (0-10yrs), Pr. Kenneth Ayuo. The row exists in the document with an
+   empty link cell. It is listed on `/archive` as "Recording not
+   available" rather than dropped, and no id was invented. **Confirm
+   whether a recording exists.**
+
+2. **One row gives no part of day.** The Book Promotion on 20 August by
+   Sis. Pendo Samson. Every other row states Morning, Afternoon or
+   Evening; this one gives the date alone. It sits between two Morning
+   rows in the document, which is suggestive and is not a source, so the
+   field is left absent and the card shows the date only. **Confirm
+   Morning.**
+
+3. **"Ev. Andrew Okwany" and "Ev. Andrew Owino" may be the same person,
+   or two people.** The document writes **Okwany** on all five of his rows
+   — four Bible Studies, one Family Life session, and the 16 August
+   sermon. The church's own YouTube title on that 16 August sermon, and
+   the artwork on the video itself, both say **Owino**. `event.ts` has a
+   speaker "Andrew and Diane Owino"; `camp_meeting_files/` has a
+   "Mr&Mrs Andrew Okwany.txt".
+
+   The document's spelling is used throughout, unchanged, because
+   overruling the committee's own document on the strength of a video
+   caption would be a guess either way — and if they are two people,
+   merging them would be worse than leaving it visible. **This is the one
+   place on `/archive` where a card and its own thumbnail disagree, so it
+   is worth settling.**
+
+### Corrections applied, and only these two
+
+- **Spacing after an honorific.** The document writes "Pr.Kenneth Ayuo",
+  "Eld.Isaac Oenga", "Ev.Andrew Okwany". Rendered with the space. Pure
+  typography.
+- **"Elkana Mose" → "Elkanah Mose".** The document writes Elkana;
+  `event.ts` and the church's own titles on these same videos both write
+  Elkanah. One person spelled two ways on one site is a defect, so the
+  site's spelling wins.
+
+Nothing else was normalised. Titles are the document's, including its own
+capitalisation.
+
+### The grouping is editorial, and one label is not the document's
+
+Nine themes. Eight take their names from labels printed in the document.
+The ninth, **Special Morning Sessions**, is not: it holds Spirit of
+Prophecy, Prophecy, Possibility Ministry and Discipleship — four one-off
+morning slots, three of them by Pr. Kenneth Ayuo, each of which would
+otherwise have been a section heading with a single card under it.
+
+Each of the four keeps its own title on its card, so nothing is lost and
+splitting them out later is a data edit, not a schema change.
+
 ## For future years
 
 Replace `src/data/program.ts` and update `src/data/event.ts`. Do not touch
 `types.ts` or `index.ts`.
+
+The archive is a **separate** swap and a purely additive one: add
+`src/data/archive/year-2027.ts` and list it in
+`src/data/archive/index.ts`. Replacing `program.ts` does not touch it,
+and must not — see DEPLOY.md, "Swapping program.ts does not touch any of
+this".

@@ -121,7 +121,9 @@ and quietly cannot submit.
 
 ## During camp meeting
 
-`/livestream` has two halves, and only one of them is your job.
+Nothing. There is no daily content edit during the week any more — the
+section below says so twice because both halves of `/livestream` used to
+have one, and one of them used to be a real job.
 
 ### Watching live: nothing to do
 
@@ -137,126 +139,110 @@ gone: a wrong id took a live broadcast off the site, because pinning an id
 overrides the channel embed even when it points at nothing. Do not
 reintroduce it.
 
-### Adding a recording: the one thing that does need doing
+### Catching up: nothing to do either
 
-**This is the only content edit anyone should need to make during the week.**
+**The recordings are no longer edited during the week.**
 
-Separate system, separate array, no effect on the live player. After a
-session ends and its recording is uploaded, add it by hand so it appears in
-"Earlier this week".
+There used to be a routine here for adding two video ids a day to
+`src/features/livestream/config.ts`, so the week filled in under the
+player as it went. That array is gone. `/livestream` is now purely
+"is something on right now", and every recording lives at `/archive`,
+which is written once from the committee's programme document after the
+event rather than typed in session by session during it.
 
-There are **two streams a day**, morning and afternoon, so the week is
-**fourteen** videos rather than sixteen: eight days times two, less the two
-half-days that hold no service. Sunday morning is the Medical Camp and
-Friday afternoon is Sabbath preparation, so neither is broadcast and
-neither gets a slot on the page — that is read from the programme, not
-typed anywhere, so nothing to maintain. The page lays the fourteen out in
-programme order and marks the ones that are not up yet, so a reader always
-gets an answer.
+So during camp meeting week there is nothing to do to either half of
+`/livestream`. See the next section for what happens afterwards.
 
-If one of those two half-days ever does get streamed, add the line anyway:
-a slot appears wherever a recording exists, whatever the programme says.
-It will not be dropped and it will not fail the build.
+---
 
-There is no YouTube API, no key and no quota, and that is deliberate: for
-fourteen videos a year, an API key to rotate plus a rebuild trigger so a
-static site notices a video posted after its last deploy is more moving
-parts than the typing it saves. Do not add one.
+## After camp meeting: writing the year into the archive
 
-### The one line
+`/archive` holds one entry per camp meeting year, newest first. 2026 is
+held session by session; 2020 to 2025 are held as one YouTube playlist
+each.
 
-Open `src/features/livestream/config.ts`, find `recordings`, and add an
-entry:
+### Adding next year
 
-```ts
-export const recordings: Recording[] = [
-  { dayId: "sabbath-15", part: "morning", videoId: "dQw4w9WgXcQ" },
-];
-```
+**Two file changes, and nothing else.**
 
-| field | what to put in it |
-| --- | --- |
-| `dayId` | the programme day this is a recording of, from `src/data/program.ts`: `sabbath-15`, `sunday-16`, `monday-17`, `tuesday-18`, `wednesday-19`, `thursday-20`, `friday-21`, `sabbath-22` |
-| `part` | `"morning"` or `"afternoon"`. Which of the day's two streams this is. Nothing else is a valid value |
-| `videoId` | the **11 characters after `v=`** in the watch URL, not the URL. From `https://www.youtube.com/watch?v=dQw4w9WgXcQ` take `dQw4w9WgXcQ`. A `youtu.be/dQw4w9WgXcQ` share link has the same id after the slash |
-| `label` | **optional.** What the recording is, where that is more than "morning" already says: "Divine Service". Leave it off and the row reads "Morning", which is true of the whole stream. Do not invent a description of a video you have not watched |
+1. Write `src/data/archive/year-2027.ts` in the shape of
+   `year-2026.ts`: a `year`, a `showcaseThemeId`, and `themes`,
+   each theme holding its videos in chronological order.
+2. Add it to the array in `src/data/archive/index.ts`.
 
-**Strip the `?si=...`.** YouTube's share button appends one — it is a
-tracking token belonging to whoever copied the link, not part of the
-video id. `https://youtu.be/dQw4w9WgXcQ?si=Ab12Cd34` is the id
-`dQw4w9WgXcQ` and nothing after the `?`.
+That is the whole change. Everything else follows from the data:
 
-**Strip `&list=`, `&index=` and `&t=` too.** A link copied out of a
-playlist or paused part-way through carries a playlist position and a
-timestamp. Neither is part of the id. Keep the eleven characters and
-nothing else.
+- the year selector gains a 2027 tab, first and selected by default
+- the "Latest" pill moves to it
+- the page's header line, its share card and its metadata description
+  recount themselves
+- the home page's moving showcase switches to 2027's showcase theme
+- `/archive` is already in `siteRoutes`, so the sitemap and the
+  service worker precache need no edit
 
-**Check the id resolves before you commit.** Open, with your id in it:
+Nothing in the codebase names 2026. If you find yourself editing a
+component to add a year, something has been written down that should have
+been derived — fix that instead.
 
-```
-https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ&format=json
-```
+### Getting the video ids
 
-A real id returns JSON with the video's title. A wrong one returns **404**.
-Takes seconds, and it is the check that would have caught the bad id that
-once broke the live player.
+Ids come out of the committee's programme document, which carries one
+YouTube link per session. Strip the `?si=...` a YouTube share button
+appends: that is a share-tracking token belonging to whoever copied the
+link, not part of the id. `https://youtu.be/K1LhA34MNmw?si=-6-FV7` is
+the id `K1LhA34MNmw`. An id beginning with a hyphen, like
+`-5LBJ9QHyJw`, is normal — the id alphabet includes `-` and `_`.
 
-**Read the title it returns, do not skim it.** It gives the day, the half
-of the day and usually the sermon, and it is what a `label` should be
-written from. An id can resolve perfectly and still be the wrong meeting —
-the 404 catches a typo, and the title is what catches a mix-up.
-
-Commit and push. Vercel builds on push and the page is live in a couple of
-minutes.
-
-### Five things that are already handled, so do not do them by hand
-
-- **Order.** Paste at the end of the array. The page is laid out from the
-  programme, day 1 to day 8, and each line is slotted into its own day and
-  part, so where it sits in the file does not matter.
-- **The days with nothing posted.** All fourteen slots are always drawn.
-  A day you have not uploaded yet shows as "Not posted yet" on its own,
-  and turns into a link the moment you add its line. Nothing needs
-  removing or un-commenting.
-- **The day's name.** "Sabbath 15th August 2026" is read from
-  `program.ts`, so it cannot disagree with the schedule.
-- **The link to the programme.** Each day links to `/schedule/<dayId>` on
-  its own.
-- **The cover pictures.** YouTube's own thumbnail for each video, from the
-  id. Nothing to upload.
-
-### If the build fails after you add a line
-
-Two causes, and both failures are deliberate.
-
-A mistyped `dayId`:
+### Check every id before committing. This is not optional.
 
 ```
-Error: Recording "dQw4w9WgXcQ" has dayId "sabath-15", which is not a
-day in src/data/program.ts. Valid ids: sabbath-15, sunday-16, ...
+https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=<ID>&format=json
 ```
 
-A wrong day id would otherwise ship a "see that day's programme" link that
-404s, from the page whose whole job that week is catching people up. The
-message lists every valid id; fix the spelling and push again.
+A real id returns the title and the channel; a wrong one 404s. Read the
+CHANNEL back, not just the status — that is the check that catches an id
+that resolves to a real video on somebody else's channel. All 54 of
+2026's ids were put through this and all 54 came back on "Seventh-day
+Adventist Church Newlife, Nairobi".
 
-Or the same day and part written twice:
+A mistyped id took a live broadcast off this site during the 2026 week.
+That is why this is a rule and not a suggestion.
 
-```
-Error: Two recordings are both "sabbath-15" / "morning": dQw4w9WgXcQ
-and a83sJFk7bB0. Each day has one morning stream and one afternoon
-stream, so one of these has the wrong day or the wrong part.
-```
+### A session with no recording
 
-One slot cannot hold two videos. Without this the second line would
-silently replace the first and a published stream would quietly vanish
-from the page. Fix whichever line has the wrong day or part.
+List it anyway, with no `videoId`. The card renders as "Recording not
+available". 2026 has one: the Family Life Session (0-10yrs) on 18 August.
 
-### A day that streamed in more than two parts
+Do not drop the row — that would report the week as one session shorter
+than it was — and do not invent an id, which is the failure above.
 
-Do not add a third entry — there is no slot for it. Put the extra video on
-the church's channel, which the page links to, and raise it with whoever
-maintains the site if it needs to be listed.
+### Two ways the build will stop you
+
+Both throw at module scope in `src/data/archive/index.ts`, which
+surfaces during `next build` as a prerender failure, so a bad edit never
+reaches production:
+
+- **the same year listed twice.** A year is one entry; a year held as
+  both a playlist and a set of themes carries both fields on that one
+  entry.
+- **a `showcaseThemeId` naming a theme that does not exist.** Without
+  this check the home page's showcase would simply be empty, which is the
+  kind of failure nobody notices.
+
+### Swapping program.ts does not touch any of this
+
+When 2027's programme replaces `src/data/program.ts`, the archive is
+unaffected, and that is structural rather than lucky. Nothing under
+`src/data/archive/` or `src/features/archive/` imports from
+`program.ts`, `event.ts` or any schedule helper. Archive entries carry
+an ISO **date** rather than a programme `dayId`, and speaker **names**
+as plain strings rather than speaker ids, so a finished year means the
+same thing with no other file present.
+
+The old arrangement did not have this property: recordings were keyed by
+`dayId` from `program.ts`, so next year's swap would have taken 2026's
+recordings with it. Do not reintroduce that coupling — if you find
+yourself wanting a `dayId` in an archive file, use the date.
 
 ---
 

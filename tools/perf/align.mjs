@@ -58,6 +58,7 @@ const ROUTES = [
   "/faq",
   "/contact",
   "/livestream",
+  "/archive",
   "/downloads",
   "/announcements",
   // /prayer-requests was here and is removed. The route no longer exists,

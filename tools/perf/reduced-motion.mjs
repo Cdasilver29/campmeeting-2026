@@ -27,7 +27,7 @@ const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const BASE = "http://localhost:3100";
 const ROUTES = process.argv.slice(2).length
   ? process.argv.slice(2)
-  : ["/", "/schedule", "/about", "/faq", "/speakers", "/ministries", "/contact", "/downloads"];
+  : ["/", "/schedule", "/about", "/faq", "/speakers", "/ministries", "/contact", "/downloads", "/archive"];
 
 const FRAMES = 8;
 const FRAME_GAP_MS = 250;
