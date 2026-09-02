@@ -1,8 +1,5 @@
-import type { RecordingPart } from "../config";
-
 /**
- * Where the livestream page lives, and how one slot of its archive is
- * addressed.
+ * Where the livestream page lives.
  *
  * ── WHAT USED TO BE HERE, AND WHY IT IS NOT ──────────────────────────
  *
@@ -25,30 +22,19 @@ import type { RecordingPart } from "../config";
  * mechanism for live viewing now, not a fallback of last resort. See
  * components/live-embed.tsx.
  *
- * ── AND THE ARCHIVE ANCHOR WENT WITH IT ──────────────────────────────
+ * ── AND `slotAnchorId` WENT WITH THE ARCHIVE ─────────────────────────
  *
- * `currentStreamHref` used the same boundary to point the hero's "Watch
- * live" button at a slot in "Earlier this week" once the event was over.
- * That branch was already unreachable and was verified so before it was
- * deleted: `eventPhase` only returns "after" from 2026-08-23, by which
- * date the clock is never on a programme day, so the anchor lookup could
- * never hit. The button is a plain link to this path now.
+ * There was one more export here: the DOM id of a slot in the "Earlier
+ * this week" grid, so a link could land on the half of the day a reader
+ * was in. The grid it addressed has moved to /archive, which is organised
+ * by theme rather than by half-day, so there is no slot left to anchor.
  *
- * What survives is what the ARCHIVE needs, which is a different system on
- * different data — individually checked ids for broadcasts that have
- * finished — and is untouched by any of the above.
+ * Nothing outside this feature ever imported it, and nothing linked to
+ * one of those anchors from another page — the only caller was the
+ * recordings list itself. A hash is never sent to the server either, so
+ * an old `#stream-tuesday-18-morning` bookmark cannot 404: it resolves to
+ * /livestream, which still exists, and lands at the top of the page.
+ * There is nothing to redirect.
  */
 
 export const LIVESTREAM_PATH = "/livestream";
-
-/**
- * The DOM id of one slot in the archive.
- *
- * Rendered on the catch-up copy of the list only — see the note in
- * components/recordings-list.tsx. The page carries the after-phase copy of
- * the same list in its markup as well, and two elements with one id is a
- * broken anchor, not a duplicate one.
- */
-export function slotAnchorId(dayId: string, part: RecordingPart): string {
-  return `stream-${dayId}-${part}`;
-}

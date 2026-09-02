@@ -1,17 +1,21 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ExternalLink, Video } from "lucide-react";
+import { ExternalLink, Library } from "lucide-react";
 import { eventInfo } from "@/data";
 import { ACTION_LINK } from "@/lib/link-styles";
 import { EventPhaseSync } from "@/components/event-phase-sync";
 import { eventPhaseScript } from "@/lib/event-phase-script";
 import { eventStartInstant, eventPhase } from "@/features/schedule/lib/time";
 import { DOC_HEADING } from "@/lib/typography";
+import { ARCHIVE_PATH } from "@/features/archive/config";
+import {
+  earliestArchiveYear,
+  latestArchiveYear,
+  latestYearRecordings,
+} from "@/features/archive/lib/entries";
 import { LIVESTREAM_CHANNEL_URL } from "../config";
-import { hasRecordings, recordingCount, totalSlots } from "../lib/recordings";
 import { LiveEmbed } from "./live-embed";
 import { NowSlot } from "./now-slot";
-import { RecordingsList } from "./recordings-list";
 
 const linkClassName = `${ACTION_LINK} -ml-2`;
 
@@ -88,39 +92,61 @@ function Stage({ children }: { children: ReactNode }) {
 }
 
 /**
- * An empty state that looks decided rather than broken.
+ * The route to the recordings, in every phase.
  *
- * The three places this page can have nothing to show — no recordings
- * posted, no stream link published, nothing scheduled right now — were
- * each a bare grey sentence sitting where content would have been, which
- * is indistinguishable from content that failed to arrive. One shape for
- * all of them: a dashed panel, an icon, and a sentence that says which of
- * "not yet" and "not ever" this is.
+ * ── THIS PAGE IS LIVE VIEWING ONLY NOW ───────────────────────────────
  *
- * Dashed rather than solid, matching PendingSlot in recordings-list.tsx,
- * so "a thing that is coming" has one look across the whole page.
+ * It used to carry the archive as well: the whole week as a grid of
+ * thumbnails under the player, in the during phase and again in the after
+ * phase. That grid is /archive, and it holds seven years rather than one
+ * week — see src/data/archive.
  *
- * `ink-muted` on `surface-muted` at 50%: the panel composites to #fcfbfd
- * in light and #230f3b in dark, where ink-muted measures 6.17:1 and
- * 10.79:1. Both clear 4.5, and both are asserted in tools/perf/contrast.mjs.
+ * What replaced it is not a smaller grid. A page that answers "is
+ * something on right now" should answer that and then get out of the way,
+ * and the honest form of "no, but there are 54 recordings" is a sentence
+ * and a link, not fifty pictures the reader did not ask for. It also
+ * costs nothing: no thumbnails, so no third-party image requests on the
+ * one page most likely to be opened on campground data.
+ *
+ * One component for all three phases, because the answer is the same in
+ * all three and only the sentence around it changes.
+ *
+ * The count and the year are read from the archive data, so this line
+ * cannot drift from what /archive actually holds, and it follows next
+ * year's file without an edit here.
+ *
+ * ink on surface-muted 15.76:1 light / 14.83:1 dark; ink-muted on the
+ * same ground 5.96:1 / 10.49:1. Both already asserted.
  */
-function EmptyPanel({ children }: { children: ReactNode }) {
+function ArchiveRoute() {
   return (
-    <div className="flex max-w-[var(--width-prose)] items-start gap-3 rounded-card border border-dashed border-line bg-surface-muted/50 p-4">
-      <Video aria-hidden className="mt-0.5 size-5 shrink-0 text-ink-muted" />
-      <p className="text-ink-muted">{children}</p>
+    <div className="flex max-w-[var(--width-prose)] flex-col gap-3 rounded-card bg-surface-muted p-4 ring-1 ring-line sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div className="flex items-start gap-3">
+        <Library aria-hidden className="mt-0.5 size-5 shrink-0 text-ink-muted" />
+        <div className="flex flex-col gap-0.5">
+          <p className="text-sm font-medium text-ink">Watch again</p>
+          <p className="text-sm text-ink-muted">
+            {latestYearRecordings} recordings from {latestArchiveYear.year},
+            and every camp meeting back to {earliestArchiveYear.year}.
+          </p>
+        </div>
+      </div>
+      <Link href={ARCHIVE_PATH} className={`shrink-0 ${linkClassName}`}>
+        Open the archive
+      </Link>
     </div>
   );
 }
 
 function BeforeStream() {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <p className="text-ink-muted">
         The livestream opens with the first session of {eventInfo.edition}, on{" "}
         {startLabel}. Nothing streams here before then.
       </p>
-      <Link href="/schedule" className={linkClassName}>
+      <ArchiveRoute />
+      <Link href="/schedule" className={`w-fit ${linkClassName}`}>
         See the full programme
       </Link>
     </div>
@@ -128,105 +154,57 @@ function BeforeStream() {
 }
 
 /**
- * The after phase, in its two shapes.
+ * The after phase: one sentence, and the way to the recordings.
  *
- * WITH RECORDINGS: the archive, day 1 to day 8, above the channel link.
- * The channel link stays rather than being replaced — this list is curated
- * by hand and is the meetings somebody chose to publish, while the channel
- * is everything the church has ever posted, which is a different and still
- * useful thing.
+ * The branch this used to carry — archive if anything was posted, an
+ * apologetic empty panel if not — is gone with the grid. There is no
+ * "nothing has been published yet" state to handle any more, because the
+ * archive is a finished, committed record rather than a list somebody is
+ * filling in during the week.
  *
- * WITH NONE: one sentence and the channel link, which is what this page
- * has always said. The wording is the part that had to change. "Recordings
- * from the week are posted to the church's YouTube channel" describes a
- * habit, and a reader who arrives the day after the closing Sabbath and
- * finds nothing cannot tell whether that means "not yet" or "this page is
- * broken". It now says they are added here as they go up, which is a
- * promise with a place attached to it.
- *
- * The branch is resolved at BUILD time, not by the clock, because
- * `recordings` is a constant in a source file. There is no state in which
- * a reader sees the wrong one.
+ * The channel link stays. /archive is what the church has catalogued and
+ * grouped; the channel is everything it has ever posted, which is a
+ * different and still useful thing.
  */
 function AfterStream() {
   return (
     <div className="flex w-full flex-col gap-4">
-      {hasRecordings ? (
-        <>
-          {/* Capped at the measure, left aligned with the grid below it —
-              see the note in CatchUp on why not `prose-column` here. */}
-          <p className="max-w-[var(--width-prose)] text-ink-muted">
-            {eventInfo.edition} has ended. {recordingCount} of {totalSlots}{" "}
-            streams from the week are posted, in programme order. The rest
-            are added here as they go up.
-          </p>
-          <RecordingsList />
-        </>
-      ) : (
-        <EmptyPanel>
-          {eventInfo.edition} has ended. Recordings are being posted to the
-          church&apos;s YouTube channel, and each one is listed here as it goes
-          up. Nothing has been published yet.
-        </EmptyPanel>
-      )}
+      <p className="max-w-[var(--width-prose)] text-ink-muted">
+        {eventInfo.edition} has ended, so nothing is streaming here. Every
+        recording from the week is in the archive.
+      </p>
+      <ArchiveRoute />
       <a
         href={LIVESTREAM_CHANNEL_URL}
         target="_blank"
         rel="noreferrer"
         className={`w-fit ${linkClassName}`}
       >
-        {hasRecordings
-          ? "See the whole channel on YouTube"
-          : "Watch for them on YouTube"}
+        See the whole channel on YouTube
       </a>
     </div>
   );
 }
 
 /**
- * Catch-up during the event: the archive, below the live player, so
- * somebody who missed a morning can find it without leaving the page.
+ * Catch-up during the event.
  *
- * Nothing at all until the FIRST video is posted, and that is not the same
- * decision the after phase made. There the page has to say something,
- * because a reader has arrived expecting recordings. Here the live player
- * is directly above and is what the reader came for, and sixteen empty
- * boxes under it on the opening morning would be a hole in the page
- * announcing that somebody has not done the typing yet. From the first
- * upload on, the unposted slots are the useful half of the answer.
+ * The same route to /archive, under the section boundary this site marks
+ * every section boundary with — --space-section of air and a hairline,
+ * with the heading held close under it at --space-item. That rule is what
+ * keeps the player and the live card reading as one unit about right now,
+ * and this as a separate one about everything else.
  */
 function CatchUp() {
-  if (!hasRecordings) return null;
   return (
-    /* THE RULE IS THE FIX FOR "THREE UNRELATED BLOCKS".
-
-       The player, the live card and the archive were separated by one flat
-       gap-6 each, so the page read as three things that happened to be
-       stacked. They are not three things: the player and the card are one
-       unit about right now, and the archive is a different unit about the
-       rest of the week. So the gap inside the unit is tightened to gap-4
-       and the boundary between the units is marked the way this site marks
-       every other section boundary — --space-section of air and a
-       hairline — with the heading held close under it at --space-item.
-
-       See the `during` block below for the other half of the arrangement. */
     <section className="flex w-full flex-col gap-(--space-item) border-t border-line pt-(--space-item)">
       {/* Capped but NOT centred. `prose-column` adds `margin-inline: auto`,
-          which would have floated this heading into the middle of the shell
-          above a grid that starts at its left edge — a heading indented
-          from the thing it heads. The measure still applies; only the
-          centring is dropped. */}
+          which would float this heading into the middle of the shell above
+          content that starts at its left edge. */}
       <h2 className={`max-w-[var(--width-prose)] ${DOC_HEADING}`}>
-        Earlier this week
+        Missed a session?
       </h2>
-      <p className="max-w-[var(--width-prose)] text-ink-muted">
-        Every stream of the week, in programme order. {recordingCount} of{" "}
-        {totalSlots} are posted so far; the rest appear here as they go up.
-      </p>
-      {/* The anchored copy. The home hero's "Watch live" button links to a
-          slot in this one — see recordings-list.tsx on why only one copy
-          carries the ids. */}
-      <RecordingsList anchors />
+      <ArchiveRoute />
     </section>
   );
 }
