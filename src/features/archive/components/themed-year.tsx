@@ -68,8 +68,27 @@ const CHIP_ON = CHIP + " bg-primary text-primary-foreground";
 const CHIP_OFF =
   CHIP + " bg-surface-muted text-ink-muted ring-1 ring-line hover:text-ink";
 
-/** The count inside a chip, so it reads as a quantity rather than a word. */
-const COUNT = "tabular-figures text-xs opacity-80";
+/**
+ * The count inside a chip, so it reads as a quantity rather than a word.
+ *
+ * ── NO OPACITY. IT WAS A REAL CONTRAST FAILURE ───────────────────────
+ *
+ * This carried `opacity-80`, and on an unselected chip that composites
+ * ink-muted over surface-muted down to #857994 on #f8f7fa: 3.81:1 for
+ * 12px normal type, against a 4.5:1 floor. Lighthouse flagged it on
+ * /archive as the sole `color-contrast` failure and it is what held the
+ * page's accessibility score at 97.
+ *
+ * The chip's own colour, undimmed, is the pairing the rest of the page
+ * already asserts: ink-muted on surface-muted 5.96:1 light / 10.49:1
+ * dark, and primary-foreground on primary 11.59:1 / 7.48:1 when the chip
+ * is selected. Nothing new is introduced by removing the dimming.
+ *
+ * What made the count read as a quantity was never the opacity anyway:
+ * it is the tabular figures and the size step down from the label beside
+ * it, and both are still here.
+ */
+const COUNT = "tabular-figures text-xs";
 
 const FIELD =
   "min-h-11 w-full rounded-control border border-line bg-surface px-3 text-sm text-ink transition-colors duration-fast ease-out-soft placeholder:text-ink-muted focus-visible:border-accent-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500";
@@ -199,7 +218,14 @@ export function ThemedYear({ entry }: { entry: ArchiveYear }) {
            that is not there, rather than a bare grey sentence — which is
            indistinguishable from content that failed to arrive. ink-muted
            on the 50% muted ground: 6.17:1 light, 10.79:1 dark. */
-        <div className="flex max-w-[var(--width-prose)] items-start gap-3 rounded-card border border-dashed border-line bg-surface-muted/50 p-5">
+        /* mx-auto, which is the site's own rule for a prose-width box
+           sitting directly on the shell — see MEASURE_CENTRED in
+           src/lib/typography.ts. Ranged left it was a 34rem panel with
+           46rem of empty page beside it, standing exactly where a
+           four-column grid had just been: it read as the last fragment of
+           a page that failed to load rather than as an answer. Centred in
+           the space the grid vacated, it reads as the state it is. */
+        <div className="mx-auto flex max-w-[var(--width-prose)] items-start gap-3 rounded-card border border-dashed border-line bg-surface-muted/50 p-5">
           <SearchX aria-hidden className="mt-0.5 size-5 shrink-0 text-ink-muted" />
           <p className="text-ink-muted">
             Nothing in {entry.year} matches that. Clear the search, or choose a
@@ -207,7 +233,30 @@ export function ThemedYear({ entry }: { entry: ArchiveYear }) {
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-(--space-section)">
+        /* ── ONE THEME IS A BIGGER BREAK THAN A SECTION ────────────────
+           `--space-band`, not `--space-section`, between one theme and
+           the next.
+
+           2026 is fifty-five sessions in nine themes, and at the section
+           step the page was one uninterrupted field of thumbnails: the
+           gap between "Bible Study" and the last row of "Sermons" above
+           it was 40px, while the gap between two rows of cards inside a
+           theme is 16px. Two and a half times is not enough of a
+           difference to group anything when the things being grouped are
+           fifty-five identically shaped cards, and half of them carry the
+           same title as their own theme — every card in Bible Study is
+           called "Bible Study".
+
+           At the band step the ratio inside a theme becomes 4:1 — heading
+           to grid at `--space-item`, theme to theme at `--space-band` —
+           which is the ratio the whole spacing scale was built around,
+           and it is what turns nine headings into nine places rather than
+           nine more lines of type. No rule, no fill, no colour: the air
+           is the identity.
+
+           The headings keep their ids and their `scroll-mt-24`, so
+           /archive#stewardship still lands where it did. */
+        <div className="flex flex-col gap-(--space-band)">
           {shown.map((theme) => (
             <section
               key={theme.id}
